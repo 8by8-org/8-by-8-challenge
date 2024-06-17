@@ -8,6 +8,8 @@ import { AbstractInviteCodeRepository } from './abstract-invite-code-repository'
 import { FirebaseInviteCodeRepository } from './firebase-invite-code-repository';
 import { AbstractUserRepository } from './abstract-user-repository';
 import { FirebaseUserRepository } from './firebase-user-repository';
+import { AbstractValidateCloudflareTurnstile } from './abstract-validate-cloudflare-turnstile';
+import { ValidateCloudflareTurnstile } from './validate-cloudflare-turnstile';
 
 const serverContainer = new Container();
 
@@ -22,5 +24,11 @@ serverContainer
 serverContainer
   .bind<AbstractUserRepository>(SERVER_SERVICE_KEYS.UserRepository)
   .to(FirebaseUserRepository);
+
+serverContainer
+  .bind<AbstractValidateCloudflareTurnstile>(
+    SERVER_SERVICE_KEYS.CloudflareTurnstile,
+  )
+  .to(ValidateCloudflareTurnstile);
 
 export { serverContainer };

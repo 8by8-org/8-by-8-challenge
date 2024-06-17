@@ -55,4 +55,4 @@ export class FirebaseUserRepository extends AbstractUserRepository {
 
     await this.firebaseAdmin.firestore.collection('users').doc(uid).set(user);
   }
-}
+} /* istanbul ignore next */ // Ignore the branch created when decorated constructor params are compiled

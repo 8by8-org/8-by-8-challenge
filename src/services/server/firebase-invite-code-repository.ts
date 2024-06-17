@@ -1,6 +1,6 @@
 import 'server-only';
 import { injectable, inject } from 'inversify';
-import { nanoid } from 'nanoid';
+import { init } from '@paralleldrive/cuid2';
 import { AbstractInviteCodeRepository } from './abstract-invite-code-repository';
 import { SERVER_SERVICE_KEYS } from './server-service-keys';
 import { z } from 'zod';
@@ -12,6 +12,10 @@ import type { AbstractFirebaseAdminService } from './abstract-firebase-admin-ser
  */
 @injectable()
 export class FirebaseInviteCodeRepository extends AbstractInviteCodeRepository {
+  private createId = init({
+    length: 10,
+  });
+
   private inviteCodeSchema = z.object({
     userId: z.string(),
   });
@@ -24,7 +28,7 @@ export class FirebaseInviteCodeRepository extends AbstractInviteCodeRepository {
   }
 
   public async createInviteCodeWithUserId(userId: string): Promise<string> {
-    const inviteCode = nanoid();
+    let inviteCode = this.createId();
 
     await this.firebaseAdmin.firestore
       .collection('invite-codes')
@@ -52,4 +56,4 @@ export class FirebaseInviteCodeRepository extends AbstractInviteCodeRepository {
 
     return parsedInviteCodeData.userId;
   }
-}
+} /* istanbul ignore next */ // Ignore the branch created when decorated constructor params are compiled

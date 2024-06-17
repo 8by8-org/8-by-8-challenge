@@ -8,7 +8,7 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
 const config = {
-  testEnvironment: 'jest-environment-jsdom',
+  testEnvironment: './jest-environment.js',
   // Provide an implementation of indexedDB for the IDBUserContextProvider
   // to access.
   setupFiles: ['jest-canvas-mock', 'fake-indexeddb/auto'],
@@ -23,7 +23,6 @@ const config = {
     'constants',
     'fonts',
     'model',
-    'services',
   ],
   coveragePathIgnorePatterns: [
     'index.ts',

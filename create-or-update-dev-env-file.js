@@ -7,7 +7,9 @@ const crypto = require('crypto');
  */
 class DevEnv {
   static #ENV_FILE_NAME = '.env';
-  static #TURNSTILE_ENV_VARIABLE_NAME = 'NEXT_PUBLIC_TURNSTILE_SITE_KEY';
+  static #TURNSTILE_PUBLIC_ENV_VARIABLE_NAME = 'NEXT_PUBLIC_TURNSTILE_SITE_KEY';
+  static #TURNSTILE_PRIVATE_ENV_VARIABLE_NAME =
+    'NEXT_PRIVATE_TURNSTILE_SECRET_KEY';
   static #FIREBASE_PROJECT_ID_VARIABLE_NAME = 'NEXT_PUBLIC_FIREBASE_PROJECT_ID';
   static #FIREBASE_CLIENT_EMAIL_VARIABLE_NAME = 'FIREBASE_CLIENT_EMAIL';
   static #FIREBASE_PRIVATE_KEY_VARIABLE_NAME = 'FIREBASE_PRIVATE_KEY';
@@ -28,7 +30,8 @@ class DevEnv {
    */
   static #createDevEnv() {
     const envFileContents = [
-      this.#createTurnstileKey(),
+      this.#createTurnstileSiteKey(),
+      this.#createTurnstileSecretKey(),
       this.#createFirebaseProjectId(),
       this.#createFirebaseClientEmail(),
       this.#createFirebasePrivateKey(),
@@ -46,8 +49,18 @@ class DevEnv {
   static #updateDevEnv() {
     const envContents = fs.readFileSync(this.#ENV_FILE_NAME, 'utf8');
 
-    if (!envContents.includes(this.#TURNSTILE_ENV_VARIABLE_NAME)) {
-      fs.appendFileSync(this.#ENV_FILE_NAME, '\n' + this.#createTurnstileKey());
+    if (!envContents.includes(this.#TURNSTILE_PUBLIC_ENV_VARIABLE_NAME)) {
+      fs.appendFileSync(
+        this.#ENV_FILE_NAME,
+        '\n' + this.#createTurnstileSiteKey(),
+      );
+    }
+
+    if (!envContents.includes(this.#TURNSTILE_PRIVATE_ENV_VARIABLE_NAME)) {
+      fs.appendFileSync(
+        this.#ENV_FILE_NAME,
+        '\n' + this.#createTurnstileSecretKey(),
+      );
     }
 
     if (!envContents.includes(this.#FIREBASE_PROJECT_ID_VARIABLE_NAME)) {
@@ -91,8 +104,15 @@ class DevEnv {
   /**
    * Creates a dummy Cloudflare Turnstile site key.
    */
-  static #createTurnstileKey() {
-    return `${this.#TURNSTILE_ENV_VARIABLE_NAME}="1x00000000000000000000AA"`;
+  static #createTurnstileSiteKey() {
+    return `${this.#TURNSTILE_PUBLIC_ENV_VARIABLE_NAME}="1x00000000000000000000AA"`;
+  }
+
+  /**
+   * Creates a dummy Cloudflare Turnstile secret key.
+   */
+  static #createTurnstileSecretKey() {
+    return `${this.#TURNSTILE_PRIVATE_ENV_VARIABLE_NAME}="1x0000000000000000000000000000000AA"`;
   }
 
   /**
