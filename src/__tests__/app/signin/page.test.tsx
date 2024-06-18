@@ -58,9 +58,10 @@ describe('SignInPage', () => {
     await user.click(signInBtn);
 
     await waitFor(() => {
-      expect(userContextValue.signInWithEmail).toHaveBeenCalledWith(
-        'user@example.com',
-      );
+      expect(userContextValue.signInWithEmail).toHaveBeenCalledWith({
+        email: 'user@example.com',
+        captchaToken: expect.any(String),
+      });
     });
   });
 

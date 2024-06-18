@@ -31,8 +31,8 @@ export default function SignIn() {
     signInForm.setSubmitted();
 
     try {
-      const { email } = await waitForPendingValidators(signInForm);
-      await signInWithEmail(email);
+      const formValue = await waitForPendingValidators(signInForm);
+      await signInWithEmail(formValue);
     } catch (e) {
       setIsLoading(false);
 

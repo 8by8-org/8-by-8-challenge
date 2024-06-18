@@ -79,12 +79,13 @@ describe('SignUpPage', () => {
     await user.click(submitButton);
 
     await waitFor(() =>
-      expect(userContextValue.signUpWithEmail).toHaveBeenCalledWith(
-        'user@example.com',
-        'user',
-        '1',
-        UserType.Challenger,
-      ),
+      expect(userContextValue.signUpWithEmail).toHaveBeenCalledWith({
+        email: 'user@example.com',
+        name: 'user',
+        avatar: '1',
+        type: UserType.Challenger,
+        captchaToken: expect.any(String),
+      }),
     );
   });
 

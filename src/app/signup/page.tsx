@@ -32,9 +32,8 @@ export default function SignUp() {
     signUpForm.setSubmitted();
 
     try {
-      const { email, name, avatar } =
-        await waitForPendingValidators(signUpForm);
-      await signUpWithEmail(email, name, avatar, UserType.Challenger);
+      const formValue = await waitForPendingValidators(signUpForm);
+      await signUpWithEmail({ ...formValue, type: UserType.Challenger });
     } catch (e) {
       setIsLoading(false);
 
