@@ -40,7 +40,7 @@ export default function SignIn() {
         if (!ValidityUtils.isValid(signInForm.fields.email)) {
           focusOnElementById(signInForm.fields.email.id);
         } else {
-          scrollToElementById(signInForm.fields.turnstileToken.id);
+          scrollToElementById(signInForm.fields.captchaToken.id);
         }
       } else {
         setHasSubmissionError(true);
@@ -77,7 +77,7 @@ export default function SignIn() {
             labelContent="Email address*"
             containerClassName={styles.input_group}
           />
-          <Turnstile field={signInForm.fields.turnstileToken} />
+          <Turnstile field={signInForm.fields.captchaToken} />
         </div>
         <div className={styles.submit_btn_container}>
           <button type="submit" className="btn_gradient btn_lg btn_wide">

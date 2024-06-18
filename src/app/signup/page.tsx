@@ -40,7 +40,7 @@ export default function SignUp() {
 
       if (e instanceof FormInvalidError) {
         const firstNonValidInputId = getFirstNonValidInputId(signUpForm);
-        if (firstNonValidInputId === signUpForm.fields.turnstileToken.id) {
+        if (firstNonValidInputId === signUpForm.fields.captchaToken.id) {
           scrollToElementById(firstNonValidInputId);
         } else if (firstNonValidInputId) {
           focusOnElementById(firstNonValidInputId);
@@ -98,7 +98,7 @@ export default function SignUp() {
           />
         </div>
         <SelectAvatar field={signUpForm.fields.avatar} isLoading={isLoading} />
-        <Turnstile field={signUpForm.fields.turnstileToken} />
+        <Turnstile field={signUpForm.fields.captchaToken} />
         <div className={styles.tos_agreement_container}>
           <p className={styles.tos_agreement}>
             By clicking on &quot;Sign Up,&quot; I agree to the{' '}

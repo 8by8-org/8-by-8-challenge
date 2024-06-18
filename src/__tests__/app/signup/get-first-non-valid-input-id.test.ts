@@ -32,19 +32,19 @@ describe('getFirstNoNValidInputId', () => {
     expect(getFirstNonValidInputId(form)).toBe(form.fields.confirmEmail.id);
   });
 
-  it(`returns "turnstile-widget" if all fields except the turnstileToken field 
+  it(`returns "turnstile-widget" if all fields except the captchaToken field 
   are valid.`, () => {
     form.fields.name.setValue('user');
     form.fields.email.setValue('user@example.com');
     form.fields.confirmEmail.setValue('user@example.com');
-    expect(getFirstNonValidInputId(form)).toBe(form.fields.turnstileToken.id);
+    expect(getFirstNonValidInputId(form)).toBe(form.fields.captchaToken.id);
   });
 
   it('returns null if all fields are valid.', () => {
     form.fields.name.setValue('user');
     form.fields.email.setValue('user@example.com');
     form.fields.confirmEmail.setValue('user@example.com');
-    form.fields.turnstileToken.onVerify('');
+    form.fields.captchaToken.onVerify('');
     expect(getFirstNonValidInputId(form)).toBe(null);
   });
 });

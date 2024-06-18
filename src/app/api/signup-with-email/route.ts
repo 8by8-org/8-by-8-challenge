@@ -4,14 +4,14 @@ import { serverContainer } from '@/services/server/server-container';
 import { AbstractUserRepository } from '@/services/server/abstract-user-repository';
 import { SERVER_SERVICE_KEYS } from '@/services/server/server-service-keys';
 import { NextResponse, NextRequest } from 'next/server';
-import { AbstractValidateCloudflareTurnstile } from '@/services/server/abstract-validate-cloudflare-turnstile';
+import { AbstractCAPTCHATokenValidator } from '@/services/server/abstract-captcha-token-validator';
 
 const SignupSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1, 'Must provide a name'),
   avatar: z.enum(['0', '1', '2', '3']),
   type: z.nativeEnum(UserType),
-  turnstileToken: z.string().min(1, 'Must provide a token'),
+  captchaToken: z.string().min(1, 'Must provide a token'),
 });
 
 /**
@@ -33,10 +33,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const data = SignupSchema.parse(body);
 
     const validateTurnstile =
-      serverContainer.get<AbstractValidateCloudflareTurnstile>(
+      serverContainer.get<AbstractCAPTCHATokenValidator>(
         SERVER_SERVICE_KEYS.CloudflareTurnstile,
       );
-    const isValidToken = await validateTurnstile.verifyToken(data);
+    const isValidToken = await validateTurnstile.isHuman(data);
 
     if (!isValidToken) {
       return NextResponse.json(

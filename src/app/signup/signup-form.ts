@@ -65,7 +65,7 @@ class SignUpTemplate extends FormTemplate {
   ] as const;
 
   public readonly autoTrim = {
-    exclude: ['turnstileToken'],
+    exclude: ['captchaToken'],
   };
 }
 

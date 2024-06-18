@@ -49,7 +49,7 @@ function FormWithTurnstileComponent({ sitekey }: FormWithTurnstileProps) {
             alignItems: 'center',
           }}
         >
-          <Turnstile field={form.fields.turnstileToken} sitekey={sitekey} />
+          <Turnstile field={form.fields.captchaToken} sitekey={sitekey} />
           <button
             type="submit"
             className="btn_gradient btn_lg"

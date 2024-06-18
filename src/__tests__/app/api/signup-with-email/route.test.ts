@@ -11,7 +11,7 @@ describe('api/signup-with-email', () => {
         name: 'User',
         avatar: '1',
         type: UserType.Challenger,
-        turnstileToken: 'test-token',
+        captchaToken: 'test-token',
       }),
     } as NextRequest;
 
@@ -30,7 +30,7 @@ describe('api/signup-with-email', () => {
         name: 'User',
         avatar: '1',
         type: UserType.Challenger,
-        turnstileToken: 'test-token',
+        captchaToken: 'test-token',
       }),
     } as NextRequest;
 

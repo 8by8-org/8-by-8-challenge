@@ -1,9 +1,9 @@
 import 'server-only';
 import { injectable } from 'inversify';
 import {
-  AbstractValidateCloudflareTurnstile,
+  AbstractCAPTCHATokenValidator,
   VerifyTokenParams,
-} from './abstract-validate-cloudflare-turnstile';
+} from './abstract-captcha-token-validator';
 import { z } from 'zod';
 
 const envSchema = z.object({
@@ -13,18 +13,16 @@ const envSchema = z.object({
 });
 
 /**
- * An implementation of {@link AbstractValidateCloudflareTurnstile} that validates
+ * An implementation of {@link AbstractCAPTCHATokenValidator} that validates
  * a Cloudflare Turnstile token.
  */
 @injectable()
-export class ValidateCloudflareTurnstile extends AbstractValidateCloudflareTurnstile {
+export class CloudflareTurnstileTokenValidator extends AbstractCAPTCHATokenValidator {
   public constructor() {
     super();
   }
 
-  public async verifyToken({
-    turnstileToken,
-  }: VerifyTokenParams): Promise<boolean> {
+  public async isHuman({ captchaToken }: VerifyTokenParams): Promise<boolean> {
     const env = envSchema.parse(process.env);
     const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
     const secret_key = env.NEXT_PRIVATE_TURNSTILE_SECRET_KEY;
@@ -32,7 +30,7 @@ export class ValidateCloudflareTurnstile extends AbstractValidateCloudflareTurns
     const result = await fetch(url, {
       body: JSON.stringify({
         secret: secret_key,
-        response: turnstileToken,
+        response: captchaToken,
       }),
       method: 'POST',
       headers: {

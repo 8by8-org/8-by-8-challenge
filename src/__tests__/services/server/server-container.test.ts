@@ -3,7 +3,7 @@ import { SERVER_SERVICE_KEYS } from '@/services/server/server-service-keys';
 import { AbstractFirebaseAdminService } from '@/services/server/abstract-firebase-admin-service';
 import { AbstractUserRepository } from '@/services/server/abstract-user-repository';
 import { AbstractInviteCodeRepository } from '@/services/server/abstract-invite-code-repository';
-import { AbstractValidateCloudflareTurnstile } from '@/services/server/abstract-validate-cloudflare-turnstile';
+import { AbstractCAPTCHATokenValidator } from '@/services/server/abstract-captcha-token-validator';
 
 describe('serverContainer', () => {
   it('provides an instance of AbstractFirebaseAdminService.', () => {
@@ -30,11 +30,9 @@ describe('serverContainer', () => {
 
   it('provides an instance of AbstractValidateCloudflareTurnstile.', () => {
     const cloudflareTurnstile =
-      serverContainer.get<AbstractValidateCloudflareTurnstile>(
+      serverContainer.get<AbstractCAPTCHATokenValidator>(
         SERVER_SERVICE_KEYS.CloudflareTurnstile,
       );
-    expect(cloudflareTurnstile).toBeInstanceOf(
-      AbstractValidateCloudflareTurnstile,
-    );
+    expect(cloudflareTurnstile).toBeInstanceOf(AbstractCAPTCHATokenValidator);
   });
 });
