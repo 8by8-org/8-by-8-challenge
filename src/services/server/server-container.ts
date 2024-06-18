@@ -26,7 +26,9 @@ serverContainer
   .to(FirebaseUserRepository);
 
 serverContainer
-  .bind<AbstractCAPTCHATokenValidator>(SERVER_SERVICE_KEYS.CloudflareTurnstile)
+  .bind<AbstractCAPTCHATokenValidator>(
+    SERVER_SERVICE_KEYS.CAPTCHATokenValidator,
+  )
   .to(CloudflareTurnstileTokenValidator);
 
 export { serverContainer };

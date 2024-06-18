@@ -31,7 +31,7 @@ describe('serverContainer', () => {
   it('provides an instance of AbstractValidateCloudflareTurnstile.', () => {
     const cloudflareTurnstile =
       serverContainer.get<AbstractCAPTCHATokenValidator>(
-        SERVER_SERVICE_KEYS.CloudflareTurnstile,
+        SERVER_SERVICE_KEYS.CAPTCHATokenValidator,
       );
     expect(cloudflareTurnstile).toBeInstanceOf(AbstractCAPTCHATokenValidator);
   });

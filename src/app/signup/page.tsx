@@ -73,6 +73,7 @@ export default function SignUp() {
             labelContent="Name*"
             labelVariant="floating"
             containerClassName={styles.input_group}
+            maxLength={255}
             aria-required
           />
           <InputGroup

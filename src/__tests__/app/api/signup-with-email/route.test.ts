@@ -4,7 +4,13 @@ import { UserType } from '@/model/enums/user-type';
 import { NextRequest } from 'next/server';
 
 describe('api/signup-with-email', () => {
-  it('returns a response with status 201', async () => {
+  const { TURNSTILE_SECRET_KEY } = process.env;
+
+  afterEach(() => {
+    process.env.TURNSTILE_SECRET_KEY = TURNSTILE_SECRET_KEY;
+  });
+
+  it('returns a response with status 201.', async () => {
     const request = {
       json: async () => ({
         email: 'user@example.com',
@@ -18,12 +24,11 @@ describe('api/signup-with-email', () => {
     const response = await POST(request);
     expect(response.status).toBe(201);
     const json = await response.json();
-    expect(json.message).toBe('User created successfully');
+    expect(json.message).toBe('User created successfully.');
   });
 
-  it('returns a response with status 400 due to invalid token', async () => {
-    process.env.NEXT_PRIVATE_TURNSTILE_SECRET_KEY =
-      DummySecretKeys.ALWAYS_BLOCKS;
+  it('returns a response with status 400 due to invalid token.', async () => {
+    process.env.TURNSTILE_SECRET_KEY = DummySecretKeys.ALWAYS_BLOCKS;
     const request = {
       json: async () => ({
         email: 'user@example.com',
@@ -35,12 +40,12 @@ describe('api/signup-with-email', () => {
     } as NextRequest;
 
     const response = await POST(request);
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(401);
     const json = await response.json();
-    expect(json.error).toBe('Token verification failed');
+    expect(json.error).toBe('Token verification failed.');
   });
 
-  it('returns a response with status 400 due to invalid schema', async () => {
+  it('returns a response with status 400 due to invalid schema.', async () => {
     const request = {
       json: async () => ({
         email: 'user@example.com',

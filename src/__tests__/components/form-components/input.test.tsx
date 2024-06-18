@@ -138,4 +138,21 @@ describe('Input', () => {
     const input = screen.getByRole('textbox');
     expect(input.classList.contains(expectedClassName)).toBe(true);
   });
+
+  it(`prevents the user from entering additional characters if maxLength has 
+  been set.`, async () => {
+    const field = new Field({
+      name: '',
+      defaultValue: '',
+    });
+
+    const user = userEvent.setup();
+
+    render(<Input field={field} type="text" maxLength={3} />);
+
+    const input = screen.getByRole('textbox');
+    await user.type(input, '123456');
+
+    expect(field.state.value).toBe('123');
+  });
 });

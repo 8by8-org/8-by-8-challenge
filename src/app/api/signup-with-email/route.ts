@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { EmailRegExp } from 'fully-formed';
 import { UserType } from '@/model/enums/user-type';
 import { serverContainer } from '@/services/server/server-container';
 import { AbstractUserRepository } from '@/services/server/abstract-user-repository';
@@ -7,8 +8,11 @@ import { NextResponse, NextRequest } from 'next/server';
 import { AbstractCAPTCHATokenValidator } from '@/services/server/abstract-captcha-token-validator';
 
 const SignupSchema = z.object({
-  email: z.string().email(),
-  name: z.string().min(1, 'Must provide a name'),
+  email: z.string().regex(new EmailRegExp()),
+  name: z
+    .string()
+    .min(1, 'Must provide a name')
+    .max(255, 'name must be 255 characters or less in length.'),
   avatar: z.enum(['0', '1', '2', '3']),
   type: z.nativeEnum(UserType),
   captchaToken: z.string().min(1, 'Must provide a token'),
@@ -34,14 +38,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const validateTurnstile =
       serverContainer.get<AbstractCAPTCHATokenValidator>(
-        SERVER_SERVICE_KEYS.CloudflareTurnstile,
+        SERVER_SERVICE_KEYS.CAPTCHATokenValidator,
       );
     const isValidToken = await validateTurnstile.isHuman(data);
 
     if (!isValidToken) {
       return NextResponse.json(
-        { error: 'Token verification failed' },
-        { status: 400 },
+        { error: 'Token verification failed.' },
+        { status: 401 },
       );
     }
 
@@ -51,12 +55,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     await userRepository.createUserWithEmail(data);
 
     return NextResponse.json(
-      { message: 'User created successfully' },
+      { message: 'User created successfully.' },
       { status: 201 },
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Error: ' + error.message },
+      { error: 'Error creating user.' },
       { status: 400 },
     );
   }
