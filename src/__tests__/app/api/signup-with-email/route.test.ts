@@ -27,7 +27,7 @@ describe('api/signup-with-email', () => {
     expect(json.message).toBe('User created successfully.');
   });
 
-  it('returns a response with status 400 due to invalid token.', async () => {
+  it('returns a response with status 401 due to invalid token.', async () => {
     process.env.TURNSTILE_SECRET_KEY = DummySecretKeys.ALWAYS_BLOCKS;
     const request = {
       json: async () => ({

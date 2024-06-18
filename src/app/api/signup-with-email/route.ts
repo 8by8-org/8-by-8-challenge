@@ -36,13 +36,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const body = await req.json();
     const data = SignupSchema.parse(body);
 
-    const validateTurnstile =
-      serverContainer.get<AbstractCAPTCHATokenValidator>(
-        SERVER_SERVICE_KEYS.CAPTCHATokenValidator,
-      );
-    const isValidToken = await validateTurnstile.isHuman(data);
+    const tokenValidator = serverContainer.get<AbstractCAPTCHATokenValidator>(
+      SERVER_SERVICE_KEYS.CAPTCHATokenValidator,
+    );
+    const isHuman = await tokenValidator.isHuman(data);
 
-    if (!isValidToken) {
+    if (!isHuman) {
       return NextResponse.json(
         { error: 'Token verification failed.' },
         { status: 401 },
@@ -58,7 +57,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       { message: 'User created successfully.' },
       { status: 201 },
     );
-  } catch (error: unknown) {
+  } catch (e) {
     return NextResponse.json(
       { error: 'Error creating user.' },
       { status: 400 },
