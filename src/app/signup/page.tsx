@@ -34,7 +34,9 @@ export default function SignUp() {
     try {
       const formValue = await waitForPendingValidators(signUpForm);
       await signUpWithEmail({ ...formValue, type: UserType.Challenger });
-    } catch (e) {
+    } catch (e: any) {
+      console.log(e.message);
+
       setIsLoading(false);
 
       if (e instanceof FormInvalidError) {

@@ -1,4 +1,4 @@
-import { IDBUserContextProvider } from '@/contexts/user-context/idb-user-context-provider';
+import { FirebaseUserContextProvider } from '@/contexts/user-context/firebase-user-context-provider';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { bebasNeue } from '@/fonts/bebas-neue';
@@ -19,11 +19,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={`${bebasNeue.variable} ${lato.variable}`}>
-        <IDBUserContextProvider>
+        <FirebaseUserContextProvider>
           <Header />
           {children}
           <Footer />
-        </IDBUserContextProvider>
+        </FirebaseUserContextProvider>
       </body>
     </html>
   );

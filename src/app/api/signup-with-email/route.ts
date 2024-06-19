@@ -58,6 +58,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       { status: 201 },
     );
   } catch (e) {
+    console.log(e);
     return NextResponse.json(
       { error: 'Error creating user.' },
       { status: 400 },

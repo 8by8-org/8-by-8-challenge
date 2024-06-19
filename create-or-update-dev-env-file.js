@@ -7,14 +7,22 @@ const crypto = require('crypto');
  */
 class DevEnv {
   static #ENV_FILE_NAME = '.env';
-  static #TURNSTILE_PUBLIC_ENV_VARIABLE_NAME = 'NEXT_PUBLIC_TURNSTILE_SITE_KEY';
-  static #TURNSTILE_PRIVATE_ENV_VARIABLE_NAME = 'TURNSTILE_SECRET_KEY';
-  static #FIREBASE_PROJECT_ID_VARIABLE_NAME = 'NEXT_PUBLIC_FIREBASE_PROJECT_ID';
-  static #FIREBASE_CLIENT_EMAIL_VARIABLE_NAME = 'FIREBASE_CLIENT_EMAIL';
-  static #FIREBASE_PRIVATE_KEY_VARIABLE_NAME = 'FIREBASE_PRIVATE_KEY';
-  static #FIREBASE_AUTH_EMULATOR_HOST_VARIABLE_NAME =
-    'FIREBASE_AUTH_EMULATOR_HOST';
-  static #FIRESTORE_EMULATOR_HOST_VARIABLE_NAME = 'FIRESTORE_EMULATOR_HOST';
+
+  static #TURNSTILE_ENV_VARIABLES = new Map([
+    ['NEXT_PUBLIC_TURNSTILE_SITE_KEY', '1x00000000000000000000AA'],
+    ['TURNSTILE_SECRET_KEY', '1x0000000000000000000000000000000AA'],
+  ]);
+
+  static #FIREBASE_ENV_VARIABLES = new Map([
+    ['NEXT_PUBLIC_FIREBASE_API_KEY', 'demo-api-key'],
+    ['NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN', 'demo-auth-domain'],
+    ['NEXT_PUBLIC_FIREBASE_PROJECT_ID', 'demo-project'],
+    ['NEXT_PUBLIC_FIREBASE_APP_ID', 'demo-app'],
+    ['FIREBASE_CLIENT_EMAIL', 'demo-client-email'],
+    ['FIREBASE_PRIVATE_KEY', this.#createFirebasePrivateKey()],
+    ['FIREBASE_AUTH_EMULATOR_HOST', '127.0.0.1:9099'],
+    ['FIRESTORE_EMULATOR_HOST', '127.0.0.1:8080'],
+  ]);
 
   static createOrUpdateDevEnv() {
     if (!fs.existsSync(this.#ENV_FILE_NAME)) {
@@ -28,17 +36,11 @@ class DevEnv {
    * Creates a new .env file with all required variables.
    */
   static #createDevEnv() {
-    const envFileContents = [
-      this.#createTurnstileSiteKey(),
-      this.#createTurnstileSecretKey(),
-      this.#createFirebaseProjectId(),
-      this.#createFirebaseClientEmail(),
-      this.#createFirebasePrivateKey(),
-      this.#createFirebaseAuthEmulatorHost(),
-      this.#createFirestoreEmulatorHost(),
-    ];
+    const envContents = this.#getAllEnvVariables()
+      .map(([key, value]) => `${key}="${value}"`)
+      .join('\n');
 
-    fs.writeFileSync(this.#ENV_FILE_NAME, envFileContents.join('\n'), 'utf8');
+    fs.writeFileSync(this.#ENV_FILE_NAME, envContents, 'utf8');
   }
 
   /**
@@ -48,87 +50,13 @@ class DevEnv {
   static #updateDevEnv() {
     const envContents = fs.readFileSync(this.#ENV_FILE_NAME, 'utf8');
 
-    if (!envContents.includes(this.#TURNSTILE_PUBLIC_ENV_VARIABLE_NAME)) {
-      fs.appendFileSync(
-        this.#ENV_FILE_NAME,
-        '\n' + this.#createTurnstileSiteKey(),
-      );
-    }
+    const envVariables = this.#getAllEnvVariables();
 
-    if (!envContents.includes(this.#TURNSTILE_PRIVATE_ENV_VARIABLE_NAME)) {
-      fs.appendFileSync(
-        this.#ENV_FILE_NAME,
-        '\n' + this.#createTurnstileSecretKey(),
-      );
-    }
-
-    if (!envContents.includes(this.#FIREBASE_PROJECT_ID_VARIABLE_NAME)) {
-      fs.appendFileSync(
-        this.#ENV_FILE_NAME,
-        '\n' + this.#createFirebaseProjectId(),
-      );
-    }
-
-    if (!envContents.includes(this.#FIREBASE_CLIENT_EMAIL_VARIABLE_NAME)) {
-      fs.appendFileSync(
-        this.#ENV_FILE_NAME,
-        '\n' + this.#createFirebaseClientEmail(),
-      );
-    }
-
-    if (!envContents.includes(this.#FIREBASE_PRIVATE_KEY_VARIABLE_NAME)) {
-      fs.appendFileSync(
-        this.#ENV_FILE_NAME,
-        '\n' + this.#createFirebasePrivateKey(),
-      );
-    }
-
-    if (
-      !envContents.includes(this.#FIREBASE_AUTH_EMULATOR_HOST_VARIABLE_NAME)
-    ) {
-      fs.appendFileSync(
-        this.#ENV_FILE_NAME,
-        '\n' + this.#createFirebaseAuthEmulatorHost(),
-      );
-    }
-
-    if (!envContents.includes(this.#FIRESTORE_EMULATOR_HOST_VARIABLE_NAME)) {
-      fs.appendFileSync(
-        this.#ENV_FILE_NAME,
-        '\n' + this.#createFirestoreEmulatorHost(),
-      );
-    }
-  }
-
-  /**
-   * Creates a dummy Cloudflare Turnstile site key.
-   */
-  static #createTurnstileSiteKey() {
-    return `${this.#TURNSTILE_PUBLIC_ENV_VARIABLE_NAME}="1x00000000000000000000AA"`;
-  }
-
-  /**
-   * Creates a dummy Cloudflare Turnstile secret key.
-   */
-  static #createTurnstileSecretKey() {
-    return `${this.#TURNSTILE_PRIVATE_ENV_VARIABLE_NAME}="1x0000000000000000000000000000000AA"`;
-  }
-
-  /**
-   * Creates a project id for a Firebase demo app. A demo app is not associated
-   * with any actual resources, but can be used to start Firebase emulators for
-   * local development. The id must start with "demo-", but apart from that, it
-   * has been chosen arbitrarily.
-   */
-  static #createFirebaseProjectId() {
-    return `${this.#FIREBASE_PROJECT_ID_VARIABLE_NAME}="demo-app"`;
-  }
-
-  /**
-   * Creates a dummy Firebase client email. The value is arbitrary.
-   */
-  static #createFirebaseClientEmail() {
-    return `${this.#FIREBASE_CLIENT_EMAIL_VARIABLE_NAME}="demo-client-email"`;
+    envVariables.forEach(([key, value]) => {
+      if (!envContents.includes(key)) {
+        fs.appendFileSync(this.#ENV_FILE_NAME, `\n${key}="${value}"`, 'utf8');
+      }
+    });
   }
 
   /**
@@ -140,21 +68,19 @@ class DevEnv {
       modulusLength: 2048,
     });
 
-    return `${this.#FIREBASE_PRIVATE_KEY_VARIABLE_NAME}="${privateKey
+    return privateKey
       .export({
         format: 'pem',
         type: 'pkcs1',
       })
       .toString('base64')
-      .replace(/\n/g, '\\n')}"`;
+      .replace(/\n/g, '\\n');
   }
 
-  static #createFirebaseAuthEmulatorHost() {
-    return `${this.#FIREBASE_AUTH_EMULATOR_HOST_VARIABLE_NAME}="127.0.0.1:9099"`;
-  }
-
-  static #createFirestoreEmulatorHost() {
-    return `${this.#FIRESTORE_EMULATOR_HOST_VARIABLE_NAME}="127.0.0.1:8080"`;
+  static #getAllEnvVariables() {
+    return Array.from(this.#FIREBASE_ENV_VARIABLES.entries()).concat(
+      Array.from(this.#TURNSTILE_ENV_VARIABLES.entries()),
+    );
   }
 }
 
