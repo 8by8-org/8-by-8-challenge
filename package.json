@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "init-dev-env": "node create-or-update-dev-env-file.js",
-    "dev": "firebase emulators:exec \"next dev\" --project demo-app --only auth,firestore",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "test": "jest --no-watch",
@@ -16,8 +16,6 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
-    "firebase": "^10.12.2",
-    "firebase-admin": "^12.1.1",
     "fully-formed": "^1.0.1",
     "inversify": "^6.0.2",
     "luxon": "^3.4.4",

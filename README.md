@@ -12,18 +12,6 @@ You must have Node.js version 18.17+ and the Firebase CLI installed to run the l
 
 To run the application locally, fork the repository and clone the fork to your machine. In the terminal, navigate into the project directory and run `npm install`. This will install the project's dependencies.
 
-You will also need the Firebase CLI installed in order to run Firebase emulators. This should be installed globally. To check if it is installed, open a terminal and run:
-
-```
-firebase --version
-```
-
-If the output is a version number, the Firebase CLI is installed. If not, run the following command to install it:
-
-```
-npm install -g firebase-tools
-```
-
 Before running the local development server, you will need to create a .env file. You can do this by running the following command:
 
 ```

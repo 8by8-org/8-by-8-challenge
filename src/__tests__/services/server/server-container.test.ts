@@ -1,19 +1,10 @@
 import { serverContainer } from '@/services/server/server-container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/server-service-keys';
-import { AbstractFirebaseAdminService } from '@/services/server/abstract-firebase-admin-service';
 import { AbstractUserRepository } from '@/services/server/abstract-user-repository';
 import { AbstractInviteCodeRepository } from '@/services/server/abstract-invite-code-repository';
 import { AbstractCAPTCHATokenValidator } from '@/services/server/abstract-captcha-token-validator';
 
 describe('serverContainer', () => {
-  it('provides an instance of AbstractFirebaseAdminService.', () => {
-    const firebaseAdminService =
-      serverContainer.get<AbstractFirebaseAdminService>(
-        SERVER_SERVICE_KEYS.FirebaseAdminService,
-      );
-    expect(firebaseAdminService).toBeInstanceOf(AbstractFirebaseAdminService);
-  });
-
   it('provides an instance of AbstractUserRepository.', () => {
     const userRepo = serverContainer.get<AbstractUserRepository>(
       SERVER_SERVICE_KEYS.UserRepository,
