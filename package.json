@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "init-dev-env": "node create-or-update-dev-env-file.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -16,6 +15,7 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
+    "@supabase/supabase-js": "^2.43.5",
     "fully-formed": "^1.0.1",
     "inversify": "^6.0.2",
     "luxon": "^3.4.4",

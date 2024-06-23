@@ -12,17 +12,6 @@ You must have Node.js version 18.17+ and the Firebase CLI installed to run the l
 
 To run the application locally, fork the repository and clone the fork to your machine. In the terminal, navigate into the project directory and run `npm install`. This will install the project's dependencies.
 
-Before running the local development server, you will need to create a .env file. You can do this by running the following command:
-
-```
-npm run init-dev-env
-```
-
-This will create a .env file if it does not already exist, or update it to ensure all required env variables are present. None of the values in this .env file point
-to actual resources.
-
-You can now run the local development server with the command `npm run dev`.
-
 ## Contributing
 
 New engineers should review [CONTRIBUTING.md](https://github.com/8by8-org/8by8-challenge/blob/development/CONTRIBUTING.md) for details about the recommended workflow and tools.

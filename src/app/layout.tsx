@@ -1,3 +1,4 @@
+import { SupabaseUserContextProvider } from '@/contexts/user-context/supabase-user-context-provider';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { bebasNeue } from '@/fonts/bebas-neue';
@@ -18,9 +19,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={`${bebasNeue.variable} ${lato.variable}`}>
-        <Header />
-        {children}
-        <Footer />
+        <SupabaseUserContextProvider>
+          <Header />
+          {children}
+          <Footer />
+        </SupabaseUserContextProvider>
       </body>
     </html>
   );
