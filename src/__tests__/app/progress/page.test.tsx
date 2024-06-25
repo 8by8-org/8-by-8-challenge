@@ -15,7 +15,7 @@ describe('ProgressTest', () => {
   mockDialogMethods();
   afterEach(cleanup);
 
-  let user: User = {
+  let appUser: User = {
     uid: '456',
     email: 'challenger2@example.com',
     name: 'Challenger2',
@@ -37,18 +37,19 @@ describe('ProgressTest', () => {
   };
 
   it('tests for Modal close.', async () => {
-    user.challengeEndTimestamp = DateTime.now().toUnixInteger();
+    appUser.challengeEndTimestamp = DateTime.now().toUnixInteger();
 
+    const user = userEvent.setup();
     render(
-      <UserContext.Provider value={{ user } as UserContextType}>
+      <UserContext.Provider value={{ user: appUser } as UserContextType}>
         <Progress />
       </UserContext.Provider>,
     );
 
-    jest.spyOn(HTMLDialogElement.prototype, 'close');
     expect(screen.getByText(/Oops, times up/i)).toBeInTheDocument();
+
     const closeBtn = screen.getByLabelText('close dialog');
-    await userEvent.click(closeBtn);
+    await user.click(closeBtn);
     await waitFor(() =>
       expect(HTMLDialogElement.prototype.close).toHaveBeenCalled(),
     );
@@ -56,11 +57,11 @@ describe('ProgressTest', () => {
 
   it('renders user when all badges are completed.', () => {
     for (let i = 2; i < 8; i++) {
-      user.badges[i] = { playerName: `test${i}`, playerAvatar: '1' };
+      appUser.badges[i] = { playerName: `test${i}`, playerAvatar: '1' };
     }
 
     render(
-      <UserContext.Provider value={{ user } as UserContextType}>
+      <UserContext.Provider value={{ user: appUser } as UserContextType}>
         <Progress />
       </UserContext.Provider>,
     );
