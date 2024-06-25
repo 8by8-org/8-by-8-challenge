@@ -1,0 +1,197 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChallengerWelcome renders challenger-welcome page unchanged 1`] = `
+<div>
+  <div
+    class="outer_container"
+  >
+    <div
+      class="inner_container"
+    >
+      <section
+        class="section_1"
+      >
+        <img
+          alt="background"
+          class="background"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+        <div
+          class="container"
+        >
+          <img
+            alt="8by8 Logo"
+            class="logo"
+            data-nimg="1"
+            decoding="async"
+            height="40"
+            loading="lazy"
+            src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+            srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+            style="color: transparent;"
+            width="40"
+          />
+        </div>
+      </section>
+      <section
+        class="section_2"
+      >
+        <h1
+          class="underline"
+        >
+          Welcome!
+        </h1>
+        <p
+          class="content"
+        >
+          Closing the voter registration gap has to be a community effort, so we're asking everyone to join us in taking the #8by8Challenge—register 8 friends to register to vote in 8 days!
+        </p>
+        <button
+          class="get_started_btn"
+          type="button"
+        >
+          Get Started
+        </button>
+        <p
+          class="signin_line"
+        >
+          Already have an account? 
+          <a
+            href="/signin"
+          >
+            Sign in
+          </a>
+        </p>
+        <a
+          class="teal_link"
+          href="/why8by8"
+        >
+          See why others are doing it
+        </a>
+      </section>
+      <section
+        class="content_3"
+      >
+        <h2
+          class="underline"
+        >
+          Here's How it Works
+        </h2>
+        <h3
+          class="step_header"
+        >
+          1. Sign Up
+        </h3>
+        <p
+          class="step_text"
+        >
+          Sign up with your name and email address to get started.
+        </p>
+        <img
+          alt="sign up"
+          class="image"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+        <h3
+          class="step_header"
+        >
+          2. Invite your friends
+        </h3>
+        <p
+          class="step_text"
+        >
+          Get 8 friends via social media or messaging apps to join your challenge.
+        </p>
+        <img
+          alt="invite your friends"
+          class="image"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+        <h3
+          class="step_header"
+        >
+          3. Friends take action
+        </h3>
+        <p
+          class="step_text"
+        >
+          Your friends can support your challenge by taking 1 of 3 actions: register to vote, set up election reminders, or take the challenge themselves. You'll earn 1 badge per friend who takes action!
+        </p>
+        <img
+          alt="friends take action"
+          class="image"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+        <h3
+          class="step_header"
+        >
+          4. Win the challenge, get a reward!
+        </h3>
+        <p
+          class="step_text"
+        >
+          When all 8 of your friends took action in your challenge within 8 days, and you win! Then select and enjoy a reward from one of our amazing partners.
+        </p>
+        <img
+          alt="earn 8 badges in 8 days"
+          class="image"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+        <button
+          class="get_started_btn"
+          type="button"
+        >
+          Get Started
+        </button>
+        <p
+          class="signin_line"
+        >
+          Already have an account?
+           
+          <a
+            class="signin_link_black"
+            href="/signin"
+          >
+            Sign in
+          </a>
+        </p>
+      </section>
+    </div>
+  </div>
+</div>
+`;

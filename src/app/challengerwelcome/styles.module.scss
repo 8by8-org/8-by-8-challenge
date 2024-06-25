@@ -1,0 +1,97 @@
+@use '../../styles/partials';
+
+.get_started_btn {
+  @extend .btn_gradient;
+  @extend .btn_lg;
+  width: 70%;
+  margin: 30px 0px;
+}
+
+.signin_line {
+  @extend .b6;
+  letter-spacing: 0.28px;
+  margin-bottom: 20px;
+  a {
+    padding-left: 2px;
+    @extend .link;
+    font-size: partials.$font-size-xxs;
+  }
+}
+
+.section_1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  .background {
+    width: 100%;
+    height: 300px;
+  }
+
+  .container {
+    height: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .logo {
+      position: relative;
+      bottom: 170px;
+    }
+  }
+}
+
+.section_2 {
+  padding: 35px 30px 0px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .content {
+    margin-top: 20px;
+    text-align: left;
+    @extend .b2;
+  }
+
+  .teal_link {
+    @extend .link;
+    @extend .b5;
+    width: -moz-fit-content;
+    width: fit-content;
+    letter-spacing: 0.28px;
+  }
+}
+
+.content_3 {
+  background-color: partials.$color-white;
+  color: partials.$color-black-text;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+  padding: 30px 30px 40px;
+
+  h2 {
+    margin-bottom: 24px;
+    line-height: normal;
+    letter-spacing: 1.08px;
+  }
+
+  .step_header {
+    align-self: flex-start;
+    line-height: normal;
+    letter-spacing: 0.72px;
+  }
+
+  .step_text {
+    @extend .b2;
+    letter-spacing: 0.36px;
+  }
+
+  .image {
+    margin: 20px 0px;
+  }
+}

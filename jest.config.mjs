@@ -24,6 +24,11 @@ const config = {
     'fonts',
     'model',
   ],
+  /*
+    TODO : remove 'local-user-service.ts' once it is implemented. Then, tests
+    can be added for 'user-context.tsx' and it can be removed from this array
+    as well.
+  */
   coveragePathIgnorePatterns: [
     'index.ts',
     'index.tsx',
