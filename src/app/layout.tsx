@@ -1,6 +1,7 @@
-import { IDBUserContextProvider } from '@/contexts/user-context/idb-user-context-provider';
-import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
+import { Header } from '@/components/header';
+import { RewardsContextProvider } from '@/contexts/rewards-context/rewards-context';
+import { IDBUserContextProvider } from '@/contexts/user-context/idb-user-context-provider';
 import { bebasNeue } from '@/fonts/bebas-neue';
 import { lato } from '@/fonts/lato';
 import type { Metadata } from 'next';
@@ -20,9 +21,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       <body className={`${bebasNeue.variable} ${lato.variable}`}>
         <IDBUserContextProvider>
-          <Header />
-          {children}
-          <Footer />
+          <RewardsContextProvider>
+            <Header />
+            {children}
+            <Footer />
+          </RewardsContextProvider>
         </IDBUserContextProvider>
       </body>
     </html>
