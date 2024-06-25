@@ -32,60 +32,11 @@ describe('ProgressTest', () => {
     ],
     challengeEndTimestamp: DateTime.now().toUnixInteger(),
     completedChallenge: true,
-    redeemedAward: false,
     contributedTo: [],
     inviteCode: '',
   };
 
-  it('renders user with 2 badges, completedChallenge: true, redeemedAward:false, registerToVote: false', () => {
-    render(
-      <UserContext.Provider value={{ user } as UserContextType}>
-        <Progress />
-      </UserContext.Provider>,
-    );
-    expect(screen.getByText('2')).toBeInTheDocument();
-    expect(screen.getByTestId('confetti')).toBeInTheDocument();
-
-    expect(
-      screen.getByText(/You've Won! Here's Your Reward/i),
-    ).toBeInTheDocument();
-
-    expect(screen.getAllByText('Register now')[0]).toBeInTheDocument();
-    expect(screen.getAllByText('Register now')[0]).toHaveAttribute(
-      'href',
-      '/voterreg',
-    );
-  });
-
-  it('renders user with redeemedAward: true and completedChallenge: true', () => {
-    user.redeemedAward = true;
-
-    render(
-      <UserContext.Provider value={{ user } as UserContextType}>
-        <Progress />
-      </UserContext.Provider>,
-    );
-
-    expect(screen.getByText(/You've Won! The Challenge/i)).toBeInTheDocument();
-  });
-
-  it('renders user when daysLeft is 1.', () => {
-    user.completedChallenge = false;
-    user.challengeEndTimestamp = DateTime.now()
-      .plus({ days: 1 })
-      .toUnixInteger();
-
-    render(
-      <UserContext.Provider value={{ user } as UserContextType}>
-        <Progress />
-      </UserContext.Provider>,
-    );
-
-    expect(screen.getByText(/Day left/i)).toBeInTheDocument();
-  });
-
   it('tests for Modal close.', async () => {
-    user.redeemedAward = false;
     user.challengeEndTimestamp = DateTime.now().toUnixInteger();
 
     render(

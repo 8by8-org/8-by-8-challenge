@@ -8,7 +8,6 @@ create table public.users (
   -- Set the challenge end date to 8 days in the future and save as Unix seconds
   challenge_end_timestamp bigint not null default extract(epoch from now() + interval '8 days'),
   completed_challenge boolean not null default false,
-  redeemed_award boolean not null default false,
   invite_code varchar(30) unique not null,
   primary key (id)
 );

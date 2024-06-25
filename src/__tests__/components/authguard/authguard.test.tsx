@@ -40,7 +40,6 @@ describe('Authguard', () => {
       badges: [],
       challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
       completedChallenge: false,
-      redeemedAward: false,
       contributedTo: [],
       inviteCode: '',
     };
@@ -82,7 +81,6 @@ describe('Authguard', () => {
       badges: [],
       challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
       completedChallenge: false,
-      redeemedAward: false,
       contributedTo: [],
       inviteCode: '',
     };
@@ -112,7 +110,6 @@ describe('Authguard', () => {
         badges: [],
         challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
         completedChallenge: false,
-        redeemedAward: false,
         contributedTo: [],
         inviteCode: '',
       });

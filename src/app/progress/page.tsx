@@ -36,15 +36,10 @@ export default function Progress() {
         <section className={styles.section_1}>
           <h1>
             {user?.completedChallenge ?
-              user?.redeemedAward ?
-                <>
-                  You&apos;ve Won! <br /> The <br />
-                  Challenge
-                </>
-              : <>
-                  You&apos;ve Won! <br /> Here&apos;s <br /> Your <br /> Reward
-                </>
-
+              <>
+                You&apos;ve Won! <br /> The <br />
+                Challenge
+              </>
             : <>
                 Your <br /> challenge <br /> badges
               </>

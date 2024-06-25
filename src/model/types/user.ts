@@ -19,7 +19,6 @@ export interface User {
    */
   challengeEndTimestamp: number;
   completedChallenge: boolean;
-  redeemedAward: boolean;
   /**
    * An array of the challengers whose challenges a player has contributed to
    * by taking an action.

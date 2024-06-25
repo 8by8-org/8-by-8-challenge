@@ -28,7 +28,6 @@ describe('Progress', () => {
         'MM-dd-yyyy',
       ).toUnixInteger(),
       completedChallenge: false,
-      redeemedAward: false,
       contributedTo: [],
       inviteCode: '',
     };

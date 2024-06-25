@@ -63,7 +63,6 @@ export class DBUserAdapter {
     type: z.nativeEnum(UserType),
     challenge_end_timestamp: z.number(),
     completed_challenge: z.boolean(),
-    redeemed_award: z.boolean(),
     invite_code: z.string(),
     completed_actions: this.dbCompletedActionsSchema,
     badges: z.array(this.dbBadgeSchema),
@@ -111,7 +110,6 @@ export class DBUserAdapter {
       })),
       challengeEndTimestamp: validatedDBUser.challenge_end_timestamp,
       completedChallenge: validatedDBUser.completed_challenge,
-      redeemedAward: validatedDBUser.redeemed_award,
       inviteCode: validatedDBUser.invite_code,
     };
 

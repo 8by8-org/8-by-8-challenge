@@ -50,7 +50,6 @@ export const ChallengerIsSignedIn: Story = {
       badges: [],
       challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
       completedChallenge: false,
-      redeemedAward: false,
       contributedTo: [],
       inviteCode: '',
     });
@@ -88,9 +87,8 @@ export const PlayerIsSignedIn: Story = {
       badges: [],
       challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
       completedChallenge: false,
-      redeemedAward: false,
       invitedBy: {
-        uid: '123',
+        inviteCode: '123',
         name: 'Challenger',
         avatar: '0',
       },
@@ -131,9 +129,8 @@ export const HybridUserIsSignedIn: Story = {
       badges: [],
       challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
       completedChallenge: false,
-      redeemedAward: false,
       invitedBy: {
-        uid: '123',
+        inviteCode: '123',
         name: 'Challenger',
         avatar: '0',
       },
