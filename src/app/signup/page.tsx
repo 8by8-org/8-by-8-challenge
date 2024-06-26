@@ -18,8 +18,9 @@ import { focusOnElementById } from '@/utils/focus-on-element-by-id';
 import { scrollToElementById } from '@/utils/scroll-to-element-by-id';
 import { FormInvalidError } from '@/utils/form-invalid-error';
 import styles from './styles.module.scss';
+import { didNotSendOTP } from '@/components/guards/did-not-send-otp';
 
-export default function SignUp() {
+function SignUp() {
   const signUpForm = useForm(new SignUpForm());
   const { signUpWithEmail } = useContextSafely(UserContext, 'SignUp');
   const [isLoading, setIsLoading] = useState(false);
@@ -131,3 +132,5 @@ export default function SignUp() {
     </PageContainer>
   );
 }
+
+export default didNotSendOTP(SignUp);

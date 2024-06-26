@@ -1,13 +1,9 @@
 'use client';
 import { useState, type FormEventHandler } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
 import { ValidityUtils } from 'fully-formed';
 import { useContextSafely } from '@/hooks/functions/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
 import { useForm } from 'fully-formed';
-import { SignInForm } from './signin-form';
-import { didNotSendOTP } from '@/components/guards/did-not-send-otp';
 import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
 import { Turnstile } from '@/components/form-components/turnstile';
@@ -17,11 +13,12 @@ import { waitForPendingValidators } from '@/utils/wait-for-pending-validators';
 import { scrollToElementById } from '@/utils/scroll-to-element-by-id';
 import { focusOnElementById } from '@/utils/focus-on-element-by-id';
 import { FormInvalidError } from '@/utils/form-invalid-error';
-import styles from './styles.module.scss';
+import { sentOTP } from '@/components/guards/sent-otp';
+import { SignInWithOTPForm } from './signin-with-otp-form';
 
-function SignIn() {
-  const signInForm = useForm(new SignInForm());
-  const { sendOTPToEmail } = useContextSafely(UserContext, 'SignIn');
+function SignInWithOTP() {
+  const form = useForm(new SignInWithOTPForm());
+  const { signInWithOTP } = useContextSafely(UserContext, 'SignIn');
   const [isLoading, setIsLoading] = useState(false);
   const [hasSubmissionError, setHasSubmissionError] = useState(false);
 
@@ -29,19 +26,19 @@ function SignIn() {
     e.preventDefault();
     setHasSubmissionError(false);
     setIsLoading(true);
-    signInForm.setSubmitted();
+    form.setSubmitted();
 
     try {
-      const formValue = await waitForPendingValidators(signInForm);
-      await sendOTPToEmail(formValue);
+      const formValue = await waitForPendingValidators(form);
+      await signInWithOTP(formValue);
     } catch (e) {
       setIsLoading(false);
 
       if (e instanceof FormInvalidError) {
-        if (!ValidityUtils.isValid(signInForm.fields.email)) {
-          focusOnElementById(signInForm.fields.email.id);
+        if (!ValidityUtils.isValid(form.fields.otp)) {
+          focusOnElementById(form.fields.otp.id);
         } else {
-          scrollToElementById(signInForm.fields.captchaToken.id);
+          scrollToElementById(form.fields.captchaToken.id);
         }
       } else {
         setHasSubmissionError(true);
@@ -51,51 +48,29 @@ function SignIn() {
 
   return (
     <PageContainer>
-      <form onSubmit={onSubmit} noValidate name="signInForm">
+      <form onSubmit={onSubmit} noValidate name="signInWithOTPForm">
         {hasSubmissionError && (
           <SubmissionError text="Something went wrong. Please try again." />
         )}
         {isLoading && <LoadingWheel />}
-        <div className={styles.title_and_fields_container}>
-          <div className={styles.hero}>
-            <h1>
-              Welcome
-              <br />
-              back!
-            </h1>
-            <Image
-              src="/static/images/pages/signin/person-voting.png"
-              width={144}
-              height={144}
-              alt="person voting"
-              className={styles.person_voting}
-            />
-          </div>
+        <div>
           <InputGroup
-            field={signInForm.fields.email}
-            type="email"
+            field={form.fields.otp}
+            type="text"
             labelVariant="floating"
             labelContent="Email address*"
-            containerClassName={styles.input_group}
+            maxLength={6}
           />
-          <Turnstile field={signInForm.fields.captchaToken} />
+          <Turnstile field={form.fields.captchaToken} />
         </div>
-        <div className={styles.submit_btn_container}>
+        <div>
           <button type="submit" className="btn_gradient btn_lg btn_wide">
             Sign in
           </button>
         </div>
       </form>
-      <div className={styles.sign_up_link_container}>
-        <p>
-          New to 8by8?{' '}
-          <Link href="/signup" className="link">
-            Sign up
-          </Link>
-        </p>
-      </div>
     </PageContainer>
   );
 }
 
-export default didNotSendOTP(SignIn);
+export default sentOTP(SignInWithOTP);

@@ -12,17 +12,24 @@ interface SignUpWithEmailParams {
   captchaToken: string;
 }
 
-interface SignInWithEmailParams {
+interface SendOTPToEmailParams {
   email: string;
+  captchaToken: string;
+}
+
+interface SignInWithOTPParams {
+  otp: string;
   captchaToken: string;
 }
 
 interface UserContextType {
   user: User | null;
+  sentOTP: boolean;
   signUpWithEmail(params: SignUpWithEmailParams): Promise<void>;
-  signInWithEmail(params: SignInWithEmailParams): Promise<void>;
-  signOut(): void;
-  restartChallenge(): void;
+  sendOTPToEmail(params: SendOTPToEmailParams): Promise<void>;
+  signInWithOTP(params: SignInWithOTPParams): Promise<void>;
+  signOut(): Promise<void>;
+  restartChallenge(): Promise<void>;
 }
 
 const UserContext = createNamedContext<UserContextType>('UserContext');
@@ -31,5 +38,6 @@ export {
   UserContext,
   type UserContextType,
   type SignUpWithEmailParams,
-  type SignInWithEmailParams,
+  type SendOTPToEmailParams,
+  type SignInWithOTPParams,
 };

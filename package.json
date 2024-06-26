@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
-    "@supabase/supabase-js": "^2.43.5",
+    "@supabase/supabase-js": "^2.44.0",
     "fully-formed": "^1.0.1",
     "inversify": "^6.0.2",
     "luxon": "^3.4.4",
