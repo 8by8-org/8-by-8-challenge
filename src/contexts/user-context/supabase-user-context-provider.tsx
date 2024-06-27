@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, type PropsWithChildren, useRef } from 'react';
+import { useState, useEffect, useRef, type PropsWithChildren } from 'react';
 import { readEnvAndCreateSupabaseClient } from './utils/read-env-and-create-supabase-client';
 import { User } from '@/model/types/user';
 import { DBUserAdapter } from './utils/db-user-adapter';
@@ -17,6 +17,7 @@ import { getSessionStorageItemWithExpiry } from '@/utils/get-session-storage-ite
 
 const supabase = readEnvAndCreateSupabaseClient();
 
+// will need to accept a user prop
 export function SupabaseUserContextProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<User | null>(null);
   const [sentOTP, setSentOTP] = useState(false);
@@ -24,66 +25,37 @@ export function SupabaseUserContextProvider({ children }: PropsWithChildren) {
   const emailForSignInKey = '8by8EmailForSignIn';
   const otpTtl = Duration.fromObject({ hours: 1 }).toMillis();
 
-  const setEmailForSignIn = (email: string) => {
+  function setEmailForSignIn(email: string) {
     setSessionStorageItemWithExpiry(emailForSignInKey, email, otpTtl);
     emailForSignIn.current = email;
     setSentOTP(true);
-  };
+  }
 
-  const loadEmailForSignIn = () => {
+  function loadEmailForSignIn() {
     emailForSignIn.current =
       getSessionStorageItemWithExpiry(emailForSignInKey, z.string()) ?? '';
     if (emailForSignIn.current) {
       setSentOTP(true);
     }
-  };
+  }
 
-  const clearEmailForSignIn = () => {
+  function clearEmailForSignIn() {
     sessionStorage.removeItem(emailForSignInKey);
     emailForSignIn.current = '';
     setSentOTP(false);
-  };
+  }
 
   useEffect(() => {
     loadEmailForSignIn();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      clearEmailForSignIn();
-
-      if (session) {
-        const { data: dbUser } = await supabase
-          .from('users')
-          .select(
-            `*,
-          completed_actions (election_reminders, register_to_vote, shared_challenge),
-          badges (action, player_name, player_avatar),
-          invited_by (challenger_invite_code, challenger_name, challenger_avatar),
-          contributed_to (challenger_name, challenger_avatar)`,
-          )
-          .eq('id', session.user.id)
-          .limit(1)
-          .single();
-
-        const appUser = DBUserAdapter.adaptDBUser(dbUser);
-
-        setUser(appUser);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
-  const signUpWithEmail = async ({
+  async function signUpWithEmail({
     email,
     name,
     avatar,
     type,
     captchaToken,
-  }: SignUpWithEmailParams) => {
+  }: SignUpWithEmailParams) {
     const verifyTokenResult = await fetch('/api/verify-captcha-token', {
       method: 'POST',
       body: JSON.stringify({ captchaToken }),
@@ -93,7 +65,7 @@ export function SupabaseUserContextProvider({ children }: PropsWithChildren) {
       throw new Error('Failed to verify captcha token.');
     }
 
-    await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         shouldCreateUser: true,
@@ -106,13 +78,12 @@ export function SupabaseUserContextProvider({ children }: PropsWithChildren) {
       },
     });
 
-    setEmailForSignIn(email);
-  };
+    if (error) throw error;
 
-  const sendOTPToEmail = async ({
-    email,
-    captchaToken,
-  }: SendOTPToEmailParams) => {
+    setEmailForSignIn(email);
+  }
+
+  async function sendOTPToEmail({ email, captchaToken }: SendOTPToEmailParams) {
     const verifyTokenResult = await fetch('/api/verify-captcha-token', {
       method: 'POST',
       body: JSON.stringify({ captchaToken }),
@@ -122,17 +93,19 @@ export function SupabaseUserContextProvider({ children }: PropsWithChildren) {
       throw new Error('Failed to verify captcha token.');
     }
 
-    await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         shouldCreateUser: false,
       },
     });
 
-    setEmailForSignIn(email);
-  };
+    if (error) throw error;
 
-  const signInWithOTP = async ({ otp, captchaToken }: SignInWithOTPParams) => {
+    setEmailForSignIn(email);
+  }
+
+  async function signInWithOTP({ otp, captchaToken }: SignInWithOTPParams) {
     const verifyTokenResult = await fetch('/api/verify-captcha-token', {
       method: 'POST',
       body: JSON.stringify({ captchaToken }),
@@ -142,23 +115,51 @@ export function SupabaseUserContextProvider({ children }: PropsWithChildren) {
       throw new Error('Failed to verify captcha token.');
     }
 
-    await supabase.auth.verifyOtp({
+    const { data, error: authError } = await supabase.auth.verifyOtp({
       email: emailForSignIn.current,
       token: otp,
       type: 'email',
     });
-  };
 
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw error;
+    if (!data.user || authError) {
+      throw new Error('Failed to sign in with OTP.');
     }
-  };
 
-  const restartChallenge = () => {
+    const appUser = await loadUserData(data.user.id);
+    setUser(appUser);
+    clearEmailForSignIn();
+  }
+
+  async function loadUserData(userId: string) {
+    const { data: dbUser, error: dbError } = await supabase
+      .from('users')
+      .select(
+        `*,
+        completed_actions (election_reminders, register_to_vote, shared_challenge),
+        badges (action, player_name, player_avatar),
+        invited_by (challenger_invite_code, challenger_name, challenger_avatar),
+        contributed_to (challenger_name, challenger_avatar)`,
+      )
+      .eq('id', userId)
+      .limit(1)
+      .single();
+
+    if (!dbUser || dbError) {
+      await supabase.auth.signOut();
+      throw new Error('Could not find user in the database.');
+    }
+
+    return DBUserAdapter.adaptDBUser(dbUser);
+  }
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    setUser(null);
+  }
+
+  async function restartChallenge() {
     throw new Error('not implemented.');
-  };
+  }
 
   return (
     <UserContext.Provider

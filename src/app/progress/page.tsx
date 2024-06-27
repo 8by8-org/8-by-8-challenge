@@ -14,7 +14,7 @@ import { Badges } from '@/components/progress/badges';
 import { Modal } from '@/components/utils/modal';
 import styles from './styles.module.scss';
 
-export default function Progress() {
+function Progress() {
   const { user, restartChallenge } = useContextSafely(
     UserContext,
     'UserContext',
@@ -181,3 +181,5 @@ export default function Progress() {
     </PageContainer>
   );
 }
+
+export default Progress;

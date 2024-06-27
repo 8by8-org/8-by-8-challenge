@@ -12,12 +12,12 @@ import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
 import { Turnstile } from '@/components/form-components/turnstile';
 import { SubmissionError } from '@/components/form-components/submission-error';
-import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { waitForPendingValidators } from '@/utils/wait-for-pending-validators';
 import { scrollToElementById } from '@/utils/scroll-to-element-by-id';
 import { focusOnElementById } from '@/utils/focus-on-element-by-id';
 import { FormInvalidError } from '@/utils/form-invalid-error';
 import styles from './styles.module.scss';
+import { LoadingWheel } from '@/components/utils/loading-wheel';
 
 function SignIn() {
   const signInForm = useForm(new SignInForm());
@@ -27,9 +27,11 @@ function SignIn() {
 
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
+    if (isLoading) return;
+
     setHasSubmissionError(false);
-    setIsLoading(true);
     signInForm.setSubmitted();
+    setIsLoading(true);
 
     try {
       const formValue = await waitForPendingValidators(signInForm);
@@ -51,11 +53,11 @@ function SignIn() {
 
   return (
     <PageContainer>
+      {isLoading && <LoadingWheel />}
       <form onSubmit={onSubmit} noValidate name="signInForm">
         {hasSubmissionError && (
           <SubmissionError text="Something went wrong. Please try again." />
         )}
-        {isLoading && <LoadingWheel />}
         <div className={styles.title_and_fields_container}>
           <div className={styles.hero}>
             <h1>
@@ -77,11 +79,16 @@ function SignIn() {
             labelVariant="floating"
             labelContent="Email address*"
             containerClassName={styles.input_group}
+            disabled={isLoading}
           />
           <Turnstile field={signInForm.fields.captchaToken} />
         </div>
         <div className={styles.submit_btn_container}>
-          <button type="submit" className="btn_gradient btn_lg btn_wide">
+          <button
+            type="submit"
+            className="btn_gradient btn_lg btn_wide"
+            disabled={isLoading}
+          >
             Sign in
           </button>
         </div>

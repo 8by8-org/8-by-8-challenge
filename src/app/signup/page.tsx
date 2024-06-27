@@ -9,7 +9,6 @@ import { SignUpForm } from './signup-form';
 import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
 import { SelectAvatar } from './select-avatar';
-import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { Turnstile } from '@/components/form-components/turnstile/turnstile';
 import { SubmissionError } from '@/components/form-components/submission-error';
 import { waitForPendingValidators } from '@/utils/wait-for-pending-validators';
@@ -19,6 +18,7 @@ import { scrollToElementById } from '@/utils/scroll-to-element-by-id';
 import { FormInvalidError } from '@/utils/form-invalid-error';
 import styles from './styles.module.scss';
 import { didNotSendOTP } from '@/components/guards/did-not-send-otp';
+import { LoadingWheel } from '@/components/utils/loading-wheel';
 
 function SignUp() {
   const signUpForm = useForm(new SignUpForm());
@@ -28,16 +28,16 @@ function SignUp() {
 
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
+    if (isLoading) return;
+
     setHasSubmissionError(false);
-    setIsLoading(true);
     signUpForm.setSubmitted();
+    setIsLoading(true);
 
     try {
       const formValue = await waitForPendingValidators(signUpForm);
       await signUpWithEmail({ ...formValue, type: UserType.Challenger });
     } catch (e: any) {
-      console.log(e.message);
-
       setIsLoading(false);
 
       if (e instanceof FormInvalidError) {
@@ -55,11 +55,11 @@ function SignUp() {
 
   return (
     <PageContainer>
-      {hasSubmissionError && (
-        <SubmissionError text="Something went wrong. Please try again." />
-      )}
       {isLoading && <LoadingWheel />}
       <form onSubmit={onSubmit} noValidate name="signUpForm">
+        {hasSubmissionError && (
+          <SubmissionError text="Something went wrong. Please try again." />
+        )}
         <div className={styles.title_and_fields_container}>
           <h1 className={styles.title}>
             <span className="underline">Sign Up</span>
@@ -76,6 +76,7 @@ function SignUp() {
             labelVariant="floating"
             containerClassName={styles.input_group}
             maxLength={255}
+            disabled={isLoading}
             aria-required
           />
           <InputGroup
@@ -116,7 +117,11 @@ function SignUp() {
           </p>
         </div>
         <div className={styles.submit_btn_container}>
-          <button type="submit" className="btn_gradient btn_lg btn_wide">
+          <button
+            type="submit"
+            className="btn_gradient btn_lg btn_wide"
+            disabled={isLoading}
+          >
             Sign Up
           </button>
         </div>
