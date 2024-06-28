@@ -13,8 +13,9 @@ import blackCurve from '@/../public/static/images/pages/progress/black-curve.svg
 import { Badges } from '@/components/progress/badges';
 import { Modal } from '@/components/utils/modal';
 import styles from './styles.module.scss';
+import { isSignedIn } from '@/components/guards/is-signed-in';
 
-function Progress() {
+export default isSignedIn(function Progress() {
   const { user, restartChallenge } = useContextSafely(
     UserContext,
     'UserContext',
@@ -180,6 +181,4 @@ function Progress() {
       </article>
     </PageContainer>
   );
-}
-
-export default Progress;
+});

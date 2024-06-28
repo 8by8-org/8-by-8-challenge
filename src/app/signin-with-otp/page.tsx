@@ -1,25 +1,27 @@
 'use client';
 import { useState, type FormEventHandler } from 'react';
+import Image from 'next/image';
 import { ValidityUtils } from 'fully-formed';
 import { useContextSafely } from '@/hooks/functions/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
 import { useForm } from 'fully-formed';
 import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
-import { Turnstile } from '@/components/form-components/turnstile';
 import { SubmissionError } from '@/components/form-components/submission-error';
-import { waitForPendingValidators } from '@/utils/wait-for-pending-validators';
-import { scrollToElementById } from '@/utils/scroll-to-element-by-id';
 import { focusOnElementById } from '@/utils/focus-on-element-by-id';
 import { FormInvalidError } from '@/utils/form-invalid-error';
 import { sentOTP } from '@/components/guards/sent-otp';
 import { SignInWithOTPForm } from './signin-with-otp-form';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { isSignedOut } from '@/components/guards/is-signed-out';
+import styles from './styles.module.scss';
 
 function SignInWithOTP() {
   const form = useForm(new SignInWithOTPForm());
-  const { signInWithOTP } = useContextSafely(UserContext, 'SignInWithOTP');
+  const { emailForSignIn, signInWithOTP } = useContextSafely(
+    UserContext,
+    'SignInWithOTP',
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [hasSubmissionError, setHasSubmissionError] = useState(false);
 
@@ -29,23 +31,18 @@ function SignInWithOTP() {
 
     setHasSubmissionError(false);
     form.setSubmitted();
-    setIsLoading(true);
+
+    if (!ValidityUtils.isValid(form)) {
+      focusOnElementById(form.fields.otp.id);
+      return;
+    }
 
     try {
-      const formValue = await waitForPendingValidators(form);
-      await signInWithOTP(formValue);
+      setIsLoading(true);
+      await signInWithOTP(form.state.value);
     } catch (e) {
       setIsLoading(false);
-
-      if (e instanceof FormInvalidError) {
-        if (!ValidityUtils.isValid(form.fields.otp)) {
-          focusOnElementById(form.fields.otp.id);
-        } else {
-          scrollToElementById(form.fields.captchaToken.id);
-        }
-      } else {
-        setHasSubmissionError(true);
-      }
+      setHasSubmissionError(true);
     }
   };
 
@@ -56,18 +53,37 @@ function SignInWithOTP() {
         {hasSubmissionError && (
           <SubmissionError text="Something went wrong. Please try again." />
         )}
-        <div>
+        <div className={styles.title_and_fields_container}>
+          <div className={styles.hero}>
+            <h1>
+              Welcome
+              <br />
+              back!
+            </h1>
+            <Image
+              src="/static/images/pages/signin/person-voting.png"
+              width={144}
+              height={144}
+              alt="person voting"
+              className={styles.person_voting}
+            />
+          </div>
+          <p className={styles.passcode_sent_to}>
+            A one time passcode has been sent to
+            <br />
+            <span className="b5">{emailForSignIn}</span>
+          </p>
           <InputGroup
             field={form.fields.otp}
-            type="text"
+            type="number"
             labelVariant="floating"
-            labelContent="Email address*"
-            maxLength={6}
+            labelContent="One time passcode*"
             disabled={isLoading}
+            containerClassName={styles.input_group}
           />
-          <Turnstile field={form.fields.captchaToken} />
+          <p className={styles.resend_code}>Resend Code (60s)</p>
         </div>
-        <div>
+        <div className={styles.submit_btn_container}>
           <button
             type="submit"
             className="btn_gradient btn_lg btn_wide"

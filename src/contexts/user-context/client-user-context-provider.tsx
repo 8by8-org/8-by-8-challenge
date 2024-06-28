@@ -1,8 +1,7 @@
 'use client';
-import { useState, useEffect, useRef, type PropsWithChildren } from 'react';
-import { readEnvAndCreateSupabaseClient } from './utils/read-env-and-create-supabase-client';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
+import { createBrowserClient } from './utils/create-browser-client';
 import { User } from '@/model/types/user';
-import { DBUserAdapter } from './utils/db-user-adapter';
 import {
   SendOTPToEmailParams,
   SignUpWithEmailParams,
@@ -14,35 +13,37 @@ import { z } from 'zod';
 import { Duration } from 'luxon';
 import { setSessionStorageItemWithExpiry } from '@/utils/set-session-storage-item-with-expiry';
 import { getSessionStorageItemWithExpiry } from '@/utils/get-session-storage-item-with-expiry';
+import { loadUser } from './utils/load-user';
 
-const supabase = readEnvAndCreateSupabaseClient();
+interface ClientUserContextProviderProps {
+  user: User | null;
+  children?: ReactNode;
+}
 
-// will need to accept a user prop
-export function SupabaseUserContextProvider({ children }: PropsWithChildren) {
-  const [user, setUser] = useState<User | null>(null);
-  const [sentOTP, setSentOTP] = useState(false);
-  const emailForSignIn = useRef<string>('');
+const supabase = createBrowserClient();
+
+export function ClientUserContextProvider(
+  props: ClientUserContextProviderProps,
+) {
+  const [user, setUser] = useState<User | null>(props.user);
+  const [emailForSignIn, setEmailForSignIn] = useState('');
   const emailForSignInKey = '8by8EmailForSignIn';
   const otpTtl = Duration.fromObject({ hours: 1 }).toMillis();
 
-  function setEmailForSignIn(email: string) {
+  function storeEmailForSignIn(email: string) {
     setSessionStorageItemWithExpiry(emailForSignInKey, email, otpTtl);
-    emailForSignIn.current = email;
-    setSentOTP(true);
+    setEmailForSignIn(email);
   }
 
   function loadEmailForSignIn() {
-    emailForSignIn.current =
-      getSessionStorageItemWithExpiry(emailForSignInKey, z.string()) ?? '';
-    if (emailForSignIn.current) {
-      setSentOTP(true);
-    }
+    setEmailForSignIn(
+      getSessionStorageItemWithExpiry(emailForSignInKey, z.string()) ?? '',
+    );
   }
 
   function clearEmailForSignIn() {
     sessionStorage.removeItem(emailForSignInKey);
-    emailForSignIn.current = '';
-    setSentOTP(false);
+    setEmailForSignIn('');
   }
 
   useEffect(() => {
@@ -80,7 +81,7 @@ export function SupabaseUserContextProvider({ children }: PropsWithChildren) {
 
     if (error) throw error;
 
-    setEmailForSignIn(email);
+    storeEmailForSignIn(email);
   }
 
   async function sendOTPToEmail({ email, captchaToken }: SendOTPToEmailParams) {
@@ -102,21 +103,12 @@ export function SupabaseUserContextProvider({ children }: PropsWithChildren) {
 
     if (error) throw error;
 
-    setEmailForSignIn(email);
+    storeEmailForSignIn(email);
   }
 
-  async function signInWithOTP({ otp, captchaToken }: SignInWithOTPParams) {
-    const verifyTokenResult = await fetch('/api/verify-captcha-token', {
-      method: 'POST',
-      body: JSON.stringify({ captchaToken }),
-    });
-
-    if (!verifyTokenResult.ok) {
-      throw new Error('Failed to verify captcha token.');
-    }
-
+  async function signInWithOTP({ otp }: SignInWithOTPParams) {
     const { data, error: authError } = await supabase.auth.verifyOtp({
-      email: emailForSignIn.current,
+      email: emailForSignIn,
       token: otp,
       type: 'email',
     });
@@ -125,31 +117,10 @@ export function SupabaseUserContextProvider({ children }: PropsWithChildren) {
       throw new Error('Failed to sign in with OTP.');
     }
 
-    const appUser = await loadUserData(data.user.id);
+    const appUser = await loadUser(data.user.id, supabase);
+
     setUser(appUser);
     clearEmailForSignIn();
-  }
-
-  async function loadUserData(userId: string) {
-    const { data: dbUser, error: dbError } = await supabase
-      .from('users')
-      .select(
-        `*,
-        completed_actions (election_reminders, register_to_vote, shared_challenge),
-        badges (action, player_name, player_avatar),
-        invited_by (challenger_invite_code, challenger_name, challenger_avatar),
-        contributed_to (challenger_name, challenger_avatar)`,
-      )
-      .eq('id', userId)
-      .limit(1)
-      .single();
-
-    if (!dbUser || dbError) {
-      await supabase.auth.signOut();
-      throw new Error('Could not find user in the database.');
-    }
-
-    return DBUserAdapter.adaptDBUser(dbUser);
   }
 
   async function signOut() {
@@ -165,7 +136,7 @@ export function SupabaseUserContextProvider({ children }: PropsWithChildren) {
     <UserContext.Provider
       value={{
         user,
-        sentOTP,
+        emailForSignIn,
         signUpWithEmail,
         sendOTPToEmail,
         signInWithOTP,
@@ -173,7 +144,7 @@ export function SupabaseUserContextProvider({ children }: PropsWithChildren) {
         restartChallenge,
       }}
     >
-      {children}
+      {props.children}
     </UserContext.Provider>
   );
 }

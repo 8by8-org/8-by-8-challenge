@@ -3,10 +3,11 @@ import { useLayoutEffect, FC } from 'react';
 import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/functions/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
+import SignInWithOTP from '@/app/signin-with-otp/page';
 
 export function didNotSendOTP<P extends object>(Component: FC<P>) {
-  return function SentOTP(props: P) {
-    const { sentOTP } = useContextSafely(UserContext, 'DidNotSendOTP');
+  return function DidNotSendOTP(props: P) {
+    const { emailForSignIn } = useContextSafely(UserContext, 'DidNotSendOTP');
     const router = useRouter();
 
     useLayoutEffect(() => {
@@ -14,11 +15,11 @@ export function didNotSendOTP<P extends object>(Component: FC<P>) {
     }, [router]);
 
     useLayoutEffect(() => {
-      if (sentOTP) {
+      if (emailForSignIn) {
         router.push('/signin-with-otp');
       }
-    }, [sentOTP, router]);
+    }, [emailForSignIn, router]);
 
-    return <Component {...props} />;
+    return !emailForSignIn ? <Component {...props} /> : <SignInWithOTP />;
   };
 }

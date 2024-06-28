@@ -4,7 +4,6 @@ import {
   FormTemplate,
   FormFactory,
 } from 'fully-formed';
-import { TurnstileTokenField } from '@/components/form-components/turnstile/turnstile-token-field';
 
 class SignInWithOTPTemplate extends FormTemplate {
   public readonly fields = [
@@ -17,7 +16,6 @@ class SignInWithOTPTemplate extends FormTemplate {
         }),
       ],
     }),
-    new TurnstileTokenField(),
   ] as const;
 }
 

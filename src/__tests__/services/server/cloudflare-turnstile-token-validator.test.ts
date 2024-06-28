@@ -1,4 +1,4 @@
-import { CloudflareTurnstileTokenValidator } from '@/services/server/cloudflare-turnstile-token-validator';
+import { CloudflareTurnstileTokenValidator } from '@/services/cloudflare-turnstile-token-validator';
 import { DummySecretKeys } from '@/constants/dummy-secret-keys';
 
 describe('CloudflareTurnstileTokenValidator', () => {

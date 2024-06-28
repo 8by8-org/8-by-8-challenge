@@ -3,10 +3,11 @@ import { useLayoutEffect, FC } from 'react';
 import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/functions/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
+import SignIn from '@/app/signin/page';
 
 export function sentOTP<P extends object>(Component: FC<P>) {
   return function SentOTP(props: P) {
-    const { sentOTP } = useContextSafely(UserContext, 'SentOTP');
+    const { emailForSignIn } = useContextSafely(UserContext, 'SentOTP');
     const router = useRouter();
 
     useLayoutEffect(() => {
@@ -17,8 +18,8 @@ export function sentOTP<P extends object>(Component: FC<P>) {
       if (!sentOTP) {
         router.push('/signin');
       }
-    }, [sentOTP, router]);
+    }, [emailForSignIn, router]);
 
-    return <Component {...props} />;
+    return emailForSignIn ? <Component {...props} /> : <SignIn />;
   };
 }

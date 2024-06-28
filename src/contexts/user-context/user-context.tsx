@@ -19,12 +19,11 @@ interface SendOTPToEmailParams {
 
 interface SignInWithOTPParams {
   otp: string;
-  captchaToken: string;
 }
 
 interface UserContextType {
   user: User | null;
-  sentOTP: boolean;
+  emailForSignIn: string;
   signUpWithEmail(params: SignUpWithEmailParams): Promise<void>;
   sendOTPToEmail(params: SendOTPToEmailParams): Promise<void>;
   signInWithOTP(params: SignInWithOTPParams): Promise<void>;
