@@ -24,10 +24,6 @@ export default isSignedIn(function Progress() {
   const [openModal, setOpenModal] = useState(false);
   const toggleInvite = useRef(null);
 
-  // Temp
-  // TODO - Partners Exist
-  // let partnersExist = false;
-
   return (
     <PageContainer>
       <article className={styles.progress_page}>
@@ -51,6 +47,7 @@ export default isSignedIn(function Progress() {
               className={styles.blob}
               src={user?.completedChallenge ? claimReward : daysRemainingBlob}
               alt="days remaining blob"
+              priority={true}
             />
             {!user?.completedChallenge && (
               <div className={styles.days_label}>
@@ -82,7 +79,12 @@ export default isSignedIn(function Progress() {
             )}
             */}
         </section>
-        <Image className={styles.curve} src={blackCurve} alt="black curve" />
+        <Image
+          className={styles.curve}
+          src={blackCurve}
+          alt="black curve"
+          priority={true}
+        />
 
         <section className={styles.section_2}>
           <h3>

@@ -19,18 +19,18 @@ serverContainer
 
 serverContainer
   .bind<NextMiddleware>(SERVICE_KEYS.isSignedIn)
-  .toFunction(isSignedInWithSupabase);
+  .toConstantValue(isSignedInWithSupabase);
 
 serverContainer
   .bind<NextMiddleware>(SERVICE_KEYS.isSignedOut)
-  .toFunction(isSignedOutFromSupabase);
+  .toConstantValue(isSignedOutFromSupabase);
 
 serverContainer
   .bind<NextMiddleware>(SERVICE_KEYS.refreshSession)
-  .toFunction(refreshSupabaseSession);
+  .toConstantValue(refreshSupabaseSession);
 
 serverContainer
   .bind<SignOut>(SERVICE_KEYS.signOut)
-  .toFunction(signOutFromSupabase);
+  .toConstantValue(signOutFromSupabase);
 
 export { serverContainer };

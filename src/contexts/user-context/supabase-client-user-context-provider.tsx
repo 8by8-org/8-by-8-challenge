@@ -15,15 +15,15 @@ import { setSessionStorageItemWithExpiry } from '@/utils/set-session-storage-ite
 import { getSessionStorageItemWithExpiry } from '@/utils/get-session-storage-item-with-expiry';
 import { loadUser } from './utils/load-user';
 
-interface ClientUserContextProviderProps {
+interface SupabaseClientUserContextProviderProps {
   user: User | null;
   children?: ReactNode;
 }
 
 const supabase = createBrowserClient();
 
-export function ClientUserContextProvider(
-  props: ClientUserContextProviderProps,
+export function SupabaseClientUserContextProvider(
+  props: SupabaseClientUserContextProviderProps,
 ) {
   const [user, setUser] = useState<User | null>(props.user);
   const [emailForSignIn, setEmailForSignIn] = useState('');

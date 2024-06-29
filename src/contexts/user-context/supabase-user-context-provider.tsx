@@ -1,11 +1,13 @@
 import 'server-only';
-import { ClientUserContextProvider } from './client-user-context-provider';
+import { SupabaseClientUserContextProvider } from './supabase-client-user-context-provider';
 import { createServerClient } from './utils/create-server-client';
 import { loadUser } from './utils/load-user';
 import type { User } from '@/model/types/user';
 import type { PropsWithChildren } from 'react';
 
-export async function UserContextProvider({ children }: PropsWithChildren) {
+export async function SupabaseUserContextProvider({
+  children,
+}: PropsWithChildren) {
   const supabase = createServerClient();
   const { data } = await supabase.auth.getUser();
   let user: User | null = null;
@@ -19,8 +21,8 @@ export async function UserContextProvider({ children }: PropsWithChildren) {
   }
 
   return (
-    <ClientUserContextProvider user={user}>
+    <SupabaseClientUserContextProvider user={user}>
       {children}
-    </ClientUserContextProvider>
+    </SupabaseClientUserContextProvider>
   );
 }

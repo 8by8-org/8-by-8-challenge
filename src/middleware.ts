@@ -1,4 +1,5 @@
 import 'server-only';
+import 'reflect-metadata';
 import { serverContainer } from './services/server-container';
 import { NextFetchEvent, NextMiddleware, type NextRequest } from 'next/server';
 import { SERVICE_KEYS } from './services/service-keys';
