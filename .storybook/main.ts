@@ -28,8 +28,5 @@ const config: StorybookConfig = {
     presets: ['next/babel'],
   },
 
-  typescript: {
-    reactDocgen: 'react-docgen-typescript',
-  },
 };
 export default config;
