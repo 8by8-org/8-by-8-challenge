@@ -10,16 +10,10 @@ export function isSignedIn<P extends object>(Component: FC<P>) {
     const { user } = useContextSafely(UserContext, 'IsSignedIn');
     const router = useRouter();
 
-    useLayoutEffect(() => {
-      router.prefetch('/signin');
-    }, [router]);
+    if (!user) {
+      router.push('/signin');
+    }
 
-    useLayoutEffect(() => {
-      if (!user) {
-        router.push('/signin');
-      }
-    }, [user, router]);
-
-    return user ? <Component {...props} /> : <SignIn />;
+    return <Component {...props} />;
   };
 }

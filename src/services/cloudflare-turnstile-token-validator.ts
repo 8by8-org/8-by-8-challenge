@@ -1,5 +1,5 @@
 import 'server-only';
-import { injectable } from 'inversify';
+import { inject } from 'undecorated-di';
 import {
   CaptchaTokenValidator,
   VerifyTokenParams,
@@ -16,10 +16,7 @@ const envSchema = z.object({
  * An implementation of {@link CaptchaTokenValidator} that validates
  * a Cloudflare Turnstile token.
  */
-@injectable()
-export class CloudflareTurnstileTokenValidator
-  implements CaptchaTokenValidator
-{
+class CloudflareTurnstileTokenValidator implements CaptchaTokenValidator {
   public async isHuman({ captchaToken }: VerifyTokenParams): Promise<boolean> {
     const env = envSchema.parse(process.env);
     const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
@@ -40,3 +37,5 @@ export class CloudflareTurnstileTokenValidator
     return outcome.success;
   }
 }
+
+export default inject(CloudflareTurnstileTokenValidator, []);

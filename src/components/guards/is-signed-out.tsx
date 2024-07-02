@@ -11,10 +11,6 @@ export function isSignedOut<P extends object>(Component: FC<P>) {
     const router = useRouter();
 
     useLayoutEffect(() => {
-      router.prefetch('/progress');
-    }, [router]);
-
-    useLayoutEffect(() => {
       if (user) {
         router.push('/progress');
       }

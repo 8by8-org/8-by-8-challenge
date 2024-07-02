@@ -3,7 +3,6 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { z } from 'zod';
 import { serverContainer } from '@/services/server-container';
 import { SERVICE_KEYS } from '@/services/service-keys';
-import type { CaptchaTokenValidator } from '@/services/captcha-token-validator';
 
 const requestBodySchema = z.object({
   captchaToken: z.string().min(1, 'Must provide a token.'),
@@ -14,7 +13,7 @@ export async function POST(request: NextRequest) {
     const data = await request.json();
     const parsed = requestBodySchema.parse(data);
 
-    const tokenValidator = serverContainer.get<CaptchaTokenValidator>(
+    const tokenValidator = serverContainer.get(
       SERVICE_KEYS.CaptchaTokenValidator,
     );
     const isHuman = await tokenValidator.isHuman(parsed);

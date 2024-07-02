@@ -1,7 +1,13 @@
-export const SERVICE_KEYS = {
-  CaptchaTokenValidator: Symbol.for('CaptchaTokenValidator'),
-  isSignedIn: Symbol.for('isSignedIn'),
-  isSignedOut: Symbol.for('isSignedOut'),
-  refreshSession: Symbol.for('refreshSession'),
-  signOut: Symbol.for('signOut'),
-};
+import { Keys } from 'undecorated-di';
+import { CaptchaTokenValidator } from './captcha-token-validator';
+import { NextMiddleware } from 'next/server';
+
+export const { keys: SERVICE_KEYS } = Keys.createKeys()
+  .addKey('CaptchaTokenValidator')
+  .forType<CaptchaTokenValidator>()
+  .addKey('isSignedIn')
+  .forType<NextMiddleware>()
+  .addKey('isSignedOut')
+  .forType<NextMiddleware>()
+  .addKey('refreshSession')
+  .forType<NextMiddleware>();

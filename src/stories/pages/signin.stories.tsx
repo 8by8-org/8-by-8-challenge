@@ -19,7 +19,7 @@ type Story = StoryObj<typeof SignIn>;
 export const Default: Story = {
   render: () => {
     const userContextValue = Builder<UserContextType>()
-      .signInWithEmail(() => {
+      .sendOTPToEmail(() => {
         throw new Error();
       })
       .build();

@@ -1,8 +1,9 @@
 import {
   FormTemplate,
   Field,
-  StringValidators,
+  Validator,
   FormFactory,
+  EmailRegExp,
 } from 'fully-formed';
 import { TurnstileTokenField } from '@/components/form-components/turnstile/turnstile-token-field';
 
@@ -12,9 +13,9 @@ class SignInFormTemplate extends FormTemplate {
       name: 'email',
       defaultValue: '',
       validators: [
-        StringValidators.email({
+        new Validator<string>({
+          predicate: value => new EmailRegExp().test(value),
           invalidMessage: 'Please enter a valid email address.',
-          trimBeforeValidation: true,
         }),
       ],
     }),

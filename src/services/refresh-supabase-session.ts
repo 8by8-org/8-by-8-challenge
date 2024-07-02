@@ -6,10 +6,9 @@ import {
   type NextRequest,
 } from 'next/server';
 import { readSupabaseUrlAndAnonKey } from '@/utils/read-supabase-url-and-anon-key';
+import { bind } from 'undecorated-di';
 
-export const refreshSupabaseSession: NextMiddleware = async (
-  request: NextRequest,
-) => {
+const refreshSupabaseSession: NextMiddleware = async (request: NextRequest) => {
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -33,8 +32,12 @@ export const refreshSupabaseSession: NextMiddleware = async (
     },
   });
 
+  console.log('In refreshSession\n');
+
   // getting the user refreshes the session
   await supabase.auth.getUser();
 
   return supabaseResponse;
 };
+
+export default bind(refreshSupabaseSession, []);

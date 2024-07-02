@@ -1,4 +1,5 @@
 import 'server-only';
+import { bind } from 'undecorated-di';
 import { createServerClient } from '@supabase/ssr';
 import {
   NextResponse,
@@ -7,7 +8,7 @@ import {
 } from 'next/server';
 import { readSupabaseUrlAndAnonKey } from '@/utils/read-supabase-url-and-anon-key';
 
-export const isSignedOutFromSupabase: NextMiddleware = async (
+const isSignedOutFromSupabase: NextMiddleware = async (
   request: NextRequest,
 ) => {
   let supabaseResponse = NextResponse.next({
@@ -37,9 +38,15 @@ export const isSignedOutFromSupabase: NextMiddleware = async (
     data: { user },
   } = await supabase.auth.getUser();
 
+  console.log('In isSignedOut');
+  console.log(user);
+  console.log();
+
   if (user) {
     return NextResponse.redirect(new URL('/progress', request.nextUrl.origin));
   }
 
   return supabaseResponse;
 };
+
+export default bind(isSignedOutFromSupabase, []);

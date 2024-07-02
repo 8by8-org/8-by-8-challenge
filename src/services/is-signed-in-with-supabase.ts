@@ -1,4 +1,5 @@
 import 'server-only';
+import { bind } from 'undecorated-di';
 import { createServerClient } from '@supabase/ssr';
 import {
   NextResponse,
@@ -7,9 +8,7 @@ import {
 } from 'next/server';
 import { readSupabaseUrlAndAnonKey } from '@/utils/read-supabase-url-and-anon-key';
 
-export const isSignedInWithSupabase: NextMiddleware = async (
-  request: NextRequest,
-) => {
+const isSignedInWithSupabase: NextMiddleware = async (request: NextRequest) => {
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -37,9 +36,15 @@ export const isSignedInWithSupabase: NextMiddleware = async (
     data: { user },
   } = await supabase.auth.getUser();
 
+  console.log('In isSignedIn');
+  console.log(user);
+  console.log();
+
   if (!user) {
     return NextResponse.redirect(new URL('/signin', request.nextUrl.origin));
   }
 
   return supabaseResponse;
 };
+
+export default bind(isSignedInWithSupabase, []);

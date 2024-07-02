@@ -1,28 +1,26 @@
 import 'server-only';
-import 'reflect-metadata';
 import { serverContainer } from './services/server-container';
-import { NextFetchEvent, NextMiddleware, type NextRequest } from 'next/server';
+import { NextFetchEvent, type NextRequest } from 'next/server';
 import { SERVICE_KEYS } from './services/service-keys';
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
+  for (const [key, value] of Array.from(request.headers.entries())) {
+    console.log(key);
+    console.log(value);
+    console.log();
+  }
+  console.log(request.url);
+
   if (isSignedInOnlyRoute(request.nextUrl.pathname)) {
-    const isSignedIn = serverContainer.get<NextMiddleware>(
-      SERVICE_KEYS.isSignedIn,
-    );
+    const isSignedIn = serverContainer.get(SERVICE_KEYS.isSignedIn);
     return await isSignedIn(request, event);
-  }
-
-  if (isSignedOutOnlyRoute(request.nextUrl.pathname)) {
-    const isSignedOut = serverContainer.get<NextMiddleware>(
-      SERVICE_KEYS.isSignedOut,
-    );
+  } else if (isSignedOutOnlyRoute(request.nextUrl.pathname)) {
+    const isSignedOut = serverContainer.get(SERVICE_KEYS.isSignedOut);
     return await isSignedOut(request, event);
+  } else {
+    const refreshSession = serverContainer.get(SERVICE_KEYS.refreshSession);
+    return await refreshSession(request, event);
   }
-
-  const refreshSession = serverContainer.get<NextMiddleware>(
-    SERVICE_KEYS.refreshSession,
-  );
-  return await refreshSession(request, event);
 }
 
 export const config = {
