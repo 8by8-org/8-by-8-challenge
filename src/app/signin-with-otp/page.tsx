@@ -50,6 +50,7 @@ function SignInWithOTP() {
 
     try {
       await userContext.resendOTP();
+      delay(1000);
       showAlert('Code sent. Please check your email.', 'success');
     } catch (e) {
       showAlert('Error sending code. Please try again.', 'error');

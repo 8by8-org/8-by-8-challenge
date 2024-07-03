@@ -35,7 +35,7 @@ export const Alert = forwardRef(function Alert(
 
   return (
     <div className={styles.alert_container}>
-      <div ref={alertRef} className={styles.hidden}></div>
+      <div ref={alertRef} className={styles.hidden} role="alert"></div>
     </div>
   );
 });

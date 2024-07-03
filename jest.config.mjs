@@ -9,10 +9,7 @@ const createJestConfig = nextJest({
 /** @type {import('jest').Config} */
 const config = {
   testEnvironment: './jest-environment.js',
-  // Provide an implementation of indexedDB for the IDBUserContextProvider
-  // to access.
-  setupFiles: ['jest-canvas-mock', 'fake-indexeddb/auto'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  setupFiles: ['jest-canvas-mock'],
   collectCoverage: true,
   //add directories here to include them in coverage reports and threshold
   collectCoverageFrom: ['./src/**'],
@@ -24,17 +21,7 @@ const config = {
     'fonts',
     'model',
   ],
-  /*
-    TODO : remove 'local-user-service.ts' once it is implemented. Then, tests
-    can be added for 'user-context.tsx' and it can be removed from this array
-    as well.
-  */
-  coveragePathIgnorePatterns: [
-    'index.ts',
-    'index.tsx',
-    'layout.tsx',
-    'idb-connection.ts',
-  ],
+  coveragePathIgnorePatterns: ['index.ts', 'index.tsx', 'layout.tsx'],
   //require 100% code coverage for the tests to pass
   coverageThreshold: {
     global: {
