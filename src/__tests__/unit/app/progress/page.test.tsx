@@ -9,7 +9,8 @@ import { DateTime } from 'luxon';
 import { Actions } from '@/model/enums/actions';
 import userEvent from '@testing-library/user-event';
 import { getErrorThrownByComponent } from '@/utils/test/get-error-thrown-by-component';
-import { calculateDaysRemaining } from '@/utils/progress/calculate-days-remaining';
+
+jest.mock('next/navigation', () => require('next-router-mock'));
 
 describe('ProgressTest', () => {
   mockDialogMethods();

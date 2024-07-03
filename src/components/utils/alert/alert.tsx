@@ -22,7 +22,7 @@ export const Alert = forwardRef(function Alert(
     return (message: string, variant: 'error' | 'success') => {
       if (alertRef.current) {
         const alert = alertRef.current;
-        alert.innerText = message;
+        alert.textContent = message;
         alert.className = styles[variant];
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {

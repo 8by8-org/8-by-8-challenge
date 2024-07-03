@@ -6,6 +6,8 @@ import { UserContext, UserContextType } from '@/contexts/user-context';
 import type { User } from '@/model/types/user';
 import { DateTime } from 'luxon';
 
+jest.mock('next/navigation', () => require('next-router-mock'));
+
 describe('Progress', () => {
   mockDialogMethods();
   afterEach(cleanup);

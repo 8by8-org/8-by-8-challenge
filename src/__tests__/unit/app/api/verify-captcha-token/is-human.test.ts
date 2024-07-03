@@ -1,7 +1,7 @@
 import { isHuman } from '@/app/api/verify-captcha-token/is-human';
 import { CLOUDFLARE_TURNSTILE_DUMMY_SECRET_KEYS } from '@/constants/cloudflare-turnstile-dummy-secret-keys';
 
-describe('CloudflareTurnstileTokenValidator', () => {
+describe('isHuman()', () => {
   const { TURNSTILE_SECRET_KEY } = process.env;
 
   afterEach(() => {

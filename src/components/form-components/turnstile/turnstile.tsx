@@ -3,7 +3,7 @@ import { useSubmitted } from 'fully-formed';
 import { TurnstileTokenField } from './turnstile-token-field';
 import { Messages } from '../messages';
 import styles from './styles.module.scss';
-import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
+import { readPublicEnvironmentVariables } from '@/utils/environment/read-public-environment-variables';
 
 interface TurnstileProps {
   /**
@@ -36,7 +36,7 @@ export function Turnstile({ field, sitekey }: TurnstileProps) {
           id={field.id}
           sitekey={
             sitekey ??
-            PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+            readPublicEnvironmentVariables().NEXT_PUBLIC_TURNSTILE_SITE_KEY
           }
           onVerify={token => {
             field.onVerify(token);

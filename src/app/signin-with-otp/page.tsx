@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef, type FormEventHandler } from 'react';
+import { useState, type FormEventHandler } from 'react';
 import Image from 'next/image';
 import { useForm, ValidityUtils } from 'fully-formed';
 import { useContextSafely } from '@/hooks/functions/use-context-safely';

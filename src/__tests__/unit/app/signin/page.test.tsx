@@ -7,6 +7,7 @@ import { Builder } from 'builder-pattern';
 import SignInPage from '@/app/signin/page';
 import { CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS } from '@/constants/cloudflare-turnstile-dummy-site-keys';
 
+jest.mock('next/navigation', () => require('next-router-mock'));
 jest.mock('react-turnstile', () => MockReactTurnstile);
 
 describe('SignInPage', () => {
@@ -16,7 +17,7 @@ describe('SignInPage', () => {
 
   beforeEach(() => {
     userContextValue = Builder<UserContextType>()
-      .signInWithEmail(jest.fn())
+      .sendOTPToEmail(jest.fn())
       .build();
     window.scrollTo = jest.fn();
   });
@@ -60,7 +61,7 @@ describe('SignInPage', () => {
     await user.click(signInBtn);
 
     await waitFor(() => {
-      expect(userContextValue.signInWithEmail).toHaveBeenCalledWith({
+      expect(userContextValue.sendOTPToEmail).toHaveBeenCalledWith({
         email: 'user@example.com',
         captchaToken: expect.any(String),
       });
@@ -115,7 +116,7 @@ describe('SignInPage', () => {
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
     userContextValue = Builder<UserContextType>()
-      .signInWithEmail(() => {
+      .sendOTPToEmail(() => {
         throw new Error();
       })
       .build();
@@ -134,10 +135,9 @@ describe('SignInPage', () => {
     await user.click(signInBtn);
 
     await waitFor(() => {
-      expect(screen.queryByRole('alert')).toBeInTheDocument();
+      expect(screen.getByRole('alert').textContent).toBe(
+        'Something went wrong. Please try again.',
+      );
     });
-    expect(screen.getByRole('alert').textContent).toBe(
-      'Something went wrong. Please try again.',
-    );
   });
 });

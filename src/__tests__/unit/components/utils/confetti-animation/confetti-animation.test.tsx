@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { render, cleanup, screen } from '@testing-library/react';
 import { ConfettiAnimation } from '@/components/utils/confetti-animation';
-import { act } from 'react-dom/test-utils'
+import { act } from 'react-dom/test-utils';
 
 describe('ConfettiAnimation', () => {
   afterEach(cleanup);

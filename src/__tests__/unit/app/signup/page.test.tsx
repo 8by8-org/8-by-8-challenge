@@ -9,6 +9,7 @@ import { CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS } from '@/constants/cloudflare-tur
 import { AVATARS } from '@/constants/avatars';
 import { UserType } from '@/model/enums/user-type';
 
+jest.mock('next/navigation', () => require('next-router-mock'));
 jest.mock('react-turnstile', () => MockReactTurnstile);
 
 describe('SignUpPage', () => {
@@ -175,8 +176,10 @@ describe('SignUpPage', () => {
     await waitFor(() => {
       expect(screen.queryByRole('alert')).toBeInTheDocument();
     });
-    expect(screen.getByRole('alert').textContent).toBe(
-      'Something went wrong. Please try again.',
-    );
+    await waitFor(() => {
+      expect(screen.getByRole('alert').textContent).toBe(
+        'Something went wrong. Please try again.',
+      );
+    });
   });
 });

@@ -1,21 +1,28 @@
 import 'server-only';
-import { PRIVATE_ENVIRONMENT_VARIABLES } from '@/constants/private-environment-variables';
+import { readPrivateEnvironmentVariables } from '@/utils/environment/read-private-environment-variables';
 
 export async function isHuman(captchaToken: string): Promise<boolean> {
   const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-  const secret_key = PRIVATE_ENVIRONMENT_VARIABLES.TURNSTILE_SECRET_KEY;
+  const { TURNSTILE_SECRET_KEY } = readPrivateEnvironmentVariables();
 
-  const result = await fetch(url, {
-    body: JSON.stringify({
-      secret: secret_key,
-      response: captchaToken,
-    }),
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  try {
+    const result = await fetch(url, {
+      body: JSON.stringify({
+        secret: TURNSTILE_SECRET_KEY,
+        response: captchaToken,
+      }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-  const outcome = await result.json();
-  return outcome.success;
+    const outcome = await result.json();
+
+    return outcome.success;
+  } catch (e) {
+    console.log(e);
+  }
+
+  return false;
 }
