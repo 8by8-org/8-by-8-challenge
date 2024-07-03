@@ -1,13 +1,12 @@
 'use client';
-import { useLayoutEffect, FC } from 'react';
+import { FC } from 'react';
 import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/functions/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
-import SignIn from '@/app/signin/page';
 
 export function isSignedIn<P extends object>(Component: FC<P>) {
-  return function IsSignedIn(props: P) {
-    const { user } = useContextSafely(UserContext, 'IsSignedIn');
+  return function AuthGuard(props: P) {
+    const { user } = useContextSafely(UserContext, 'AuthGuard');
     const router = useRouter();
 
     if (!user) {

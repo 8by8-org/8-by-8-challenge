@@ -1,26 +1,22 @@
-import '@testing-library/jest-dom';
-import {
-  render,
-  screen,
-  cleanup,
-  waitFor,
-} from '@testing-library/react';
+import { PropsWithChildren, useState } from 'react';
+import { render, screen, cleanup, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import '@testing-library/jest-dom';
 import navigation from 'next/navigation';
-import { AuthGuard } from '@/components/utils/authguard';
-import { User } from '@/model/types/user';
-import { UserContext, UserContextType } from '@/contexts/user-context';
 import { Builder } from 'builder-pattern';
-import { UserType } from '@/model/enums/user-type';
-import { useState } from 'react';
 import { DateTime } from 'luxon';
+import { isSignedIn } from '@/components/guards/is-signed-in';
+import { UserContext, type UserContextType } from '@/contexts/user-context';
+import { UserType } from '@/model/enums/user-type';
+import type { User } from '@/model/types/user';
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { useContextSafely } from '@/hooks/functions/use-context-safely';
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
 
-describe('Authguard', () => {
+describe('isSignedIn', () => {
   let router: AppRouterInstance;
 
   beforeEach(() => {
@@ -30,7 +26,7 @@ describe('Authguard', () => {
 
   afterEach(cleanup);
 
-  it('renders a child component', () => {
+  it('returns a component that can be rendered.', () => {
     const user: User = {
       uid: '',
       email: '',
@@ -49,29 +45,76 @@ describe('Authguard', () => {
       inviteCode: '',
     };
     const userContextValue = Builder<UserContextType>().user(user).build();
+
+    const TestComponent = isSignedIn(function () {
+      return <div data-testid="test"></div>;
+    });
+
     render(
       <UserContext.Provider value={userContextValue}>
-        <AuthGuard>
-          <div data-testid="test"></div>
-        </AuthGuard>
+        <TestComponent />
       </UserContext.Provider>,
     );
     expect(screen.queryByTestId('test')).toBeInTheDocument();
   });
 
-  it('calls signin page', () => {
-    const userContextValue = Builder<UserContextType>().user(null).build();
+  it('returns a component that can accept props.', () => {
+    const user: User = {
+      uid: '',
+      email: '',
+      name: '',
+      avatar: '2',
+      type: UserType.Challenger,
+      completedActions: {
+        electionReminders: false,
+        registerToVote: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      completedChallenge: false,
+      contributedTo: [],
+      inviteCode: '',
+    };
+    const userContextValue = Builder<UserContextType>().user(user).build();
+
+    interface TestComponentProps {
+      message: string;
+    }
+
+    const TestComponent = isSignedIn(function ({
+      message,
+    }: TestComponentProps) {
+      return <div>{message}</div>;
+    });
+
+    const message = 'test';
 
     render(
       <UserContext.Provider value={userContextValue}>
-        <AuthGuard />
+        <TestComponent message={message} />
+      </UserContext.Provider>,
+    );
+    expect(screen.queryByText('test')).toBeInTheDocument();
+  });
+
+  it('blocks an inaccessible page if the user is signed in.', () => {
+    const userContextValue = Builder<UserContextType>().user(null).build();
+
+    const TestComponent = isSignedIn(function () {
+      return null;
+    });
+
+    render(
+      <UserContext.Provider value={userContextValue}>
+        <TestComponent />
       </UserContext.Provider>,
     );
 
     expect(router.push).toHaveBeenCalledWith('/signin');
   });
 
-  it('does not call signin page', () => {
+  it('allows access to a page if the user is signed in.', () => {
     const user: User = {
       uid: '',
       email: '',
@@ -91,16 +134,21 @@ describe('Authguard', () => {
     };
 
     const userContextValue = Builder<UserContextType>().user(user).build();
+
+    const TestComponent = isSignedIn(function () {
+      return null;
+    });
+
     render(
       <UserContext.Provider value={userContextValue}>
-        <AuthGuard />
+        <TestComponent />
       </UserContext.Provider>,
     );
     expect(router.push).not.toHaveBeenCalled();
   });
 
-  it('redirects the user', async () => {
-    function TestComponent() {
+  it('redirects the user upon signout.', async () => {
+    function MockUserContextProvider({ children }: PropsWithChildren) {
       const [user, setUser] = useState<User | null>({
         uid: '',
         email: '',
@@ -119,21 +167,27 @@ describe('Authguard', () => {
         inviteCode: '',
       });
 
-      const signout = () => setUser(null);
-
-      const UserContextValue = Builder<UserContextType>().user(user).build();
+      const signOut = async () => setUser(null);
 
       return (
-        <UserContext.Provider value={UserContextValue}>
-          <AuthGuard>
-            <button onClick={signout}>Sign out</button>
-          </AuthGuard>
+        <UserContext.Provider value={{ user, signOut } as UserContextType}>
+          {children}
         </UserContext.Provider>
       );
     }
 
+    const TestComponent = isSignedIn(function () {
+      const { signOut } = useContextSafely(UserContext, 'TestComponent');
+
+      return <button onClick={signOut}>Sign out</button>;
+    });
+
     const user = userEvent.setup();
-    render(<TestComponent />);
+    render(
+      <MockUserContextProvider>
+        <TestComponent />
+      </MockUserContextProvider>,
+    );
 
     expect(router.push).not.toHaveBeenCalled();
 

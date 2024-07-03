@@ -1,21 +1,18 @@
 'use client';
-import { useLayoutEffect, FC } from 'react';
+import { FC } from 'react';
 import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/functions/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
-import Progress from '@/app/progress/page';
 
 export function isSignedOut<P extends object>(Component: FC<P>) {
-  return function IsSignedOut(props: P) {
-    const { user } = useContextSafely(UserContext, 'IsSignedOut');
+  return function UnAuthGuard(props: P) {
+    const { user } = useContextSafely(UserContext, 'UnAuthGuard');
     const router = useRouter();
 
-    useLayoutEffect(() => {
-      if (user) {
-        router.push('/progress');
-      }
-    }, [user, router]);
+    if (user) {
+      router.push('/progress');
+    }
 
-    return !user ? <Component {...props} /> : <Progress />;
+    return <Component {...props} />;
   };
 }
