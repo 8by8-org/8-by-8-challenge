@@ -1,5 +1,5 @@
 import { render, cleanup } from '@testing-library/react';
-import { mockDialogMethods } from '@/testing-utils/mock-dialog-methods';
+import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 import Progress from '@/app/progress/page';
 import { UserType } from '@/model/enums/user-type';
 import { UserContext, UserContextType } from '@/contexts/user-context';

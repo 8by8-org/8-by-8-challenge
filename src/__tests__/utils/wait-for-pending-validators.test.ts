@@ -6,9 +6,9 @@ import {
   FormFactory,
   ValidityUtils,
 } from 'fully-formed';
-import { waitForPendingValidators } from '@/utils/wait-for-pending-validators';
-import { FormInvalidError } from '@/utils/form-invalid-error';
-import { PromiseScheduler } from '@/testing-utils/promise-scheduler';
+import { waitForPendingValidators } from '@/utils/client/wait-for-pending-validators';
+import { FormInvalidError } from '@/utils/client/form-invalid-error';
+import { PromiseScheduler } from '@/utils/test/promise-scheduler';
 
 describe('waitForPendingValidators', () => {
   it('resolves with the value of the form, if valid.', async () => {

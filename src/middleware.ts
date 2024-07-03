@@ -1,26 +1,19 @@
 import 'server-only';
-import { serverContainer } from './services/server-container';
+import { isSignedInWithSupabase } from './utils/middleware/is-signed-in-with-supabase';
+import { isSignedOutFromSupabase } from './utils/middleware/is-signed-out-from-supabase';
+import { refreshSupabaseSession } from './utils/middleware/refresh-supabase-session';
 import { NextFetchEvent, type NextRequest } from 'next/server';
-import { SERVICE_KEYS } from './services/service-keys';
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
-  for (const [key, value] of Array.from(request.headers.entries())) {
-    console.log(key);
-    console.log(value);
-    console.log();
-  }
-  console.log(request.url);
-
   if (isSignedInOnlyRoute(request.nextUrl.pathname)) {
-    const isSignedIn = serverContainer.get(SERVICE_KEYS.isSignedIn);
-    return await isSignedIn(request, event);
-  } else if (isSignedOutOnlyRoute(request.nextUrl.pathname)) {
-    const isSignedOut = serverContainer.get(SERVICE_KEYS.isSignedOut);
-    return await isSignedOut(request, event);
-  } else {
-    const refreshSession = serverContainer.get(SERVICE_KEYS.refreshSession);
-    return await refreshSession(request, event);
+    return await isSignedInWithSupabase(request, event);
   }
+
+  if (isSignedOutOnlyRoute(request.nextUrl.pathname)) {
+    return await isSignedOutFromSupabase(request, event);
+  }
+
+  return await refreshSupabaseSession(request, event);
 }
 
 export const config = {

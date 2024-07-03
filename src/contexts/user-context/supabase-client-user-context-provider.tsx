@@ -1,6 +1,6 @@
 'use client';
-import { useState, useEffect, useRef, type ReactNode } from 'react';
-import { createBrowserClient } from './utils/create-browser-client';
+import { useState, useEffect, type ReactNode } from 'react';
+import { createSupabaseBrowserClient } from './create-supabase-browser-client';
 import { User } from '@/model/types/user';
 import {
   SendOTPToEmailParams,
@@ -11,16 +11,16 @@ import {
 import { createId } from '@paralleldrive/cuid2';
 import { z } from 'zod';
 import { Duration } from 'luxon';
-import { setSessionStorageItemWithExpiry } from '@/utils/set-session-storage-item-with-expiry';
-import { getSessionStorageItemWithExpiry } from '@/utils/get-session-storage-item-with-expiry';
-import { loadUser } from './utils/load-user';
+import { setSessionStorageItemWithExpiry } from './set-session-storage-item-with-expiry';
+import { getSessionStorageItemWithExpiry } from './get-session-storage-item-with-expiry';
+import { loadUserFromSupabase } from './load-user-from-supabase';
 
 interface SupabaseClientUserContextProviderProps {
   user: User | null;
   children?: ReactNode;
 }
 
-const supabase = createBrowserClient();
+const supabase = createSupabaseBrowserClient();
 
 export function SupabaseClientUserContextProvider(
   props: SupabaseClientUserContextProviderProps,
@@ -106,6 +106,19 @@ export function SupabaseClientUserContextProvider(
     storeEmailForSignIn(email);
   }
 
+  async function resendOTP() {
+    const { error } = await supabase.auth.signInWithOtp({
+      email: emailForSignIn,
+      options: {
+        shouldCreateUser: false,
+      },
+    });
+
+    if (error) throw error;
+
+    storeEmailForSignIn(emailForSignIn);
+  }
+
   async function signInWithOTP({ otp }: SignInWithOTPParams) {
     const { data, error: authError } = await supabase.auth.verifyOtp({
       email: emailForSignIn,
@@ -117,7 +130,7 @@ export function SupabaseClientUserContextProvider(
       throw new Error('Failed to sign in with OTP.');
     }
 
-    const appUser = await loadUser(data.user.id, supabase);
+    const appUser = await loadUserFromSupabase(data.user.id, supabase);
 
     setUser(appUser);
     clearEmailForSignIn();
@@ -139,6 +152,7 @@ export function SupabaseClientUserContextProvider(
         emailForSignIn,
         signUpWithEmail,
         sendOTPToEmail,
+        resendOTP,
         signInWithOTP,
         signOut,
         restartChallenge,

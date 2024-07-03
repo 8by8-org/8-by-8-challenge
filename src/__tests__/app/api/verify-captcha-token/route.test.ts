@@ -1,5 +1,5 @@
 import { POST } from '@/app/api/verify-captcha-token/route';
-import { DummySecretKeys } from '@/constants/dummy-secret-keys';
+import { CLOUDFLARE_TURNSTILE_DUMMY_SECRET_KEYS } from '@/constants/cloudflare-turnstile-dummy-secret-keys';
 import type { NextRequest } from 'next/server';
 
 describe('api/signup-with-email', () => {
@@ -22,7 +22,8 @@ describe('api/signup-with-email', () => {
 
   it(`returns a response with status 200 if the captchaToken is 
   valid.`, async () => {
-    process.env.TURNSTILE_SECRET_KEY = DummySecretKeys.ALWAYS_PASSES;
+    process.env.TURNSTILE_SECRET_KEY =
+      CLOUDFLARE_TURNSTILE_DUMMY_SECRET_KEYS.ALWAYS_PASSES;
 
     const request = {
       json: async () => ({
@@ -37,7 +38,8 @@ describe('api/signup-with-email', () => {
 
   it(`returns a response with status 401 if the token cannot be 
   verified.`, async () => {
-    process.env.TURNSTILE_SECRET_KEY = DummySecretKeys.ALWAYS_BLOCKS;
+    process.env.TURNSTILE_SECRET_KEY =
+      CLOUDFLARE_TURNSTILE_DUMMY_SECRET_KEYS.ALWAYS_BLOCKS;
 
     const request = {
       json: async () => ({
@@ -52,7 +54,8 @@ describe('api/signup-with-email', () => {
 
   it(`returns a response with status 401 if the token has already been 
   spent.`, async () => {
-    process.env.TURNSTILE_SECRET_KEY = DummySecretKeys.ALREADY_SPENT;
+    process.env.TURNSTILE_SECRET_KEY =
+      CLOUDFLARE_TURNSTILE_DUMMY_SECRET_KEYS.ALREADY_SPENT;
 
     const request = {
       json: async () => ({

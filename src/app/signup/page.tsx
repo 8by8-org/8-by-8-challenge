@@ -10,13 +10,12 @@ import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
 import { SelectAvatar } from './select-avatar';
 import { Turnstile } from '@/components/form-components/turnstile/turnstile';
-import { SubmissionError } from '@/components/form-components/submission-error';
-import { waitForPendingValidators } from '@/utils/wait-for-pending-validators';
+import { Alert, useAlert } from '@/components/utils/alert';
+import { waitForPendingValidators } from '@/utils/client/wait-for-pending-validators';
 import { getFirstNonValidInputId } from './get-first-non-valid-input-id';
-import { focusOnElementById } from '@/utils/focus-on-element-by-id';
-import { scrollToElementById } from '@/utils/scroll-to-element-by-id';
-import { FormInvalidError } from '@/utils/form-invalid-error';
-import { UnAuthGuard } from '@/components/utils/authguard/unauthguard';
+import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
+import { scrollToElementById } from '@/utils/client/scroll-to-element-by-id';
+import { FormInvalidError } from '@/utils/client/form-invalid-error';
 import styles from './styles.module.scss';
 import { didNotSendOTP } from '@/components/guards/did-not-send-otp';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
@@ -25,13 +24,11 @@ function SignUp() {
   const signUpForm = useForm(new SignUpForm());
   const { signUpWithEmail } = useContextSafely(UserContext, 'SignUp');
   const [isLoading, setIsLoading] = useState(false);
-  const [hasSubmissionError, setHasSubmissionError] = useState(false);
+  const { alertRef, showAlert } = useAlert();
 
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
     if (isLoading) return;
-
-    setHasSubmissionError(false);
     signUpForm.setSubmitted();
     setIsLoading(true);
 
@@ -49,7 +46,7 @@ function SignUp() {
           focusOnElementById(firstNonValidInputId);
         }
       } else {
-        setHasSubmissionError(true);
+        showAlert('Something went wrong. Please try again.', 'error');
       }
     }
   };
@@ -58,9 +55,7 @@ function SignUp() {
     <PageContainer>
       {isLoading && <LoadingWheel />}
       <form onSubmit={onSubmit} noValidate name="signUpForm">
-        {hasSubmissionError && (
-          <SubmissionError text="Something went wrong. Please try again." />
-        )}
+        <Alert ref={alertRef} />
         <div className={styles.title_and_fields_container}>
           <h1 className={styles.title}>
             <span className="underline">Sign Up</span>

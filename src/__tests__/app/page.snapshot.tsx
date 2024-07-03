@@ -1,5 +1,5 @@
 import { render, cleanup } from '@testing-library/react';
-import { mockDialogMethods } from '@/testing-utils/mock-dialog-methods';
+import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 import Home from '@/app/page';
 
 describe('Home', () => {

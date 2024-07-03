@@ -1,6 +1,6 @@
 import { render, cleanup, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { mockDialogMethods } from '@/testing-utils/mock-dialog-methods';
+import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 import Progress from '@/app/progress/page';
 import { UserType } from '@/model/enums/user-type';
 import { UserContext, UserContextType } from '@/contexts/user-context';
@@ -8,7 +8,7 @@ import type { User } from '@/model/types/user';
 import { DateTime } from 'luxon';
 import { Actions } from '@/model/enums/actions';
 import userEvent from '@testing-library/user-event';
-import { getErrorThrownByComponent } from '@/testing-utils/get-error-thrown-by-component';
+import { getErrorThrownByComponent } from '@/utils/test/get-error-thrown-by-component';
 import { calculateDaysRemaining } from '@/utils/progress/calculate-days-remaining';
 
 describe('ProgressTest', () => {

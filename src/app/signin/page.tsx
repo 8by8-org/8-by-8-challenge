@@ -11,11 +11,11 @@ import { didNotSendOTP } from '@/components/guards/did-not-send-otp';
 import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
 import { Turnstile } from '@/components/form-components/turnstile';
-import { SubmissionError } from '@/components/form-components/submission-error';
-import { waitForPendingValidators } from '@/utils/wait-for-pending-validators';
-import { scrollToElementById } from '@/utils/scroll-to-element-by-id';
-import { focusOnElementById } from '@/utils/focus-on-element-by-id';
-import { FormInvalidError } from '@/utils/form-invalid-error';
+import { Alert, useAlert } from '@/components/utils/alert';
+import { waitForPendingValidators } from '@/utils/client/wait-for-pending-validators';
+import { scrollToElementById } from '@/utils/client/scroll-to-element-by-id';
+import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
+import { FormInvalidError } from '@/utils/client/form-invalid-error';
 import styles from './styles.module.scss';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
 
@@ -23,13 +23,11 @@ function SignIn() {
   const signInForm = useForm(new SignInForm());
   const { sendOTPToEmail } = useContextSafely(UserContext, 'SignIn');
   const [isLoading, setIsLoading] = useState(false);
-  const [hasSubmissionError, setHasSubmissionError] = useState(false);
+  const { alertRef, showAlert } = useAlert();
 
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
     if (isLoading) return;
-
-    setHasSubmissionError(false);
     signInForm.setSubmitted();
     setIsLoading(true);
 
@@ -46,7 +44,7 @@ function SignIn() {
           scrollToElementById(signInForm.fields.captchaToken.id);
         }
       } else {
-        setHasSubmissionError(true);
+        showAlert('Something went wrong. Please try again.', 'error');
       }
     }
   };
@@ -55,9 +53,7 @@ function SignIn() {
     <PageContainer>
       {isLoading && <LoadingWheel />}
       <form onSubmit={onSubmit} noValidate name="signInForm">
-        {hasSubmissionError && (
-          <SubmissionError text="Something went wrong. Please try again." />
-        )}
+        <Alert ref={alertRef} />
         <div className={styles.title_and_fields_container}>
           <div className={styles.hero}>
             <h1>

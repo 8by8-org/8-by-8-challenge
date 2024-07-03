@@ -26,6 +26,7 @@ interface UserContextType {
   emailForSignIn: string;
   signUpWithEmail(params: SignUpWithEmailParams): Promise<void>;
   sendOTPToEmail(params: SendOTPToEmailParams): Promise<void>;
+  resendOTP(): Promise<void>;
   signInWithOTP(params: SignInWithOTPParams): Promise<void>;
   signOut(): Promise<void>;
   restartChallenge(): Promise<void>;

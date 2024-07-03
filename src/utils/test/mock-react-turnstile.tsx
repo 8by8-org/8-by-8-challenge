@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { DummySiteKeys } from '@/constants/dummy-site-keys';
+import { CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS } from '@/constants/cloudflare-turnstile-dummy-site-keys';
 
 interface ReactTurnstileProps {
   sitekey: string;
@@ -32,13 +32,13 @@ export function MockReactTurnstile({
     let onResult: () => void;
 
     switch (sitekey) {
-      case DummySiteKeys.ALWAYS_PASSES:
+      case CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES:
         onResult = () => onVerify && onVerify(DUMMY_TOKEN);
         break;
-      case DummySiteKeys.ALWAYS_BLOCKS:
+      case CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_BLOCKS:
         onResult = () => onError && onError();
         break;
-      case DummySiteKeys.FORCES_CHALLENGE:
+      case CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.FORCES_CHALLENGE:
         onResult = () => {
           onBeforeInteractive && onBeforeInteractive();
           setShowChallenge(true);
@@ -53,7 +53,7 @@ export function MockReactTurnstile({
     setTimeout(() => {
       onResult();
 
-      if (sitekey !== DummySiteKeys.FORCES_CHALLENGE) {
+      if (sitekey !== CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.FORCES_CHALLENGE) {
         setTimeout(() => {
           onExpire && onExpire();
         }, TIMEOUT);

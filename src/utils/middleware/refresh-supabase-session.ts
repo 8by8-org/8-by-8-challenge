@@ -5,15 +5,21 @@ import {
   type NextMiddleware,
   type NextRequest,
 } from 'next/server';
-import { readSupabaseUrlAndAnonKey } from '@/utils/read-supabase-url-and-anon-key';
-import { bind } from 'undecorated-di';
+import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 
-const refreshSupabaseSession: NextMiddleware = async (request: NextRequest) => {
+export const refreshSupabaseSession: NextMiddleware = async (
+  request: NextRequest,
+) => {
   let supabaseResponse = NextResponse.next({
     request,
   });
 
-  const supabase = createServerClient(...readSupabaseUrlAndAnonKey(), {
+  const {
+    NEXT_PUBLIC_SUPABASE_URL: url,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: anonKey,
+  } = PUBLIC_ENVIRONMENT_VARIABLES;
+
+  const supabase = createServerClient(url, anonKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll();
@@ -32,12 +38,8 @@ const refreshSupabaseSession: NextMiddleware = async (request: NextRequest) => {
     },
   });
 
-  console.log('In refreshSession\n');
-
   // getting the user refreshes the session
   await supabase.auth.getUser();
 
   return supabaseResponse;
 };
-
-export default bind(refreshSupabaseSession, []);

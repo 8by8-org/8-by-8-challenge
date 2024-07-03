@@ -1,8 +1,7 @@
 import 'server-only';
 import { NextResponse, type NextRequest } from 'next/server';
 import { z } from 'zod';
-import { serverContainer } from '@/services/server-container';
-import { SERVICE_KEYS } from '@/services/service-keys';
+import { isHuman } from './is-human';
 
 const requestBodySchema = z.object({
   captchaToken: z.string().min(1, 'Must provide a token.'),
@@ -11,14 +10,10 @@ const requestBodySchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
-    const parsed = requestBodySchema.parse(data);
+    const { captchaToken } = requestBodySchema.parse(data);
+    const captchaPassed = await isHuman(captchaToken);
 
-    const tokenValidator = serverContainer.get(
-      SERVICE_KEYS.CaptchaTokenValidator,
-    );
-    const isHuman = await tokenValidator.isHuman(parsed);
-
-    if (isHuman) {
+    if (captchaPassed) {
       return NextResponse.json({ message: 'Token verified.' }, { status: 200 });
     } else {
       return NextResponse.json(

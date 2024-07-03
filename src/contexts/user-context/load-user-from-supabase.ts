@@ -2,7 +2,7 @@ import { DBUserAdapter } from './db-user-adapter';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { User } from '@/model/types/user';
 
-export async function loadUser(
+export async function loadUserFromSupabase(
   userId: string,
   supabase: SupabaseClient,
 ): Promise<User | null> {

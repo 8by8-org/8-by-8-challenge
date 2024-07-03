@@ -1,13 +1,13 @@
 import { render, screen, cleanup, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TurnstileTokenField } from '@/components/form-components/turnstile/turnstile-token-field';
-import { DummySiteKeys } from '@/constants/dummy-site-keys';
+import { CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS } from '@/constants/cloudflare-turnstile-dummy-site-keys';
 import { Validity, ValidityUtils } from 'fully-formed';
 import {
   MockReactTurnstile,
   DUMMY_TOKEN,
   CHALLENGE_BTN_TEST_ID,
-} from '@/testing-utils/mock-react-turnstile';
+} from '@/utils/test/mock-react-turnstile';
 import { Turnstile } from '@/components/form-components/turnstile';
 
 jest.mock('react-turnstile', () => MockReactTurnstile);
@@ -20,7 +20,12 @@ describe('Turnstile', () => {
   the challenge succeeds.`, async () => {
     const field = new TurnstileTokenField();
 
-    render(<Turnstile field={field} sitekey={DummySiteKeys.ALWAYS_PASSES} />);
+    render(
+      <Turnstile
+        field={field}
+        sitekey={CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES}
+      />,
+    );
     expect(ValidityUtils.isPending(field)).toBe(true);
 
     await waitFor(() => {
@@ -39,7 +44,12 @@ describe('Turnstile', () => {
   challenge fails.`, async () => {
     const field = new TurnstileTokenField();
 
-    render(<Turnstile field={field} sitekey={DummySiteKeys.ALWAYS_BLOCKS} />);
+    render(
+      <Turnstile
+        field={field}
+        sitekey={CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_BLOCKS}
+      />,
+    );
     expect(ValidityUtils.isPending(field)).toBe(true);
 
     await waitFor(() => {
@@ -63,7 +73,12 @@ describe('Turnstile', () => {
   challenge result expires.`, async () => {
     const field = new TurnstileTokenField();
 
-    render(<Turnstile field={field} sitekey={DummySiteKeys.ALWAYS_PASSES} />);
+    render(
+      <Turnstile
+        field={field}
+        sitekey={CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES}
+      />,
+    );
     expect(ValidityUtils.isPending(field)).toBe(true);
 
     await waitFor(() => {
@@ -94,7 +109,10 @@ describe('Turnstile', () => {
     const field = new TurnstileTokenField();
     const user = userEvent.setup();
     render(
-      <Turnstile field={field} sitekey={DummySiteKeys.FORCES_CHALLENGE} />,
+      <Turnstile
+        field={field}
+        sitekey={CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.FORCES_CHALLENGE}
+      />,
     );
     expect(ValidityUtils.isPending(field)).toBe(true);
 

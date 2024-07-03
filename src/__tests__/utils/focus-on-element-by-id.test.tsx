@@ -1,5 +1,5 @@
 import { render, cleanup } from '@testing-library/react';
-import { focusOnElementById } from '@/utils/focus-on-element-by-id';
+import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
 
 describe('focusOnElementById', () => {
   afterEach(cleanup);

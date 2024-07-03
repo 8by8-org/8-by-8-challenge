@@ -1,7 +1,7 @@
 import { render, cleanup } from '@testing-library/react';
 import { Header } from '@/components/header';
 import { UserContext, UserContextType } from '@/contexts/user-context';
-import { mockDialogMethods } from '@/testing-utils/mock-dialog-methods';
+import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 
 describe('Header', () => {
   mockDialogMethods();

@@ -1,5 +1,5 @@
 import type { User } from '@/model/types/user';
-import { calculateDaysRemaining } from '@/utils/progress/calculate-days-remaining';
+import { calculateDaysRemaining } from '@/app/progress/calculate-days-remaining';
 import { DateTime } from 'luxon';
 
 describe('calculateDaysRemaining', () => {

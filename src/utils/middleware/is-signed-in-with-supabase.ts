@@ -1,21 +1,25 @@
 import 'server-only';
-import { bind } from 'undecorated-di';
 import { createServerClient } from '@supabase/ssr';
 import {
   NextResponse,
   type NextMiddleware,
   type NextRequest,
 } from 'next/server';
-import { readSupabaseUrlAndAnonKey } from '@/utils/read-supabase-url-and-anon-key';
+import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 
-const isSignedOutFromSupabase: NextMiddleware = async (
+export const isSignedInWithSupabase: NextMiddleware = async (
   request: NextRequest,
 ) => {
   let supabaseResponse = NextResponse.next({
     request,
   });
 
-  const supabase = createServerClient(...readSupabaseUrlAndAnonKey(), {
+  const {
+    NEXT_PUBLIC_SUPABASE_URL: url,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: anonKey,
+  } = PUBLIC_ENVIRONMENT_VARIABLES;
+
+  const supabase = createServerClient(url, anonKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll();
@@ -38,15 +42,9 @@ const isSignedOutFromSupabase: NextMiddleware = async (
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log('In isSignedOut');
-  console.log(user);
-  console.log();
-
-  if (user) {
-    return NextResponse.redirect(new URL('/progress', request.nextUrl.origin));
+  if (!user) {
+    return NextResponse.redirect(new URL('/signin', request.nextUrl.origin));
   }
 
   return supabaseResponse;
 };
-
-export default bind(isSignedOutFromSupabase, []);

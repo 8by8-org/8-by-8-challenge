@@ -9,7 +9,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { Modal } from '@/components/utils/modal';
-import { mockDialogMethods } from '@/testing-utils/mock-dialog-methods';
+import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 
 describe('Modal', () => {
   mockDialogMethods();

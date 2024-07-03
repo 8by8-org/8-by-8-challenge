@@ -1,5 +1,5 @@
-import { MockReactTurnstile } from '@/testing-utils/mock-react-turnstile';
-import { getErrorThrownByComponent } from '@/testing-utils/get-error-thrown-by-component';
+import { MockReactTurnstile } from '@/utils/test/mock-react-turnstile';
+import { getErrorThrownByComponent } from '@/utils/test/get-error-thrown-by-component';
 
 describe('MockReactTurnstile', () => {
   it(`throws an error if it does not receive a known dummy site key.`, () => {

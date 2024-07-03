@@ -27,10 +27,25 @@
   margin-bottom: $spacing-sm;
 }
 
-.resend_code {
+.resend_otp_container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $spacing-sm;
+}
+
+.countdown {
   @extend .b6;
   text-align: center;
-  margin-bottom: $spacing-sm;
+}
+
+.resend_otp {
+  @extend .b5;
+  text-decoration: underline;
+  background-color: transparent;
+  border: none;
+  text-align: center;
+  margin: 0;
+  padding: 0;
 }
 
 .submit_btn_container {

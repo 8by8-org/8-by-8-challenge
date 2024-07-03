@@ -1,5 +1,5 @@
 import { render, screen, cleanup } from '@testing-library/react';
-import { scrollToElementById } from '@/utils/scroll-to-element-by-id';
+import { scrollToElementById } from '@/utils/client/scroll-to-element-by-id';
 
 describe('scrollToElementById', () => {
   afterEach(cleanup);

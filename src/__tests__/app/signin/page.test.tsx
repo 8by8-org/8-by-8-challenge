@@ -1,11 +1,11 @@
 import { render, screen, cleanup, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { MockReactTurnstile } from '@/testing-utils/mock-react-turnstile';
+import { MockReactTurnstile } from '@/utils/test/mock-react-turnstile';
 import { UserContext, type UserContextType } from '@/contexts/user-context';
 import { Builder } from 'builder-pattern';
 import SignInPage from '@/app/signin/page';
-import { DummySiteKeys } from '@/constants/dummy-site-keys';
+import { CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS } from '@/constants/cloudflare-turnstile-dummy-site-keys';
 
 jest.mock('react-turnstile', () => MockReactTurnstile);
 
@@ -30,7 +30,8 @@ describe('SignInPage', () => {
   });
 
   it(`renders a form with an input element for the user's email address.`, () => {
-    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = DummySiteKeys.ALWAYS_PASSES;
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
+      CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
 
     render(
       <UserContext.Provider value={userContextValue}>
@@ -43,7 +44,8 @@ describe('SignInPage', () => {
   });
 
   it('calls signInWithEmail if the form is valid.', async () => {
-    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = DummySiteKeys.ALWAYS_PASSES;
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
+      CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
     const user = userEvent.setup();
     render(
       <UserContext.Provider value={userContextValue}>
@@ -66,7 +68,8 @@ describe('SignInPage', () => {
   });
 
   it('focuses on the email input if it is invalid when the form is submitted.', async () => {
-    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = DummySiteKeys.ALWAYS_PASSES;
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
+      CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
     const user = userEvent.setup();
     render(
       <UserContext.Provider value={userContextValue}>
@@ -85,7 +88,8 @@ describe('SignInPage', () => {
 
   it(`scrolls to the Turnstile component if email is valid and Turnstile is not 
   when the form is submitted.`, async () => {
-    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = DummySiteKeys.ALWAYS_BLOCKS;
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
+      CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_BLOCKS;
     const user = userEvent.setup();
     render(
       <UserContext.Provider value={userContextValue}>
@@ -108,7 +112,8 @@ describe('SignInPage', () => {
   });
 
   it('displays an error message if signInWithEmail throws an error.', async () => {
-    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = DummySiteKeys.ALWAYS_PASSES;
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
+      CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
     userContextValue = Builder<UserContextType>()
       .signInWithEmail(() => {
         throw new Error();

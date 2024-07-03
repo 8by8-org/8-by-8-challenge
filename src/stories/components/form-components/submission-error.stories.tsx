@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { useState, FormEventHandler } from 'react';
-import { SubmissionError } from '@/components/form-components/submission-error';
+import { Alert } from '@/components/utils/alert';
 import { GlobalStylesProvider } from '@/stories/global-styles-provider';
 import { PageContainer } from '@/components/utils/page-container';
 
-const meta: Meta<typeof SubmissionError> = {
-  component: SubmissionError,
+const meta: Meta<typeof Alert> = {
+  component: Alert,
 };
 
 export default meta;
@@ -21,7 +21,7 @@ function FormWithSubmissionError() {
   return (
     <GlobalStylesProvider>
       <PageContainer>
-        {!!errorMessage && <SubmissionError text={errorMessage} />}
+        {!!errorMessage && <Alert text={errorMessage} />}
         <form
           onSubmit={onSubmit}
           style={{ marginLeft: '30px', marginRight: '30px' }}
@@ -47,7 +47,7 @@ function FormWithSubmissionError() {
   );
 }
 
-type Story = StoryObj<typeof SubmissionError>;
+type Story = StoryObj<typeof Alert>;
 
 export const FormWithError: Story = {
   render: FormWithSubmissionError,

@@ -1,5 +1,5 @@
 import { CloudflareTurnstileTokenValidator } from '@/services/cloudflare-turnstile-token-validator';
-import { DummySecretKeys } from '@/constants/dummy-secret-keys';
+import { CLOUDFLARE_TURNSTILE_DUMMY_SECRET_KEYS } from '@/constants/cloudflare-turnstile-dummy-secret-keys';
 
 describe('CloudflareTurnstileTokenValidator', () => {
   let validateCloudflareTurnstile: CloudflareTurnstileTokenValidator;
@@ -22,7 +22,8 @@ describe('CloudflareTurnstileTokenValidator', () => {
   });
 
   it('returns true with a secret key that always fails', async () => {
-    process.env.TURNSTILE_SECRET_KEY = DummySecretKeys.ALWAYS_BLOCKS;
+    process.env.TURNSTILE_SECRET_KEY =
+      CLOUDFLARE_TURNSTILE_DUMMY_SECRET_KEYS.ALWAYS_BLOCKS;
     const result = await validateCloudflareTurnstile.isHuman({
       captchaToken: 'test-token',
     });
@@ -31,7 +32,8 @@ describe('CloudflareTurnstileTokenValidator', () => {
   });
 
   it('returns false with a secret key that is already spent', async () => {
-    process.env.TURNSTILE_SECRET_KEY = DummySecretKeys.ALREADY_SPENT;
+    process.env.TURNSTILE_SECRET_KEY =
+      CLOUDFLARE_TURNSTILE_DUMMY_SECRET_KEYS.ALREADY_SPENT;
     const result = await validateCloudflareTurnstile.isHuman({
       captchaToken: 'test-token',
     });

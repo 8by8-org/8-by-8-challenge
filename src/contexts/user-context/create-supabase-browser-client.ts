@@ -1,5 +1,5 @@
-import { createBrowserClient as _createBrowserClient } from '@supabase/ssr';
-import { readSupabaseUrlAndAnonKey } from '../../../utils/read-supabase-url-and-anon-key';
+import { createBrowserClient } from '@supabase/ssr';
+import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
@@ -10,8 +10,11 @@ import type { SupabaseClient } from '@supabase/supabase-js';
  *
  * @returns An instance of {@link SupabaseClient}.
  */
-export function createBrowserClient(): SupabaseClient {
-  const [url, anonKey] = readSupabaseUrlAndAnonKey();
+export function createSupabaseBrowserClient(): SupabaseClient {
+  const {
+    NEXT_PUBLIC_SUPABASE_URL: url,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: anonKey,
+  } = PUBLIC_ENVIRONMENT_VARIABLES;
 
-  return _createBrowserClient(url, anonKey);
+  return createBrowserClient(url, anonKey);
 }

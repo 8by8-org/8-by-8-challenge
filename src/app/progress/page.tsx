@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { PageContainer } from '@/components/utils/page-container';
 import { UserContext } from '@/contexts/user-context';
-import { calculateDaysRemaining } from '@/utils/progress/calculate-days-remaining';
+import { calculateDaysRemaining } from './calculate-days-remaining';
 import { useContextSafely } from '@/hooks/functions/use-context-safely';
 import { ChallengeButton } from '@/components/progress/challenge-button/challenge-button';
 import claimReward from '@/../public/static/images/pages/progress/claiming-a-reward.svg';
