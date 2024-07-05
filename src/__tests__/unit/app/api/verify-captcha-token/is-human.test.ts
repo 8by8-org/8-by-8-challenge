@@ -1,6 +1,9 @@
 import { isHuman } from '@/app/api/verify-captcha-token/is-human';
 import { CLOUDFLARE_TURNSTILE_DUMMY_SECRET_KEYS } from '@/constants/cloudflare-turnstile-dummy-secret-keys';
 
+// there should be a better way to test this
+// maybe test based on the response not on the key
+// this way we are testing OUR code, not cloudflare's
 describe('isHuman()', () => {
   const { TURNSTILE_SECRET_KEY } = process.env;
 

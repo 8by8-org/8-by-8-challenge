@@ -14,13 +14,12 @@ import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { isSignedOut } from '@/components/guards/is-signed-out';
 import styles from './styles.module.scss';
 import { useCountdown } from '@/hooks/functions/use-countdown';
-import { delay } from '@/utils/client/delay';
 
 function SignInWithOTP() {
   const form = useForm(new SignInWithOTPForm());
   const userContext = useContextSafely(UserContext, 'SignInWithOTP');
   const [isLoading, setIsLoading] = useState(false);
-  const { countdown, restartCountdown } = useCountdown(10);
+  const { countdown, restartCountdown } = useCountdown(60);
   const { alertRef, showAlert } = useAlert();
 
   const onSubmit: FormEventHandler = async e => {
@@ -50,7 +49,6 @@ function SignInWithOTP() {
 
     try {
       await userContext.resendOTP();
-      delay(1000);
       showAlert('Code sent. Please check your email.', 'success');
     } catch (e) {
       showAlert('Error sending code. Please try again.', 'error');
