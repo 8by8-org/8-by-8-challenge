@@ -1,13 +1,20 @@
 import 'server-only';
-import { readPrivateEnvironmentVariables } from '@/utils/environment/read-private-environment-variables';
+import { PRIVATE_ENVIRONMENT_VARIABLES } from '@/constants/private-environment-variables';
 
+/**
+ * Verifies a CAPTCHA token generated on the client against a token
+ * verification endpoint.
+ *
+ * @param captchaToken - The CAPTCHA token received from the client.
+ * @returns A Promise\<boolean\> indicating whether or not the token is
+ * valid.
+ */
 export async function isHuman(captchaToken: string): Promise<boolean> {
   const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-  const { TURNSTILE_SECRET_KEY } = readPrivateEnvironmentVariables();
 
   const result = await fetch(url, {
     body: JSON.stringify({
-      secret: TURNSTILE_SECRET_KEY,
+      secret: PRIVATE_ENVIRONMENT_VARIABLES.TURNSTILE_SECRET_KEY,
       response: captchaToken,
     }),
     method: 'POST',

@@ -11,9 +11,9 @@ const config = {
   testEnvironment: './jest-environment.js',
   setupFiles: ['jest-canvas-mock'],
   collectCoverage: true,
-  //add directories here to include them in coverage reports and threshold
+  // add directories here to include them in coverage reports and threshold
   collectCoverageFrom: ['./src/**'],
-  //directories that should not be counted against the test coverage thresholds
+  // directories that should not be counted against the test coverage thresholds
   modulePathIgnorePatterns: [
     '__snapshots__',
     'stories',
@@ -21,6 +21,7 @@ const config = {
     'fonts',
     'model',
   ],
+  // files that should not be counted against the test coverage thresholds
   coveragePathIgnorePatterns: ['index.ts', 'index.tsx', 'layout.tsx'],
   //require 100% code coverage for the tests to pass
   coverageThreshold: {
@@ -30,6 +31,10 @@ const config = {
       lines: 100,
       statements: 100,
     },
+  },
+  // enable jest.mock() to recognize the '@/' import alias
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
   },
 };
 
