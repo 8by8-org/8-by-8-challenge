@@ -50,6 +50,16 @@ export function SupabaseClientUserContextProvider(
     loadEmailForSignIn();
   }, []);
 
+  /*
+    Clear emailForSignIn from state and session storage when the user 
+    successfully signs in.
+  */
+  useEffect(() => {
+    if (user) {
+      clearEmailForSignIn();
+    }
+  }, [user]);
+
   async function signUpWithEmail({
     email,
     name,
@@ -131,9 +141,7 @@ export function SupabaseClientUserContextProvider(
     }
 
     const appUser = await loadUserFromSupabase(data.user.id, supabase);
-
     setUser(appUser);
-    clearEmailForSignIn();
   }
 
   async function signOut() {
