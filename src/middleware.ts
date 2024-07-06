@@ -1,4 +1,6 @@
 import 'server-only';
+import { SIGNED_IN_ONLY_ROUTES } from './constants/signed-in-only-routes';
+import { SIGNED_OUT_ONLY_ROUTES } from './constants/signed-out-only-routes';
 import { isSignedInWithSupabase } from './utils/middleware/is-signed-in-with-supabase';
 import { isSignedOutFromSupabase } from './utils/middleware/is-signed-out-from-supabase';
 import { refreshSupabaseSession } from './utils/middleware/refresh-supabase-session';
@@ -23,16 +25,9 @@ export const config = {
 };
 
 function isSignedInOnlyRoute(pathname: string) {
-  const signedInOnlyRoutes = ['/progress'];
-  return signedInOnlyRoutes.some(route => pathname.match(route));
+  return SIGNED_IN_ONLY_ROUTES.some(route => pathname.match(route));
 }
 
 function isSignedOutOnlyRoute(pathname: string) {
-  const signedOutOnlyRoutes = [
-    '/signup',
-    '/signin',
-    '/signin-with-otp',
-    '/challengerwelcome',
-  ];
-  return signedOutOnlyRoutes.some(route => pathname.match(route));
+  return SIGNED_OUT_ONLY_ROUTES.some(route => pathname.match(route));
 }

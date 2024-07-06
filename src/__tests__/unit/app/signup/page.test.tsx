@@ -27,6 +27,7 @@ describe('SignUpPage', () => {
 
   beforeEach(() => {
     userContextValue = Builder<UserContextType>()
+      .user(null)
       .signUpWithEmail(jest.fn())
       .build();
     window.scrollTo = jest.fn();

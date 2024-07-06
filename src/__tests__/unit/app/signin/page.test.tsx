@@ -25,6 +25,7 @@ describe('SignInPage', () => {
 
   beforeEach(() => {
     userContextValue = Builder<UserContextType>()
+      .user(null)
       .sendOTPToEmail(jest.fn())
       .build();
     window.scrollTo = jest.fn();
@@ -132,9 +133,15 @@ describe('SignInPage', () => {
     );
 
     const email = screen.getByLabelText('Email address*');
-    await user.type(email, 'user@example.com{enter}');
+    await user.type(email, 'user@example.com');
 
     const form = screen.getByRole('form');
+    fireEvent.submit(form);
+
+    await waitFor(() =>
+      expect(userContextValue.sendOTPToEmail).toHaveBeenCalled(),
+    );
+
     fireEvent.submit(form);
     fireEvent.submit(form);
     fireEvent.submit(form);
