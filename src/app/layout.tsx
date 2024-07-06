@@ -6,6 +6,7 @@ import { lato } from '@/fonts/lato';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import '../styles/main.scss';
+import { AlertsContextProvider } from '@/contexts/alerts-context';
 
 interface RootLayoutProps {
   children?: ReactNode;
@@ -19,11 +20,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={`${bebasNeue.variable} ${lato.variable}`}>
-        <SupabaseUserContextProvider>
-          <Header />
-          {children}
-          <Footer />
-        </SupabaseUserContextProvider>
+        <AlertsContextProvider>
+          <SupabaseUserContextProvider>
+            <Header />
+            {children}
+            <Footer />
+          </SupabaseUserContextProvider>
+        </AlertsContextProvider>
       </body>
     </html>
   );

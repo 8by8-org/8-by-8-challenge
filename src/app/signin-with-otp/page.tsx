@@ -4,23 +4,23 @@ import Image from 'next/image';
 import { useForm, ValidityUtils } from 'fully-formed';
 import { useContextSafely } from '@/hooks/functions/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
+import { AlertsContext } from '@/contexts/alerts-context';
 import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
-import { Alert, useAlert } from '@/components/utils/alert';
 import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
 import { sentOTP } from '@/components/guards/sent-otp';
 import { SignInWithOTPForm } from './signin-with-otp-form';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { isSignedOut } from '@/components/guards/is-signed-out';
-import styles from './styles.module.scss';
 import { useCountdown } from '@/hooks/functions/use-countdown';
+import styles from './styles.module.scss';
 
 function SignInWithOTP() {
   const form = useForm(new SignInWithOTPForm());
   const userContext = useContextSafely(UserContext, 'SignInWithOTP');
-  const [isLoading, setIsLoading] = useState(false);
+  const { showAlert } = useContextSafely(AlertsContext, 'SignInWithOTP');
   const { countdown, restartCountdown } = useCountdown(60);
-  const { alertRef, showAlert } = useAlert();
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
@@ -62,7 +62,6 @@ function SignInWithOTP() {
     <PageContainer>
       {isLoading && <LoadingWheel />}
       <form onSubmit={onSubmit} noValidate name="signInWithOTPForm">
-        <Alert ref={alertRef} />
         <div className={styles.title_and_fields_container}>
           <div className={styles.hero}>
             <h1>
