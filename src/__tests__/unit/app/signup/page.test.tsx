@@ -7,10 +7,11 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { MockReactTurnstile } from '@/utils/test/mock-react-turnstile';
-import { UserContext, type UserContextType } from '@/contexts/user-context';
 import { Builder } from 'builder-pattern';
+import { MockReactTurnstile } from '@/utils/test/mock-react-turnstile';
 import SignUpPage from '@/app/signup/page';
+import { UserContext, type UserContextType } from '@/contexts/user-context';
+import { AlertsContextProvider } from '@/contexts/alerts-context';
 import { CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS } from '@/constants/cloudflare-turnstile-dummy-site-keys';
 import { AVATARS } from '@/constants/avatars';
 import { UserType } from '@/model/enums/user-type';
@@ -45,9 +46,11 @@ describe('SignUpPage', () => {
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
 
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignUpPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignUpPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     expect(screen.queryByRole('form')).toBeInTheDocument();
@@ -69,9 +72,11 @@ describe('SignUpPage', () => {
     const user = userEvent.setup();
 
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignUpPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignUpPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     const name = screen.getByLabelText('Name*');
@@ -108,9 +113,11 @@ describe('SignUpPage', () => {
     const user = userEvent.setup();
 
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignUpPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignUpPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     const name = screen.getByLabelText('Name*');
@@ -154,9 +161,11 @@ describe('SignUpPage', () => {
     const user = userEvent.setup();
 
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignUpPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignUpPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     const name = screen.getByLabelText('Name*');
@@ -191,10 +200,13 @@ describe('SignUpPage', () => {
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
 
     const user = userEvent.setup();
+
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignUpPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignUpPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     const name = screen.getByLabelText('Name*');
@@ -211,10 +223,13 @@ describe('SignUpPage', () => {
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_BLOCKS;
 
     const user = userEvent.setup();
+
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignUpPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignUpPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     const name = screen.getByLabelText('Name*');
@@ -241,6 +256,7 @@ describe('SignUpPage', () => {
   it('displays an error message if signUpWithEmail throws an error.', async () => {
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
+
     userContextValue = Builder<UserContextType>()
       .signUpWithEmail(() => {
         throw new Error();
@@ -248,10 +264,13 @@ describe('SignUpPage', () => {
       .build();
 
     const user = userEvent.setup();
+
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignUpPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignUpPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     const name = screen.getByLabelText('Name*');

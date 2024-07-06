@@ -2,28 +2,27 @@
 import { useState, type FormEventHandler } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ValidityUtils } from 'fully-formed';
+import { useForm, ValidityUtils } from 'fully-formed';
+import { SignInForm } from './signin-form';
 import { useContextSafely } from '@/hooks/functions/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
-import { useForm } from 'fully-formed';
-import { SignInForm } from './signin-form';
+import { AlertsContext } from '@/contexts/alerts-context';
 import { didNotSendOTP } from '@/components/guards/did-not-send-otp';
 import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
 import { Turnstile } from '@/components/form-components/turnstile';
-import { Alert, useAlert } from '@/components/utils/alert';
 import { waitForPendingValidators } from '@/utils/client/wait-for-pending-validators';
 import { scrollToElementById } from '@/utils/client/scroll-to-element-by-id';
 import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
 import { FormInvalidError } from '@/utils/client/form-invalid-error';
-import styles from './styles.module.scss';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
+import styles from './styles.module.scss';
 
 function SignIn() {
   const signInForm = useForm(new SignInForm());
   const { sendOTPToEmail } = useContextSafely(UserContext, 'SignIn');
+  const { showAlert } = useContextSafely(AlertsContext, 'SignIn');
   const [isLoading, setIsLoading] = useState(false);
-  const { alertRef, showAlert } = useAlert();
 
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
@@ -53,7 +52,6 @@ function SignIn() {
     <PageContainer>
       {isLoading && <LoadingWheel />}
       <form onSubmit={onSubmit} noValidate name="signInForm">
-        <Alert ref={alertRef} />
         <div className={styles.title_and_fields_container}>
           <div className={styles.hero}>
             <h1>

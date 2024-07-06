@@ -48,7 +48,7 @@
       }
     }
 
-    @include partials.media-query-screen-size-xs {
+    @include partials.media-query-screen-size-sm {
       .days_blob_container {
         .days_label {
           left: 40%;

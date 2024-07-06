@@ -7,10 +7,11 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { MockReactTurnstile } from '@/utils/test/mock-react-turnstile';
-import { UserContext, type UserContextType } from '@/contexts/user-context';
 import { Builder } from 'builder-pattern';
+import { MockReactTurnstile } from '@/utils/test/mock-react-turnstile';
 import SignInPage from '@/app/signin/page';
+import { UserContext, type UserContextType } from '@/contexts/user-context';
+import { AlertsContextProvider } from '@/contexts/alerts-context';
 import { CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS } from '@/constants/cloudflare-turnstile-dummy-site-keys';
 import { PromiseScheduler } from '@/utils/test/promise-scheduler';
 
@@ -42,9 +43,11 @@ describe('SignInPage', () => {
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
 
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignInPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignInPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     expect(screen.queryByRole('form')).toBeInTheDocument();
@@ -54,11 +57,15 @@ describe('SignInPage', () => {
   it('calls sendOTPToEmail if the form is valid.', async () => {
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
+
     const user = userEvent.setup();
+
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignInPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignInPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     const email = screen.getByLabelText('Email address*');
@@ -79,11 +86,15 @@ describe('SignInPage', () => {
   input.`, async () => {
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
+
     const user = userEvent.setup();
+
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignInPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignInPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     const email = screen.getByLabelText('Email address*');
@@ -109,11 +120,15 @@ describe('SignInPage', () => {
 
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
+
     const user = userEvent.setup();
+
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignInPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignInPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     const email = screen.getByLabelText('Email address*');
@@ -130,11 +145,15 @@ describe('SignInPage', () => {
   it('focuses on the email input if it is invalid when the form is submitted.', async () => {
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
+
     const user = userEvent.setup();
+
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignInPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignInPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     const email = screen.getByLabelText('Email address*');
@@ -150,11 +169,15 @@ describe('SignInPage', () => {
   when the form is submitted.`, async () => {
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_BLOCKS;
+
     const user = userEvent.setup();
+
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignInPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignInPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     const email = screen.getByLabelText('Email address*');
@@ -174,6 +197,7 @@ describe('SignInPage', () => {
   it('displays an error message if sendOTPToEmail throws an error.', async () => {
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
+
     userContextValue = Builder<UserContextType>()
       .sendOTPToEmail(() => {
         throw new Error();
@@ -181,10 +205,13 @@ describe('SignInPage', () => {
       .build();
 
     const user = userEvent.setup();
+
     render(
-      <UserContext.Provider value={userContextValue}>
-        <SignInPage />
-      </UserContext.Provider>,
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <SignInPage />
+        </UserContext.Provider>
+      </AlertsContextProvider>,
     );
 
     const email = screen.getByLabelText('Email address*');

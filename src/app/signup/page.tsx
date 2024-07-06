@@ -1,30 +1,30 @@
 'use client';
 import { useState, type FormEventHandler } from 'react';
-import { useForm } from 'fully-formed';
 import Link from 'next/link';
+import { useForm } from 'fully-formed';
 import { useContextSafely } from '@/hooks/functions/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
+import { AlertsContext } from '@/contexts/alerts-context';
 import { UserType } from '@/model/enums/user-type';
 import { SignUpForm } from './signup-form';
+import { didNotSendOTP } from '@/components/guards/did-not-send-otp';
 import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
 import { SelectAvatar } from './select-avatar';
 import { Turnstile } from '@/components/form-components/turnstile/turnstile';
-import { Alert, useAlert } from '@/components/utils/alert';
 import { waitForPendingValidators } from '@/utils/client/wait-for-pending-validators';
 import { getFirstNonValidInputId } from './get-first-non-valid-input-id';
 import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
 import { scrollToElementById } from '@/utils/client/scroll-to-element-by-id';
 import { FormInvalidError } from '@/utils/client/form-invalid-error';
-import styles from './styles.module.scss';
-import { didNotSendOTP } from '@/components/guards/did-not-send-otp';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
+import styles from './styles.module.scss';
 
 function SignUp() {
   const signUpForm = useForm(new SignUpForm());
   const { signUpWithEmail } = useContextSafely(UserContext, 'SignUp');
+  const { showAlert } = useContextSafely(AlertsContext, 'SignUp');
   const [isLoading, setIsLoading] = useState(false);
-  const { alertRef, showAlert } = useAlert();
 
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
@@ -55,7 +55,6 @@ function SignUp() {
     <PageContainer>
       {isLoading && <LoadingWheel />}
       <form onSubmit={onSubmit} noValidate name="signUpForm">
-        <Alert ref={alertRef} />
         <div className={styles.title_and_fields_container}>
           <h1 className={styles.title}>
             <span className="underline">Sign Up</span>
