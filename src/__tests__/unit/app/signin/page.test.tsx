@@ -1,4 +1,10 @@
-import { render, screen, cleanup, waitFor } from '@testing-library/react';
+import {
+  render,
+  screen,
+  cleanup,
+  waitFor,
+  fireEvent,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { MockReactTurnstile } from '@/utils/test/mock-react-turnstile';
@@ -6,6 +12,7 @@ import { UserContext, type UserContextType } from '@/contexts/user-context';
 import { Builder } from 'builder-pattern';
 import SignInPage from '@/app/signin/page';
 import { CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS } from '@/constants/cloudflare-turnstile-dummy-site-keys';
+import { PromiseScheduler } from '@/utils/test/promise-scheduler';
 
 jest.mock('next/navigation', () => require('next-router-mock'));
 jest.mock('react-turnstile', () => MockReactTurnstile);
@@ -44,7 +51,7 @@ describe('SignInPage', () => {
     expect(screen.queryByLabelText('Email address*')).toBeInTheDocument();
   });
 
-  it('calls signInWithEmail if the form is valid.', async () => {
+  it('calls sendOTPToEmail if the form is valid.', async () => {
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
     const user = userEvent.setup();
@@ -66,6 +73,58 @@ describe('SignInPage', () => {
         captchaToken: expect.any(String),
       });
     });
+  });
+
+  it(`calls sendOTPToEmail when the form is submitted via keyboard 
+  input.`, async () => {
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
+      CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
+    const user = userEvent.setup();
+    render(
+      <UserContext.Provider value={userContextValue}>
+        <SignInPage />
+      </UserContext.Provider>,
+    );
+
+    const email = screen.getByLabelText('Email address*');
+    await user.type(email, 'user@example.com{enter}');
+
+    await waitFor(() => {
+      expect(userContextValue.sendOTPToEmail).toHaveBeenCalledWith({
+        email: 'user@example.com',
+        captchaToken: expect.any(String),
+      });
+    });
+  });
+
+  it('does not call sendOTPToEmail() if isLoading is true.', async () => {
+    const promiseScheduler = new PromiseScheduler();
+    userContextValue = Builder<UserContextType>()
+      .sendOTPToEmail(
+        jest.fn().mockImplementation(() => {
+          return promiseScheduler.createScheduledPromise<void>(undefined);
+        }),
+      )
+      .build();
+
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
+      CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
+    const user = userEvent.setup();
+    render(
+      <UserContext.Provider value={userContextValue}>
+        <SignInPage />
+      </UserContext.Provider>,
+    );
+
+    const email = screen.getByLabelText('Email address*');
+    await user.type(email, 'user@example.com{enter}');
+
+    const form = screen.getByRole('form');
+    fireEvent.submit(form);
+    fireEvent.submit(form);
+    fireEvent.submit(form);
+
+    expect(userContextValue.sendOTPToEmail).toHaveBeenCalledTimes(1);
   });
 
   it('focuses on the email input if it is invalid when the form is submitted.', async () => {
@@ -112,7 +171,7 @@ describe('SignInPage', () => {
     });
   });
 
-  it('displays an error message if signInWithEmail throws an error.', async () => {
+  it('displays an error message if sendOTPToEmail throws an error.', async () => {
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY =
       CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES;
     userContextValue = Builder<UserContextType>()

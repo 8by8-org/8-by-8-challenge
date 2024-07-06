@@ -1,8 +1,10 @@
 'use client';
+import { useEffect } from 'react';
 import { PageContainer } from '@/components/utils/page-container';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { isSignedOut } from '@/components/guards/is-signed-out';
 import top from '../../../public/static/images/pages/challenger-welcome/black-curve-lg.png';
 import stepOne from '../../../public/static/images/pages/challenger-welcome/step-1.png';
 import stepTwo from '../../../public/static/images/pages/challenger-welcome/step-2.png';
@@ -14,13 +16,27 @@ import styles from './styles.module.scss';
 function ChallengerWelcome() {
   const router = useRouter();
 
+  useEffect(() => {
+    router.prefetch('/signup');
+  }, [router]);
+
   return (
     <PageContainer>
       <section className={styles.section_1}>
-        <Image className={styles.background} src={top} alt="background" />
+        <Image
+          className={styles.background}
+          src={top}
+          alt="background"
+          priority={true}
+        />
 
         <div className={styles.container}>
-          <Image className={styles.logo} src={logo} alt="8by8 Logo" />
+          <Image
+            className={styles.logo}
+            src={logo}
+            alt="8by8 Logo"
+            priority={true}
+          />
         </div>
       </section>
 
@@ -115,4 +131,4 @@ function ChallengerWelcome() {
   );
 }
 
-export default ChallengerWelcome;
+export default isSignedOut(ChallengerWelcome);

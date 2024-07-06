@@ -28,6 +28,11 @@ function isSignedInOnlyRoute(pathname: string) {
 }
 
 function isSignedOutOnlyRoute(pathname: string) {
-  const signedOutOnlyRoutes = ['/signup', '/signin', '/signin-with-otp'];
+  const signedOutOnlyRoutes = [
+    '/signup',
+    '/signin',
+    '/signin-with-otp',
+    '/challengerwelcome',
+  ];
   return signedOutOnlyRoutes.some(route => pathname.match(route));
 }

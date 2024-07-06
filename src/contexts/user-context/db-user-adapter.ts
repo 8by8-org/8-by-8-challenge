@@ -50,7 +50,6 @@ export class DBUserAdapter {
   });
 
   private static dbContributedToSchema = z.object({
-    challenger_invite_code: z.string(),
     challenger_name: z.string(),
     challenger_avatar: z.enum(['0', '1', '2', '3']),
   });
