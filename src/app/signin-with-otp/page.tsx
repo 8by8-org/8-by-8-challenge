@@ -43,8 +43,6 @@ function SignInWithOTP() {
 
   const resendOTP: FormEventHandler = async e => {
     e.preventDefault();
-    if (isLoading) return;
-
     setIsLoading(true);
 
     try {
@@ -94,7 +92,11 @@ function SignInWithOTP() {
         <div className={styles.resend_otp_container}>
           {countdown > 0 ?
             <p className={styles.countdown}>Resend Code ({countdown}s)</p>
-          : <button onClick={resendOTP} className={styles.resend_otp}>
+          : <button
+              onClick={resendOTP}
+              className={styles.resend_otp}
+              disabled={isLoading}
+            >
               Resend Code
             </button>
           }
