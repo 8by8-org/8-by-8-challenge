@@ -1,14 +1,14 @@
 import 'server-only';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { readPublicEnvironmentVariables } from '@/utils/environment/read-public-environment-variables';
+import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 
 export function createSupabaseServerClient() {
   const cookieStore = cookies();
   const {
     NEXT_PUBLIC_SUPABASE_URL: url,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: anonKey,
-  } = readPublicEnvironmentVariables();
+  } = PUBLIC_ENVIRONMENT_VARIABLES;
 
   return createServerClient(url, anonKey, {
     cookies: {

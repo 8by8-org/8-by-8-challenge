@@ -2,8 +2,9 @@ import 'server-only';
 import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requestBodySchema } from './request-body-schema';
-import { isHuman } from '@/utils/server/is-human';
+import { isHuman } from '@/utils/server/captcha/is-human';
 import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
+import { setEmailForSignInCookie } from '@/utils/server/email-for-signin-cookie/set-email-for-signin-cookie';
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,6 +36,8 @@ export async function POST(request: NextRequest) {
         { status: error.status ?? 500 },
       );
     }
+
+    setEmailForSignInCookie(email);
 
     return NextResponse.json(
       { message: 'OTP has been sent.' },

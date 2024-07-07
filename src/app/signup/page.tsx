@@ -7,7 +7,6 @@ import { UserContext } from '@/contexts/user-context';
 import { AlertsContext } from '@/contexts/alerts-context';
 import { UserType } from '@/model/enums/user-type';
 import { SignUpForm } from './signup-form';
-import { didNotSendOTP } from '@/components/guards/did-not-send-otp';
 import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
 import { SelectAvatar } from './select-avatar';
@@ -133,4 +132,4 @@ function SignUp() {
   );
 }
 
-export default didNotSendOTP(SignUp);
+export default SignUp;

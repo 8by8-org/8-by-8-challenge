@@ -1,7 +1,8 @@
 import 'server-only';
 import { SupabaseClientUserContextProvider } from './supabase-client-user-context-provider';
-import { createSupabaseServerClient } from './create-supabase-server-client';
-import { loadUserFromSupabase } from './load-user-from-supabase';
+import { createSupabaseServerClient } from '../../utils/supabase/create-supabase-server-client';
+import { loadUserFromSupabase } from '../../utils/supabase/load-user-from-supabase';
+import { getEmailForSignInFromCookie } from '@/utils/server/email-for-signin-cookie/get-email-for-signin-from-cookie';
 import type { User } from '@/model/types/user';
 import type { PropsWithChildren } from 'react';
 
@@ -20,8 +21,13 @@ export async function SupabaseUserContextProvider({
     }
   }
 
+  const emailForSignIn = getEmailForSignInFromCookie();
+
   return (
-    <SupabaseClientUserContextProvider user={user}>
+    <SupabaseClientUserContextProvider
+      user={user}
+      emailForSignIn={emailForSignIn}
+    >
       {children}
     </SupabaseClientUserContextProvider>
   );

@@ -1,7 +1,7 @@
 import 'server-only';
 import { NextResponse, type NextRequest } from 'next/server';
 import { z } from 'zod';
-import { isHuman } from '../../../utils/server/is-human';
+import { isHuman } from '../../../utils/server/captcha/is-human';
 
 const requestBodySchema = z.object({
   captchaToken: z.string().min(1, 'Must provide a token.'),

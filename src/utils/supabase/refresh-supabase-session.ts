@@ -5,7 +5,7 @@ import {
   type NextMiddleware,
   type NextRequest,
 } from 'next/server';
-import { readPublicEnvironmentVariables } from '../environment/read-public-environment-variables';
+import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 
 export const refreshSupabaseSession: NextMiddleware = async (
   request: NextRequest,
@@ -17,7 +17,7 @@ export const refreshSupabaseSession: NextMiddleware = async (
   const {
     NEXT_PUBLIC_SUPABASE_URL: url,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: anonKey,
-  } = readPublicEnvironmentVariables();
+  } = PUBLIC_ENVIRONMENT_VARIABLES;
 
   const supabase = createServerClient(url, anonKey, {
     cookies: {

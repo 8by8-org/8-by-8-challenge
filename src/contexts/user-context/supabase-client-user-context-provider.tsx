@@ -1,21 +1,18 @@
 'use client';
-import { useState, useEffect, type ReactNode } from 'react';
-import { createSupabaseBrowserClient } from './create-supabase-browser-client';
-import { User } from '@/model/types/user';
+import { useState, type ReactNode } from 'react';
+import { createSupabaseBrowserClient } from '@/utils/supabase/create-supabase-browser-client';
 import {
   SendOTPToEmailParams,
   SignUpWithEmailParams,
   SignInWithOTPParams,
   UserContext,
 } from './user-context';
-import { z } from 'zod';
-import { Duration } from 'luxon';
-import { setSessionStorageItemWithExpiry } from './set-session-storage-item-with-expiry';
-import { getSessionStorageItemWithExpiry } from './get-session-storage-item-with-expiry';
-import { loadUserFromSupabase } from './load-user-from-supabase';
+import { useRouter } from 'next/navigation';
+import type { User } from '@/model/types/user';
 
 interface SupabaseClientUserContextProviderProps {
   user: User | null;
+  emailForSignIn: string;
   children?: ReactNode;
 }
 
@@ -25,39 +22,8 @@ export function SupabaseClientUserContextProvider(
   props: SupabaseClientUserContextProviderProps,
 ) {
   const [user, setUser] = useState<User | null>(props.user);
-  const [emailForSignIn, setEmailForSignIn] = useState('');
-  const emailForSignInKey = '8by8EmailForSignIn';
-  const otpTtl = Duration.fromObject({ hours: 1 }).toMillis();
-
-  function storeEmailForSignIn(email: string) {
-    setSessionStorageItemWithExpiry(emailForSignInKey, email, otpTtl);
-    setEmailForSignIn(email);
-  }
-
-  function loadEmailForSignIn() {
-    setEmailForSignIn(
-      getSessionStorageItemWithExpiry(emailForSignInKey, z.string()) ?? '',
-    );
-  }
-
-  function clearEmailForSignIn() {
-    sessionStorage.removeItem(emailForSignInKey);
-    setEmailForSignIn('');
-  }
-
-  useEffect(() => {
-    loadEmailForSignIn();
-  }, []);
-
-  /*
-    Clear emailForSignIn from state and session storage when the user 
-    successfully signs in.
-  */
-  useEffect(() => {
-    if (user) {
-      clearEmailForSignIn();
-    }
-  }, [user]);
+  const [emailForSignIn, setEmailForSignIn] = useState(props.emailForSignIn);
+  const router = useRouter();
 
   async function signUpWithEmail(params: SignUpWithEmailParams) {
     const response = await fetch('/api/signup-with-email', {
@@ -69,7 +35,9 @@ export function SupabaseClientUserContextProvider(
       throw new Error('Failed to create user.');
     }
 
-    storeEmailForSignIn(params.email);
+    setEmailForSignIn(params.email);
+
+    router.push('/signin-with-otp');
   }
 
   async function sendOTPToEmail(params: SendOTPToEmailParams) {
@@ -82,7 +50,9 @@ export function SupabaseClientUserContextProvider(
       throw new Error('Failed to send one-time passcode');
     }
 
-    storeEmailForSignIn(params.email);
+    setEmailForSignIn(params.email);
+
+    router.push('/signin-with-otp');
   }
 
   async function resendOTP() {
@@ -94,23 +64,20 @@ export function SupabaseClientUserContextProvider(
     if (!response.ok) {
       throw new Error('Failed to send one-time passcode');
     }
-
-    storeEmailForSignIn(emailForSignIn);
   }
 
   async function signInWithOTP({ otp }: SignInWithOTPParams) {
-    const { data, error: authError } = await supabase.auth.verifyOtp({
-      email: emailForSignIn,
-      token: otp,
-      type: 'email',
+    const response = await fetch('/api/signin-with-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email: emailForSignIn, otp }),
     });
 
-    if (!data.user || authError) {
+    if (!response.ok) {
       throw new Error('Failed to sign in with OTP.');
     }
 
-    const appUser = await loadUserFromSupabase(data.user.id, supabase);
-    setUser(appUser);
+    const data = await response.json();
+    setUser(data.user as User);
   }
 
   async function signOut() {

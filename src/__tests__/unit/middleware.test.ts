@@ -1,31 +1,31 @@
 import { middleware, config } from '@/middleware';
 import { SIGNED_IN_ONLY_ROUTES } from '@/constants/signed-in-only-routes';
 import { SIGNED_OUT_ONLY_ROUTES } from '@/constants/signed-out-only-routes';
-import * as isSignedInModule from '@/utils/middleware/is-signed-in-with-supabase';
-import * as isSignedOutModule from '@/utils/middleware/is-signed-out-from-supabase';
-import * as refreshSessionModule from '@/utils/middleware/refresh-supabase-session';
+import * as isSignedInModule from '@/utils/supabase/is-signed-in-with-supabase';
+import * as isSignedOutModule from '@/utils/supabase/is-signed-out-from-supabase';
+import * as refreshSessionModule from '@/utils/supabase/refresh-supabase-session';
 import { Builder } from 'builder-pattern';
 import type { NextURL } from 'next/dist/server/web/next-url';
 import type { NextRequest, NextFetchEvent } from 'next/server';
 
-jest.mock('@/utils/middleware/is-signed-in-with-supabase', () => {
+jest.mock('@/utils/supabase/is-signed-in-with-supabase', () => {
   return {
     __esModule: true,
-    ...jest.requireActual('@/utils/middleware/is-signed-in-with-supabase'),
+    ...jest.requireActual('@/utils/supabase/is-signed-in-with-supabase'),
   };
 });
 
-jest.mock('@/utils/middleware/is-signed-out-from-supabase', () => {
+jest.mock('@/utils/supabase/is-signed-out-from-supabase', () => {
   return {
     __esModule: true,
-    ...jest.requireActual('@/utils/middleware/is-signed-out-from-supabase'),
+    ...jest.requireActual('@/utils/supabase/is-signed-out-from-supabase'),
   };
 });
 
-jest.mock('@/utils/middleware/refresh-supabase-session', () => {
+jest.mock('@/utils/supabase/refresh-supabase-session', () => {
   return {
     __esModule: true,
-    ...jest.requireActual('@/utils/middleware/refresh-supabase-session'),
+    ...jest.requireActual('@/utils/supabase/refresh-supabase-session'),
   };
 });
 

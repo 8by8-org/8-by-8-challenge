@@ -7,7 +7,6 @@ import { SignInForm } from './signin-form';
 import { useContextSafely } from '@/hooks/functions/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
 import { AlertsContext } from '@/contexts/alerts-context';
-import { didNotSendOTP } from '@/components/guards/did-not-send-otp';
 import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
 import { Turnstile } from '@/components/form-components/turnstile';
@@ -99,4 +98,4 @@ function SignIn() {
   );
 }
 
-export default didNotSendOTP(SignIn);
+export default SignIn;
