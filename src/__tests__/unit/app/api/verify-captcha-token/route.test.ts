@@ -1,16 +1,16 @@
 import { POST } from '@/app/api/verify-captcha-token/route';
 import { Builder } from 'builder-pattern';
 import { NextRequest } from 'next/server';
-import * as isHumanModule from '@/app/api/verify-captcha-token/is-human';
+import * as isHumanModule from '@/utils/server/is-human';
 
 /*
   Mock the module containing isHuman in order to make isHuman configurable 
   and enable it to be spied on.
 */
-jest.mock('@/app/api/verify-captcha-token/is-human', () => {
+jest.mock('@/utils/server/is-human', () => {
   return {
     __esModule: true,
-    ...jest.requireActual('@/app/api/verify-captcha-token/is-human'),
+    ...jest.requireActual('@/utils/server/is-human'),
   };
 });
 

@@ -1,4 +1,4 @@
-import { isHuman } from '@/app/api/verify-captcha-token/is-human';
+import { isHuman } from '@/utils/server/is-human';
 
 describe('isHuman()', () => {
   it(`returns true when the response returned from the token verification 

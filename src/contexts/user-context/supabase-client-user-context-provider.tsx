@@ -8,7 +8,6 @@ import {
   SignInWithOTPParams,
   UserContext,
 } from './user-context';
-import { createId } from '@paralleldrive/cuid2';
 import { z } from 'zod';
 import { Duration } from 'luxon';
 import { setSessionStorageItemWithExpiry } from './set-session-storage-item-with-expiry';
@@ -60,71 +59,41 @@ export function SupabaseClientUserContextProvider(
     }
   }, [user]);
 
-  async function signUpWithEmail({
-    email,
-    name,
-    avatar,
-    type,
-    captchaToken,
-  }: SignUpWithEmailParams) {
-    const verifyTokenResult = await fetch('/api/verify-captcha-token', {
+  async function signUpWithEmail(params: SignUpWithEmailParams) {
+    const response = await fetch('/api/signup-with-email', {
       method: 'POST',
-      body: JSON.stringify({ captchaToken }),
+      body: JSON.stringify(params),
     });
 
-    if (!verifyTokenResult.ok) {
-      throw new Error('Failed to verify captcha token.');
+    if (!response.ok) {
+      throw new Error('Failed to create user.');
     }
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: true,
-        data: {
-          name,
-          avatar,
-          type,
-          invite_code: createId(),
-        },
-      },
-    });
-
-    if (error) throw error;
-
-    storeEmailForSignIn(email);
+    storeEmailForSignIn(params.email);
   }
 
-  async function sendOTPToEmail({ email, captchaToken }: SendOTPToEmailParams) {
-    const verifyTokenResult = await fetch('/api/verify-captcha-token', {
+  async function sendOTPToEmail(params: SendOTPToEmailParams) {
+    const response = await fetch('/api/send-otp-to-email', {
       method: 'POST',
-      body: JSON.stringify({ captchaToken }),
+      body: JSON.stringify(params),
     });
 
-    if (!verifyTokenResult.ok) {
-      throw new Error('Failed to verify captcha token.');
+    if (!response.ok) {
+      throw new Error('Failed to send one-time passcode');
     }
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: false,
-      },
-    });
-
-    if (error) throw error;
-
-    storeEmailForSignIn(email);
+    storeEmailForSignIn(params.email);
   }
 
   async function resendOTP() {
-    const { error } = await supabase.auth.signInWithOtp({
-      email: emailForSignIn,
-      options: {
-        shouldCreateUser: false,
-      },
+    const response = await fetch('/api/resend-otp-to-email', {
+      method: 'POST',
+      body: JSON.stringify({ email: emailForSignIn }),
     });
 
-    if (error) throw error;
+    if (!response.ok) {
+      throw new Error('Failed to send one-time passcode');
+    }
 
     storeEmailForSignIn(emailForSignIn);
   }
