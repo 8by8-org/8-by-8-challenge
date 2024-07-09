@@ -54,7 +54,7 @@ export const Middleware = inject(
     ) {
       return (
         !response?.redirected &&
-        request.nextUrl.pathname.includes('/signin-with-otp')
+        request.nextUrl.pathname.includes('/signin-with-email-and-otp')
       );
     }
   },
