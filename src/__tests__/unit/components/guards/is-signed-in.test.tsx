@@ -10,7 +10,7 @@ import { UserContext, type UserContextType } from '@/contexts/user-context';
 import { UserType } from '@/model/enums/user-type';
 import type { User } from '@/model/types/user';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { useContextSafely } from '@/hooks/use-context-safely';
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),

@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useContextSafely } from '../../../../hooks/functions/use-context-safely';
+import { useContextSafely } from '../../../../hooks/use-context-safely';
 import { HeaderContext } from '../../header-context';
 import type { ReactNode } from 'react';
 

@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { useContext } from 'react';
 import { render, screen, cleanup } from '@testing-library/react';
-import { createNamedContext } from '@/hooks/functions/create-named-context';
+import { createNamedContext } from '@/hooks/create-named-context';
 
 describe('createNamedContext', () => {
   afterEach(cleanup);

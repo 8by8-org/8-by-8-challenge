@@ -1,5 +1,5 @@
 'use client';
-import { useContextSafely } from '../../../../../hooks/functions/use-context-safely';
+import { useContextSafely } from '../../../../../hooks/use-context-safely';
 import { HeaderContext } from '../../../../../components/header/header-context';
 import styles from './styles.module.scss';
 

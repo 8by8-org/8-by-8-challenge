@@ -2,7 +2,7 @@
 import { useState, type FormEventHandler } from 'react';
 import Link from 'next/link';
 import { useForm } from 'fully-formed';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
 import { AlertsContext } from '@/contexts/alerts-context';
 import { UserType } from '@/model/enums/user-type';

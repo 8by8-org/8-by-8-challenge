@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { serverContainer } from '@/services/server/container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
+import { ServerError } from '@/errors/server-error';
 
 export async function DELETE() {
   const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
@@ -12,8 +13,12 @@ export async function DELETE() {
       { status: 200 },
     );
   } catch (e) {
+    if (e instanceof ServerError) {
+      return NextResponse.json({ error: e.message }, { status: e.statusCode });
+    }
+
     return NextResponse.json(
-      { message: 'There was a problem signing out.' },
+      { error: 'There was a problem signing out.' },
       { status: 500 },
     );
   }

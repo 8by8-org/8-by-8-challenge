@@ -1,5 +1,5 @@
 'use client';
-import { createNamedContext } from '@/hooks/functions/create-named-context';
+import { createNamedContext } from '@/hooks/create-named-context';
 import { Alert, useAlert } from '@/components/utils/alert';
 import type { PropsWithChildren } from 'react';
 

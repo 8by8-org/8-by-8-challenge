@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useContextSafely } from '../../../hooks/functions/use-context-safely';
+import { useContextSafely } from '../../../hooks/use-context-safely';
 import { HeaderContext } from '../header-context';
 import { Modal } from '../../utils/modal';
 import styles from './styles.module.scss';

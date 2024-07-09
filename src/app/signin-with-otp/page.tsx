@@ -2,7 +2,7 @@
 import { useState, type FormEventHandler } from 'react';
 import Image from 'next/image';
 import { useForm, ValidityUtils } from 'fully-formed';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
 import { AlertsContext } from '@/contexts/alerts-context';
 import { PageContainer } from '@/components/utils/page-container';
@@ -12,7 +12,7 @@ import { sentOTP } from '@/components/guards/sent-otp';
 import { SignInWithOTPForm } from './signin-with-otp-form';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { isSignedOut } from '@/components/guards/is-signed-out';
-import { useCountdown } from '@/hooks/functions/use-countdown';
+import { useCountdown } from '@/hooks/use-countdown';
 import styles from './styles.module.scss';
 
 function SignInWithOTP() {

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useContextSafely } from '../../../hooks/functions/use-context-safely';
+import { useContextSafely } from '../../../hooks/use-context-safely';
 import { FaBars } from 'react-icons/fa';
 import { HeaderContext } from '../header-context';
 import { HamburgerMenuState } from '../header-context';

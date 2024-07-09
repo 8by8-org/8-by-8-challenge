@@ -1,6 +1,6 @@
-import { NullContextError } from '@/hooks/errors/null-context-error';
-import { createNamedContext } from '@/hooks/functions/create-named-context';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { NullContextError } from '@/errors/null-context-error';
+import { createNamedContext } from '@/hooks/create-named-context';
+import { useContextSafely } from '@/hooks/use-context-safely';
 import { getErrorThrownByComponent } from '@/utils/test/get-error-thrown-by-component';
 
 describe('useContextSafely', () => {

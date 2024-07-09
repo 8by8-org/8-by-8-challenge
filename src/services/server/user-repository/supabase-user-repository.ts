@@ -4,6 +4,7 @@ import type { UserRepository } from './user-repository';
 import type { User } from '@/model/types/user';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
 import type { DBUserAdapter } from '../db-user-adapter/db-user-adapter';
+import { ServerError } from '@/errors/server-error';
 
 export const SupabaseUserRepository = inject(
   class SupabaseUserRepository implements UserRepository {
@@ -15,7 +16,7 @@ export const SupabaseUserRepository = inject(
     async getUserById(userId: string): Promise<User | null> {
       const supabase = this.createSupabaseClient();
 
-      const { data: dbUser } = await supabase
+      const { data: dbUser, error } = await supabase
         .from('users')
         .select(
           `*,
@@ -28,9 +29,18 @@ export const SupabaseUserRepository = inject(
         .limit(1)
         .single();
 
+      if (error) {
+        throw new ServerError(error.message, error.status);
+      }
+
       if (!dbUser) return null;
 
-      return this.dbUserAdapter.adaptDBUser(dbUser);
+      try {
+        const user = this.dbUserAdapter.adaptDBUser(dbUser);
+        return user;
+      } catch (e) {
+        throw new ServerError('Failed to parse user data.', 400);
+      }
     }
   },
   [SERVER_SERVICE_KEYS.createSupabaseClient, SERVER_SERVICE_KEYS.DbUserAdapter],

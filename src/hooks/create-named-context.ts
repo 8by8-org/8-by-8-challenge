@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { NamedContext } from '../types/named-context';
+import type { NamedContext } from './named-context';
 
 /**
  * Creates a React Context object with the provided displayName and a default

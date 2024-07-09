@@ -1,4 +1,4 @@
-import { NullContextError } from '@/hooks/errors/null-context-error';
+import { NullContextError } from '@/errors/null-context-error';
 
 describe('NullContextError', () => {
   it('has a message property describing the failure of the consumer to access the context.', () => {

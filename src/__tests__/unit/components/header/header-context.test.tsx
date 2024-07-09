@@ -8,7 +8,7 @@ import {
 } from '@testing-library/react';
 import { useEffect } from 'react';
 import userEvent from '@testing-library/user-event';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { useContextSafely } from '@/hooks/use-context-safely';
 import {
   HamburgerMenuState,
   HeaderContext,

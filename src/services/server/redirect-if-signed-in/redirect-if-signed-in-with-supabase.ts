@@ -33,6 +33,18 @@ export const redirectIfSignedInWithSupabase = bind(
         },
       },
     });
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      return NextResponse.redirect(
+        new URL('/progress', request.nextUrl.origin),
+      );
+    }
+
+    return supabaseResponse;
   },
   [],
 );

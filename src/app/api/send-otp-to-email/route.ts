@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { requestBodySchema } from './request-body-schema';
 import { serverContainer } from '@/services/server/container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
+import { ServerError } from '@/errors/server-error';
 
 export async function POST(request: NextRequest) {
   const captchaValidator = serverContainer.get(
@@ -30,6 +31,10 @@ export async function POST(request: NextRequest) {
       { status: 200 },
     );
   } catch (e) {
+    if (e instanceof ServerError) {
+      return NextResponse.json({ error: e.message }, { status: e.statusCode });
+    }
+
     return NextResponse.json({ error: 'Bad data.' }, { status: 400 });
   }
 }

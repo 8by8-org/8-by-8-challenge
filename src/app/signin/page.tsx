@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useForm, ValidityUtils } from 'fully-formed';
 import { SignInForm } from './signin-form';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
 import { AlertsContext } from '@/contexts/alerts-context';
 import { PageContainer } from '@/components/utils/page-container';

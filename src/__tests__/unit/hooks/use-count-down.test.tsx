@@ -2,7 +2,7 @@ import { render, screen, cleanup, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { act } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { useCountdown } from '@/hooks/functions/use-countdown';
+import { useCountdown } from '@/hooks/use-countdown';
 
 describe('useCountdown', () => {
   let clearIntervalSpy: jest.SpyInstance;
