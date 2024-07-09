@@ -1,15 +1,10 @@
 import 'server-only';
+import { bind } from 'undecorated-di';
 import { createServerClient } from '@supabase/ssr';
-import {
-  NextResponse,
-  type NextMiddleware,
-  type NextRequest,
-} from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 
-export const isSignedInWithSupabase: NextMiddleware = async (
-  request: NextRequest,
-) => {
+export const refreshSupabaseSession = bind(async (request: NextRequest) => {
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -38,13 +33,8 @@ export const isSignedInWithSupabase: NextMiddleware = async (
     },
   });
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.redirect(new URL('/signin', request.nextUrl.origin));
-  }
+  // By calling auth.getUser(), we refresh the user's session.
+  await supabase.auth.getUser();
 
   return supabaseResponse;
-};
+}, []);

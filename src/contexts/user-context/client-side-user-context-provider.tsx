@@ -1,6 +1,5 @@
 'use client';
 import { useState, type ReactNode } from 'react';
-import { createSupabaseBrowserClient } from '@/utils/supabase/create-supabase-browser-client';
 import {
   SendOTPToEmailParams,
   SignUpWithEmailParams,
@@ -10,16 +9,14 @@ import {
 import { useRouter } from 'next/navigation';
 import type { User } from '@/model/types/user';
 
-interface SupabaseClientUserContextProviderProps {
+interface ClientSideUserContextProviderProps {
   user: User | null;
   emailForSignIn: string;
   children?: ReactNode;
 }
 
-const supabase = createSupabaseBrowserClient();
-
-export function SupabaseClientUserContextProvider(
-  props: SupabaseClientUserContextProviderProps,
+export function ClientSideUserContextProvider(
+  props: ClientSideUserContextProviderProps,
 ) {
   const [user, setUser] = useState<User | null>(props.user);
   const [emailForSignIn, setEmailForSignIn] = useState(props.emailForSignIn);
@@ -81,7 +78,14 @@ export function SupabaseClientUserContextProvider(
   }
 
   async function signOut() {
-    await supabase.auth.signOut();
+    const response = await fetch('/api/signout', {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('There was a problem signing out.');
+    }
+
     setUser(null);
   }
 

@@ -1,40 +1,20 @@
 import 'server-only';
 import { NextResponse, type NextRequest } from 'next/server';
 import { requestBodySchema } from './request-body-schema';
-import { createSupabaseServerClient } from '@/utils/supabase/create-supabase-server-client';
-import { deleteEmailForSignInCookie } from '@/utils/server/email-for-signin-cookie/delete-email-for-signin-cookie';
-import { loadUserFromSupabase } from '@/utils/supabase/load-user-from-supabase';
+import { serverContainer } from '@/services/server/container';
+import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 
 export async function POST(request: NextRequest) {
+  const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
+  const cookies = serverContainer.get(SERVER_SERVICE_KEYS.Cookies);
+
   try {
     const requestBody = await request.json();
     const { email, otp } = requestBodySchema.parse(requestBody);
+    const user = await auth.signInWithEmailAndOTP(email, otp);
+    cookies.clearEmailForSignIn();
 
-    const supabase = createSupabaseServerClient();
-
-    const { data, error } = await supabase.auth.verifyOtp({
-      email,
-      token: otp,
-      type: 'email',
-    });
-
-    if (error || !data.user) {
-      return NextResponse.json(
-        { error: error ? error.message : 'Could not find user.' },
-        { status: error ? error.status ?? 500 : 404 },
-      );
-    }
-
-    try {
-      const user = await loadUserFromSupabase(data.user.id, supabase);
-      deleteEmailForSignInCookie();
-      return NextResponse.json({ user }, { status: 200 });
-    } catch (e) {
-      return NextResponse.json(
-        { error: 'Could not load user data.' },
-        { status: 404 },
-      );
-    }
+    return NextResponse.json({ user }, { status: 200 });
   } catch (e) {
     return NextResponse.json({ error: 'Bad data.' }, { status: 400 });
   }

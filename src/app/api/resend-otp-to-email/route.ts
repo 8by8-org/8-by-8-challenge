@@ -1,35 +1,19 @@
 import 'server-only';
 import { NextResponse, type NextRequest } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { requestBodySchema } from './request-body-schema';
-import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
-import { setEmailForSignInCookie } from '@/utils/server/email-for-signin-cookie/set-email-for-signin-cookie';
+import { serverContainer } from '@/services/server/container';
+import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 
 export async function POST(request: NextRequest) {
+  const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
+  const cookies = serverContainer.get(SERVER_SERVICE_KEYS.Cookies);
+
   try {
     const data = await request.json();
     const { email } = requestBodySchema.parse(data);
 
-    const supabase = createClient(
-      PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_URL,
-      PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    );
-
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: false,
-      },
-    });
-
-    if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.status ?? 500 },
-      );
-    }
-
-    setEmailForSignInCookie(email);
+    await auth.sendOTPToEmail(email);
+    cookies.setEmailForSignIn(email);
 
     return NextResponse.json(
       { message: 'OTP has been resent.' },

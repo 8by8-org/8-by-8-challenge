@@ -1,18 +1,21 @@
 import 'server-only';
 import { NextResponse, type NextRequest } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { requestBodySchema } from './request-body-schema';
-import { isHuman } from '@/utils/server/captcha/is-human';
-import { createInviteCode } from './create-invite-code';
-import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
-import { setEmailForSignInCookie } from '@/utils/server/email-for-signin-cookie/set-email-for-signin-cookie';
+import { serverContainer } from '@/services/server/container';
+import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 
 export async function POST(request: NextRequest) {
+  const captchaValidator = serverContainer.get(
+    SERVER_SERVICE_KEYS.CaptchaValidator,
+  );
+  const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
+  const cookies = serverContainer.get(SERVER_SERVICE_KEYS.Cookies);
+
   try {
     const data = await request.json();
     const { email, name, avatar, type, captchaToken } =
       requestBodySchema.parse(data);
-    const captchaPassed = await isHuman(captchaToken);
+    const captchaPassed = await captchaValidator.isHuman(captchaToken);
 
     if (!captchaPassed)
       return NextResponse.json(
@@ -20,32 +23,8 @@ export async function POST(request: NextRequest) {
         { status: 401 },
       );
 
-    const supabase = createClient(
-      PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_URL,
-      PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    );
-
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: true,
-        data: {
-          name,
-          avatar,
-          type,
-          invite_code: createInviteCode(),
-        },
-      },
-    });
-
-    if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.status ?? 500 },
-      );
-    }
-
-    setEmailForSignInCookie(email);
+    await auth.signUpWithEmailAndSendOTP(email, name, avatar, type);
+    cookies.setEmailForSignIn(email);
 
     return NextResponse.json(
       { message: 'Successfully created user.' },

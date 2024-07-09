@@ -1,4 +1,5 @@
-import { SupabaseUserContextProvider } from '@/contexts/user-context/supabase-user-context-provider';
+import { AlertsContextProvider } from '@/contexts/alerts-context';
+import { UserContextProvider } from '@/contexts/user-context/user-context-provider';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { bebasNeue } from '@/fonts/bebas-neue';
@@ -6,7 +7,6 @@ import { lato } from '@/fonts/lato';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import '../styles/main.scss';
-import { AlertsContextProvider } from '@/contexts/alerts-context';
 
 interface RootLayoutProps {
   children?: ReactNode;
@@ -21,11 +21,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       <body className={`${bebasNeue.variable} ${lato.variable}`}>
         <AlertsContextProvider>
-          <SupabaseUserContextProvider>
+          <UserContextProvider>
             <Header />
             {children}
             <Footer />
-          </SupabaseUserContextProvider>
+          </UserContextProvider>
         </AlertsContextProvider>
       </body>
     </html>
