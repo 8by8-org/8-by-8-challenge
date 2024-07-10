@@ -13,16 +13,17 @@ const config = {
   collectCoverage: true,
   // add directories here to include them in coverage reports and threshold
   collectCoverageFrom: ['./src/**'],
-  // directories that should not be counted against the test coverage thresholds
-  modulePathIgnorePatterns: [
-    '__snapshots__',
-    'stories',
-    'constants',
-    'fonts',
-    'model',
-  ],
   // files that should not be counted against the test coverage thresholds
-  coveragePathIgnorePatterns: ['index.ts', 'index.tsx', 'layout.tsx'],
+  coveragePathIgnorePatterns: [
+    'index.ts',
+    'index.tsx',
+    'layout.tsx',
+    '<rootDir>/src/__tests__/',
+    '<rootDir>/src/stories/',
+    '<rootDir>/src/constants/',
+    'fonts',
+    '<rootDir>/src/model/',
+  ],
   //require 100% code coverage for the tests to pass
   coverageThreshold: {
     global: {
