@@ -14,7 +14,7 @@ export function SignoutModal() {
   );
   const { signOut } = useContextSafely(UserContext, 'SignoutModal');
   const { showAlert } = useContextSafely(AlertsContext, 'SignoutModal');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   return (
     <Modal
@@ -22,19 +22,19 @@ export function SignoutModal() {
       theme="dark"
       isOpen={isSignoutModalShown}
       closeModal={() => {
-        if (!isLoading) {
+        if (!isSigningOut) {
           closeSignoutModal();
         }
       }}
     >
-      {isLoading ?
+      {isSigningOut ?
         <p className="b2">Signing out...</p>
       : <>
           <p className="b1">Are you sure you want to sign out?</p>
           <button
             className={styles.btn_top}
             onClick={async () => {
-              setIsLoading(true);
+              setIsSigningOut(true);
 
               try {
                 await signOut();
@@ -43,17 +43,12 @@ export function SignoutModal() {
               }
 
               closeSignoutModal();
-              setIsLoading(false);
+              setIsSigningOut(false);
             }}
-            disabled={isLoading}
           >
             <span>Yes, but I&apos;ll be back</span>
           </button>
-          <button
-            className={styles.btn_bottom}
-            onClick={closeSignoutModal}
-            disabled={isLoading}
-          >
+          <button className={styles.btn_bottom} onClick={closeSignoutModal}>
             <span>No, I think I&apos;ll stay</span>
           </button>
         </>
