@@ -51,6 +51,7 @@ export function Turnstile({ field, sitekey }: TurnstileProps) {
             field.onError();
           }}
           refreshExpired="auto"
+          theme="light"
           fixedSize
         />
         <div className={styles.messages_wrapper}>
