@@ -2,9 +2,10 @@
 import { useState } from 'react';
 import { useContextSafely } from '../../../hooks/use-context-safely';
 import { HeaderContext } from '../header-context';
+import { UserContext } from '@/contexts/user-context';
+import { AlertsContext } from '@/contexts/alerts-context';
 import { Modal } from '../../utils/modal';
 import styles from './styles.module.scss';
-import { UserContext } from '@/contexts/user-context';
 
 export function SignoutModal() {
   const { isSignoutModalShown, closeSignoutModal } = useContextSafely(
@@ -12,6 +13,7 @@ export function SignoutModal() {
     'SignoutModal',
   );
   const { signOut } = useContextSafely(UserContext, 'SignoutModal');
+  const { showAlert } = useContextSafely(AlertsContext, 'SignoutModal');
   const [isLoading, setIsLoading] = useState(false);
 
   return (
@@ -26,14 +28,20 @@ export function SignoutModal() {
       }}
     >
       {isLoading ?
-        <p>Signing out...</p>
+        <p className="b2">Signing out...</p>
       : <>
           <p className="b1">Are you sure you want to sign out?</p>
           <button
             className={styles.btn_top}
             onClick={async () => {
               setIsLoading(true);
-              await signOut();
+
+              try {
+                await signOut();
+              } catch (e) {
+                showAlert('There was a problem signing out.', 'error');
+              }
+
               closeSignoutModal();
               setIsLoading(false);
             }}

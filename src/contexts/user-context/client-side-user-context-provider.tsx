@@ -34,7 +34,7 @@ export function ClientSideUserContextProvider(
 
     setEmailForSignIn(params.email);
 
-    router.push('/signin-with-email-and-otp');
+    router.push('/signin-with-otp');
   }
 
   async function sendOTPToEmail(params: SendOTPToEmailParams) {
@@ -49,7 +49,7 @@ export function ClientSideUserContextProvider(
 
     setEmailForSignIn(params.email);
 
-    router.push('/signin-with-email-and-otp');
+    router.push('/signin-with-otp');
   }
 
   async function resendOTP() {
@@ -64,7 +64,7 @@ export function ClientSideUserContextProvider(
   }
 
   async function signInWithOTP({ otp }: SignInWithOTPParams) {
-    const response = await fetch('/api/signin-with-email-and-otp', {
+    const response = await fetch('/api/signin-with-otp', {
       method: 'POST',
       body: JSON.stringify({ email: emailForSignIn, otp }),
     });
