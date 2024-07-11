@@ -13,5 +13,11 @@ export function readPrivateEnvironmentVariables() {
           'Could not load environment variable TURNSTILE_SECRET_KEY.',
       })
       .parse(process.env.TURNSTILE_SECRET_KEY),
+    SUPABASE_SERVICE_ROLE_KEY: z
+      .string({
+        required_error:
+          'Could not load environment variable SUPABASE_SERVICE_ROLE_KEY',
+      })
+      .parse(process.env.SUPABASE_SERVICE_ROLE_KEY),
   };
 }

@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "test": "jest --no-watch",
-    "test:ci": "npm run init-dev-env && jest --ci -u",
+    "test:ci": "node init-env.js && jest --ci -u",
     "lint": "next lint",
     "format": "prettier --write \"**/*.+(js|ts|json)\"",
     "storybook": "storybook dev -p 6006",
@@ -59,6 +61,7 @@
     "prettier": "^3.2.5",
     "sass": "^1.72.0",
     "storybook": "^8.1.9",
+    "supabase": "^1.183.5",
     "typescript": "^5"
   }
 }
