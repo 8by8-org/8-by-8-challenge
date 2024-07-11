@@ -5,8 +5,8 @@ import { SERVER_SERVICE_KEYS } from '../keys';
 import type { ICookies } from '../cookies/i-cookies';
 
 export const redirectIfOTPNotSent = bind(
-  (cookies: ICookies, request: NextRequest) => {
-    const emailForSignIn = cookies.loadEmailForSignIn();
+  async (cookies: ICookies, request: NextRequest) => {
+    const emailForSignIn = await cookies.loadEmailForSignIn();
 
     if (!emailForSignIn) {
       return NextResponse.redirect(new URL('/signin', request.nextUrl.origin));

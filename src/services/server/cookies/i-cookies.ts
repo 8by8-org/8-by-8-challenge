@@ -1,5 +1,5 @@
 export interface ICookies {
-  setEmailForSignIn(email: string): void;
-  loadEmailForSignIn(): string;
+  setEmailForSignIn(email: string): Promise<void>;
+  loadEmailForSignIn(): Promise<string>;
   clearEmailForSignIn(): void;
 }

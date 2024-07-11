@@ -8,7 +8,7 @@ export async function UserContextProvider({ children }: PropsWithChildren) {
   const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
   const cookies = serverContainer.get(SERVER_SERVICE_KEYS.Cookies);
   const user = await auth.loadSessionUser();
-  const emailForSignIn = cookies.loadEmailForSignIn();
+  const emailForSignIn = await cookies.loadEmailForSignIn();
 
   return (
     <ClientSideUserContextProvider user={user} emailForSignIn={emailForSignIn}>

@@ -31,7 +31,7 @@ export const Middleware = inject(
         const response = await this.redirectIfSignedIn(request, event);
 
         if (this.shouldCheckIfSentOTP(request, response)) {
-          return this.redirectIfOTPNotSent(request, event);
+          return await this.redirectIfOTPNotSent(request, event);
         } else {
           return response;
         }

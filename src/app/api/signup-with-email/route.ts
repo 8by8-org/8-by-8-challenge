@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       );
 
     await auth.signUpWithEmailAndSendOTP(email, name, avatar, type);
-    cookies.setEmailForSignIn(email);
+    await cookies.setEmailForSignIn(email);
 
     return NextResponse.json(
       { message: 'Successfully created user.' },

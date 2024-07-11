@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const { email } = requestBodySchema.parse(data);
 
     await auth.sendOTPToEmail(email);
-    cookies.setEmailForSignIn(email);
+    await cookies.setEmailForSignIn(email);
 
     return NextResponse.json(
       { message: 'OTP has been resent.' },
