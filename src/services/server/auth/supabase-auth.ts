@@ -1,14 +1,13 @@
 import { inject } from 'undecorated-di';
 import { init } from '@paralleldrive/cuid2';
-import { isAuthApiError } from '@supabase/supabase-js';
 import { SERVER_SERVICE_KEYS } from '../keys';
+import { ServerError } from '@/errors/server-error';
 import type { Auth } from './auth';
 import type { User } from '@/model/types/user';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
 import type { UserRepository } from '../user-repository/user-repository';
 import type { Avatar } from '@/model/types/avatar';
 import type { UserType } from '@/model/enums/user-type';
-import { ServerError } from '@/errors/server-error';
 
 export const SupabaseAuth = inject(
   class SupabaseAuth implements Auth {
@@ -27,22 +26,22 @@ export const SupabaseAuth = inject(
     ): Promise<void> {
       const supabase = this.createSupabaseClient();
 
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.admin.createUser({
         email,
-        options: {
-          shouldCreateUser: true,
-          data: {
-            name,
-            avatar,
-            type,
-            invite_code: this.createInviteCode(),
-          },
+        email_confirm: true,
+        user_metadata: {
+          name,
+          avatar,
+          type,
+          invite_code: this.createInviteCode(),
         },
       });
 
       if (error) {
         throw new ServerError(error.message, error.status);
       }
+
+      await this.sendOTPToEmail(email);
     }
 
     async sendOTPToEmail(email: string): Promise<void> {
@@ -80,9 +79,14 @@ export const SupabaseAuth = inject(
       const user = await this.userRepository.getUserById(data.user.id);
 
       if (!user) {
-        try {
-          await supabase.auth.signOut();
-        } finally {
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+          throw new ServerError(
+            'User was authenticated, but user data was not found. Tried to sign out, but could not.',
+            500,
+          );
+        } else {
           throw new ServerError(
             'User was authenticated, but user data was not found.',
             404,
