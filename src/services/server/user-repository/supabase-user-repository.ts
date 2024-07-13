@@ -5,12 +5,13 @@ import type { User } from '@/model/types/user';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '../user-record-parser/i-user-record-parser';
 import { ServerError } from '@/errors/server-error';
+import { AuthError } from '@supabase/supabase-js';
 
 export const SupabaseUserRepository = inject(
   class SupabaseUserRepository implements UserRepository {
     constructor(
       private createSupabaseClient: CreateSupabaseClient,
-      private dbUserAdapter: IUserRecordParser,
+      private userRecordParser: IUserRecordParser,
     ) {}
 
     async getUserById(userId: string): Promise<User | null> {
@@ -27,7 +28,7 @@ export const SupabaseUserRepository = inject(
         )
         .eq('id', userId)
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error) {
         throw new ServerError(error.message, error.status);
@@ -36,7 +37,7 @@ export const SupabaseUserRepository = inject(
       if (!dbUser) return null;
 
       try {
-        const user = this.dbUserAdapter.parseUserRecord(dbUser);
+        const user = this.userRecordParser.parseUserRecord(dbUser);
         return user;
       } catch (e) {
         throw new ServerError('Failed to parse user data.', 400);
