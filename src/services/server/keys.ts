@@ -5,7 +5,7 @@ import type { ICookies } from './cookies/i-cookies';
 import type { IMiddleware } from './middleware/i-middleware.interface';
 import type { NextMiddleware } from 'next/server';
 import type { UserRepository } from './user-repository/user-repository';
-import type { DBUserAdapter } from './db-user-adapter/db-user-adapter';
+import type { IUserRecordParser } from './user-record-parser/i-user-record-parser';
 import type { CreateSupabaseClient } from './create-supabase-client/create-supabase-client';
 
 export const { keys: SERVER_SERVICE_KEYS } = Keys.createKeys()
@@ -17,8 +17,8 @@ export const { keys: SERVER_SERVICE_KEYS } = Keys.createKeys()
   .forType<ICookies>()
   .addKey('createSupabaseClient')
   .forType<CreateSupabaseClient>()
-  .addKey('DbUserAdapter')
-  .forType<DBUserAdapter>()
+  .addKey('UserRecordParser')
+  .forType<IUserRecordParser>()
   .addKey('Middleware')
   .forType<IMiddleware>()
   .addKey('redirectIfOTPNotSent')

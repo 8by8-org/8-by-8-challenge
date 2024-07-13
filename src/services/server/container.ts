@@ -5,7 +5,7 @@ import { CloudflareTurnstileValidator } from './captcha-validator/cloudflare-tur
 import { SupabaseAuth } from './auth/supabase-auth';
 import { Cookies } from './cookies/cookies';
 import { createSupabaseServerClient } from './create-supabase-client/create-supabase-server-client';
-import { SupabaseUserAdapter } from './db-user-adapter/supabase-user-adapter';
+import { UserRecordParser } from './user-record-parser/user-record-parser';
 import { Middleware } from './middleware/middleware';
 import { redirectIfOTPNotSent } from './redirect-if-otp-not-sent/redirect-if-otp-not-sent';
 import { redirectIfSignedInWithSupabase } from './redirect-if-signed-in/redirect-if-signed-in-with-supabase';
@@ -24,7 +24,7 @@ export const serverContainer = ContainerBuilder.createBuilder()
     SERVER_SERVICE_KEYS.createSupabaseClient,
     createSupabaseServerClient,
   )
-  .registerClass(SERVER_SERVICE_KEYS.DbUserAdapter, SupabaseUserAdapter)
+  .registerClass(SERVER_SERVICE_KEYS.UserRecordParser, UserRecordParser)
   .registerClass(SERVER_SERVICE_KEYS.Middleware, Middleware)
   .registerFunction(
     SERVER_SERVICE_KEYS.redirectIfOTPNotSent,

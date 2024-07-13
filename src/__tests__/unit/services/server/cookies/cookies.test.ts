@@ -1,9 +1,8 @@
 import { Cookies } from '@/services/server/cookies/cookies';
 import { Builder } from 'builder-pattern';
-import {
-  ResponseCookies,
-  type RequestCookie,
-  type ResponseCookie,
+import type {
+  RequestCookie,
+  ResponseCookie,
 } from 'next/dist/compiled/@edge-runtime/cookies';
 import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 

@@ -3,45 +3,37 @@ import { inject } from 'undecorated-di';
 import { z } from 'zod';
 import { UserType } from '@/model/enums/user-type';
 import { Actions } from '@/model/enums/actions';
-import type { DBUserAdapter } from './db-user-adapter';
+import type { IUserRecordParser } from './i-user-record-parser';
 import type { User } from '@/model/types/user';
-import type { Avatar } from '@/model/types/avatar';
-
 interface DBActionBadge {
   action: Actions.VoterRegistration | Actions.SharedChallenge;
 }
 
-interface DBPlayerBadge {
-  player_name: string;
-  player_avatar: Avatar;
-}
-
-export const SupabaseUserAdapter = inject(
-  class SupabaseUserAdapter implements DBUserAdapter {
+export const UserRecordParser = inject(
+  class UserRecordParser implements IUserRecordParser {
     private dbCompletedActionsSchema = z.object({
       election_reminders: z.boolean(),
       register_to_vote: z.boolean(),
       shared_challenge: z.boolean(),
     });
 
-    private dbBadgeSchema = z
-      .object({
+    private dbBadgeSchema = z.union([
+      z.object({
         action: z.enum([Actions.VoterRegistration, Actions.SharedChallenge]),
+        player_name: z.undefined(),
+        player_avatar: z.undefined(),
+      }),
+      z.object({
         player_name: z.string(),
         player_avatar: z.enum(['0', '1', '2', '3']),
-      })
-      .partial();
+        action: z.undefined(),
+      }),
+    ]);
 
     private isDBActionBadge(
       badge: z.infer<typeof this.dbBadgeSchema>,
     ): badge is DBActionBadge {
-      return !!badge.action;
-    }
-
-    private isDBPlayerBadge(
-      badge: z.infer<typeof this.dbBadgeSchema>,
-    ): badge is DBPlayerBadge {
-      return !!badge.player_name && !!badge.player_avatar;
+      return 'action' in badge;
     }
 
     private dbInvitedBySchema = z.object({
@@ -70,7 +62,7 @@ export const SupabaseUserAdapter = inject(
       contributed_to: z.array(this.dbContributedToSchema),
     });
 
-    public adaptDBUser(dbUser: object): User {
+    public parseUserRecord(dbUser: object): User {
       const validatedDBUser = this.dbUserSchema.parse(dbUser);
 
       const user: User = {
@@ -87,15 +79,12 @@ export const SupabaseUserAdapter = inject(
         },
         badges: validatedDBUser.badges.map(badge => {
           if (this.isDBActionBadge(badge)) return badge;
-          else if (this.isDBPlayerBadge(badge))
+          else {
             return {
               playerName: badge.player_name,
               playerAvatar: badge.player_avatar,
             };
-          else
-            throw new Error(
-              'Badge is neither an action badge nor a player badge.',
-            );
+          }
         }),
         invitedBy:
           validatedDBUser.invited_by ?
