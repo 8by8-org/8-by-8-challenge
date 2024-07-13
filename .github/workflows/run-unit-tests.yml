@@ -17,4 +17,3 @@ jobs:
       - run: npm ci
       - run: npm run supabase-test:start
       - run: npm run test:ci
-      - run: npm run supabase-test:stop

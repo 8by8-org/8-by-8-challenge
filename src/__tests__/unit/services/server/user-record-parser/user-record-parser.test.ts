@@ -22,10 +22,13 @@ describe('UserRecordParser', () => {
     badges: [
       {
         action: Actions.SharedChallenge,
+        player_name: null,
+        player_avatar: null,
       },
       {
         player_name: 'user 2',
         player_avatar: '1',
+        action: null,
       },
     ],
     invited_by: {

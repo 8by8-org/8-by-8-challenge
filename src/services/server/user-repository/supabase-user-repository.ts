@@ -1,11 +1,10 @@
 import { inject } from 'undecorated-di';
 import { SERVER_SERVICE_KEYS } from '../keys';
+import { ServerError } from '@/errors/server-error';
 import type { UserRepository } from './user-repository';
 import type { User } from '@/model/types/user';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '../user-record-parser/i-user-record-parser';
-import { ServerError } from '@/errors/server-error';
-import { AuthError } from '@supabase/supabase-js';
 
 export const SupabaseUserRepository = inject(
   class SupabaseUserRepository implements UserRepository {

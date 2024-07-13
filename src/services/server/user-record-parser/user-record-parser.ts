@@ -7,6 +7,8 @@ import type { IUserRecordParser } from './i-user-record-parser';
 import type { User } from '@/model/types/user';
 interface DBActionBadge {
   action: Actions.VoterRegistration | Actions.SharedChallenge;
+  player_name: null;
+  player_avatar: null;
 }
 
 export const UserRecordParser = inject(
@@ -20,20 +22,20 @@ export const UserRecordParser = inject(
     private dbBadgeSchema = z.union([
       z.object({
         action: z.enum([Actions.VoterRegistration, Actions.SharedChallenge]),
-        player_name: z.undefined(),
-        player_avatar: z.undefined(),
+        player_name: z.null(),
+        player_avatar: z.null(),
       }),
       z.object({
         player_name: z.string(),
         player_avatar: z.enum(['0', '1', '2', '3']),
-        action: z.undefined(),
+        action: z.null(),
       }),
     ]);
 
     private isDBActionBadge(
       badge: z.infer<typeof this.dbBadgeSchema>,
     ): badge is DBActionBadge {
-      return 'action' in badge;
+      return !!badge.action;
     }
 
     private dbInvitedBySchema = z.object({
@@ -78,8 +80,11 @@ export const UserRecordParser = inject(
           sharedChallenge: validatedDBUser.completed_actions.shared_challenge,
         },
         badges: validatedDBUser.badges.map(badge => {
-          if (this.isDBActionBadge(badge)) return badge;
-          else {
+          if (this.isDBActionBadge(badge)) {
+            return {
+              action: badge.action,
+            };
+          } else {
             return {
               playerName: badge.player_name,
               playerAvatar: badge.player_avatar,
