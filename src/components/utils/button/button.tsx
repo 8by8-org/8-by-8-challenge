@@ -1,30 +1,28 @@
-// Button.tsx
-import React, { FC } from 'react';
+import React, { type ButtonHTMLAttributes } from 'react';
 import styles from './button.module.scss';
 
-type ButtonProps = {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'btn_gradient' | 'btn_inverted';
   size?: 'btn_lg' | 'btn_sm';
   wide?: boolean;
   children: React.ReactNode;
-};
+}
 
-export const Button: FC<ButtonProps> = ({
+export function Button({
   variant = 'btn_gradient',
   size = 'btn_lg',
   wide = false,
   children,
-}) => {
+  ...htmlButtonProps
+}: ButtonProps) {
   const classNames = [styles[variant], styles[size]];
   if (wide) {
     classNames.push(styles.btn_wide);
   }
 
-  console.log('Button classNames:', classNames); // Debugging line
-
   return (
-    <button className={classNames.join(' ')}>
+    <button className={classNames.join(' ')} {...htmlButtonProps}>
       <span>{children}</span>
     </button>
   );
-};
+}
