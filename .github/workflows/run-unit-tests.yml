@@ -15,5 +15,5 @@ jobs:
         with:
           version: latest
       - run: npm ci
-      - run: npm run supabase-test:start
+      - run: npm run supabase-test:ci
       - run: npm run test:ci
