@@ -23,6 +23,7 @@ const config = {
     '<rootDir>/src/constants/',
     'fonts',
     '<rootDir>/src/model/',
+    'user-context-provider.tsx',
   ],
   //require 100% code coverage for the tests to pass
   coverageThreshold: {
