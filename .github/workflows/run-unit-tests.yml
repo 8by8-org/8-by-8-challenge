@@ -7,11 +7,11 @@ jobs:
   run-unit-tests:
     runs-on: ubuntu-latest
     env:
-      NEXT_PUBLIC_TURNSTILE_SITE_KEY: { { secrets.TEST_TURNSTILE_SITE_KEY } }
-      TURNSTILE_SECRET_KEY: { { secrets.TEST_TURNSTILE_SECRET_KEY } }
-      NEXT_PUBLIC_SUPABASE_URL: { { secrets.TEST_SUPABASE_URL } }
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: { { secrets.TEST_SUPABASE_ANON_KEY } }
-      SUPABASE_SERVICE_ROLE_KEY: { { secrets.TEST_SUPABASE_SECRET_KEY } }
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.TEST_TURNSTILE_SITE_KEY }}
+      TURNSTILE_SECRET_KEY: ${{ secrets.TEST_TURNSTILE_SECRET_KEY }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.TEST_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.TEST_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.TEST_SUPABASE_SECRET_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
