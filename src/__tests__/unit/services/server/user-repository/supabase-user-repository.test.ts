@@ -9,8 +9,7 @@ import { UserType } from '@/model/enums/user-type';
 import { Actions } from '@/model/enums/actions';
 import { createId } from '@paralleldrive/cuid2';
 import { ServerError } from '@/errors/server-error';
-import { Builder } from 'builder-pattern';
-import { AuthError, type SupabaseClient } from '@supabase/supabase-js';
+import { AuthError } from '@supabase/supabase-js';
 import type { CreateSupabaseClient } from '@/services/server/create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '@/services/server/user-record-parser/i-user-record-parser';
 
@@ -243,8 +242,8 @@ describe('SupabaseUserRepository', () => {
     const errorMessage = 'test error message';
 
     createSupabaseClient = jest.fn().mockImplementation(() => {
-      return Builder<SupabaseClient>()
-        .from(() => ({
+      return {
+        from: () => ({
           select: () => ({
             eq: () => ({
               limit: () => ({
@@ -257,8 +256,8 @@ describe('SupabaseUserRepository', () => {
               }),
             }),
           }),
-        }))
-        .build();
+        }),
+      };
     });
 
     userRepository = new SupabaseUserRepository(
@@ -273,8 +272,8 @@ describe('SupabaseUserRepository', () => {
 
   it('throws a ServerError if UserRecordParser.parseUserRecord throws an error.', async () => {
     createSupabaseClient = jest.fn().mockImplementation(() => {
-      return Builder<SupabaseClient>()
-        .from(() => ({
+      return {
+        from: () => ({
           select: () => ({
             eq: () => ({
               limit: () => ({
@@ -287,8 +286,8 @@ describe('SupabaseUserRepository', () => {
               }),
             }),
           }),
-        }))
-        .build();
+        }),
+      };
     });
 
     const userRecordParser: IUserRecordParser = {
