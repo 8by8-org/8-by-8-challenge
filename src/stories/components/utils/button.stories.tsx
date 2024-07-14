@@ -1,8 +1,7 @@
-// button.stories.tsx
 import { Meta, StoryObj } from '@storybook/react';
-import { Button } from '../../components/utils/button/button';
-import { GlobalStylesProvider } from '../global-styles-provider';
-import '../../components/button/button.module.scss';
+import { Button } from '../../../components/utils/button';
+import { GlobalStylesProvider } from '../../global-styles-provider';
+
 const meta: Meta<typeof Button> = {
   component: Button,
 };

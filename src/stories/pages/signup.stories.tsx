@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import SignUp from '@/app/signup/page';
 import { Builder } from 'builder-pattern';
 import { UserContext, UserContextType } from '@/contexts/user-context';
+import { AlertsContextProvider } from '@/contexts/alerts-context';
 import { GlobalStylesProvider } from '../global-styles-provider';
 import { Header } from '@/components/header';
 
@@ -26,10 +27,12 @@ export const Default: Story = {
 
     return (
       <GlobalStylesProvider>
-        <UserContext.Provider value={userContextValue}>
-          <Header />
-          <SignUp />
-        </UserContext.Provider>
+        <AlertsContextProvider>
+          <UserContext.Provider value={userContextValue}>
+            <Header />
+            <SignUp />
+          </UserContext.Provider>
+        </AlertsContextProvider>
       </GlobalStylesProvider>
     );
   },

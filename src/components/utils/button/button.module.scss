@@ -1,4 +1,4 @@
-@use '../../styles/partials' as *;
+@use '../../../styles/partials' as *;
 
 @mixin -base {
   position: relative;
@@ -52,7 +52,7 @@
   @include -base;
   @include -gradient-text;
   @include -outline;
-  background: $colors-black-8by8;
+  background: $color-black-8by8;
 }
 
 .btn_lg {

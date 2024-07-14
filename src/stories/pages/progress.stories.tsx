@@ -12,6 +12,11 @@ import { Actions } from '@/model/enums/actions';
 
 const meta: Meta<typeof Progress> = {
   component: Progress,
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+    },
+  },
 };
 
 export default meta;
