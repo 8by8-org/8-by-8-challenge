@@ -1,4 +1,4 @@
-import { redirectIfSignedInWithSupabase } from '@/services/server/redirect-if-signed-in/redirect-if-signed-in-with-supabase';
+import { redirectIfSignedOutFromSupabase } from '@/services/server/redirect-if-signed-out/redirect-if-signed-out-from-supabase';
 import { PRIVATE_ENVIRONMENT_VARIABLES } from '@/constants/private-environment-variables';
 import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 import { UserType } from '@/model/enums/user-type';
@@ -9,12 +9,21 @@ import { createId } from '@paralleldrive/cuid2';
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest } from 'next/server';
 
-describe('redirectIfSignedInWithSupabase', () => {
+describe('redirectIfSignedOutFromSupabase', () => {
   afterEach(() => {
     return resetSupabase();
   });
 
-  it('returns a response that redirects the user if they are signed in.', async () => {
+  it('returns a response that redirects the user if they are signed out.', async () => {
+    const request = new NextRequest('https://challenge.8by8.us/progress', {
+      method: 'GET',
+    });
+
+    const response = await redirectIfSignedOutFromSupabase(request);
+    expect(wasRedirected(response)).toBe(true);
+  });
+
+  it('returns a response that does not redirect the user if they are signed in.', async () => {
     /*
       Create a supabase client and capture the cookies it creates when a user 
       signs in.
@@ -75,23 +84,13 @@ describe('redirectIfSignedInWithSupabase', () => {
       Create a request, set the captured cookie on the request, and verify that 
       the response redirects the user.
     */
-    const request = new NextRequest('https://challenge.8by8.us/signin', {
+    const request = new NextRequest('https://challenge.8by8.us/progress', {
       method: 'GET',
     });
 
     request.cookies.set(authCookie.name, authCookie.value);
-    request.cookies.set('test-cookie', 'test-value');
 
-    const response = await redirectIfSignedInWithSupabase(request);
-    expect(wasRedirected(response)).toBe(true);
-  });
-
-  it('returns a response that does not redirect the user if they are signed out.', async () => {
-    const request = new NextRequest('https://challenge.8by8.us/signin', {
-      method: 'GET',
-    });
-
-    const response = await redirectIfSignedInWithSupabase(request);
+    const response = await redirectIfSignedOutFromSupabase(request);
     expect(wasRedirected(response)).toBe(false);
   });
 });

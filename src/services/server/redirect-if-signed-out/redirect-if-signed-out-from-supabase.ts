@@ -20,6 +20,7 @@ export const redirectIfSignedOutFromSupabase = bind(
         getAll() {
           return request.cookies.getAll();
         },
+        /* istanbul ignore next */
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
