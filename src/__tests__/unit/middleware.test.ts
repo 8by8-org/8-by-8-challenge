@@ -6,7 +6,6 @@ import { wasRedirected } from '@/utils/shared/was-redirected';
 import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
 import { Builder } from 'builder-pattern';
 import { NextFetchEvent, NextRequest } from 'next/server';
-
 import { MockNextCookies } from '@/utils/test/mock-next-cookies';
 
 const mockCookies = new MockNextCookies();
