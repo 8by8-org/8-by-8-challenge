@@ -6,13 +6,13 @@ import { deleteAuthUsers } from './delete-auth-users';
 import { clearTable } from './clear-table';
 
 /**
- * Clears all data between from Supabase. Intended to be called between tests to
- * ensure that tests are not coupled.
+ * Clears all data between from the auth/database provider(s). Intended to be
+ * called between tests to ensure that tests are not coupled.
  *
  * @remarks
- * This will clear all data from Supabase auth and database, so use with caution.
+ * This will clear all data from auth and database, so use with caution.
  */
-export async function resetSupabase() {
+export async function resetAuthAndDatabase() {
   const supabase = createBrowserClient(
     PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_URL,
     PRIVATE_ENVIRONMENT_VARIABLES.SUPABASE_SERVICE_ROLE_KEY,

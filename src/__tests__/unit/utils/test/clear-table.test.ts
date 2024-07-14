@@ -2,7 +2,7 @@ import { PRIVATE_ENVIRONMENT_VARIABLES } from '@/constants/private-environment-v
 import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 import { UserType } from '@/model/enums/user-type';
 import { clearTable } from '@/utils/test/clear-table';
-import { resetSupabase } from '@/utils/test/reset-supabase';
+import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
 import { createId } from '@paralleldrive/cuid2';
 import { createBrowserClient } from '@supabase/ssr';
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -10,7 +10,7 @@ import { Builder } from 'builder-pattern';
 
 describe('clearTable', () => {
   afterEach(() => {
-    return resetSupabase();
+    return resetAuthAndDatabase();
   });
 
   it('clears all rows from a given table.', async () => {

@@ -4,7 +4,7 @@ import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-var
 import { PRIVATE_ENVIRONMENT_VARIABLES } from '@/constants/private-environment-variables';
 import { UserRecordParser } from '@/services/server/user-record-parser/user-record-parser';
 import { v4 as uuid } from 'uuid';
-import { resetSupabase } from '@/utils/test/reset-supabase';
+import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
 import { UserType } from '@/model/enums/user-type';
 import { Actions } from '@/model/enums/actions';
 import { createId } from '@paralleldrive/cuid2';
@@ -33,7 +33,7 @@ describe('SupabaseUserRepository', () => {
   });
 
   afterEach(() => {
-    return resetSupabase();
+    return resetAuthAndDatabase();
   });
 
   it('returns null when getUserById is called and no user is found.', async () => {

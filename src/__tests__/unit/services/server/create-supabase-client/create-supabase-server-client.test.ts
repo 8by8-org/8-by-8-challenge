@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from '@/services/server/create-supabase-client/create-supabase-server-client';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { MockNextCookies } from '@/utils/test/mock-next-cookies';
-import { resetSupabase } from '@/utils/test/reset-supabase';
+import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
 import { UserType } from '@/model/enums/user-type';
 import { createId } from '@paralleldrive/cuid2';
 
@@ -16,7 +16,7 @@ describe('createSupabaseServerClient', () => {
 
   afterEach(() => {
     mockCookies.cookies().clear();
-    return resetSupabase();
+    return resetAuthAndDatabase();
   });
 
   afterAll(() => jest.unmock('next/headers'));
