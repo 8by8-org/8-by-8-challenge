@@ -6,11 +6,28 @@ Currently, we are working on migrating the existing application to Next.js and T
 
 ## Requirements
 
-You must have Node.js version 18.17+ and the Firebase CLI installed to run the local development server.
+You must have Node.js version 18.17+. Docker is strongly recommended for local development with Supabase, but you may also create your own Supabase project if you cannot install Docker.
 
 ## Getting Started
 
 To run the application locally, fork the repository and clone the fork to your machine. In the terminal, navigate into the project directory and run `npm install`. This will install the project's dependencies.
+
+Copy the contents of .env.example into a file named .env.
+
+Replace the values of the variables inside .env with appropriate entries. Values for turnstile keys can be found here: https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+
+Values for Supabase variables will be displayed in the terminal after running either `npm run supabase-dev:start` or `npm run supabase-test:start`. These values will be
+the same for both commands, and will be the same each time you run these commands.
+
+Add the following secrets to your Github repository:
+
+- TEST_TURNSTILE_SITE_KEY
+- TURNSTILE_SECRET_KEY
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
+- SUPABASE_SERVICE_ROLE_KEY
+
+The value of each secret should be the same as the value you added to your .env file for the corresponding environment variable. Adding these will enable our test workflow to successfully run.
 
 ## Contributing
 
@@ -18,7 +35,7 @@ New engineers should review [CONTRIBUTING.md](https://github.com/8by8-org/8by8-c
 
 ## Resources
 
-- [Figma prototype (see "Mocks, December version" under pages)](https://www.figma.com/file/0Q2tpQqi9sYcIA3ZyiX3PF/8BY8_POD_Jul30)
+- [Figma prototype](https://www.figma.com/design/TP1ZMtd6ykIjNql1t0OBoA/8BY8_PROTO_V2)
 - [Existing application source code](https://github.com/8by8-org/web-app)
 - [Deployed application](http://challenge.8by8.us/)
 - [Contributing](https://github.com/8by8-org/8by8-challenge/blob/development/CONTRIBUTING.md)
