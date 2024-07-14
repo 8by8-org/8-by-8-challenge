@@ -8,13 +8,17 @@ import { resetSupabase } from '@/utils/test/reset-supabase';
 import { UserType } from '@/model/enums/user-type';
 import { Actions } from '@/model/enums/actions';
 import { createId } from '@paralleldrive/cuid2';
+import { ServerError } from '@/errors/server-error';
+import { Builder } from 'builder-pattern';
+import { AuthError, type SupabaseClient } from '@supabase/supabase-js';
 import type { CreateSupabaseClient } from '@/services/server/create-supabase-client/create-supabase-client';
+import type { IUserRecordParser } from '@/services/server/user-record-parser/i-user-record-parser';
 
 describe('SupabaseUserRepository', () => {
   let userRepository: InstanceType<typeof SupabaseUserRepository>;
   let createSupabaseClient: CreateSupabaseClient;
 
-  beforeAll(() => {
+  beforeEach(() => {
     createSupabaseClient = () => {
       return createBrowserClient(
         PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_URL,
@@ -169,6 +173,7 @@ describe('SupabaseUserRepository', () => {
 
     // Evaluate whether the challenger is returned as expected.
     const challenger = await userRepository.getUserById(authChallenger.id);
+
     expect(challenger).toEqual({
       uid: authChallenger.id,
       email: authChallenger.email,
@@ -197,6 +202,7 @@ describe('SupabaseUserRepository', () => {
 
     // Evaluate whether the player is returned as expected.
     const player = await userRepository.getUserById(authPlayer.id);
+
     expect(player).toEqual({
       uid: authPlayer.id,
       email: authPlayer.email,
@@ -228,5 +234,73 @@ describe('SupabaseUserRepository', () => {
         avatar: challengerMetadata.avatar,
       },
     });
+  });
+
+  it('throws a ServerError if supabase.from().select() throws an error.', async () => {
+    const errorMessage = 'test error message';
+
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return Builder<SupabaseClient>()
+        .from(() => ({
+          select: () => ({
+            eq: () => ({
+              limit: () => ({
+                maybeSingle: () => {
+                  return Promise.resolve({
+                    data: null,
+                    error: new AuthError(errorMessage, 500),
+                  });
+                },
+              }),
+            }),
+          }),
+        }))
+        .build();
+    });
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+
+    await expect(userRepository.getUserById('')).rejects.toThrow(
+      new ServerError(errorMessage, 500),
+    );
+  });
+
+  it('throws a ServerError if UserRecordParser.parseUserRecord throws an error.', async () => {
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return Builder<SupabaseClient>()
+        .from(() => ({
+          select: () => ({
+            eq: () => ({
+              limit: () => ({
+                maybeSingle: () => {
+                  return Promise.resolve({
+                    data: {},
+                    error: null,
+                  });
+                },
+              }),
+            }),
+          }),
+        }))
+        .build();
+    });
+
+    const userRecordParser: IUserRecordParser = {
+      parseUserRecord: () => {
+        throw new Error('Error parsing user.');
+      },
+    };
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      userRecordParser,
+    );
+
+    await expect(userRepository.getUserById('')).rejects.toThrow(
+      new ServerError('Failed to parse user data.', 400),
+    );
   });
 });
