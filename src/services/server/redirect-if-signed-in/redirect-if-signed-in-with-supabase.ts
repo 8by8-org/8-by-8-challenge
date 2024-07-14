@@ -10,6 +10,8 @@ export const redirectIfSignedInWithSupabase = bind(
       request,
     });
 
+    console.log(request.cookies.getAll());
+
     const {
       NEXT_PUBLIC_SUPABASE_URL: url,
       NEXT_PUBLIC_SUPABASE_ANON_KEY: anonKey,

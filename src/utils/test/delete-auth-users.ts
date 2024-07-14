@@ -8,11 +8,11 @@ export async function deleteAuthUsers(
     error,
   } = await supabase.auth.admin.listUsers();
 
-  if (error) throw error;
+  if (error) throw new Error(error.message);
 
   for (const user of users) {
     const { error } = await supabase.auth.admin.deleteUser(user.id);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
   }
 
   return users.length;

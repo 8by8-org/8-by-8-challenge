@@ -1,52 +1,24 @@
 import { Cookies } from '@/services/server/cookies/cookies';
-import { Builder } from 'builder-pattern';
-import type {
-  RequestCookie,
-  ResponseCookie,
-} from 'next/dist/compiled/@edge-runtime/cookies';
-import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
+import { MockNextCookies } from '@/utils/test/mock-next-cookies';
 
-const mockCookieStore = new Map<string, RequestCookie>();
-
-function mockNextCookies(): ReadonlyRequestCookies {
-  return Builder<ReadonlyRequestCookies>()
-    .get((name: string) => {
-      return mockCookieStore.get(name);
-    })
-    .set((name: string, value: string, cookie?: Partial<ResponseCookie>) => {
-      mockCookieStore.set(name, {
-        name,
-        value,
-        ...cookie,
-      });
-
-      return mockNextCookies();
-    })
-    .delete((name: string) => {
-      mockCookieStore.delete(name);
-
-      return mockNextCookies();
-    })
-    .build();
-}
+const mockCookies = new MockNextCookies();
 
 jest.mock('next/headers', () => ({
-  cookies: () => mockNextCookies(),
+  cookies: () => mockCookies.cookies(),
 }));
 
 describe('Cookies', () => {
   afterEach(() => {
-    mockCookieStore.clear();
+    mockCookies.cookies().clear();
   });
 
-  afterAll(jest.restoreAllMocks);
+  afterAll(() => jest.unmock('next/headers'));
 
   it('sets, retrieves, and deletes cookies.', async () => {
     const cookies = new Cookies();
     const emailForSignIn = 'user@example.com';
     await cookies.setEmailForSignIn(emailForSignIn);
     await expect(cookies.loadEmailForSignIn()).resolves.toBe(emailForSignIn);
-
     cookies.clearEmailForSignIn();
     await expect(cookies.loadEmailForSignIn()).resolves.toBe('');
   });

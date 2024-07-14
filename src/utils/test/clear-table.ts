@@ -6,11 +6,11 @@ export async function clearTable(
 ): Promise<number> {
   const { data: rows, error } = await supabase.from(tableName).select();
 
-  if (error) throw error;
+  if (error) throw new Error(error.message);
 
   for (const row of rows) {
     const { error } = await supabase.from(tableName).delete().eq('id', row.id);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
   }
 
   return rows.length;

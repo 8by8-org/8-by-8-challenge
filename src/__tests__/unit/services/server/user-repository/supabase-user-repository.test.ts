@@ -59,7 +59,7 @@ describe('SupabaseUserRepository', () => {
       });
 
     if (challengerInsertionError) {
-      throw challengerInsertionError;
+      throw new Error(challengerInsertionError.message);
     }
 
     const authChallenger = challengerData.user!;
@@ -74,7 +74,7 @@ describe('SupabaseUserRepository', () => {
       .insert(challengerActionBadge);
 
     if (challengerActionBadgeInsertionError) {
-      throw challengerActionBadgeInsertionError;
+      throw new Error(challengerActionBadgeInsertionError.message);
     }
 
     const { error: challengerUpdateError } = await supabase
@@ -85,7 +85,7 @@ describe('SupabaseUserRepository', () => {
       .eq('user_id', authChallenger.id);
 
     if (challengerUpdateError) {
-      throw challengerUpdateError;
+      throw new Error(challengerUpdateError.message);
     }
 
     // Create a player who has been invited by the challenger.
@@ -104,7 +104,7 @@ describe('SupabaseUserRepository', () => {
       });
 
     if (playerInsertionError) {
-      throw playerInsertionError;
+      throw new Error(playerInsertionError.message);
     }
 
     const authPlayer = playerData.user!;
@@ -119,7 +119,7 @@ describe('SupabaseUserRepository', () => {
       });
 
     if (invitedByInsertionError) {
-      throw invitedByInsertionError;
+      throw new Error(invitedByInsertionError.message);
     }
 
     // Complete an action on behalf of the challenger.
@@ -132,7 +132,8 @@ describe('SupabaseUserRepository', () => {
       .from('badges')
       .insert(playerActionBadge);
 
-    if (playerActionBadgeInsertionError) throw playerActionBadgeInsertionError;
+    if (playerActionBadgeInsertionError)
+      throw new Error(playerActionBadgeInsertionError.message);
 
     const playerContributedTo = {
       player_id: authPlayer.id,
@@ -145,7 +146,7 @@ describe('SupabaseUserRepository', () => {
       .insert(playerContributedTo);
 
     if (contributedToInsertionError) {
-      throw contributedToInsertionError;
+      throw new Error(contributedToInsertionError.message);
     }
 
     const { error: playerUpdateError } = await supabase
@@ -156,7 +157,7 @@ describe('SupabaseUserRepository', () => {
       .eq('user_id', authPlayer.id);
 
     if (playerUpdateError) {
-      throw playerUpdateError;
+      throw new Error(playerUpdateError.message);
     }
 
     const playerAwardedBadge = {
@@ -170,7 +171,7 @@ describe('SupabaseUserRepository', () => {
       .insert(playerAwardedBadge);
 
     if (playerAwardedBadgeInsertionError) {
-      throw playerAwardedBadgeInsertionError;
+      throw new Error(playerAwardedBadgeInsertionError.message);
     }
 
     // Evaluate whether the challenger is returned as expected.

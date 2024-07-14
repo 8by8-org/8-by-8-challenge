@@ -31,7 +31,7 @@ describe('clearTable', () => {
         },
       });
 
-      if (error) throw error;
+      if (error) throw new Error(error.message);
     }
 
     const beforeClearTable = await supabase.from('users').select();

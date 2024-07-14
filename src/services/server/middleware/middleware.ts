@@ -9,6 +9,7 @@ import type {
   NextMiddleware,
   NextMiddlewareResult,
 } from 'next/dist/server/web/types';
+import { wasRedirected } from '@/utils/shared/was-redirected';
 
 export const Middleware = inject(
   class Middleware implements IMiddleware {
@@ -53,7 +54,7 @@ export const Middleware = inject(
       response: NextMiddlewareResult,
     ) {
       return (
-        !response?.redirected &&
+        !wasRedirected(response) &&
         request.nextUrl.pathname.includes('/signin-with-otp')
       );
     }
