@@ -19,16 +19,6 @@ Replace the values of the variables inside .env with appropriate entries. Values
 Values for Supabase variables will be displayed in the terminal after running either `npm run supabase-dev:start` or `npm run supabase-test:start`. These values will be
 the same for both commands, and will be the same each time you run these commands.
 
-Add the following secrets to your Github repository:
-
-- TEST_TURNSTILE_SITE_KEY
-- TURNSTILE_SECRET_KEY
-- NEXT_PUBLIC_SUPABASE_URL
-- NEXT_PUBLIC_SUPABASE_ANON_KEY
-- SUPABASE_SERVICE_ROLE_KEY
-
-The value of each secret should be the same as the value you added to your .env file for the corresponding environment variable. Adding these will enable our test workflow to successfully run.
-
 ## Contributing
 
 New engineers should review [CONTRIBUTING.md](https://github.com/8by8-org/8by8-challenge/blob/development/CONTRIBUTING.md) for details about the recommended workflow and tools.
