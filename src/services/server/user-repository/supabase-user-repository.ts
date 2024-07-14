@@ -30,7 +30,7 @@ export const SupabaseUserRepository = inject(
         .maybeSingle();
 
       if (error) {
-        throw new ServerError(error.message, error.status);
+        throw new ServerError(error.message, 500);
       }
 
       if (!dbUser) return null;
