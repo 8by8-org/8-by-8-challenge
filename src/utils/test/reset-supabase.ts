@@ -2,7 +2,8 @@ import 'server-only';
 import { createBrowserClient } from '@supabase/ssr';
 import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 import { PRIVATE_ENVIRONMENT_VARIABLES } from '@/constants/private-environment-variables';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import { deleteAuthUsers } from './delete-auth-users';
+import { clearTable } from './clear-table';
 
 /**
  * Clears all data between from Supabase. Intended to be called between tests to
@@ -29,38 +30,4 @@ export async function resetSupabase() {
   await clearTable('badges', supabase);
   await clearTable('contributed_to', supabase);
   await clearTable('invited_by', supabase);
-}
-
-export async function deleteAuthUsers(
-  supabase: SupabaseClient,
-): Promise<number> {
-  const {
-    data: { users },
-    error,
-  } = await supabase.auth.admin.listUsers();
-
-  if (error) throw error;
-
-  for (const user of users) {
-    const { error } = await supabase.auth.admin.deleteUser(user.id);
-    if (error) throw error;
-  }
-
-  return users.length;
-}
-
-export async function clearTable(
-  tableName: string,
-  supabase: SupabaseClient,
-): Promise<number> {
-  const { data: rows, error } = await supabase.from(tableName).select();
-
-  if (error) throw new error();
-
-  for (const row of rows) {
-    const { error } = await supabase.from(tableName).delete().eq('id', row.id);
-    if (error) throw error;
-  }
-
-  return rows.length;
 }

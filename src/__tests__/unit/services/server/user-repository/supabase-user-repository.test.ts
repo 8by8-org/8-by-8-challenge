@@ -32,7 +32,9 @@ describe('SupabaseUserRepository', () => {
     );
   });
 
-  afterEach(resetSupabase);
+  afterEach(() => {
+    return resetSupabase();
+  });
 
   it('returns null when getUserById is called and no user is found.', async () => {
     await expect(userRepository.getUserById(uuid())).resolves.toBe(null);
