@@ -2,7 +2,7 @@ import { middleware, config } from '@/middleware';
 import { SIGNED_IN_ONLY_ROUTES } from '@/constants/signed-in-only-routes';
 import { SIGNED_OUT_ONLY_ROUTES } from '@/constants/signed-out-only-routes';
 import { getSignedInRequest } from '@/utils/test/get-signed-in-request';
-import { wasRedirected } from '@/utils/shared/was-redirected';
+import { willBeRedirected } from '@/utils/shared/was-redirected';
 import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
 import { Builder } from 'builder-pattern';
 import { NextFetchEvent, NextRequest } from 'next/server';
@@ -37,7 +37,7 @@ describe('middleware', () => {
         Builder<NextFetchEvent>().build(),
       );
 
-      expect(wasRedirected(response)).toBe(true);
+      expect(willBeRedirected(response)).toBe(true);
     }
   });
 
@@ -54,7 +54,7 @@ describe('middleware', () => {
         request,
         Builder<NextFetchEvent>().build(),
       );
-      expect(wasRedirected(response)).toBe(false);
+      expect(willBeRedirected(response)).toBe(false);
 
       await resetAuthAndDatabase();
     }
@@ -75,7 +75,7 @@ describe('middleware', () => {
         Builder<NextFetchEvent>().build(),
       );
 
-      expect(wasRedirected(response)).toBe(true);
+      expect(willBeRedirected(response)).toBe(true);
 
       await resetAuthAndDatabase();
     }
@@ -95,7 +95,7 @@ describe('middleware', () => {
         Builder<NextFetchEvent>().build(),
       );
 
-      expect(wasRedirected(response)).toBe(false);
+      expect(willBeRedirected(response)).toBe(false);
     }
   });
 
@@ -113,7 +113,7 @@ describe('middleware', () => {
       Builder<NextFetchEvent>().build(),
     );
 
-    expect(wasRedirected(response)).toBe(true);
+    expect(willBeRedirected(response)).toBe(true);
   });
 
   test(`no other requests are redirected.`, async () => {
@@ -129,7 +129,7 @@ describe('middleware', () => {
         Builder<NextFetchEvent>().build(),
       );
 
-      expect(wasRedirected(response)).toBe(false);
+      expect(willBeRedirected(response)).toBe(false);
     }
   });
 

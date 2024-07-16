@@ -13,6 +13,27 @@ import { redirectIfSignedOutFromSupabase } from './redirect-if-signed-out/redire
 import { refreshSupabaseSession } from './refresh-session/refresh-supabase-session';
 import { SupabaseUserRepository } from './user-repository/supabase-user-repository';
 
+/**
+ * An inversion of control container that should be used to obtain instances of
+ * service classes, functions, etc. The container is designated server-only and
+ * can only be imported into backend code, such as API routes, middleware and
+ * server components. This container provides a layer of abstraction between
+ * vender-specific code and application code, creating a more loosely-coupled
+ * architecture.
+ *
+ * @example
+ * ```
+ * // An API route that obtains a service from the container
+ * import { serverContainer } from '@/services/server/container';
+ * import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
+ *
+ * export function POST(request: NextRequest) {
+ *   const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
+ *
+ *   // invoke methods of auth and return a response
+ * }
+ * ```
+ */
 export const serverContainer = ContainerBuilder.createBuilder()
   .registerClass(SERVER_SERVICE_KEYS.Auth, SupabaseAuth)
   .registerClass(

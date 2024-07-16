@@ -3,14 +3,19 @@ import { inject } from 'undecorated-di';
 import { SERVER_SERVICE_KEYS } from '../keys';
 import { SIGNED_IN_ONLY_ROUTES } from '@/constants/signed-in-only-routes';
 import { SIGNED_OUT_ONLY_ROUTES } from '@/constants/signed-out-only-routes';
+import { willBeRedirected } from '@/utils/shared/was-redirected';
 import type { IMiddleware } from './i-middleware.interface';
 import type { NextRequest, NextFetchEvent } from 'next/server';
 import type {
   NextMiddleware,
   NextMiddlewareResult,
 } from 'next/dist/server/web/types';
-import { wasRedirected } from '@/utils/shared/was-redirected';
 
+/**
+ * An implementation of {@link IMiddleware} that potentially redirects the user
+ * depending on various conditions, such as their authentication status, whether
+ * or not a one-time passcode has been sent to their email address, etc.
+ */
 export const Middleware = inject(
   class Middleware implements IMiddleware {
     constructor(
@@ -54,7 +59,7 @@ export const Middleware = inject(
       response: NextMiddlewareResult,
     ) {
       return (
-        !wasRedirected(response) &&
+        !willBeRedirected(response) &&
         request.nextUrl.pathname.includes('/signin-with-otp')
       );
     }

@@ -6,6 +6,11 @@ import type { User } from '@/model/types/user';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '../user-record-parser/i-user-record-parser';
 
+/**
+ * An implementation of {@link UserRepository} that interacts with
+ * a [Supabase](https://supabase.com/) database and parses rows returned from
+ * that database into {@link User}s.
+ */
 export const SupabaseUserRepository = inject(
   class SupabaseUserRepository implements UserRepository {
     constructor(

@@ -5,12 +5,17 @@ import { UserType } from '@/model/enums/user-type';
 import { Actions } from '@/model/enums/actions';
 import type { IUserRecordParser } from './i-user-record-parser';
 import type { User } from '@/model/types/user';
+
 interface DBActionBadge {
   action: Actions.VoterRegistration | Actions.SharedChallenge;
   player_name: null;
   player_avatar: null;
 }
 
+/**
+ * An implementation of {@link IUserRecordParser}. Parses an object returned
+ * by an ORM into a {@link User}.
+ */
 export const UserRecordParser = inject(
   class UserRecordParser implements IUserRecordParser {
     private dbCompletedActionsSchema = z.object({

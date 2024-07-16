@@ -9,6 +9,16 @@ import type { UserRepository } from '../user-repository/user-repository';
 import type { Avatar } from '@/model/types/avatar';
 import type { UserType } from '@/model/enums/user-type';
 
+/**
+ * An implementation of {@link Auth} that calls leverages Supabase to provide
+ * methods for managing authentication from backend code.
+ *
+ * @remarks
+ * By wrapping the class with the `inject` function from
+ * [undecorated-di](https://www.npmjs.com/package/undecorated-di), the class
+ * can be registered to (and then later obtained from) an inversion of control
+ * container.
+ */
 export const SupabaseAuth = inject(
   class SupabaseAuth implements Auth {
     private createInviteCode = init({ length: 10 });

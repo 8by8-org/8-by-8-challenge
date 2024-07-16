@@ -4,6 +4,13 @@ import { cookies } from 'next/headers';
 import { DateTime } from 'luxon';
 import type { ICookies } from './i-cookies';
 
+/**
+ * An implementation of {@link ICookies}. Provides a mechanism for setting
+ * cookies to track various settings, such as the email address to which a
+ * one-time passcode was sent. This improves user experience by allowing certain
+ * components to be rendered on the server with the user's information
+ * pre-populated.
+ */
 export const Cookies = inject(
   class Cookies implements ICookies {
     private emailForSignInCookieName = '8by8-email-for-signin';

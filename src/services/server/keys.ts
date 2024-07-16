@@ -8,7 +8,7 @@ import type { UserRepository } from './user-repository/user-repository';
 import type { IUserRecordParser } from './user-record-parser/i-user-record-parser';
 import type { CreateSupabaseClient } from './create-supabase-client/create-supabase-client';
 
-export const { keys: SERVER_SERVICE_KEYS } = Keys.createKeys()
+const { keys } = Keys.createKeys()
   .addKey('Auth')
   .forType<Auth>()
   .addKey('CaptchaValidator')
@@ -31,3 +31,10 @@ export const { keys: SERVER_SERVICE_KEYS } = Keys.createKeys()
   .forType<NextMiddleware>()
   .addKey('UserRepository')
   .forType<UserRepository>();
+
+/**
+ * Keys that can be used to retrieve service classes, functions, etc. from an
+ * inversion of control container. Each key is linked to a specific interface,
+ * making retrieval type-safe.
+ */
+export const SERVER_SERVICE_KEYS = keys;

@@ -2,7 +2,7 @@ import { redirectIfOTPNotSent } from '@/services/server/redirect-if-otp-not-sent
 import { Builder } from 'builder-pattern';
 import { ICookies } from '@/services/server/cookies/i-cookies';
 import { NextRequest } from 'next/server';
-import { wasRedirected } from '@/utils/shared/was-redirected';
+import { willBeRedirected } from '@/utils/shared/was-redirected';
 
 describe('redirectIfOTPNotSent', () => {
   it('redirects the user if it fails to load an email for sign in.', async () => {
@@ -13,7 +13,7 @@ describe('redirectIfOTPNotSent', () => {
       'https://challenge.8by8.us/signin-with-otp',
     );
     const response = await redirectIfOTPNotSent(cookies, request);
-    expect(wasRedirected(response)).toBe(true);
+    expect(willBeRedirected(response)).toBe(true);
   });
 
   it('does not redirect the user if it loads an email for sign in.', async () => {
@@ -24,6 +24,6 @@ describe('redirectIfOTPNotSent', () => {
       'https://challenge.8by8.us/signin-with-otp',
     );
     const response = await redirectIfOTPNotSent(cookies, request);
-    expect(wasRedirected(response)).toBe(false);
+    expect(willBeRedirected(response)).toBe(false);
   });
 });

@@ -4,6 +4,11 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 
+/**
+ * Calls supabase.auth.getUser() in order to refresh their auth token. See
+ * {@link https://supabase.com/docs/guides/auth/server-side/nextjs?queryGroups=router&router=app}
+ * for more information.
+ */
 export const refreshSupabaseSession = bind(async (request: NextRequest) => {
   let supabaseResponse = NextResponse.next({
     request,

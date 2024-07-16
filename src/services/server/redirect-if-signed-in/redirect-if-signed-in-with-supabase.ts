@@ -4,6 +4,10 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 
+/**
+ * Reads authentication information from cookies and redirects the user to
+ * /progress if they are signed in.
+ */
 export const redirectIfSignedInWithSupabase = bind(
   async (request: NextRequest) => {
     let supabaseResponse = NextResponse.next({

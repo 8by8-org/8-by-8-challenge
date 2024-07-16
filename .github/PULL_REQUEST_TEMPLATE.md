@@ -3,7 +3,8 @@
 > Please ensure you have followed all of the steps below before submitting a pull request:
 
 - [ ] Include the corresponding Jira issue key and #done in the PR title, like so: "JRA-123 #done Migrate Election Reminders"
-- [ ] Verify that the code compiles
+- [ ] Verify that the code compiles (npm run dev)
+- [ ] Verify that the project builds (npm run build)
 - [ ] Verify that all tests pass
 - [ ] Verify that unit tests cover 100% of the code
 - [ ] Create Storybook stories for visual components

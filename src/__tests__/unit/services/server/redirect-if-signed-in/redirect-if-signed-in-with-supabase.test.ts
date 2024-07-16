@@ -1,5 +1,5 @@
 import { redirectIfSignedInWithSupabase } from '@/services/server/redirect-if-signed-in/redirect-if-signed-in-with-supabase';
-import { wasRedirected } from '@/utils/shared/was-redirected';
+import { willBeRedirected } from '@/utils/shared/was-redirected';
 import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
 import { NextRequest } from 'next/server';
 import { getSignedInRequest } from '@/utils/test/get-signed-in-request';
@@ -17,7 +17,7 @@ describe('redirectIfSignedInWithSupabase', () => {
       },
     );
     const response = await redirectIfSignedInWithSupabase(request);
-    expect(wasRedirected(response)).toBe(true);
+    expect(willBeRedirected(response)).toBe(true);
   });
 
   it('returns a response that does not redirect the user if they are signed out.', async () => {
@@ -26,6 +26,6 @@ describe('redirectIfSignedInWithSupabase', () => {
     });
 
     const response = await redirectIfSignedInWithSupabase(request);
-    expect(wasRedirected(response)).toBe(false);
+    expect(willBeRedirected(response)).toBe(false);
   });
 });
