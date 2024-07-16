@@ -9,12 +9,25 @@ import {
 import { useRouter } from 'next/navigation';
 import type { User } from '@/model/types/user';
 
+/**
+ * Props that can be passed from a server component into a
+ * {@link ClientSideUserContextProvider} in order to pre-render child components
+ * with the user's information pre-populated.
+ */
 interface ClientSideUserContextProviderProps {
   user: User | null;
   emailForSignIn: string;
   children?: ReactNode;
 }
 
+/**
+ * Receives a {@link User} and an email address to use for signing in from a
+ * server component and provides these as React state variables to child
+ * components. Provides methods for signing in, signing out, and more.
+ *
+ * @param props - {@link ClientSideUserContextProviderProps}
+ * @returns A {@link UserContext} provider.
+ */
 export function ClientSideUserContextProvider(
   props: ClientSideUserContextProviderProps,
 ) {
@@ -89,6 +102,7 @@ export function ClientSideUserContextProvider(
     setUser(null);
   }
 
+  /* istanbul ignore next */
   async function restartChallenge() {
     throw new Error('not implemented.');
   }

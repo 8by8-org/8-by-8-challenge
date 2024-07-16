@@ -8,7 +8,9 @@ import { NextMiddlewareResult } from 'next/dist/server/web/types';
  * @returns A boolean indicating whether or not the user will be redirected.
  */
 export function willBeRedirected(nextMiddlewareResult: NextMiddlewareResult) {
+  if (!nextMiddlewareResult) return false;
+
   const redirectCodes = [307, 308];
 
-  return redirectCodes.includes(nextMiddlewareResult!.status);
+  return redirectCodes.includes(nextMiddlewareResult.status);
 }

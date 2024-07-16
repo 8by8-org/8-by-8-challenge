@@ -3,7 +3,7 @@ import { inject } from 'undecorated-di';
 import { SERVER_SERVICE_KEYS } from '../keys';
 import { SIGNED_IN_ONLY_ROUTES } from '@/constants/signed-in-only-routes';
 import { SIGNED_OUT_ONLY_ROUTES } from '@/constants/signed-out-only-routes';
-import { willBeRedirected } from '@/utils/shared/was-redirected';
+import { willBeRedirected } from '@/utils/shared/will-be-redirected';
 import type { IMiddleware } from './i-middleware.interface';
 import type { NextRequest, NextFetchEvent } from 'next/server';
 import type {

@@ -2,7 +2,7 @@ import { redirectIfOTPNotSent } from '@/services/server/redirect-if-otp-not-sent
 import { Builder } from 'builder-pattern';
 import { ICookies } from '@/services/server/cookies/i-cookies';
 import { NextRequest } from 'next/server';
-import { willBeRedirected } from '@/utils/shared/was-redirected';
+import { willBeRedirected } from '@/utils/shared/will-be-redirected';
 
 describe('redirectIfOTPNotSent', () => {
   it('redirects the user if it fails to load an email for sign in.', async () => {

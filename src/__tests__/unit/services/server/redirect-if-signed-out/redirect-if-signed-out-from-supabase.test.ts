@@ -1,5 +1,5 @@
 import { redirectIfSignedOutFromSupabase } from '@/services/server/redirect-if-signed-out/redirect-if-signed-out-from-supabase';
-import { willBeRedirected } from '@/utils/shared/was-redirected';
+import { willBeRedirected } from '@/utils/shared/will-be-redirected';
 import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
 import { NextRequest } from 'next/server';
 import { getSignedInRequest } from '@/utils/test/get-signed-in-request';

@@ -1,6 +1,6 @@
 import { PropsWithChildren, useState } from 'react';
 import { render, screen, cleanup, waitFor } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import navigation from 'next/navigation';
 import { Builder } from 'builder-pattern';

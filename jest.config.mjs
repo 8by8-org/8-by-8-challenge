@@ -9,7 +9,7 @@ const createJestConfig = nextJest({
 /** @type {import('jest').Config} */
 const config = {
   testEnvironment: './jest-environment.js',
-  setupFiles: ['jest-canvas-mock'],
+  setupFiles: ['jest-canvas-mock', './jest-setup.js'],
   collectCoverage: true,
   // add directories here to include them in coverage reports and threshold
   collectCoverageFrom: ['./src/**'],
@@ -23,7 +23,7 @@ const config = {
     '<rootDir>/src/constants/',
     'fonts',
     '<rootDir>/src/model/',
-    'user-context-provider.tsx',
+    'user-context/user-context-provider.tsx',
   ],
   //require 100% code coverage for the tests to pass
   coverageThreshold: {

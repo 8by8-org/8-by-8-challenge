@@ -51,7 +51,7 @@ export const AlertsContext =
  * given amount of time.
  *
  * @param props - {@link PropsWithChildren}
- * @returns An {@link AlertsContext.Provider}
+ * @returns An {@link AlertsContext} provider.
  */
 export function AlertsContextProvider({ children }: PropsWithChildren) {
   const { alertRef, showAlert } = useAlert();

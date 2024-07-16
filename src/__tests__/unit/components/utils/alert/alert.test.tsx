@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { render, screen, cleanup, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { userEvent } from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
 import { Alert, useAlert } from '@/components/utils/alert';
 
 describe('Alert', () => {
