@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "@supabase/ssr": "^0.4.0",
     "firebase": "^10.12.2",
     "firebase-admin": "^12.1.1",
     "fully-formed": "^1.0.1",
@@ -64,6 +66,7 @@
     "prettier": "^3.2.5",
     "sass": "^1.72.0",
     "storybook": "^8.1.9",
+    "supabase": "^1.183.5",
     "typescript": "^5"
   }
 }

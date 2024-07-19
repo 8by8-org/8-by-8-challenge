@@ -10,4 +10,4 @@ interface RewardsContextType {
 
 const RewardsContext = createNamedContext<RewardsContextType>('RewardsContext');
 
-export { RewardsContext, type RewardsContextType };
+export { RewardsContext,  type RewardsContextType };
