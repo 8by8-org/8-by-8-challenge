@@ -12,6 +12,11 @@ import { Actions } from '@/model/enums/actions';
 
 const meta: Meta<typeof Progress> = {
   component: Progress,
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+    },
+  },
 };
 
 export default meta;
@@ -34,7 +39,6 @@ export const DaysLeftChallenge: Story = {
       badges: [],
       challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
       completedChallenge: false,
-      redeemedAward: false,
       contributedTo: [],
       inviteCode: '',
     };
@@ -68,7 +72,6 @@ export const NoDaysLeftChallenge: Story = {
       ],
       challengeEndTimestamp: DateTime.now().toUnixInteger(),
       completedChallenge: false,
-      redeemedAward: false,
       contributedTo: [],
       inviteCode: '',
     };
@@ -107,7 +110,6 @@ export const CompletedChallenge: Story = {
       ],
       challengeEndTimestamp: DateTime.now().toUnixInteger(),
       completedChallenge: true,
-      redeemedAward: true,
       contributedTo: [],
       inviteCode: '',
     };

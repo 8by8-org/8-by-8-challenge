@@ -1,7 +1,7 @@
-import { Footer } from '@/components/footer';
+import { AlertsContextProvider } from '@/contexts/alerts-context';
+import { UserContextProvider } from '@/contexts/user-context/user-context-provider';
 import { Header } from '@/components/header';
-
-import { IDBUserContextProvider } from '@/contexts/user-context/idb-user-context-provider';
+import { Footer } from '@/components/footer';
 import { bebasNeue } from '@/fonts/bebas-neue';
 import { lato } from '@/fonts/lato';
 import type { Metadata } from 'next';
@@ -20,11 +20,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={`${bebasNeue.variable} ${lato.variable}`}>
-        <IDBUserContextProvider>
+        <AlertsContextProvider>
+          <UserContextProvider>
             <Header />
             {children}
             <Footer />
-        </IDBUserContextProvider>
+          </UserContextProvider>
+        </AlertsContextProvider>
       </body>
     </html>
   );

@@ -6,10 +6,21 @@ on:
 jobs:
   run-unit-tests:
     runs-on: ubuntu-latest
+    env:
+      # Dummy environment variables for testing only
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+      TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+      SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: latest
+          node-version: '18.x'
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
       - run: npm ci
+      - run: npm run supabase-test:start
       - run: npm run test:ci

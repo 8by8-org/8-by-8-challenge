@@ -1,0 +1,18 @@
+Jul 18, 2024 4:30:05 PM io.netty.util.internal.MacAddressUtil defaultMachineId
+WARNING: Failed to find a usable hardware address from the network interfaces; using random bytes: 91:2b:60:3d:11:a8:b6:e6
+Jul 18, 2024 4:30:05 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+INFO: Started WebSocket server on ws://127.0.0.1:9150
+API endpoint: http://127.0.0.1:8080
+If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
+
+   export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
+
+If you are running a Firestore in Datastore Mode project, run:
+
+   export DATASTORE_EMULATOR_HOST=127.0.0.1:8080
+
+Note: Support for Datastore Mode is in preview. If you encounter any bugs please file at https://github.com/firebase/firebase-tools/issues.
+Dev App Server is now running.
+
+*** shutting down gRPC server since JVM is shutting down
+*** server shut down

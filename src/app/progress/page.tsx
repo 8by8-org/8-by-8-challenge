@@ -3,8 +3,8 @@ import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { PageContainer } from '@/components/utils/page-container';
 import { UserContext } from '@/contexts/user-context';
-import { calculateDaysRemaining } from '@/utils/progress/calculate-days-remaining';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { calculateDaysRemaining } from './calculate-days-remaining';
+import { useContextSafely } from '@/hooks/use-context-safely';
 import { ChallengeButton } from '@/components/progress/challenge-button/challenge-button';
 import claimReward from '@/../public/static/images/pages/progress/claiming-a-reward.svg';
 import daysRemainingBlob from '@/../public/static/images/pages/progress/days-remaining-blob.svg';
@@ -13,8 +13,9 @@ import blackCurve from '@/../public/static/images/pages/progress/black-curve.svg
 import { Badges } from '@/components/progress/badges';
 import { Modal } from '@/components/utils/modal';
 import styles from './styles.module.scss';
+import { isSignedIn } from '@/components/guards/is-signed-in';
 
-export default function Progress() {
+export default isSignedIn(function Progress() {
   const { user, restartChallenge } = useContextSafely(
     UserContext,
     'UserContext',
@@ -22,10 +23,6 @@ export default function Progress() {
   const daysLeft = calculateDaysRemaining(user);
   const [openModal, setOpenModal] = useState(false);
   const toggleInvite = useRef(null);
-
-  // Temp
-  // TODO - Partners Exist
-  // let partnersExist = false;
 
   return (
     <PageContainer>
@@ -36,15 +33,10 @@ export default function Progress() {
         <section className={styles.section_1}>
           <h1>
             {user?.completedChallenge ?
-              user?.redeemedAward ?
-                <>
-                  You&apos;ve Won! <br /> The <br />
-                  Challenge
-                </>
-              : <>
-                  You&apos;ve Won! <br /> Here&apos;s <br /> Your <br /> Reward
-                </>
-
+              <>
+                You&apos;ve Won! <br /> The <br />
+                Challenge
+              </>
             : <>
                 Your <br /> challenge <br /> badges
               </>
@@ -55,6 +47,7 @@ export default function Progress() {
               className={styles.blob}
               src={user?.completedChallenge ? claimReward : daysRemainingBlob}
               alt="days remaining blob"
+              priority={true}
             />
             {!user?.completedChallenge && (
               <div className={styles.days_label}>
@@ -86,7 +79,12 @@ export default function Progress() {
             )}
             */}
         </section>
-        <Image className={styles.curve} src={blackCurve} alt="black curve" />
+        <Image
+          className={styles.curve}
+          src={blackCurve}
+          alt="black curve"
+          priority={true}
+        />
 
         <section className={styles.section_2}>
           <h3>
@@ -185,4 +183,4 @@ export default function Progress() {
       </article>
     </PageContainer>
   );
-}
+});

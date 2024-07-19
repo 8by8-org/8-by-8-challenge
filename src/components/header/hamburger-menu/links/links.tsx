@@ -1,5 +1,5 @@
 'use client';
-import { useContextSafely } from '../../../../hooks/functions/use-context-safely';
+import { useContextSafely } from '../../../../hooks/use-context-safely';
 import { UserContext } from '../../../../contexts/user-context/user-context';
 import { UserType } from '../../../../model/enums/user-type';
 import { ChallengerLinks } from './challenger-links';

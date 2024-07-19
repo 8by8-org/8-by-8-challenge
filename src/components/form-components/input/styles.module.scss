@@ -31,6 +31,15 @@
   transition: none;
 }
 
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.input[type='number'] {
+  -moz-appearance: textfield;
+}
+
 .show_text {
   color: $color-black-text;
 
@@ -40,5 +49,5 @@
 }
 
 .invalid {
-  border-color: $color-red-alert;
+  border-color: $color-error;
 }

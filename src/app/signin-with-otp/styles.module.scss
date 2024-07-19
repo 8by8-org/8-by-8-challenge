@@ -1,0 +1,57 @@
+@use '../../styles/partials' as *;
+
+.title_and_fields_container {
+  margin-top: $spacing-md;
+  padding-left: $spacing-vertical-gutter;
+  padding-right: $spacing-vertical-gutter;
+}
+
+.hero {
+  height: 200px;
+  margin-bottom: 22px;
+  position: relative;
+}
+
+.person_voting {
+  position: absolute;
+  bottom: 0;
+  right: $spacing-vertical-gutter;
+}
+
+.passcode_sent_to {
+  @extend .b6;
+  margin-bottom: $spacing-sm;
+}
+
+.input_group {
+  margin-bottom: $spacing-sm;
+}
+
+.resend_otp_container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $spacing-sm;
+}
+
+.countdown {
+  @extend .b6;
+  text-align: center;
+}
+
+.resend_otp {
+  @extend .b5;
+  text-decoration: underline;
+  background-color: transparent;
+  border: none;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.submit_btn_container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $spacing-lg;
+  padding-left: $spacing-vertical-gutter;
+  padding-right: $spacing-vertical-gutter;
+}

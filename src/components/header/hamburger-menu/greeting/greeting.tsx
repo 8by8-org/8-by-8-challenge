@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { useContextSafely } from '../../../../hooks/functions/use-context-safely';
+import { useContextSafely } from '../../../../hooks/use-context-safely';
 import { UserContext } from '../../../../contexts/user-context/user-context';
 import styles from './styles.module.scss';
 
