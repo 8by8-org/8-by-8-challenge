@@ -98,7 +98,7 @@ class NextJSTests(unittest.TestCase):
     #     In 2020, we saw an unprecedented 150% spike in anti-AAPI (Asian American Pacific Islander) hate crimes, a trend that is already continuing into 2021. This is both a national and a local problem.
     #     The 8by8 mission aims to build civic participation and bring awareness to the struggles of AAPI citizens, while encouraging community involvement and investment. Our approach involves working with community, business, and tech leaders to create voter registration solutions that work.
     #     Copyright © 2021
-    #     8BY8 is a nonprofit organization dedicated to stopping hate against Asian American Pacific Islander communities through voter registration and turnout.
+    #   
     #     """
     #     paragraph_tag = self.driver.find_elements(By.TAG_NAME, 'p')
     #     paragraph_container = ''
@@ -115,7 +115,6 @@ class NextJSTests(unittest.TestCase):
 
 
 # section 4
-
     def test_all_section_4_render(self):
         sections = self.driver.find_elements(By.TAG_NAME, "section")
         third_section = sections[3]
@@ -159,14 +158,40 @@ class NextJSTests(unittest.TestCase):
 # section 6 
     def test_section_6_render(self):
         section = self.driver.find_elements(By.TAG_NAME, "section")
-        fifth_section = section[6]
+        fifth_section = section[5]
         section_class = fifth_section.get_attribute("class")
-        styles = 'styles_section_5__e7b2k'
+        styles = 'styles_section_6__4DbyJ'
         self.assertEqual(section_class, styles)
         
    
-    
+    def test_target_text_tags(self):
+        h2_render = self.driver.find_elements(By.TAG_NAME, 'h2')
+        h2_find = h2_render[2]
+        h2_text = h2_find.text
+        text = "the path to fixing this problem starts with closing the representation gap In Asian-American communities."
+        self.assertEqual(h2_text, text)
+        h3_elements = self.driver.find_elements(By.TAG_NAME, 'h3')
+        expected_texts = [
+        'Asian American voter turnout rate has remained Below',
+        'Asian-Americans make up',
+        'of the population',
+        'but only',
+        'of Congress is Asian or AAPI'
+    ]
+      
+        # running a for loop on the h3 tag    
+        for i, expected_text in enumerate(expected_texts):
+            self.assertEqual(h3_elements[i].text, expected_text)
+            
+        if len(h3_elements) < len(expected_texts):
+            self.fail(f"{len(expected_text)} should be  for the tests to pass! ")
         
+
+
+#    not sure how to test for the div elements similar to the h3_elements 
+
+
+      
 
 
 if __name__ == "__main__":
