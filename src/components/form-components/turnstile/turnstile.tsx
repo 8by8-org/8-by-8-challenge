@@ -3,6 +3,7 @@ import { useSubmitted } from 'fully-formed';
 import { TurnstileTokenField } from './turnstile-token-field';
 import { Messages } from '../messages';
 import styles from './styles.module.scss';
+import { readPublicEnvironmentVariables } from '@/utils/environment/read-public-environment-variables';
 
 interface TurnstileProps {
   /**
@@ -33,7 +34,10 @@ export function Turnstile({ field, sitekey }: TurnstileProps) {
       <div className={styles.content}>
         <ReactTurnstile
           id={field.id}
-          sitekey={sitekey ?? process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          sitekey={
+            sitekey ??
+            readPublicEnvironmentVariables().NEXT_PUBLIC_TURNSTILE_SITE_KEY
+          }
           onVerify={token => {
             field.onVerify(token);
           }}
@@ -47,6 +51,7 @@ export function Turnstile({ field, sitekey }: TurnstileProps) {
             field.onError();
           }}
           refreshExpired="auto"
+          theme="light"
           fixedSize
         />
         <div className={styles.messages_wrapper}>

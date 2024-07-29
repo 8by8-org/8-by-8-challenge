@@ -1,5 +1,5 @@
 import { useState, useRef, RefObject, PropsWithChildren } from 'react';
-import { createNamedContext } from '../../hooks/functions/create-named-context';
+import { createNamedContext } from '../../hooks/create-named-context';
 
 export type HeaderContextType = {
   hamburgerMenuState: HamburgerMenuState;

@@ -26,12 +26,12 @@ type TurnstileTokenFieldState = FormChildState<string> &
  */
 export class TurnstileTokenField
   implements
-    FormChild<'turnstileToken', string>,
+    FormChild<'captchaToken', string>,
     MessageBearer,
     Identifiable,
     Submittable
 {
-  public readonly name = 'turnstileToken';
+  public readonly name = 'captchaToken';
   public readonly id = 'turnstile-widget';
   public readonly transient = false;
 

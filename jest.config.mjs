@@ -9,31 +9,21 @@ const createJestConfig = nextJest({
 /** @type {import('jest').Config} */
 const config = {
   testEnvironment: './jest-environment.js',
-  // Provide an implementation of indexedDB for the IDBUserContextProvider
-  // to access.
-  setupFiles: ['jest-canvas-mock', 'fake-indexeddb/auto'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  setupFiles: ['jest-canvas-mock', './jest-setup.js'],
   collectCoverage: true,
-  //add directories here to include them in coverage reports and threshold
+  // add directories here to include them in coverage reports and threshold
   collectCoverageFrom: ['./src/**'],
-  //directories that should not be counted against the test coverage thresholds
-  modulePathIgnorePatterns: [
-    '__snapshots__',
-    'stories',
-    'constants',
-    'fonts',
-    'model',
-  ],
-  /*
-    TODO : remove 'local-user-service.ts' once it is implemented. Then, tests
-    can be added for 'user-context.tsx' and it can be removed from this array
-    as well.
-  */
+  // files that should not be counted against the test coverage thresholds
   coveragePathIgnorePatterns: [
     'index.ts',
     'index.tsx',
     'layout.tsx',
-    'idb-connection.ts',
+    '<rootDir>/src/__tests__/',
+    '<rootDir>/src/stories/',
+    '<rootDir>/src/constants/',
+    'fonts',
+    '<rootDir>/src/model/',
+    'user-context/user-context-provider.tsx',
   ],
   //require 100% code coverage for the tests to pass
   coverageThreshold: {
@@ -43,6 +33,10 @@ const config = {
       lines: 100,
       statements: 100,
     },
+  },
+  // enable jest.mock() to recognize the '@/' import alias
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
   },
 };
 

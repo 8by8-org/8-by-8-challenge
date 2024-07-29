@@ -6,34 +6,18 @@ Currently, we are working on migrating the existing application to Next.js and T
 
 ## Requirements
 
-You must have Node.js version 18.17+ and the Firebase CLI installed to run the local development server.
+You must have Node.js version 18.17+. Docker is strongly recommended for local development with Supabase, but you may also create your own Supabase project if you cannot install Docker.
 
 ## Getting Started
 
 To run the application locally, fork the repository and clone the fork to your machine. In the terminal, navigate into the project directory and run `npm install`. This will install the project's dependencies.
 
-You will also need the Firebase CLI installed in order to run Firebase emulators. This should be installed globally. To check if it is installed, open a terminal and run:
+Copy the contents of .env.example into a file named .env.
 
-```
-firebase --version
-```
+Replace the values of the variables inside .env with appropriate entries. Values for turnstile keys can be found here: https://developers.cloudflare.com/turnstile/troubleshooting/testing/
 
-If the output is a version number, the Firebase CLI is installed. If not, run the following command to install it:
-
-```
-npm install -g firebase-tools
-```
-
-Before running the local development server, you will need to create a .env file. You can do this by running the following command:
-
-```
-npm run init-dev-env
-```
-
-This will create a .env file if it does not already exist, or update it to ensure all required env variables are present. None of the values in this .env file point
-to actual resources.
-
-You can now run the local development server with the command `npm run dev`.
+Values for Supabase variables will be displayed in the terminal after running either `npm run supabase-dev:start` or `npm run supabase-test:start`. These values will be
+the same for both commands, and will be the same each time you run these commands.
 
 ## Contributing
 
@@ -41,7 +25,7 @@ New engineers should review [CONTRIBUTING.md](https://github.com/8by8-org/8by8-c
 
 ## Resources
 
-- [Figma prototype (see "Mocks, December version" under pages)](https://www.figma.com/file/0Q2tpQqi9sYcIA3ZyiX3PF/8BY8_POD_Jul30)
+- [Figma prototype](https://www.figma.com/design/TP1ZMtd6ykIjNql1t0OBoA/8BY8_PROTO_V2)
 - [Existing application source code](https://github.com/8by8-org/web-app)
 - [Deployed application](http://challenge.8by8.us/)
 - [Contributing](https://github.com/8by8-org/8by8-challenge/blob/development/CONTRIBUTING.md)

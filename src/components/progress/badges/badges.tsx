@@ -1,9 +1,9 @@
 import type { Badge } from '@/model/types/badge';
 import { NumberBadge } from './number-badge';
 import styles from './styles.module.scss';
-import { isActionBadge } from '../../../utils/is-action-badge';
+import { isActionBadge } from './is-action-badge';
 import { ActionBadge } from './action-badge';
-import { isPlayerBadge } from '../../../utils/is-player-badge';
+import { isPlayerBadge } from './is-player-badge';
 import { PlayerBadge } from './player-badge';
 
 interface BadgesProps {

@@ -24,8 +24,8 @@ export function getFirstNonValidInputId({
   ) {
     return fields.confirmEmail.id;
   }
-  if (!ValidityUtils.isValid(fields.turnstileToken)) {
-    return fields.turnstileToken.id;
+  if (!ValidityUtils.isValid(fields.captchaToken)) {
+    return fields.captchaToken.id;
   }
 
   return null;

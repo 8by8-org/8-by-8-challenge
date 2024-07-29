@@ -10,7 +10,7 @@ import { TurnstileTokenField } from '@/components/form-components/turnstile/turn
 import { GlobalStylesProvider } from '@/stories/global-styles-provider';
 import { FormEventHandler } from 'react';
 import { PageContainer } from '@/components/utils/page-container';
-import { DummySiteKeys } from '@/constants/dummy-site-keys';
+import { CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS } from '@/constants/cloudflare-turnstile-dummy-site-keys';
 
 const meta: Meta<typeof Turnstile> = {
   component: Turnstile,
@@ -49,7 +49,7 @@ function FormWithTurnstileComponent({ sitekey }: FormWithTurnstileProps) {
             alignItems: 'center',
           }}
         >
-          <Turnstile field={form.fields.turnstileToken} sitekey={sitekey} />
+          <Turnstile field={form.fields.captchaToken} sitekey={sitekey} />
           <button
             type="submit"
             className="btn_gradient btn_lg"
@@ -71,18 +71,24 @@ type Story = StoryObj<typeof Turnstile>;
 
 export const AlwaysPasses: Story = {
   render: () => (
-    <FormWithTurnstileComponent sitekey={DummySiteKeys.ALWAYS_PASSES} />
+    <FormWithTurnstileComponent
+      sitekey={CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_PASSES}
+    />
   ),
 };
 
 export const AlwaysBlocks: Story = {
   render: () => (
-    <FormWithTurnstileComponent sitekey={DummySiteKeys.ALWAYS_BLOCKS} />
+    <FormWithTurnstileComponent
+      sitekey={CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.ALWAYS_BLOCKS}
+    />
   ),
 };
 
 export const ForcesInteractiveChallenge: Story = {
   render: () => (
-    <FormWithTurnstileComponent sitekey={DummySiteKeys.FORCES_CHALLENGE} />
+    <FormWithTurnstileComponent
+      sitekey={CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS.FORCES_CHALLENGE}
+    />
   ),
 };

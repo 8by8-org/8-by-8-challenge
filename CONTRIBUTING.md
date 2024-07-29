@@ -13,9 +13,7 @@ Additionally, we will be using the following languages/frameworks/libraries, whi
 
 - [Next.js](https://nextjs.org/)
 - [TypeScript](https://www.typescriptlang.org/)
-- [Firebase](https://firebase.google.com/)
 - [Sass](https://sass-lang.com/)
-- [Inversify](https://inversify.io/) - For dependency injection.
 - [Luxon](https://github.com/moment/luxon/) - For manipulating dates.
 
 Finally, please take some time to familiarize yourself with the different user stories depicted in the Figma.
@@ -26,7 +24,7 @@ To contribute, you will need the following tools installed on your machine:
 
 - A code editor. [Visual Studio Code](https://code.visualstudio.com/) is a great option as it provides many helpful features for TypeScript development.
 - [Node.js](https://nodejs.org/en) - At the time of writing, Next.js requires version 18.17 or later.
-- [The Firebase CLI](https://firebase.google.com/docs/cli) - necessary for running emulators for local Firebase development.
+- Docker (strongly recommended, but not required. The alternative is to set up your own Supabase project.)
 
 ## Jira
 

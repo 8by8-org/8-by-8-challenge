@@ -1,5 +1,5 @@
 'use client';
-import { useContextSafely } from '../../../hooks/functions/use-context-safely';
+import { useContextSafely } from '../../../hooks/use-context-safely';
 import { IoIosArrowForward } from 'react-icons/io';
 import { HeaderContext } from '../header-context';
 import { HamburgerMenuState } from '../header-context';

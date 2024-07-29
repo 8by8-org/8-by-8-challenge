@@ -27,6 +27,5 @@ const config: StorybookConfig = {
   babel: {
     presets: ['next/babel'],
   },
-
 };
 export default config;

@@ -1,62 +1,57 @@
 'use client';
 import { useState, type FormEventHandler } from 'react';
-import { useForm } from 'fully-formed';
 import Link from 'next/link';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { useForm } from 'fully-formed';
+import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
+import { AlertsContext } from '@/contexts/alerts-context';
 import { UserType } from '@/model/enums/user-type';
 import { SignUpForm } from './signup-form';
 import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
 import { SelectAvatar } from './select-avatar';
-import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { Turnstile } from '@/components/form-components/turnstile/turnstile';
-import { SubmissionError } from '@/components/form-components/submission-error';
-import { waitForPendingValidators } from '@/utils/wait-for-pending-validators';
+import { waitForPendingValidators } from '@/utils/client/wait-for-pending-validators';
 import { getFirstNonValidInputId } from './get-first-non-valid-input-id';
-import { focusOnElementById } from '@/utils/focus-on-element-by-id';
-import { scrollToElementById } from '@/utils/scroll-to-element-by-id';
-import { FormInvalidError } from '@/utils/form-invalid-error';
-import { UnAuthGuard } from '@/components/utils/authguard/unauthguard';
+import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
+import { scrollToElementById } from '@/utils/client/scroll-to-element-by-id';
+import { FormInvalidError } from '@/utils/client/form-invalid-error';
+import { LoadingWheel } from '@/components/utils/loading-wheel';
 import styles from './styles.module.scss';
 
-export default function SignUp() {
+function SignUp() {
   const signUpForm = useForm(new SignUpForm());
   const { signUpWithEmail } = useContextSafely(UserContext, 'SignUp');
+  const { showAlert } = useContextSafely(AlertsContext, 'SignUp');
   const [isLoading, setIsLoading] = useState(false);
-  const [hasSubmissionError, setHasSubmissionError] = useState(false);
 
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
-    setHasSubmissionError(false);
-    setIsLoading(true);
+    if (isLoading) return;
     signUpForm.setSubmitted();
+    setIsLoading(true);
 
     try {
-      const { email, name, avatar } =
-        await waitForPendingValidators(signUpForm);
-      await signUpWithEmail(email, name, avatar, UserType.Challenger);
-    } catch (e) {
+      const formValue = await waitForPendingValidators(signUpForm);
+      await signUpWithEmail({ ...formValue, type: UserType.Challenger });
+    } catch (e: any) {
       setIsLoading(false);
 
       if (e instanceof FormInvalidError) {
         const firstNonValidInputId = getFirstNonValidInputId(signUpForm);
-        if (firstNonValidInputId === signUpForm.fields.turnstileToken.id) {
+        if (firstNonValidInputId === signUpForm.fields.captchaToken.id) {
           scrollToElementById(firstNonValidInputId);
         } else if (firstNonValidInputId) {
           focusOnElementById(firstNonValidInputId);
         }
       } else {
-        setHasSubmissionError(true);
+        showAlert('Something went wrong. Please try again.', 'error');
       }
     }
   };
 
   return (
     <PageContainer>
-      {hasSubmissionError && (
-        <SubmissionError text="Something went wrong. Please try again." />
-      )}
       {isLoading && <LoadingWheel />}
       <form onSubmit={onSubmit} noValidate name="signUpForm">
         <div className={styles.title_and_fields_container}>
@@ -74,6 +69,8 @@ export default function SignUp() {
             labelContent="Name*"
             labelVariant="floating"
             containerClassName={styles.input_group}
+            maxLength={255}
+            disabled={isLoading}
             aria-required
           />
           <InputGroup
@@ -99,7 +96,7 @@ export default function SignUp() {
           />
         </div>
         <SelectAvatar field={signUpForm.fields.avatar} isLoading={isLoading} />
-        <Turnstile field={signUpForm.fields.turnstileToken} />
+        <Turnstile field={signUpForm.fields.captchaToken} />
         <div className={styles.tos_agreement_container}>
           <p className={styles.tos_agreement}>
             By clicking on &quot;Sign Up,&quot; I agree to the{' '}
@@ -114,7 +111,11 @@ export default function SignUp() {
           </p>
         </div>
         <div className={styles.submit_btn_container}>
-          <button type="submit" className="btn_gradient btn_lg btn_wide">
+          <button
+            type="submit"
+            className="btn_gradient btn_lg btn_wide"
+            disabled={isLoading}
+          >
             Sign Up
           </button>
         </div>
@@ -130,3 +131,5 @@ export default function SignUp() {
     </PageContainer>
   );
 }
+
+export default SignUp;

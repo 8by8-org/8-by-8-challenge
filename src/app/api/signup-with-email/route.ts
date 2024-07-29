@@ -1,63 +1,41 @@
-import { z } from 'zod';
-import { UserType } from '@/model/enums/user-type';
-import { serverContainer } from '@/services/server/server-container';
-import { AbstractUserRepository } from '@/services/server/abstract-user-repository';
-import { SERVER_SERVICE_KEYS } from '@/services/server/server-service-keys';
-import { NextResponse, NextRequest } from 'next/server';
-import { AbstractValidateCloudflareTurnstile } from '@/services/server/abstract-validate-cloudflare-turnstile';
+import 'server-only';
+import { NextResponse, type NextRequest } from 'next/server';
+import { requestBodySchema } from './request-body-schema';
+import { serverContainer } from '@/services/server/container';
+import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
+import { ServerError } from '@/errors/server-error';
 
-const SignupSchema = z.object({
-  email: z.string().email(),
-  name: z.string().min(1, 'Must provide a name'),
-  avatar: z.enum(['0', '1', '2', '3']),
-  type: z.nativeEnum(UserType),
-  turnstileToken: z.string().min(1, 'Must provide a token'),
-});
+export async function POST(request: NextRequest) {
+  const captchaValidator = serverContainer.get(
+    SERVER_SERVICE_KEYS.CaptchaValidator,
+  );
+  const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
+  const cookies = serverContainer.get(SERVER_SERVICE_KEYS.Cookies);
 
-/**
- * Handles the POST request for user signup.
- *
- * @param req - The Next.js request object
- *
- * @returns A Next.js response indicating the result
- *
- * @remarks
- * This route performs the following
- * 1. Parses and validates the request body against 'SignupSchema'
- * 2. Verifies the Cloudflare Turnstile token
- * 3. Creates a new user
- */
-export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const body = await req.json();
-    const data = SignupSchema.parse(body);
+    const data = await request.json();
+    const { email, name, avatar, type, captchaToken } =
+      requestBodySchema.parse(data);
+    const captchaPassed = await captchaValidator.isHuman(captchaToken);
 
-    const validateTurnstile =
-      serverContainer.get<AbstractValidateCloudflareTurnstile>(
-        SERVER_SERVICE_KEYS.CloudflareTurnstile,
-      );
-    const isValidToken = await validateTurnstile.verifyToken(data);
-
-    if (!isValidToken) {
+    if (!captchaPassed)
       return NextResponse.json(
-        { error: 'Token verification failed' },
-        { status: 400 },
+        { error: 'Could not verify captcha token.' },
+        { status: 401 },
       );
-    }
 
-    const userRepository = serverContainer.get<AbstractUserRepository>(
-      SERVER_SERVICE_KEYS.UserRepository,
-    );
-    await userRepository.createUserWithEmail(data);
+    await auth.signUpWithEmailAndSendOTP(email, name, avatar, type);
+    await cookies.setEmailForSignIn(email);
 
     return NextResponse.json(
-      { message: 'User created successfully' },
+      { message: 'Successfully created user.' },
       { status: 201 },
     );
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: 'Error: ' + error.message },
-      { status: 400 },
-    );
+  } catch (e) {
+    if (e instanceof ServerError) {
+      return NextResponse.json({ error: e.message }, { status: e.statusCode });
+    }
+
+    return NextResponse.json({ error: 'Bad data.' }, { status: 400 });
   }
 }

@@ -14,7 +14,6 @@ class SignInFormTemplate extends FormTemplate {
       validators: [
         StringValidators.email({
           invalidMessage: 'Please enter a valid email address.',
-          trimBeforeValidation: true,
         }),
       ],
     }),
