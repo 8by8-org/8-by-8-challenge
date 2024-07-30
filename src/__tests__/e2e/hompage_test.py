@@ -89,22 +89,36 @@ class NextJSTests(unittest.TestCase):
     def test_section_3_render(self):
         sections = self.driver.find_elements(By.TAG_NAME, "section")
         third_section = sections[2]
+        paragraph_text = third_section.text
+        print(paragraph_text)
         section_class = third_section.get_attribute("class")
         self.assertEqual(section_class, 'styles_section_3__AiNEH')
+        # manipulate the section tag to giving out the p_tag content because of the issue with class 
+        expected_paragraph = [
+            "In 2020, we saw an unprecedented 150% spike in anti-AAPI (Asian American Pacific Islander) hate crimes,",
+            "a trend that is already continuing into 2021.",
+            "This is both a national and a local problem."
+        ]
+        if len(paragraph_text) != len(expected_paragraph):
+            self.fail("Length of text does not match expected length!")
+        for p in range(len(paragraph_text)):
+            if paragraph_text[p] == expected_paragraph[p]:
+                return True 
+            
 
 #   this will only pass when I get to the [1] p tag because this p tag has no class to identify it so the function runs the entire p tag contnet -- possible solution would be to add a class to this p tag and distinguish it form the other p tag ?
-    # def test_paragraph_elements(self):
-    #     expected_paragraph = """
-    #     In 2020, we saw an unprecedented 150% spike in anti-AAPI (Asian American Pacific Islander) hate crimes, a trend that is already continuing into 2021. This is both a national and a local problem.
-    #     The 8by8 mission aims to build civic participation and bring awareness to the struggles of AAPI citizens, while encouraging community involvement and investment. Our approach involves working with community, business, and tech leaders to create voter registration solutions that work.
-    #     Copyright © 2021
-    #   
-    #     """
-    #     paragraph_tag = self.driver.find_elements(By.TAG_NAME, 'p')
-    #     paragraph_container = ''
-    #     for p in paragraph_tag:
-    #         paragraph_container = p.text
-    #     print(paragraph_container, expected_paragraph)
+#     def test_paragraph_elements(self):
+#         expected_paragraph = " In 2020, we saw an unprecedented 150% spike in anti-AAPI (Asian American Pacific Islander) hate crimes, a trend that is already continuing into 2021. This is both a national and a local problem."
+#         paragraph_tag = self.driver.find_elements(By.TAG_NAME, 'p')
+#         found = False
+#         for p in paragraph_tag:
+#             if p.get_attribute("class") == None:
+#                 self.assertEqual(p.text, expected_paragraph)
+#                 found = True 
+#                 break
+            
+#         if not found:
+#             self.fail("error occurred")
 
     def test_div_image(self):
         image_displayed = self.driver.find_element(
@@ -184,12 +198,78 @@ class NextJSTests(unittest.TestCase):
             self.assertEqual(h3_elements[i].text, expected_text)
             
         if len(h3_elements) < len(expected_texts):
-            self.fail(f"{len(expected_text)} should be  for the tests to pass! ")
+            self.fail(f"{len(expected_text)} !== {len(h3_elements)}")
         
 
+    
 
-#    not sure how to test for the div elements similar to the h3_elements 
 
+# how to pass this? section_6 divs ?
+
+# test image inside of the div 
+    def test_div_image(self):
+        test_image = self.driver.find_element(
+            By.XPATH, "//img[@alt='black curve']")
+        image_src = test_image.get_attribute("src")
+        formatted_url = f"{self.host}/_next/static/media/black-curve.49e02ce0.svg"
+        self.assertEqual(image_src, formatted_url)
+
+        
+    # section_7
+    def test_section_7_render(self):
+        section = self.driver.find_elements(By.TAG_NAME, "section")
+        fifth_section = section[6]
+        section_class = fifth_section.get_attribute("class")
+        styles = 'styles_section_7__z9IJU'
+        self.assertEqual(section_class, styles)
+        
+    def test_image_speech_bubble(self):
+        test_image = self.driver.find_element(
+            By.XPATH, "//img[@alt='we need your help!']")
+        image_src = test_image.get_attribute("src")
+        formatted_url = f"{self.host}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fspeech-bubble-3.3f2f3c8a.png&w=640&q=75"
+        self.assertEqual(image_src, formatted_url)
+        
+    def test_h2_content(self):
+        h2_content = self.driver.find_elements(By.TAG_NAME, 'h2')
+        h2_locate = h2_content[3]
+        h2_text = h2_locate.text
+        expected_text = "we're asking everyone to join us in taking the #8by8challenge and registering 8 of their friends to vote in 8 days."
+        self.assertEqual(h2_text, expected_text)
+        
+    def test_button_action(self):
+        button_element = self.driver.find_element(By.CSS_SELECTOR, ".btn_gradient.btn_wide.btn_lg")
+        if button_element.text == 'TAKE THE CHALLENGE':
+            button_element.click()
+        else:
+            self.fail(f"expected texted TAKE THE CHALLENGE but got {button_element.text}")
+        
+        
+    def test_paragraph_tag(self):
+        expected_text = "The 8by8 mission aims to build civic participation and bring awareness to the struggles of AAPI citizens, while encouraging community involvement and investment. Our approach involves working with community, business, and tech leaders to create voter registration solutions that work."
+        paragraph_elements = self.driver.find_elements(By.TAG_NAME, 'p')
+        locate = False
+        for p in paragraph_elements:
+            if p.get_attribute("class") == "b2 color_white":
+                self.assertEqual(p.text, expected_text)
+                locate = True
+                break
+        
+        if not locate:
+            self.fail("Expected paragraph with class 'b2 color_white' was not found.")  
+            
+                
+            
+    def test_anchor_tag(self):
+        a_content = self.driver.find_element(By.TAG_NAME, 'a')
+        a_content.get_attribute('href') == '/https://www.8by8.us/'
+        actions = ActionChains(self.driver)
+        actions.move_to_element(a_content)
+        actions.click()
+        actions.perform()
+        
+        
+        
 
       
 
