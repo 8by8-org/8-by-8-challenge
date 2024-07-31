@@ -113,9 +113,9 @@ class Section_03(NextJSTests):
             "a trend that is already continuing into 2021.",
             "This is both a national and a local problem."
         ]
-        joined_paragraph = ' '.join(expected_paragraph).strip()
-        joined_incoming_text = ''.join(paragraph_text)
-        self.assertEqual(joined_incoming_text, joined_paragraph)
+        joined_expected = ' '.join(expected_paragraph).strip()
+        joined_text = ''.join(paragraph_text)
+        self.assertEqual(joined_text, joined_expected)
 
     def test_div_image(self):
         image_displayed = self.driver.find_element(
