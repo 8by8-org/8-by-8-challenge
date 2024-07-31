@@ -21,6 +21,9 @@ class NextJSTests(unittest.TestCase):
     def setUp(self):
         self.driver.get(self.host)
 
+class WebpageElements(NextJSTests):
+   
+
     def test_homepage_title(self):
         self.assertEqual(self.driver.title, '8by8 Challenge')
 
@@ -30,7 +33,6 @@ class NextJSTests(unittest.TestCase):
         src = image_element.get_attribute("src")
         formatted_url = f"{self.host}/_next/static/media/8by8-logo.a39d7aad.svg"
         self.assertEqual(src, formatted_url)
-        
 
     def test_h1_exists(self):
         h1_rendered = self.driver.find_element(By.TAG_NAME, 'h1')
@@ -39,13 +41,17 @@ class NextJSTests(unittest.TestCase):
                          'GET 8 AAPI FRIENDS TO REGISTER TO VOTE IN 8 DAYS')
 
     def test_locate_button(self):
-        button_element = self.driver.find_element(By.CSS_SELECTOR, ".styles_challenge_btn__T0eGB")
+        button_element = self.driver.find_element(
+            By.CSS_SELECTOR, ".styles_challenge_btn__T0eGB")
         if button_element.text == 'TAKE THE CHALLENGE':
             self.assertEqual(button_element.text, 'TAKE THE CHALLENGE')
         else:
-            self.fail(f"expected texted TAKE THE CHALLENGE but got {button_element.text}")
-        
-    
+            self.fail(
+                f"expected texted TAKE THE CHALLENGE but got {button_element.text}")
+
+
+class Section_01(NextJSTests):
+   
 
     def test_section_1_render(self):
         test_section_1 = self.driver.find_element(By.TAG_NAME, 'section')
@@ -60,7 +66,6 @@ class NextJSTests(unittest.TestCase):
         actions.click()
         actions.perform()
 
-#   check if the image exists
     def test_image_exists(self):
         image_element = self.driver.find_element(
             By.XPATH, "//img[@alt='yellow curve']")
@@ -69,7 +74,9 @@ class NextJSTests(unittest.TestCase):
         self.assertEqual(src, formatted_url)
 
 
-#   section_2
+
+class Section_02(NextJSTests):
+   
 
     def test_section_2_rendered(self):
         sections = self.driver.find_elements(By.TAG_NAME, "section")
@@ -92,6 +99,9 @@ class NextJSTests(unittest.TestCase):
         self.assertEqual(src, formatted_url)
 
     # section 3
+    
+class Section_03(NextJSTests):
+    
     def test_section_3_render(self):
         sections = self.driver.find_elements(By.TAG_NAME, "section")
         third_section = sections[2]
@@ -106,9 +116,6 @@ class NextJSTests(unittest.TestCase):
         joined_paragraph = ' '.join(expected_paragraph).strip()
         joined_incoming_text = ''.join(paragraph_text)
         self.assertEqual(joined_incoming_text, joined_paragraph)
-        
-        
-    
 
     def test_div_image(self):
         image_displayed = self.driver.find_element(
@@ -118,7 +125,8 @@ class NextJSTests(unittest.TestCase):
         self.assertEqual(src, formatted_url)
 
 
-# section 4
+class Section_04(NextJSTests):
+
     def test_all_section_4_render(self):
         sections = self.driver.find_elements(By.TAG_NAME, "section")
         third_section = sections[3]
@@ -133,6 +141,8 @@ class NextJSTests(unittest.TestCase):
                 f"Expected class 'styles_section_4__h94nS', but got '{section_class}'")
 
 # section 5
+class Section_05(NextJSTests):
+    
     def test_section_5_render(self):
         section = self.driver.find_elements(By.TAG_NAME, "section")
         fifth_section = section[4]
@@ -140,10 +150,9 @@ class NextJSTests(unittest.TestCase):
         section_class = fifth_section.get_attribute("class")
         styles = 'styles_section_5__e7b2k'
         self.assertEqual(section_class, styles)
-        expected_sentence =  'We need\nmore aapi\nvoters'
+        expected_sentence = 'We need\nmore aapi\nvoters'
         p_incoming_text = ''.join(p_text)
         self.assertEqual(p_incoming_text, expected_sentence)
-        
 
     def test_image_shown(self):
         image_shown = self.driver.find_element(
@@ -152,7 +161,6 @@ class NextJSTests(unittest.TestCase):
         formatted_url = f"{self.host}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fspeech-bubble-2.06da5b3c.png&w=640&q=75"
         self.assertEqual(image_src, formatted_url)
 
-            
     def test_secondary_image(self):
         test_image = self.driver.find_element(
             By.XPATH, "//img[@alt='mic']")
@@ -161,15 +169,16 @@ class NextJSTests(unittest.TestCase):
         self.assertEqual(image_src, formatted_url)
 
 
-# section 6 
+# section 6
+class Section_06(NextJSTests):
+    
     def test_section_6_render(self):
         section = self.driver.find_elements(By.TAG_NAME, "section")
         fifth_section = section[5]
         section_class = fifth_section.get_attribute("class")
         styles = 'styles_section_6__4DbyJ'
         self.assertEqual(section_class, styles)
-        
-   
+
     def test_target_text_tags(self):
         h2_render = self.driver.find_elements(By.TAG_NAME, 'h2')
         h2_find = h2_render[2]
@@ -178,22 +187,20 @@ class NextJSTests(unittest.TestCase):
         self.assertEqual(h2_text, text)
         h3_elements = self.driver.find_elements(By.TAG_NAME, 'h3')
         expected_texts = [
-        'Asian American voter turnout rate has remained Below',
-        'Asian-Americans make up',
-        'of the population',
-        'but only',
-        'of Congress is Asian or AAPI'
-    ]
-      
-        # running a for loop on the h3 tag    
+            'Asian American voter turnout rate has remained Below',
+            'Asian-Americans make up',
+            'of the population',
+            'but only',
+            'of Congress is Asian or AAPI'
+        ]
+
+        # running a for loop on the h3 tag
         for i, expected_text in enumerate(expected_texts):
             self.assertEqual(h3_elements[i].text, expected_text)
-            
+
         if len(h3_elements) < len(expected_texts):
             self.fail(f"{len(expected_text)} !== {len(h3_elements)}")
-        
 
-    
     def test_section_6_divs(self):
         div_content = self.driver.find_elements(By.TAG_NAME, 'div')
         for i in range(len(div_content)):
@@ -205,12 +212,14 @@ class NextJSTests(unittest.TestCase):
                 self.assertEqual(div_content[i].text, "7%")
             elif div_class == "styles_stat_percentage_container_3__sUpCi":
                 self.assertEqual(div_content[i].text, "3%")
-            else: 
+            else:
                 pass
-            
 
 
-# test image inside of the div 
+# test image inside of the div
+
+class ImageDiv(NextJSTests):
+    
     def test_div_image(self):
         test_image = self.driver.find_element(
             By.XPATH, "//img[@alt='black curve']")
@@ -218,37 +227,39 @@ class NextJSTests(unittest.TestCase):
         formatted_url = f"{self.host}/_next/static/media/black-curve.49e02ce0.svg"
         self.assertEqual(image_src, formatted_url)
 
-        
     # section_7
+class Section_07(NextJSTests):
+    
     def test_section_7_render(self):
         section = self.driver.find_elements(By.TAG_NAME, "section")
         fifth_section = section[6]
         section_class = fifth_section.get_attribute("class")
         styles = 'styles_section_7__z9IJU'
         self.assertEqual(section_class, styles)
-        
+
     def test_image_speech_bubble(self):
         test_image = self.driver.find_element(
             By.XPATH, "//img[@alt='we need your help!']")
         image_src = test_image.get_attribute("src")
         formatted_url = f"{self.host}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fspeech-bubble-3.3f2f3c8a.png&w=640&q=75"
         self.assertEqual(image_src, formatted_url)
-        
+
     def test_h2_content(self):
         h2_content = self.driver.find_elements(By.TAG_NAME, 'h2')
         h2_locate = h2_content[3]
         h2_text = h2_locate.text
         expected_text = "we're asking everyone to join us in taking the #8by8challenge and registering 8 of their friends to vote in 8 days."
         self.assertEqual(h2_text, expected_text)
-        
+
     def test_button_action(self):
-        button_element = self.driver.find_element(By.CSS_SELECTOR, ".btn_gradient.btn_wide.btn_lg")
+        button_element = self.driver.find_element(
+            By.CSS_SELECTOR, ".btn_gradient.btn_wide.btn_lg")
         if button_element.text == 'TAKE THE CHALLENGE':
             button_element.click()
         else:
-            self.fail(f"expected texted TAKE THE CHALLENGE but got {button_element.text}")
-        
-        
+            self.fail(
+                f"expected texted TAKE THE CHALLENGE but got {button_element.text}")
+
     def test_paragraph_tag(self):
         expected_text = "The 8by8 mission aims to build civic participation and bring awareness to the struggles of AAPI citizens, while encouraging community involvement and investment. Our approach involves working with community, business, and tech leaders to create voter registration solutions that work."
         paragraph_elements = self.driver.find_elements(By.TAG_NAME, 'p')
@@ -258,12 +269,11 @@ class NextJSTests(unittest.TestCase):
                 self.assertEqual(p.text, expected_text)
                 locate = True
                 break
-        
+
         if not locate:
-            self.fail("Expected paragraph with class 'b2 color_white' was not found.")  
-            
-                
-            
+            self.fail(
+                "Expected paragraph with class 'b2 color_white' was not found.")
+
     def test_anchor_tag(self):
         a_content = self.driver.find_element(By.TAG_NAME, 'a')
         a_content.get_attribute('href') == '/https://www.8by8.us/'
@@ -271,7 +281,6 @@ class NextJSTests(unittest.TestCase):
         actions.move_to_element(a_content)
         actions.click()
         actions.perform()
-        
 
 
 if __name__ == "__main__":
