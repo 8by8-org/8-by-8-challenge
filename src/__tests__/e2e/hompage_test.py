@@ -39,8 +39,13 @@ class NextJSTests(unittest.TestCase):
                          'GET 8 AAPI FRIENDS TO REGISTER TO VOTE IN 8 DAYS')
 
     def test_locate_button(self):
-        button_element = self.driver.find_element(By.TAG_NAME, "button")
-        self.assertTrue(button_element.is_displayed())
+        button_element = self.driver.find_element(By.CSS_SELECTOR, ".styles_challenge_btn__T0eGB")
+        if button_element.text == 'TAKE THE CHALLENGE':
+            self.assertEqual(button_element.text, 'TAKE THE CHALLENGE')
+        else:
+            self.fail(f"expected texted TAKE THE CHALLENGE but got {button_element.text}")
+        
+    
 
     def test_section_1_render(self):
         test_section_1 = self.driver.find_element(By.TAG_NAME, 'section')
@@ -200,6 +205,8 @@ class NextJSTests(unittest.TestCase):
                 self.assertEqual(div_content[i].text, "7%")
             elif div_class == "styles_stat_percentage_container_3__sUpCi":
                 self.assertEqual(div_content[i].text, "3%")
+            else: 
+                pass
             
 
 
@@ -265,10 +272,6 @@ class NextJSTests(unittest.TestCase):
         actions.click()
         actions.perform()
         
-        
-        
-
-      
 
 
 if __name__ == "__main__":
