@@ -25,10 +25,12 @@ class NextJSTests(unittest.TestCase):
         self.assertEqual(self.driver.title, '8by8 Challenge')
 
     def test_logo_render(self):
-        wait = WebDriverWait(self.driver, 5)
-        logo_element = wait.until(EC.visibility_of_element_located(
-            (By.XPATH, "//img[@alt='8by8 Logo']")))
-        self.assertTrue(logo_element.is_displayed())
+        image_element = self.driver.find_element(
+            By.XPATH, "//img[@alt='8by8 Logo']")
+        src = image_element.get_attribute("src")
+        formatted_url = f"{self.host}/_next/static/media/8by8-logo.a39d7aad.svg"
+        self.assertEqual(src, formatted_url)
+        
 
     def test_h1_exists(self):
         h1_rendered = self.driver.find_element(By.TAG_NAME, 'h1')
@@ -61,8 +63,7 @@ class NextJSTests(unittest.TestCase):
         formatted_url = f"{self.host}/_next/static/media/yellow-curve.0236528a.svg"
         self.assertEqual(src, formatted_url)
 
-#   check for the next section aaka section2
-#   it wiill be better if we have a child class for each section, that way we are following the lexographical concept of seleinium tests
+
 #   section_2
 
     def test_section_2_rendered(self):
@@ -90,35 +91,19 @@ class NextJSTests(unittest.TestCase):
         sections = self.driver.find_elements(By.TAG_NAME, "section")
         third_section = sections[2]
         paragraph_text = third_section.text
-        print(paragraph_text)
         section_class = third_section.get_attribute("class")
         self.assertEqual(section_class, 'styles_section_3__AiNEH')
-        # manipulate the section tag to giving out the p_tag content because of the issue with class 
         expected_paragraph = [
             "In 2020, we saw an unprecedented 150% spike in anti-AAPI (Asian American Pacific Islander) hate crimes,",
             "a trend that is already continuing into 2021.",
             "This is both a national and a local problem."
         ]
-        if len(paragraph_text) != len(expected_paragraph):
-            self.fail("Length of text does not match expected length!")
-        for p in range(len(paragraph_text)):
-            if paragraph_text[p] == expected_paragraph[p]:
-                return True 
-            
-
-#   this will only pass when I get to the [1] p tag because this p tag has no class to identify it so the function runs the entire p tag contnet -- possible solution would be to add a class to this p tag and distinguish it form the other p tag ?
-#     def test_paragraph_elements(self):
-#         expected_paragraph = " In 2020, we saw an unprecedented 150% spike in anti-AAPI (Asian American Pacific Islander) hate crimes, a trend that is already continuing into 2021. This is both a national and a local problem."
-#         paragraph_tag = self.driver.find_elements(By.TAG_NAME, 'p')
-#         found = False
-#         for p in paragraph_tag:
-#             if p.get_attribute("class") == None:
-#                 self.assertEqual(p.text, expected_paragraph)
-#                 found = True 
-#                 break
-            
-#         if not found:
-#             self.fail("error occurred")
+        joined_paragraph = ' '.join(expected_paragraph).strip()
+        joined_incoming_text = ''.join(paragraph_text)
+        self.assertEqual(joined_incoming_text, joined_paragraph)
+        
+        
+    
 
     def test_div_image(self):
         image_displayed = self.driver.find_element(
@@ -146,9 +131,14 @@ class NextJSTests(unittest.TestCase):
     def test_section_5_render(self):
         section = self.driver.find_elements(By.TAG_NAME, "section")
         fifth_section = section[4]
+        p_text = fifth_section.text
         section_class = fifth_section.get_attribute("class")
         styles = 'styles_section_5__e7b2k'
         self.assertEqual(section_class, styles)
+        expected_sentence =  'We need\nmore aapi\nvoters'
+        p_incoming_text = ''.join(p_text)
+        self.assertEqual(p_incoming_text, expected_sentence)
+        
 
     def test_image_shown(self):
         image_shown = self.driver.find_element(
@@ -157,10 +147,7 @@ class NextJSTests(unittest.TestCase):
         formatted_url = f"{self.host}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fspeech-bubble-2.06da5b3c.png&w=640&q=75"
         self.assertEqual(image_src, formatted_url)
 
-
-#   h1 cannot be found so need to fix that for section 5 
-    # def test_show_h1(self):
-    
+            
     def test_secondary_image(self):
         test_image = self.driver.find_element(
             By.XPATH, "//img[@alt='mic']")
@@ -202,9 +189,19 @@ class NextJSTests(unittest.TestCase):
         
 
     
+    def test_section_6_divs(self):
+        div_content = self.driver.find_elements(By.TAG_NAME, 'div')
+        for i in range(len(div_content)):
+            div_class = div_content[i].get_attribute("class")
+            if div_class == "styles_stat_percentage_container_1__E4Hep":
+                div_text = div_content[i].text
+                self.assertEqual(div_text, "60%")
+            elif div_class == "styles_stat_percentage_container_2__yCM_4":
+                self.assertEqual(div_content[i].text, "7%")
+            elif div_class == "styles_stat_percentage_container_3__sUpCi":
+                self.assertEqual(div_content[i].text, "3%")
+            
 
-
-# how to pass this? section_6 divs ?
 
 # test image inside of the div 
     def test_div_image(self):
