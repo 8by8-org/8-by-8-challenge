@@ -1,4 +1,5 @@
 const JestEnvironmentJSDOM = require('jest-environment-jsdom').default;
+const { webcrypto } = require('crypto');
 
 /**
  * Creates a custom Jest environment so that the `@paralleldrive/cuid2` package
@@ -12,5 +13,6 @@ module.exports = class CustomJestEnvironment extends JestEnvironmentJSDOM {
     global.Request = Request;
     global.Response = Response;
     global.Headers = Headers;
+    global.crypto.subtle = webcrypto.subtle;
   }
 };
