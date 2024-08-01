@@ -7,6 +7,9 @@ interface CorrectScrollIfOptionIsHiddenParams {
   menuRef: RefObject<HTMLMenuElement>;
 }
 
+/**
+ * Scrolls a focused option until it is no longer hidden by scroll buttons.
+ */
 export function correctScrollIfOptionIsHidden({
   option,
   scrollUpButtonRef,

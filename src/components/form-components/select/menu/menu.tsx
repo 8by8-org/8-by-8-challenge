@@ -16,10 +16,24 @@ import type { Option } from '../types/option';
 import styles from './styles.module.scss';
 
 interface MenuProps {
+  /**
+   * A {@link Field} whose value can be set by the menu.
+   */
   field: FieldOfType<string>;
-  id: string;
+
+  /**
+   * An array of options to be displayed within the menu.
+   */
   options: Option[];
+
+  /**
+   * A {@link RefObject} received from the parent `Select` component. The
+   * `Select` component also passes this ref into a `Combobox` element, where it
+   * is assigned to an element with the `combobox` role. The `Menu` component
+   * may transfer focus to this element when it is closed.
+   */
   comboboxRef: RefObject<HTMLInputElement>;
+  id: string;
 }
 
 export interface MenuRef {
@@ -35,9 +49,9 @@ export interface MenuRef {
 }
 
 /**
- * A menu for the `Select` component. Exposes functions that can be called by
- * from outside the menu to open it to a specific option, close it, and
- * toggle it (opening it to a specific option if currently closed).
+ * A menu for the `Select` component. Exposes functions that can be called from
+ * outside the menu to open it to a specific option, close it, and toggle it
+ * (opening it to a specific option if currently closed).
  */
 export const Menu = forwardRef(function Menu(
   props: MenuProps,

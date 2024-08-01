@@ -12,6 +12,7 @@ import {
   ValidityUtils,
   type FieldOfType,
   type IGroup,
+  type Field,
 } from 'fully-formed';
 import Image from 'next/image';
 import { isPrintableCharacterKey } from '../utils/is-printable-character-key';
@@ -21,17 +22,65 @@ import type { MenuRef } from '../menu';
 import styles from './styles.module.scss';
 
 interface ComboboxProps {
+  /**
+   * The label to be displayed when no option is selected. The `aria-label`
+   * attribute of the combobox is also set to this value.
+   */
   label: string;
+
+  /**
+   * A Fully Formed {@link Field} that will control the state of the combobox.
+   */
   field: FieldOfType<string>;
+
+  /**
+   * An array of {@link IGroup}s. The validity of each group included
+   * in this array will count towards the displayed validity of the combobox.
+   */
   groups: IGroup[];
+
+  /**
+   * An array of {@link Option}s to be rendered within the menu of the parent
+   * `Select` component.
+   */
   options: Option[];
+
+  /**
+   * The id of the menu rendered by the parent `Select` component.
+   */
   menuId: string;
+
+  /**
+   * A {@link RefObject} received from the parent `Select` component which
+   * provides functions for opening, closing, and toggling the menu.
+   */
   menuRef: RefObject<MenuRef>;
+
+  /**
+   * A flag indicating whether or not a `MoreInfo` button will be displayed by
+   * the parent `Select` component. If true, the maximum width of the combobox
+   * will be less than the full width of the `Select` in order to accomodate
+   * this button.
+   */
   hasMoreInfo: boolean;
   ['aria-required']?: boolean;
   ['aria-describedby']?: string;
 }
 
+/**
+ * Renders an input with its `role` attribute set to "combobox." Its value and
+ * validity are controlled by the state of a {@link Field}.
+ *
+ * @remarks
+ * In addition to implementing click-based navigation, the component
+ * implements the following keyboard navigation controls:
+ * - `Enter` - opens the menu and focuses on the currently selected option, or
+ *   the first option if no option is selected.
+ * - `ArrowDown` - opens the menu and focuses on the first option.
+ * - `ArrowUp` - opens the menu and focuses on the last option.
+ * - Printable characters - opens the menu and focuses on the first option
+ *   that starts with that character.
+ */
 export const Combobox = forwardRef(function Combobox(
   props: ComboboxProps,
   ref: ForwardedRef<HTMLInputElement>,

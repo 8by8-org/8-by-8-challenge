@@ -6,6 +6,10 @@ interface StartScrollingUpParams {
   scrollInterval: MutableRefObject<ReturnType<typeof setInterval> | undefined>;
 }
 
+/**
+ * Scrolls the menu up until either the top of the menu is reached or
+ * `scrollInterval.current` is cleared.
+ */
 export function startScrollingUp({
   menuRef,
   scrollInterval,

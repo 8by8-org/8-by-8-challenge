@@ -22,6 +22,11 @@ interface ToggleMenuParams {
   >;
 }
 
+/**
+ * Opens the menu if closed and closes the menu if opened. When the menu is
+ * closed, focus is returned to the element referenced by the provided
+ * `comboboxRef`.
+ */
 export function toggleMenu(params: ToggleMenuParams) {
   if (params.containerRef.current?.classList.contains('hidden')) {
     openMenu(params);

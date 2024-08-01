@@ -21,6 +21,14 @@ interface HandleKeyboardNavigationParams {
   field: FieldOfType<string>;
 }
 
+/**
+ * Handles keyboard input received while an option within the menu is in
+ * focus.
+ *
+ * @param key - The key that was pressed.
+ * @param optionIndex - The index of the option that received the keyboard
+ * input.
+ */
 export function handleKeyboardInput({
   key,
   optionIndex,

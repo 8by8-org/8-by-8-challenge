@@ -12,7 +12,14 @@ interface FocusOnOptionParams {
 /**
  * Focuses on an option within the menu by its index.
  *
- * @param optionIndex
+ * @param params - {@link FocusOnOptionParams}
+ * @remarks
+ * If the provided index is `0` or `optionCount - 1`, the menu will be scrolled
+ * directly to the top or bottom (respectively), guaranteeing that the
+ * corresponding scroll button disappears.
+ *
+ * Otherwise, the option is scrolled into view and then scrolled further until
+ * it is no longer hidden by a scroll button.
  */
 export function focusOnOption({
   optionIndex,
@@ -34,6 +41,7 @@ export function focusOnOption({
       behavior: 'instant',
       block: 'nearest',
     });
+
     correctScrollIfOptionIsHidden({
       option,
       scrollUpButtonRef,

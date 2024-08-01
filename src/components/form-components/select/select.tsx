@@ -24,7 +24,7 @@ interface SelectProps {
    */
   label: string;
   /**
-   * A Fully Formed {@link Field} that will control the state of the input.
+   * A Fully Formed {@link Field} that will control the state of the component.
    */
   field: FieldOfType<string>;
   /**
@@ -38,6 +38,11 @@ interface SelectProps {
    * A list of selectable options to be displayed in the menu.
    */
   options: Option[];
+  /**
+   * If included, renders a {@link MoreInfo} component next to the combobox
+   * which opens a modal containing the {@link ReactNode} passed in via this
+   * prop.
+   */
   moreInfo?: ReactNode;
   className?: string;
   style?: CSSProperties;

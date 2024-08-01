@@ -5,6 +5,10 @@ interface CloseMenuAndFocusOnComboboxParams {
   comboboxRef: RefObject<HTMLInputElement>;
 }
 
+/**
+ * Closes the menu and returns focus to the element referenced by the provided
+ * `comboboxRef`.
+ */
 export function closeMenuAndFocusOnCombobox({
   containerRef,
   comboboxRef,

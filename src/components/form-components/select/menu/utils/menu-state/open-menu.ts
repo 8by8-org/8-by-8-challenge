@@ -24,6 +24,10 @@ interface OpenMenuParams {
   >;
 }
 
+/**
+ * Opens the menu and focuses on the option at the provided index. If
+ * `openWithKeyboard` is true, sets `isKeyboardNavigating.current` to `true`.
+ */
 export function openMenu({
   indexOfOptionToReceiveFocus,
   optionCount,

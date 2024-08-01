@@ -6,6 +6,10 @@ interface StartScrollingDownParams {
   scrollInterval: MutableRefObject<ReturnType<typeof setInterval> | undefined>;
 }
 
+/**
+ * Scrolls the menu down until either the bottom of the menu is reached or
+ * `scrollInterval.current` is cleared.
+ */
 export function startScrollingDown({
   menuRef,
   scrollInterval,
