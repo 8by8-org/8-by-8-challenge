@@ -19,6 +19,44 @@ Replace the values of the variables inside .env with appropriate entries. Values
 Values for Supabase variables will be displayed in the terminal after running either `npm run supabase-dev:start` or `npm run supabase-test:start`. These values will be
 the same for both commands, and will be the same each time you run these commands.
 
+#  Selenium Tests 
+
+## Prerequisites
+
+- **Python**: Ensure Python is installed on your system.
+- **Selenium**: Python package for browser automation.
+- **WebDriver**: Browser driver for Selenium (e.g., ChromeDriver).
+
+## Setup Instructions
+
+### 1. Create Virtual Enviornment 
+
+python -m venv venv 
+
+### 2. Activate Virtual Enviornment 
+
+macOS 
+source venv/bin/activate 
+
+Windows 
+venv\Scripts\activate
+
+
+### 3. Install Selenium Package 
+
+pip install selenium
+
+### 4. Run your NextJs server 
+
+npm run dev 
+
+### 5. cd into the directory 
+
+cd <path-to-test-directory>
+
+python -m unittest homepage_test.py
+
+
 ## Contributing
 
 New engineers should review [CONTRIBUTING.md](https://github.com/8by8-org/8by8-challenge/blob/development/CONTRIBUTING.md) for details about the recommended workflow and tools.
