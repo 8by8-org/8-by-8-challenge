@@ -9,7 +9,7 @@ import {
 import Image from 'next/image';
 import { useValue, type FieldOfType } from 'fully-formed';
 import { useMenu } from './hooks/use-menu';
-import { hasTouchPointExitedButton, stopScrolling } from './utils';
+import { hasTouchPointExitedButton } from './utils';
 import caretDown from '@/../public/static/images/components/select/caret-down.svg';
 import caretUp from '@/../public/static/images/components/select/caret-up.svg';
 import type { Option } from '../types/option';
@@ -36,8 +36,8 @@ export interface MenuRef {
 
 /**
  * A menu for the `Select` component. Exposes functions that can be called by
- * the `Combobox` to open the menu to a specific option, close the menu, and
- * toggle the menu (opening it to a specific option if currently closed).
+ * from outside the menu to open it to a specific option, close it, and
+ * toggle it (opening it to a specific option if currently closed).
  */
 export const Menu = forwardRef(function Menu(
   props: MenuProps,

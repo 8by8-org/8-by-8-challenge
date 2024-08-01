@@ -9,6 +9,11 @@ interface FocusOnOptionParams {
   menuRef: RefObject<HTMLMenuElement>;
 }
 
+/**
+ * Focuses on an option within the menu by its index.
+ *
+ * @param optionIndex
+ */
 export function focusOnOption({
   optionIndex,
   optionCount,
@@ -29,7 +34,6 @@ export function focusOnOption({
       behavior: 'instant',
       block: 'nearest',
     });
-    // make correction if element is hidden by scroll button
     correctScrollIfOptionIsHidden({
       option,
       scrollUpButtonRef,

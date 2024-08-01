@@ -7,9 +7,11 @@ import {
 } from 'react';
 import {
   usePipe,
+  useMultiPipe,
   useValue,
   ValidityUtils,
   type FieldOfType,
+  type IGroup,
 } from 'fully-formed';
 import Image from 'next/image';
 import { isPrintableCharacterKey } from '../utils/is-printable-character-key';
@@ -21,6 +23,7 @@ import styles from './styles.module.scss';
 interface ComboboxProps {
   label: string;
   field: FieldOfType<string>;
+  groups: IGroup[];
   options: Option[];
   menuId: string;
   menuRef: RefObject<MenuRef>;
@@ -43,12 +46,22 @@ export const Combobox = forwardRef(function Combobox(
     }
   });
 
-  const comboboxClassName = usePipe(
-    props.field,
-    ({ validity, hasBeenModified, submitted }) => {
+  const comboboxClassName = useMultiPipe(
+    [props.field, ...props.groups],
+    states => {
+      const fieldState = states[0];
       const classNames = [styles.combobox];
 
-      if (ValidityUtils.isInvalid(validity) && (hasBeenModified || submitted)) {
+      const validity = ValidityUtils.minValidity(states, {
+        pruneUnvalidatedGroups: true,
+      });
+
+      if (
+        ValidityUtils.isInvalid(validity) &&
+        (fieldState.hasBeenBlurred ||
+          fieldState.hasBeenModified ||
+          fieldState.submitted)
+      ) {
         classNames.push(styles.invalid);
       }
 
@@ -58,9 +71,10 @@ export const Combobox = forwardRef(function Combobox(
 
   const ariaInvalid = usePipe(
     props.field,
-    ({ validity, hasBeenModified, submitted }) => {
+    ({ validity, hasBeenBlurred, hasBeenModified, submitted }) => {
       return (
-        ValidityUtils.isInvalid(validity) && (hasBeenModified || submitted)
+        ValidityUtils.isInvalid(validity) &&
+        (hasBeenBlurred || hasBeenModified || submitted)
       );
     },
   );
