@@ -36,6 +36,10 @@ interface MenuProps {
   id: string;
 }
 
+/**
+ * A {@link RefObject} that exposes methods for opening, closing and toggling
+ * the {@link Menu} component from outside.
+ */
 export interface MenuRef {
   openMenu: (
     indexOfOptionToReceiveFocus: number,
