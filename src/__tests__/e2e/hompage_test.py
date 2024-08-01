@@ -10,24 +10,26 @@ class NextJSTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Set up the browser instance before all tests"""
         cls.driver = webdriver.Chrome()
         cls.driver.implicitly_wait(10)
         cls.host = "http://localhost:3000"
 
     @classmethod
     def tearDownClass(cls):
+        """Close the browser instance after all tests are complete"""
         cls.driver.quit()
 
     def setUp(self):
+        """Navigate to the base URL before each test"""
         self.driver.get(self.host)
-
-class WebpageElements(NextJSTests):
-   
-
+        
     def test_homepage_title(self):
+        """Test if the homepage title is correct"""
         self.assertEqual(self.driver.title, '8by8 Challenge')
 
     def test_logo_render(self):
+        """Test if the logo image is rendered correctly"""
         image_element = self.driver.find_element(
             By.XPATH, "//img[@alt='8by8 Logo']")
         src = image_element.get_attribute("src")
@@ -35,12 +37,14 @@ class WebpageElements(NextJSTests):
         self.assertEqual(src, formatted_url)
 
     def test_h1_exists(self):
+        """Test if the h1 element is displayed"""
         h1_rendered = self.driver.find_element(By.TAG_NAME, 'h1')
         self.assertTrue(h1_rendered.is_displayed())
         self.assertEqual(h1_rendered.text,
                          'GET 8 AAPI FRIENDS TO REGISTER TO VOTE IN 8 DAYS')
 
     def test_locate_button(self):
+        """Test if the challenge button is displayed correctly"""
         button_element = self.driver.find_element(
             By.CSS_SELECTOR, ".styles_challenge_btn__T0eGB")
         if button_element.text == 'TAKE THE CHALLENGE':
@@ -50,15 +54,15 @@ class WebpageElements(NextJSTests):
                 f"expected texted TAKE THE CHALLENGE but got {button_element.text}")
 
 
-class Section_01(NextJSTests):
-   
-
+# SECTION_01
     def test_section_1_render(self):
+        """Test if Section 1 is rendered correctly"""
         test_section_1 = self.driver.find_element(By.TAG_NAME, 'section')
         section_class = test_section_1.get_attribute("class")
         self.assertEqual(section_class, 'styles_section_1__MMFLM')
 
-    def test_link_tag_content(self):
+    def test_link_tag_navigation(self):
+        """Test the link tag content in Section 1"""
         link_tag = self.driver.find_element(By.PARTIAL_LINK_TEXT, 'See')
         link_tag.get_attribute('href') == '/why8by8'
         actions = ActionChains(self.driver)
@@ -67,6 +71,7 @@ class Section_01(NextJSTests):
         actions.perform()
 
     def test_image_exists(self):
+        """Test if the image in Section 1 exists"""
         image_element = self.driver.find_element(
             By.XPATH, "//img[@alt='yellow curve']")
         src = image_element.get_attribute("src")
@@ -74,17 +79,16 @@ class Section_01(NextJSTests):
         self.assertEqual(src, formatted_url)
 
 
-
-class Section_02(NextJSTests):
-   
-
+# SECTION_02
     def test_section_2_rendered(self):
+        """Test if Section 2 is rendered"""
         sections = self.driver.find_elements(By.TAG_NAME, "section")
         second_section = sections[1]
         section_class = second_section.get_attribute("class")
         self.assertEqual(section_class, 'styles_section_2__wgjjP')
 
     def test_image_dispayed(self):
+        """Test if the main image in Section 2 is displayed"""
         image_displayed = self.driver.find_element(
             By.XPATH, "//img[@alt='why 8by8?']")
         src = image_displayed.get_attribute("src")
@@ -92,17 +96,17 @@ class Section_02(NextJSTests):
         self.assertEqual(src, formatted_url)
 
     def test_father_and_daughter_image(self):
+        """Test if the father_daughter image in Section 2 is displayed"""
         image_displayed = self.driver.find_element(
             By.XPATH, "//img[@alt='sign']")
         src = image_displayed.get_attribute("src")
         formatted_url = f"{self.host}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ffather-and-daughter-with-sign.1f060e65.png&w=750&q=75"
         self.assertEqual(src, formatted_url)
+        
 
-    # section 3
-    
-class Section_03(NextJSTests):
-    
+# SECTION_03        
     def test_section_3_render(self):
+        """Test if Section 3 is rendered"""
         sections = self.driver.find_elements(By.TAG_NAME, "section")
         third_section = sections[2]
         paragraph_text = third_section.text
@@ -118,6 +122,7 @@ class Section_03(NextJSTests):
         self.assertEqual(joined_text, joined_expected)
 
     def test_div_image(self):
+        """Test if the image in the div of Section 3 is displayed correctly"""
         image_displayed = self.driver.find_element(
             By.XPATH, "//img[@alt='teal curve']")
         src = image_displayed.get_attribute("src")
@@ -125,9 +130,9 @@ class Section_03(NextJSTests):
         self.assertEqual(src, formatted_url)
 
 
-class Section_04(NextJSTests):
-
+# SECTION_04
     def test_all_section_4_render(self):
+        """Test if Section 4 is rendered correctly"""
         sections = self.driver.find_elements(By.TAG_NAME, "section")
         third_section = sections[3]
         h2_text = third_section.text
@@ -139,11 +144,11 @@ class Section_04(NextJSTests):
         else:
             self.fail(
                 f"Expected class 'styles_section_4__h94nS', but got '{section_class}'")
-
-# section 5
-class Section_05(NextJSTests):
     
+
+# SECTION_05    
     def test_section_5_render(self):
+        """Test if Section 5 is rendered """
         section = self.driver.find_elements(By.TAG_NAME, "section")
         fifth_section = section[4]
         p_text = fifth_section.text
@@ -155,6 +160,7 @@ class Section_05(NextJSTests):
         self.assertEqual(p_incoming_text, expected_sentence)
 
     def test_image_shown(self):
+        """Test if the main image in Section 5 is displayed"""
         image_shown = self.driver.find_element(
             By.XPATH, "//img[@alt='solution?']")
         image_src = image_shown.get_attribute("src")
@@ -162,6 +168,7 @@ class Section_05(NextJSTests):
         self.assertEqual(image_src, formatted_url)
 
     def test_secondary_image(self):
+        """Test if the secondary_image in Section 5 is displayed"""
         test_image = self.driver.find_element(
             By.XPATH, "//img[@alt='mic']")
         image_src = test_image.get_attribute("src")
@@ -169,10 +176,9 @@ class Section_05(NextJSTests):
         self.assertEqual(image_src, formatted_url)
 
 
-# section 6
-class Section_06(NextJSTests):
-    
+# SECTION_06
     def test_section_6_render(self):
+        """Test if Section 6 is rendered """
         section = self.driver.find_elements(By.TAG_NAME, "section")
         fifth_section = section[5]
         section_class = fifth_section.get_attribute("class")
@@ -180,6 +186,7 @@ class Section_06(NextJSTests):
         self.assertEqual(section_class, styles)
 
     def test_target_text_tags(self):
+        """Test if the target text for h2 & h3 are displayed"""
         h2_render = self.driver.find_elements(By.TAG_NAME, 'h2')
         h2_find = h2_render[2]
         h2_text = h2_find.text
@@ -194,7 +201,7 @@ class Section_06(NextJSTests):
             'of Congress is Asian or AAPI'
         ]
 
-        # running a for loop on the h3 tag
+
         for i, expected_text in enumerate(expected_texts):
             self.assertEqual(h3_elements[i].text, expected_text)
 
@@ -202,6 +209,7 @@ class Section_06(NextJSTests):
             self.fail(f"{len(expected_text)} !== {len(h3_elements)}")
 
     def test_section_6_divs(self):
+        """Test if all the divs are displaying correct content"""
         div_content = self.driver.find_elements(By.TAG_NAME, 'div')
         for i in range(len(div_content)):
             div_class = div_content[i].get_attribute("class")
@@ -215,22 +223,18 @@ class Section_06(NextJSTests):
             else:
                 pass
 
-
-# test image inside of the div
-
-class ImageDiv(NextJSTests):
-    
-    def test_div_image(self):
+    def test_div_content(self):
+        """Test if the images in the div is getting displayed"""
         test_image = self.driver.find_element(
             By.XPATH, "//img[@alt='black curve']")
         image_src = test_image.get_attribute("src")
         formatted_url = f"{self.host}/_next/static/media/black-curve.49e02ce0.svg"
         self.assertEqual(image_src, formatted_url)
 
-    # section_7
-class Section_07(NextJSTests):
-    
+
+# SECTION_07
     def test_section_7_render(self):
+        """Test if section_7 is rendered"""
         section = self.driver.find_elements(By.TAG_NAME, "section")
         fifth_section = section[6]
         section_class = fifth_section.get_attribute("class")
@@ -238,6 +242,7 @@ class Section_07(NextJSTests):
         self.assertEqual(section_class, styles)
 
     def test_image_speech_bubble(self):
+        """Test if the speech_bubble image is displayed"""
         test_image = self.driver.find_element(
             By.XPATH, "//img[@alt='we need your help!']")
         image_src = test_image.get_attribute("src")
@@ -245,6 +250,7 @@ class Section_07(NextJSTests):
         self.assertEqual(image_src, formatted_url)
 
     def test_h2_content(self):
+        """Test if expected_text is being rendered"""
         h2_content = self.driver.find_elements(By.TAG_NAME, 'h2')
         h2_locate = h2_content[3]
         h2_text = h2_locate.text
@@ -252,6 +258,7 @@ class Section_07(NextJSTests):
         self.assertEqual(h2_text, expected_text)
 
     def test_button_action(self):
+        """Test if the button functions as expected"""
         button_element = self.driver.find_element(
             By.CSS_SELECTOR, ".btn_gradient.btn_wide.btn_lg")
         if button_element.text == 'TAKE THE CHALLENGE':
@@ -261,6 +268,7 @@ class Section_07(NextJSTests):
                 f"expected texted TAKE THE CHALLENGE but got {button_element.text}")
 
     def test_paragraph_tag(self):
+        """Test if the p_tag displays all the expected content"""
         expected_text = "The 8by8 mission aims to build civic participation and bring awareness to the struggles of AAPI citizens, while encouraging community involvement and investment. Our approach involves working with community, business, and tech leaders to create voter registration solutions that work."
         paragraph_elements = self.driver.find_elements(By.TAG_NAME, 'p')
         locate = False
@@ -275,6 +283,7 @@ class Section_07(NextJSTests):
                 "Expected paragraph with class 'b2 color_white' was not found.")
 
     def test_anchor_tag(self):
+        """Test if the anchor tag is opening a new browser with a click event"""
         a_content = self.driver.find_element(By.TAG_NAME, 'a')
         a_content.get_attribute('href') == '/https://www.8by8.us/'
         actions = ActionChains(self.driver)
@@ -285,3 +294,6 @@ class Section_07(NextJSTests):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
