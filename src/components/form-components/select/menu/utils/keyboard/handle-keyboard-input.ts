@@ -1,0 +1,90 @@
+import { stopScrolling } from '../scroll/stop-scrolling';
+import { focusOnOption } from '../focus/focus-on-option';
+import { closeMenuAndFocusOnCombobox } from '../menu-state/close-menu-and-focus-on-combobox';
+import { isPrintableCharacterKey } from '../../../utils/is-printable-character-key';
+import { findOptionIndexByFirstChar } from '../../../utils/find-option-index-by-first-letter';
+import type { RefObject, MutableRefObject } from 'react';
+import type { FieldOfType } from 'fully-formed';
+import type { Option } from '../../../types/option';
+
+interface HandleKeyboardNavigationParams {
+  key: string;
+  optionIndex: number;
+  options: Option[];
+  containerRef: RefObject<HTMLDivElement>;
+  comboboxRef: RefObject<HTMLInputElement>;
+  menuRef: RefObject<HTMLMenuElement>;
+  scrollUpButtonRef: RefObject<HTMLButtonElement>;
+  scrollDownButtonRef: RefObject<HTMLButtonElement>;
+  scrollInterval: MutableRefObject<ReturnType<typeof setInterval> | undefined>;
+  isKeyboardNavigating: MutableRefObject<boolean>;
+  field: FieldOfType<string>;
+}
+
+export function handleKeyboardInput({
+  key,
+  optionIndex,
+  options,
+  containerRef,
+  comboboxRef,
+  menuRef,
+  scrollUpButtonRef,
+  scrollDownButtonRef,
+  scrollInterval,
+  isKeyboardNavigating,
+  field,
+}: HandleKeyboardNavigationParams) {
+  if (key === 'ArrowDown' && optionIndex < options.length - 1) {
+    isKeyboardNavigating.current = true;
+
+    stopScrolling(scrollInterval);
+
+    focusOnOption({
+      optionIndex: optionIndex + 1,
+      optionCount: options.length,
+      scrollUpButtonRef,
+      scrollDownButtonRef,
+      menuRef,
+    });
+  } else if (key === 'ArrowUp' && optionIndex > 0) {
+    isKeyboardNavigating.current = true;
+
+    stopScrolling(scrollInterval);
+
+    focusOnOption({
+      optionIndex: optionIndex - 1,
+      optionCount: options.length,
+      scrollUpButtonRef,
+      scrollDownButtonRef,
+      menuRef,
+    });
+  } else if (key === 'Enter' || key === 'Tab') {
+    field.setValue(options[optionIndex].value);
+
+    closeMenuAndFocusOnCombobox({
+      comboboxRef,
+      containerRef,
+    });
+  } else if (key === 'Escape') {
+    closeMenuAndFocusOnCombobox({
+      comboboxRef,
+      containerRef,
+    });
+  } else if (isPrintableCharacterKey(key)) {
+    isKeyboardNavigating.current = true;
+    const indexOfOptionToReceiveFocus = findOptionIndexByFirstChar(
+      options,
+      key,
+    );
+
+    if (indexOfOptionToReceiveFocus >= 0) {
+      focusOnOption({
+        optionIndex: indexOfOptionToReceiveFocus,
+        optionCount: options.length,
+        scrollUpButtonRef,
+        scrollDownButtonRef,
+        menuRef,
+      });
+    }
+  }
+}

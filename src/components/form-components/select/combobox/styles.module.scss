@@ -1,0 +1,45 @@
+@use '../../../../styles/partials' as *;
+@use '../variables' as *;
+
+.container {
+  display: inline-block;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+}
+
+.container_with_more_info {
+  display: inline-block;
+  width: calc(100% - $more-info-width-with-margin);
+  max-width: calc(100% - $more-info-width-with-margin);
+  position: relative;
+}
+
+.input {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: default;
+}
+
+.combobox {
+  @extend .b1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: $border-width solid $color-black-text;
+  padding: 8px 0;
+}
+
+.invalid {
+  border-color: $color-error;
+}
+
+.selection {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: calc(100% - $caret-width-with-margin);
+  cursor: default;
+}

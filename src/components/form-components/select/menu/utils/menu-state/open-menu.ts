@@ -1,0 +1,66 @@
+import { focusOnOption } from '../focus/focus-on-option';
+import { isMenuScrollable } from '../scroll/is-menu-scrollable';
+import { isMenuScrolledToTop } from '../scroll/is-menu-scrolled-to-top';
+import { isMenuScrolledToBottom } from '../scroll/is-menu-scrolled-to-bottom';
+import type {
+  RefObject,
+  MutableRefObject,
+  Dispatch,
+  SetStateAction,
+} from 'react';
+
+interface OpenMenuParams {
+  indexOfOptionToReceiveFocus: number;
+  optionCount: number;
+  openWithKeyboard: boolean;
+  containerRef: RefObject<HTMLDivElement>;
+  comboboxRef: RefObject<HTMLInputElement>;
+  menuRef: RefObject<HTMLMenuElement>;
+  scrollUpButtonRef: RefObject<HTMLButtonElement>;
+  scrollDownButtonRef: RefObject<HTMLButtonElement>;
+  isKeyboardNavigating: MutableRefObject<boolean>;
+  setScrollPosition: Dispatch<
+    SetStateAction<'noscroll' | 'top' | 'middle' | 'bottom'>
+  >;
+}
+
+export function openMenu({
+  indexOfOptionToReceiveFocus,
+  optionCount,
+  openWithKeyboard,
+  containerRef,
+  comboboxRef,
+  menuRef,
+  scrollUpButtonRef,
+  scrollDownButtonRef,
+  isKeyboardNavigating,
+  setScrollPosition,
+}: OpenMenuParams) {
+  if (containerRef.current && menuRef.current) {
+    if (openWithKeyboard) {
+      isKeyboardNavigating.current = true;
+    }
+
+    containerRef.current.classList.remove('hidden');
+
+    focusOnOption({
+      optionIndex: indexOfOptionToReceiveFocus,
+      optionCount: optionCount,
+      scrollUpButtonRef,
+      scrollDownButtonRef,
+      menuRef,
+    });
+
+    if (isMenuScrollable(menuRef)) {
+      if (isMenuScrolledToTop(menuRef)) {
+        setScrollPosition('top');
+      } else if (isMenuScrolledToBottom(menuRef)) {
+        setScrollPosition('bottom');
+      } else {
+        setScrollPosition('middle');
+      }
+    }
+
+    comboboxRef.current?.setAttribute('aria-expanded', 'true');
+  }
+}
