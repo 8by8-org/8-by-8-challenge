@@ -100,21 +100,6 @@ export interface MenuControls {
   handleKeyboardInput: (key: string, optionIndex: number) => void;
 
   /**
-   * Focuses on an option within the menu by its index.
-   *
-   * @param optionIndex
-   *
-   * @remarks
-   * If the provided index is `0` or `optionCount - 1`, the menu will be scrolled
-   * directly to the top or bottom (respectively), guaranteeing that the
-   * corresponding scroll button disappears.
-   *
-   * Otherwise, the option is scrolled into view and then scrolled further until
-   * it is no longer hidden by a scroll button.
-   */
-  focusOnOption: (optionIndex: number) => void;
-
-  /**
    * Returns `true` when the height of the content of the menu is greater than
    * the maximum height of the menu.
    *

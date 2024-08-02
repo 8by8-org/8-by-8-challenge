@@ -124,19 +124,6 @@ export function useMenu({
     [comboboxRef, field, options],
   );
 
-  const focusOnOption = useCallback(
-    (optionIndex: number) => {
-      utils.focusOnOption({
-        optionIndex,
-        optionCount: options.length,
-        scrollUpButtonRef,
-        scrollDownButtonRef,
-        menuRef,
-      });
-    },
-    [options.length],
-  );
-
   const isMenuScrollable = useCallback(() => {
     return utils.isMenuScrollable(menuRef);
   }, []);
@@ -180,7 +167,6 @@ export function useMenu({
     closeMenuAndFocusOnCombobox,
     toggleMenu,
     handleKeyboardInput,
-    focusOnOption,
     isMenuScrollable,
     isMenuScrolledToTop,
     isMenuScrolledToBottom,
