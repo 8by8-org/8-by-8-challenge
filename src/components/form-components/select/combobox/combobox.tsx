@@ -118,15 +118,17 @@ export const Combobox = forwardRef(function Combobox(
     },
   );
 
-  const ariaInvalid = usePipe(
-    props.field,
-    ({ validity, hasBeenBlurred, hasBeenModified, submitted }) => {
-      return (
-        ValidityUtils.isInvalid(validity) &&
-        (hasBeenBlurred || hasBeenModified || submitted)
-      );
-    },
-  );
+  const ariaInvalid = useMultiPipe([props.field, ...props.groups], states => {
+    const validity = ValidityUtils.minValidity(states);
+    const fieldState = states[0];
+
+    return (
+      ValidityUtils.isInvalid(validity) &&
+      (fieldState.hasBeenModified ||
+        fieldState.hasBeenBlurred ||
+        fieldState.submitted)
+    );
+  });
 
   const handleKeyboardInput: KeyboardEventHandler = event => {
     const { key } = event;

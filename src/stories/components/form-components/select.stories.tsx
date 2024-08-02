@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { Select } from '@/components/form-components/select';
-import { Field, Validator } from 'fully-formed';
+import { Field, StringValidators, Validator } from 'fully-formed';
 import { GlobalStylesProvider } from '@/stories/global-styles-provider';
 import { US_STATES_AND_TERRITORIES } from '@/constants/us-states-and-territories';
 
@@ -74,6 +74,20 @@ export const ManyOptions: Story = {
   },
 };
 
+export const NoOptions: Story = {
+  render: () => {
+    return (
+      <GlobalStylesProvider>
+        <Select
+          label="No options to select from"
+          field={new Field({ name: 'testField', defaultValue: '' })}
+          options={[]}
+        />
+      </GlobalStylesProvider>
+    );
+  },
+};
+
 export const WithMoreInfoButton: Story = {
   render: () => {
     const politicalParty = new Field({
@@ -115,6 +129,43 @@ export const WithMoreInfoButton: Story = {
               nec ut blandit.
             </p>
           }
+        />
+      </GlobalStylesProvider>
+    );
+  },
+};
+
+export const Required: Story = {
+  render: () => {
+    const requiredField = new Field({
+      name: 'requiredField',
+      defaultValue: '',
+      validators: [
+        StringValidators.required({
+          invalidMessage: 'Please select an option.',
+        }),
+      ],
+    });
+
+    return (
+      <GlobalStylesProvider>
+        <Select
+          label="Select an option"
+          field={requiredField}
+          options={[
+            {
+              text: 'Option A',
+              value: 'a',
+            },
+            {
+              text: 'Option B',
+              value: 'b',
+            },
+            {
+              text: 'Option C',
+              value: 'c',
+            },
+          ]}
         />
       </GlobalStylesProvider>
     );
