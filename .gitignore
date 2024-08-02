@@ -41,4 +41,5 @@ next-env.d.ts
 # ide-specific folders
 .vscode/
 .idea/
-*storybook.log/myenv
+*storybook.log
+
