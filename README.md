@@ -24,9 +24,13 @@ the same for both commands, and will be the same each time you run these command
 ### Prerequisites
 
 - **Python**: Ensure Python is installed on your system.
-Documentation:  [https://www.python.org/](https://github.com/8by8-org/web-app).
+[Documentation](https://www.python.org/).
 - **Selenium**: Python package for browser automation.
-Documentation:  [https://selenium-python.readthedocs.io/installation.html#](https://github.com/8by8-org/web-app).
+[Documentation](https://selenium-python.readthedocs.io/installation.html#).
+- **Pytest**: Python package for unit testing.
+[Documentation](https://docs.pytest.org/en/stable/getting-started.html).
+- **Drivers**: Included with Selenium version 4.6.0 and higher. 
+[Documentation](https://www.selenium.dev/documentation/selenium_manager/).
 
 
 ### Setup Instructions
@@ -43,16 +47,47 @@ macOS
 Windows 
 `venv\Scripts\activate`
 
-### 3. Install Selenium Package 
 
-`pip install selenium`
+### 3.  Installing Selenium
+
+Selenium does not need to be installed on a per-project basis. To see if you
+already have it installed, you can run the following command:
+
+```
+pip show selenium
+```
+
+If installed, it will print information about the package. If the version is less
+than 4.6.0, you should update it by running:
+
+```
+pip install -U selenium
+```
+
+Otherwise, you can install it by running the following command:
+
+```
+pip install selenium
+```
+
+For more information on installing Selenium, see [this](https://www.selenium.dev/documentation/webdriver/getting_started/install_library/).
+
+For information on upgrading Selenium, see [this](https://www.selenium.dev/documentation/webdriver/troubleshooting/upgrade_to_selenium_4/).
 
 
-### 4. cd into the directory 
+### 4.  Installing pytest
 
-`cd  path-to-test-directory`
+Be sure to install pytest:
 
-`python -m unittest homepage_test.py`
+```
+pip install pytest
+```
+
+### 5.  Run the tests
+
+To run the Selenium tests, navigate into `src/__tests__/e2e` and run
+`python -m pytest`.
+
 
 
 ## Contributing
