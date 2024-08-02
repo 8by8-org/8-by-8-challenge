@@ -16,6 +16,7 @@ import {
 } from 'fully-formed';
 import Image from 'next/image';
 import { isPrintableCharacterKey } from '../utils/is-printable-character-key';
+import { findOptionIndexByFirstChar } from '../utils/find-option-index-by-first-letter';
 import caretDown from '../../../../../public/static/images/components/select/caret-down.svg';
 import type { Option } from '../types/option';
 import type { MenuRef } from '../menu';
@@ -183,9 +184,10 @@ export const Combobox = forwardRef(function Combobox(
   }
 
   function openMenuWithAutoComplete(key: string) {
-    const indexOfOptionToReceiveFocus = props.options.findIndex(option => {
-      return option.text.toLowerCase().startsWith(key);
-    });
+    const indexOfOptionToReceiveFocus = findOptionIndexByFirstChar(
+      props.options,
+      key,
+    );
 
     if (indexOfOptionToReceiveFocus >= 0) {
       props.menuRef.current?.openMenu(indexOfOptionToReceiveFocus, true);
