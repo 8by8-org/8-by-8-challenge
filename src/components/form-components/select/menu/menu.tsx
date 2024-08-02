@@ -15,7 +15,7 @@ import caretUp from '@/../public/static/images/components/select/caret-up.svg';
 import type { Option } from '../types/option';
 import styles from './styles.module.scss';
 
-interface MenuProps {
+export interface MenuProps {
   /**
    * A {@link Field} whose value can be set by the menu.
    */
