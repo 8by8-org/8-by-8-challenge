@@ -7,7 +7,7 @@ import styles from './styles.module.scss';
  */
 export function PageContainer({ children }: PropsWithChildren) {
   return (
-    <div className={styles.outer_container} data-testid="page-container">
+    <div className={styles.outer_container}>
       <div className={styles.inner_container}>{children}</div>
     </div>
   );
