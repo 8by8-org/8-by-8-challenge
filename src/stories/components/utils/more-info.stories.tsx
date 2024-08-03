@@ -15,7 +15,8 @@ export const Default: Story = {
     return (
       <GlobalStylesProvider>
         <MoreInfo
-          topic="Lorem Ipsum"
+          buttonAltText="Click for more information"
+          dialogAriaLabel="More information about Lorem Ipsum"
           info={
             <p>
               Lorem ipsum odor amet, consectetuer adipiscing elit. Aeleifend
