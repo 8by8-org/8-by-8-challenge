@@ -7,15 +7,8 @@ import questionMark from '@/../public/static/images/components/more-info/questio
 import styles from './styles.module.scss';
 
 interface MoreInfoProps {
-  /**
-   * The name of the topic that the component expounds upon. Used to generate
-   * `aria` attributes including the alt text for the image rendered within the
-   * button and the label for the {@link Modal}.
-   */
-  topic: string;
-  /**
-   * A {@link ReactNode} that will be rendered within the {@link Modal}.
-   */
+  buttonAltText: string;
+  dialogAriaLabel: string;
   info: ReactNode;
   style?: CSSProperties;
   className?: string;
@@ -28,7 +21,13 @@ interface MoreInfoProps {
  *
  * @param props - {@link MoreInfoProps}
  */
-export function MoreInfo({ topic, info, style, className }: MoreInfoProps) {
+export function MoreInfo({
+  buttonAltText,
+  dialogAriaLabel,
+  info,
+  style,
+  className,
+}: MoreInfoProps) {
   const [showModal, setShowModal] = useState(false);
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
@@ -43,13 +42,10 @@ export function MoreInfo({ topic, info, style, className }: MoreInfoProps) {
         className={classNames.join(' ')}
         style={style}
       >
-        <Image
-          src={questionMark}
-          alt={`Click for more information about ${topic}.`}
-        />
+        <Image src={questionMark} alt={buttonAltText} />
       </button>
       <Modal
-        ariaLabel={`More information about ${topic}.`}
+        ariaLabel={dialogAriaLabel}
         theme="light"
         isOpen={showModal}
         closeModal={closeModal}

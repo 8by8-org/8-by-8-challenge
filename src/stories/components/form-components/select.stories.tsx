@@ -122,13 +122,17 @@ export const WithMoreInfoButton: Story = {
               value: 'other',
             },
           ]}
-          moreInfo={
-            <p>
-              Lorem ipsum odor amet, consectetuer adipiscing elit. Aeleifend
-              magna dolor, nibh at metus eu habitant. Quam tempus suscipit amet
-              nec ut blandit.
-            </p>
-          }
+          moreInfo={{
+            buttonAltText: 'Click for more information about this field',
+            dialogAriaLabel: 'More information',
+            infoComponent: (
+              <p>
+                Lorem ipsum odor amet, consectetuer adipiscing elit. Aeleifend
+                magna dolor, nibh at metus eu habitant. Quam tempus suscipit
+                amet nec ut blandit.
+              </p>
+            ),
+          }}
         />
       </GlobalStylesProvider>
     );

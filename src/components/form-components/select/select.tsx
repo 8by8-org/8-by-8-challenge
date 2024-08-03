@@ -43,7 +43,11 @@ interface SelectProps {
    * which opens a modal containing the {@link ReactNode} passed in via this
    * prop.
    */
-  moreInfo?: ReactNode;
+  moreInfo?: {
+    buttonAltText: string;
+    dialogAriaLabel: string;
+    infoComponent: ReactNode;
+  };
   className?: string;
   style?: CSSProperties;
   ['aria-required']?: boolean;
@@ -149,8 +153,9 @@ export function Select({
         />
         {moreInfo && (
           <MoreInfo
-            topic={label}
-            info={moreInfo}
+            buttonAltText={moreInfo.buttonAltText}
+            dialogAriaLabel={moreInfo.dialogAriaLabel}
+            info={moreInfo.infoComponent}
             className={styles.open_more_info}
           />
         )}

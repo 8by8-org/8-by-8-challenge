@@ -47,4 +47,11 @@ describe('Button component', () => {
       expect(button).toHaveTextContent(`Button ${index + 1}`);
     });
   });
+
+  it('appends a className it receives as prop to its className.', () => {
+    const className = 'test';
+    render(<Button className={className}>Click Me</Button>);
+    const button = document.getElementsByTagName('button')[0];
+    expect(button.classList).toContain(className);
+  });
 });
