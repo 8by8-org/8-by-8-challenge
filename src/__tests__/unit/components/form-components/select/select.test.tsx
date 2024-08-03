@@ -1046,7 +1046,7 @@ describe('Select', () => {
 
     const isMenuScrolledToBottomSpy = jest
       .spyOn(scrollUtils, 'isMenuScrolledToBottom')
-      .mockImplementationOnce(() => false);
+      .mockImplementation(() => false);
 
     render(
       <Select
@@ -1076,7 +1076,7 @@ describe('Select', () => {
     expect(screen.queryByAltText('Scroll down')).toBeInTheDocument();
 
     isMenuScrollable = false;
-    fireEvent(window, new Event('resize'));
+    fireEvent.resize(window);
 
     await waitFor(() => {
       expect(screen.queryByAltText('Scroll up')).not.toBeInTheDocument();
@@ -1104,7 +1104,7 @@ describe('Select', () => {
 
     const isMenuScrolledToBottomSpy = jest
       .spyOn(scrollUtils, 'isMenuScrolledToBottom')
-      .mockImplementationOnce(() => isMenuScrolledToBottom);
+      .mockImplementation(() => isMenuScrolledToBottom);
 
     render(
       <Select
@@ -1135,7 +1135,7 @@ describe('Select', () => {
 
     isMenuScrolledToTop = true;
     isMenuScrolledToBottom = false;
-    fireEvent(window, new Event('resize'));
+    fireEvent.resize(window);
 
     await waitFor(() => {
       expect(screen.queryByAltText('Scroll up')).not.toBeInTheDocument();
@@ -1163,7 +1163,7 @@ describe('Select', () => {
 
     const isMenuScrolledToBottomSpy = jest
       .spyOn(scrollUtils, 'isMenuScrolledToBottom')
-      .mockImplementationOnce(() => isMenuScrolledToBottom);
+      .mockImplementation(() => isMenuScrolledToBottom);
 
     render(
       <Select
@@ -1194,7 +1194,7 @@ describe('Select', () => {
 
     isMenuScrolledToTop = false;
     isMenuScrolledToBottom = true;
-    fireEvent(window, new Event('resize'));
+    fireEvent.resize(window);
 
     await waitFor(() => {
       expect(screen.queryByAltText('Scroll down')).not.toBeInTheDocument();
@@ -1220,7 +1220,7 @@ describe('Select', () => {
 
     const isMenuScrolledToBottomSpy = jest
       .spyOn(scrollUtils, 'isMenuScrolledToBottom')
-      .mockImplementationOnce(() => false);
+      .mockImplementation(() => false);
 
     render(
       <Select
@@ -1250,7 +1250,7 @@ describe('Select', () => {
     expect(screen.queryByAltText('Scroll down')).not.toBeInTheDocument();
 
     isMenuScrollable = true;
-    fireEvent(window, new Event('resize'));
+    fireEvent.resize(window);
 
     await waitFor(() => {
       expect(screen.queryByAltText('Scroll up')).toBeInTheDocument();
@@ -1277,7 +1277,7 @@ describe('Select', () => {
 
     const isMenuScrolledToBottomSpy = jest
       .spyOn(scrollUtils, 'isMenuScrolledToBottom')
-      .mockImplementationOnce(() => isMenuScrolledToBottom);
+      .mockImplementation(() => isMenuScrolledToBottom);
 
     render(
       <Select
@@ -1310,7 +1310,7 @@ describe('Select', () => {
     isMenuScrolledToBottom = false;
 
     const menu = screen.getByRole('listbox');
-    fireEvent(menu, new Event('scroll'));
+    fireEvent.scroll(menu);
 
     await waitFor(() => {
       expect(screen.queryByAltText('Scroll up')).not.toBeInTheDocument();
@@ -1337,7 +1337,7 @@ describe('Select', () => {
 
     const isMenuScrolledToBottomSpy = jest
       .spyOn(scrollUtils, 'isMenuScrolledToBottom')
-      .mockImplementationOnce(() => isMenuScrolledToBottom);
+      .mockImplementation(() => isMenuScrolledToBottom);
 
     render(
       <Select
@@ -1370,7 +1370,7 @@ describe('Select', () => {
     isMenuScrolledToBottom = true;
 
     const menu = screen.getByRole('listbox');
-    fireEvent(menu, new Event('scroll'));
+    fireEvent.scroll(menu);
 
     await waitFor(() => {
       expect(screen.queryByAltText('Scroll down')).not.toBeInTheDocument();
@@ -1398,7 +1398,7 @@ describe('Select', () => {
       .spyOn(scrollUtils, 'isMenuScrolledToBottom')
       .mockImplementation(() => false);
 
-    const { debug } = render(
+    render(
       <Select
         label="Select an option"
         field={new Field({ name: 'favoriteColor', defaultValue: '' })}
@@ -1428,7 +1428,7 @@ describe('Select', () => {
     isMenuScrolledToTop = false;
 
     const menu = screen.getByRole('listbox');
-    fireEvent(menu, new Event('scroll'));
+    fireEvent.scroll(menu);
 
     await waitFor(() => {
       expect(screen.queryByAltText('Scroll up')).toBeInTheDocument();
@@ -1471,17 +1471,17 @@ describe('Select', () => {
 
     expect(isKeyboardNavigating.current).toBe(true);
 
-    fireEvent(document, new Event('mousemove'));
+    fireEvent.mouseMove(document);
     expect(isKeyboardNavigating.current).toBe(false);
 
     useMenuSpy.mockRestore();
   });
 
-  // it(`calls MenuControls.startScrollingUp when the mouse enters the scroll up
-  // button and the user is not navigating with the keyboard.`, () => {});
+  it(`calls MenuControls.startScrollingUp when the mouse enters the scroll up
+  button and the user is not navigating with the keyboard.`, async () => {});
 
-  // it(`does not call MenuControls.startScrollingUp when the mouse enters the
-  // scroll up button and the user is navigating with the keyboard.`, () => {});
+  it(`does not call MenuControls.startScrollingUp when the mouse enters the
+  scroll up button and the user is navigating with the keyboard.`, () => {});
 
   // it(`calls MenuControls.stopScrolling when the mouse leaves the scroll up
   // button.`, () => {});
