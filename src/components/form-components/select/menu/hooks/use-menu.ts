@@ -10,7 +10,7 @@ import type { FieldOfType } from 'fully-formed';
 import type { MenuControls } from './menu-controls';
 import type { Option } from '../../types/option';
 
-interface UseMenuParams {
+export interface UseMenuParams {
   /**
    * An array of options to be displayed inside the enclosing `Menu` component.
    */

@@ -1,4 +1,4 @@
-import { correctScrollIfOptionIsHidden } from '../scroll/correct-scroll-if-option-is-hidden';
+import { correctScrollIfOptionIsHidden } from '../scroll';
 import type { RefObject } from 'react';
 
 interface FocusOnOptionParams {

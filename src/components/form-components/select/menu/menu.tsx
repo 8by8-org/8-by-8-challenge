@@ -129,6 +129,13 @@ export const Menu = forwardRef(function Menu(
           type="button"
           className={styles.scroll_up}
           onMouseEnter={() => {
+            /*
+              If the user has opened the menu with the keyboard or is cycling 
+              through the options with the arrow keys, the mouse can enter the 
+              button when the content of the menu scrolls. This can cause 
+              unexpected behavior, so return without calling startScrollingUp if 
+              the user is navigating the menu with the keyboard.
+            */
             if (menuControls.isKeyboardNavigating.current) {
               return;
             }
@@ -211,6 +218,13 @@ export const Menu = forwardRef(function Menu(
           type="button"
           className={styles.scroll_down}
           onMouseEnter={() => {
+            /*
+              If the user has opened the menu with the keyboard or is cycling 
+              through the options with the arrow keys, the mouse can enter the 
+              button when the content of the menu scrolls. This can cause 
+              unexpected behavior, so return without calling startScrollingDown
+              if the user is navigating the menu with the keyboard.
+            */
             if (menuControls.isKeyboardNavigating.current) {
               return;
             }

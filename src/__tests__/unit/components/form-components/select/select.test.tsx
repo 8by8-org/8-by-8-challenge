@@ -1,11 +1,45 @@
 import { Select } from '@/components/form-components/select';
-import { render, screen, cleanup, act, waitFor } from '@testing-library/react';
+import {
+  render,
+  screen,
+  cleanup,
+  act,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { Field, StringValidators, Group } from 'fully-formed';
-import zipState from 'zip-state';
 import { mockScrollMethods } from '@/utils/test/mock-scroll-methods';
+import * as scrollUtils from '../../../../../components/form-components/select/menu/utils/scroll';
+import * as useMenuModule from '../../../../../components/form-components/select/menu/hooks/use-menu';
+import zipState from 'zip-state';
 import { US_STATES_AND_TERRITORIES } from '@/constants/us-states-and-territories';
+
+/*
+  The individual modules within utils must be mocked so that when they are 
+  spied on and replaced with a mock implementation, the other functions in 
+  utils call the mock implementations.
+*/
+jest.mock(
+  '../../../../../components/form-components/select/menu/utils/scroll',
+  () => ({
+    __esModule: true,
+    ...jest.requireActual(
+      '../../../../../components/form-components/select/menu/utils/scroll',
+    ),
+  }),
+);
+
+jest.mock(
+  '../../../../../components/form-components/select/menu/hooks/use-menu',
+  () => ({
+    __esModule: true,
+    ...jest.requireActual(
+      '../../../../../components/form-components/select/menu/hooks/use-menu',
+    ),
+  }),
+);
 
 describe('Select', () => {
   let user: UserEvent;
@@ -997,4 +1031,480 @@ describe('Select', () => {
 
     expect(screen.queryByText(stateAndZipDoNotMatch)).not.toBeInTheDocument();
   });
+
+  it(`hides the menu's scroll buttons when the screen is resized and the menu 
+  is no longer scrollable.`, async () => {
+    let isMenuScrollable = true;
+
+    const isMenuScrollableSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrollable')
+      .mockImplementation(() => isMenuScrollable);
+
+    const isMenuScrolledToTopSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToTop')
+      .mockImplementation(() => false);
+
+    const isMenuScrolledToBottomSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToBottom')
+      .mockImplementationOnce(() => false);
+
+    render(
+      <Select
+        label="Select an option"
+        field={new Field({ name: 'favoriteColor', defaultValue: '' })}
+        options={[
+          {
+            text: 'Red',
+            value: 'red',
+          },
+          {
+            text: 'Green',
+            value: 'green',
+          },
+          {
+            text: 'Blue',
+            value: 'blue',
+          },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole('combobox'));
+    await waitFor(() =>
+      expect(screen.queryByAltText('Scroll up')).toBeInTheDocument(),
+    );
+    expect(screen.queryByAltText('Scroll down')).toBeInTheDocument();
+
+    isMenuScrollable = false;
+    fireEvent(window, new Event('resize'));
+
+    await waitFor(() => {
+      expect(screen.queryByAltText('Scroll up')).not.toBeInTheDocument();
+      expect(screen.queryByAltText('Scroll down')).not.toBeInTheDocument();
+    });
+
+    isMenuScrollableSpy.mockRestore();
+    isMenuScrolledToTopSpy.mockRestore();
+    isMenuScrolledToBottomSpy.mockRestore();
+  });
+
+  it(`hides the scroll up buttom and shows the scroll down button when the
+  screen is resized, the menu is scrollable, and the menu is scrolled to the
+  top.`, async () => {
+    let isMenuScrolledToTop = false;
+    let isMenuScrolledToBottom = true;
+
+    const isMenuScrollableSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrollable')
+      .mockImplementation(() => true);
+
+    const isMenuScrolledToTopSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToTop')
+      .mockImplementation(() => isMenuScrolledToTop);
+
+    const isMenuScrolledToBottomSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToBottom')
+      .mockImplementationOnce(() => isMenuScrolledToBottom);
+
+    render(
+      <Select
+        label="Select an option"
+        field={new Field({ name: 'favoriteColor', defaultValue: '' })}
+        options={[
+          {
+            text: 'Red',
+            value: 'red',
+          },
+          {
+            text: 'Green',
+            value: 'green',
+          },
+          {
+            text: 'Blue',
+            value: 'blue',
+          },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole('combobox'));
+    await waitFor(() =>
+      expect(screen.queryByAltText('Scroll up')).toBeInTheDocument(),
+    );
+    expect(screen.queryByAltText('Scroll down')).not.toBeInTheDocument();
+
+    isMenuScrolledToTop = true;
+    isMenuScrolledToBottom = false;
+    fireEvent(window, new Event('resize'));
+
+    await waitFor(() => {
+      expect(screen.queryByAltText('Scroll up')).not.toBeInTheDocument();
+      expect(screen.queryByAltText('Scroll down')).toBeInTheDocument();
+    });
+
+    isMenuScrollableSpy.mockRestore();
+    isMenuScrolledToTopSpy.mockRestore();
+    isMenuScrolledToBottomSpy.mockRestore();
+  });
+
+  it(`hides the scroll down button and shows the scroll up button when the
+  screen is resized, the menu is scrollable, and the menu is scrolled to the
+  bottom.`, async () => {
+    let isMenuScrolledToTop = true;
+    let isMenuScrolledToBottom = false;
+
+    const isMenuScrollableSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrollable')
+      .mockImplementation(() => true);
+
+    const isMenuScrolledToTopSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToTop')
+      .mockImplementation(() => isMenuScrolledToTop);
+
+    const isMenuScrolledToBottomSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToBottom')
+      .mockImplementationOnce(() => isMenuScrolledToBottom);
+
+    render(
+      <Select
+        label="Select an option"
+        field={new Field({ name: 'favoriteColor', defaultValue: '' })}
+        options={[
+          {
+            text: 'Red',
+            value: 'red',
+          },
+          {
+            text: 'Green',
+            value: 'green',
+          },
+          {
+            text: 'Blue',
+            value: 'blue',
+          },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole('combobox'));
+    await waitFor(() =>
+      expect(screen.queryByAltText('Scroll down')).toBeInTheDocument(),
+    );
+    expect(screen.queryByAltText('Scroll up')).not.toBeInTheDocument();
+
+    isMenuScrolledToTop = false;
+    isMenuScrolledToBottom = true;
+    fireEvent(window, new Event('resize'));
+
+    await waitFor(() => {
+      expect(screen.queryByAltText('Scroll down')).not.toBeInTheDocument();
+      expect(screen.queryByAltText('Scroll up')).toBeInTheDocument();
+    });
+
+    isMenuScrollableSpy.mockRestore();
+    isMenuScrolledToTopSpy.mockRestore();
+    isMenuScrolledToBottomSpy.mockRestore();
+  });
+
+  it(`shows both scroll buttons when the menu is resized, the menu is scrollable,
+  and the menu is scrolled neither to the top nor the bottom.`, async () => {
+    let isMenuScrollable = false;
+
+    const isMenuScrollableSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrollable')
+      .mockImplementation(() => isMenuScrollable);
+
+    const isMenuScrolledToTopSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToTop')
+      .mockImplementation(() => false);
+
+    const isMenuScrolledToBottomSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToBottom')
+      .mockImplementationOnce(() => false);
+
+    render(
+      <Select
+        label="Select an option"
+        field={new Field({ name: 'favoriteColor', defaultValue: '' })}
+        options={[
+          {
+            text: 'Red',
+            value: 'red',
+          },
+          {
+            text: 'Green',
+            value: 'green',
+          },
+          {
+            text: 'Blue',
+            value: 'blue',
+          },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole('combobox'));
+    await waitFor(() =>
+      expect(screen.queryByAltText('Scroll up')).not.toBeInTheDocument(),
+    );
+    expect(screen.queryByAltText('Scroll down')).not.toBeInTheDocument();
+
+    isMenuScrollable = true;
+    fireEvent(window, new Event('resize'));
+
+    await waitFor(() => {
+      expect(screen.queryByAltText('Scroll up')).toBeInTheDocument();
+      expect(screen.queryByAltText('Scroll down')).toBeInTheDocument();
+    });
+
+    isMenuScrollableSpy.mockRestore();
+    isMenuScrolledToTopSpy.mockRestore();
+    isMenuScrolledToBottomSpy.mockRestore();
+  });
+
+  it(`hides the scroll up buttom and shows the scroll down button when the
+  menu is scrolled and reaches the top.`, async () => {
+    let isMenuScrolledToTop = false;
+    let isMenuScrolledToBottom = true;
+
+    const isMenuScrollableSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrollable')
+      .mockImplementation(() => true);
+
+    const isMenuScrolledToTopSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToTop')
+      .mockImplementation(() => isMenuScrolledToTop);
+
+    const isMenuScrolledToBottomSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToBottom')
+      .mockImplementationOnce(() => isMenuScrolledToBottom);
+
+    render(
+      <Select
+        label="Select an option"
+        field={new Field({ name: 'favoriteColor', defaultValue: '' })}
+        options={[
+          {
+            text: 'Red',
+            value: 'red',
+          },
+          {
+            text: 'Green',
+            value: 'green',
+          },
+          {
+            text: 'Blue',
+            value: 'blue',
+          },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole('combobox'));
+    await waitFor(() =>
+      expect(screen.queryByAltText('Scroll up')).toBeInTheDocument(),
+    );
+    expect(screen.queryByAltText('Scroll down')).not.toBeInTheDocument();
+
+    isMenuScrolledToTop = true;
+    isMenuScrolledToBottom = false;
+
+    const menu = screen.getByRole('listbox');
+    fireEvent(menu, new Event('scroll'));
+
+    await waitFor(() => {
+      expect(screen.queryByAltText('Scroll up')).not.toBeInTheDocument();
+      expect(screen.queryByAltText('Scroll down')).toBeInTheDocument();
+    });
+
+    isMenuScrollableSpy.mockRestore();
+    isMenuScrolledToTopSpy.mockRestore();
+    isMenuScrolledToBottomSpy.mockRestore();
+  });
+
+  it(`hides the scroll down button and shows the scroll up button when the
+  menu is scrolled and reaches the bottom.`, async () => {
+    let isMenuScrolledToTop = true;
+    let isMenuScrolledToBottom = false;
+
+    const isMenuScrollableSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrollable')
+      .mockImplementation(() => true);
+
+    const isMenuScrolledToTopSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToTop')
+      .mockImplementation(() => isMenuScrolledToTop);
+
+    const isMenuScrolledToBottomSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToBottom')
+      .mockImplementationOnce(() => isMenuScrolledToBottom);
+
+    render(
+      <Select
+        label="Select an option"
+        field={new Field({ name: 'favoriteColor', defaultValue: '' })}
+        options={[
+          {
+            text: 'Red',
+            value: 'red',
+          },
+          {
+            text: 'Green',
+            value: 'green',
+          },
+          {
+            text: 'Blue',
+            value: 'blue',
+          },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole('combobox'));
+    await waitFor(() =>
+      expect(screen.queryByAltText('Scroll down')).toBeInTheDocument(),
+    );
+    expect(screen.queryByAltText('Scroll up')).not.toBeInTheDocument();
+
+    isMenuScrolledToTop = false;
+    isMenuScrolledToBottom = true;
+
+    const menu = screen.getByRole('listbox');
+    fireEvent(menu, new Event('scroll'));
+
+    await waitFor(() => {
+      expect(screen.queryByAltText('Scroll down')).not.toBeInTheDocument();
+      expect(screen.queryByAltText('Scroll up')).toBeInTheDocument();
+    });
+
+    isMenuScrollableSpy.mockRestore();
+    isMenuScrolledToTopSpy.mockRestore();
+    isMenuScrolledToBottomSpy.mockRestore();
+  });
+
+  it(`shows both scroll buttons when the menu is scrolled without reaching the
+  top or bottom.`, async () => {
+    let isMenuScrolledToTop = true;
+
+    const isMenuScrollableSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrollable')
+      .mockImplementation(() => true);
+
+    const isMenuScrolledToTopSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToTop')
+      .mockImplementation(() => isMenuScrolledToTop);
+
+    const isMenuScrolledToBottomSpy = jest
+      .spyOn(scrollUtils, 'isMenuScrolledToBottom')
+      .mockImplementation(() => false);
+
+    const { debug } = render(
+      <Select
+        label="Select an option"
+        field={new Field({ name: 'favoriteColor', defaultValue: '' })}
+        options={[
+          {
+            text: 'Red',
+            value: 'red',
+          },
+          {
+            text: 'Green',
+            value: 'green',
+          },
+          {
+            text: 'Blue',
+            value: 'blue',
+          },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole('combobox'));
+    await waitFor(() =>
+      expect(screen.queryByAltText('Scroll down')).toBeInTheDocument(),
+    );
+    expect(screen.queryByAltText('Scroll up')).not.toBeInTheDocument();
+
+    isMenuScrolledToTop = false;
+
+    const menu = screen.getByRole('listbox');
+    fireEvent(menu, new Event('scroll'));
+
+    await waitFor(() => {
+      expect(screen.queryByAltText('Scroll up')).toBeInTheDocument();
+    });
+    expect(screen.queryByAltText('Scroll down')).toBeInTheDocument();
+
+    isMenuScrollableSpy.mockRestore();
+    isMenuScrolledToTopSpy.mockRestore();
+    isMenuScrolledToBottomSpy.mockRestore();
+  });
+
+  it(`sets MenuControls.isKeyboardNavigating.current to false when the user
+  moves the mouse.`, async () => {
+    const isKeyboardNavigating = {
+      current: true,
+    };
+
+    const { useMenu } = useMenuModule;
+
+    const useMenuSpy = jest
+      .spyOn(useMenuModule, 'useMenu')
+      .mockImplementationOnce((params: useMenuModule.UseMenuParams) => {
+        return {
+          ...useMenu(params),
+          isKeyboardNavigating,
+        };
+      });
+
+    render(
+      <Select
+        label="Select an option"
+        field={new Field({ name: 'testField', defaultValue: '' })}
+        options={[]}
+      />,
+    );
+
+    const combobox = screen.getByRole('combobox');
+    combobox.focus();
+    await user.keyboard('{Enter}');
+
+    expect(isKeyboardNavigating.current).toBe(true);
+
+    fireEvent(document, new Event('mousemove'));
+    expect(isKeyboardNavigating.current).toBe(false);
+
+    useMenuSpy.mockRestore();
+  });
+
+  // it(`calls MenuControls.startScrollingUp when the mouse enters the scroll up
+  // button and the user is not navigating with the keyboard.`, () => {});
+
+  // it(`does not call MenuControls.startScrollingUp when the mouse enters the
+  // scroll up button and the user is navigating with the keyboard.`, () => {});
+
+  // it(`calls MenuControls.stopScrolling when the mouse leaves the scroll up
+  // button.`, () => {});
+
+  // it(`calls MenuControls.startScrollingUp when the mousedown event of the scroll
+  // up button is fired, and then calls stopScrolling when the mouseup event is
+  // fired.`, () => {});
+
+  // it(`calls MenuControls.startScrollingUp when the touchstart event of the
+  // scroll up button is fired, and then calls stopScrolling when the touchend
+  // event is fired.`, () => {});
+
+  // it(`calls MenuControls.startScrollingUp when the touchstart event of the
+  // scroll up button is fired, and then calls stopScrolling when the touchcancel
+  // event is fired.`, () => {});
+
+  // it(`calls MenuControls.startScrollingUp when the touchstart event of the
+  // scroll up button is fired, and then calls stopScrolling when the touchmove
+  // event fires and the touch coordinates have moved outside of the
+  // button.`, () => {});
+
+  // it(`calls MenuControls.startScrollingUp when the touchstart event of the
+  // scroll up button is fired but does not call stopScrolling when the touchmove
+  // event fires and the touch coordinates have remained inside of the
+  // button.`, () => {});
 });

@@ -1,6 +1,6 @@
-import { stopScrolling } from '../scroll/stop-scrolling';
-import { focusOnOption } from '../focus/focus-on-option';
-import { closeMenuAndFocusOnCombobox } from '../menu-state/close-menu-and-focus-on-combobox';
+import { stopScrolling } from '../scroll';
+import { focusOnOption } from '../focus';
+import { closeMenuAndFocusOnCombobox } from '../menu-state';
 import { isPrintableCharacterKey } from '../../../utils/is-printable-character-key';
 import { findOptionIndexByFirstChar } from '../../../utils/find-option-index-by-first-letter';
 import type { RefObject, MutableRefObject } from 'react';

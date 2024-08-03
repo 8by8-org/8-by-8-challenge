@@ -1,7 +1,7 @@
-import { focusOnOption } from '../focus/focus-on-option';
-import { isMenuScrollable } from '../scroll/is-menu-scrollable';
-import { isMenuScrolledToTop } from '../scroll/is-menu-scrolled-to-top';
-import { isMenuScrolledToBottom } from '../scroll/is-menu-scrolled-to-bottom';
+import { focusOnOption } from '../focus';
+import { isMenuScrollable } from '../scroll';
+import { isMenuScrolledToTop } from '../scroll';
+import { isMenuScrolledToBottom } from '../scroll';
 import type {
   RefObject,
   MutableRefObject,
