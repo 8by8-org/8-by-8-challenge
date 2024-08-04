@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import Select
 
 
 class NextJSTests(unittest.TestCase):
@@ -23,7 +24,8 @@ class NextJSTests(unittest.TestCase):
     def setUp(self):
         """Navigate to the base URL before each test"""
         self.driver.get(self.host)
-        
+
+# Webpage Elements  
     def test_homepage_title(self):
         """Test if the homepage title is correct"""
         self.assertEqual(self.driver.title, '8by8 Challenge')
@@ -52,7 +54,38 @@ class NextJSTests(unittest.TestCase):
         else:
             self.fail(
                 f"expected texted TAKE THE CHALLENGE but got {button_element.text}")
+# HamBurger Menu    
+    def test_hamburger_menu(self):
+        """Test if the hambuger menu functions as intended"""
+        prevState = self.driver.find_element(By.CLASS_NAME, 'hidden').is_selected()
+        if not prevState:
+            alterState = self.driver.find_element(By.CLASS_NAME, 'styles_outer_container__ppLtJ')
+            actions = ActionChains(self.driver)
+            actions.move_to_element(alterState).click().perform()
+        else:
+            self.fail('Hamburger Menu Tests have failed!')
+    
+        innerMenu = self.driver.find_element(By.CLASS_NAME, 'styles_inner_container__0JSHj').is_displayed()
+        if innerMenu:
+            return None
+        else:
+            self.fail('Inner Menu is not displayed!')  
 
+     
+    def test_content_list(self):
+        """Test if the hambuger menu shows some menu content"""
+        content_list = self.driver.find_elements(By.TAG_NAME, 'ul')
+        for i in range(len(content_list)):
+            if content_list[i].get_attribute("class") == 'styles_hamburger_menu_items__8yFBG':
+                content = self.driver.find_element(By.TAG_NAME, 'li').is_displayed()
+                if content:
+                    test_button = self.driver.find_element(By.TAG_NAME, 'button')
+                    actions = ActionChains(self.driver)
+                    actions.move_to_element(test_button).click().perform()
+            else:
+                self.fail('TAG_NAME not found!')
+                    
+            
 
 # SECTION_01
     def test_section_1_render(self):
