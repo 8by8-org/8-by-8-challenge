@@ -117,7 +117,7 @@ npm run start
 ### 7.   Run the tests
 
 To run the Selenium tests, navigate into `src/__tests__/e2e` and run
-`python -m pytest`.
+`python3 -m pytest`.
 
 
 
