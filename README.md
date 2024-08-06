@@ -35,9 +35,23 @@ the same for both commands, and will be the same each time you run these command
 
 ### Setup Instructions
 
+
+### Python Version
+
+While our project can run on different versions of Python, it is best practice to use Python 3 for better performance, security, and compatibility with modern libraries and frameworks.
+
+### Installing Python 3
+
+If you do not have Python 3 installed, you can download it from the [official Python website](https://www.python.org/downloads/).
+
+```
+python --version
+```
+
+
 ### 1. Create Virtual Enviornment 
 
-`python -m venv venv` 
+`python3 -m venv venv` 
 
 ### 2. Activate Virtual Enviornment 
 
@@ -48,12 +62,11 @@ Windows
 `venv\Scripts\activate`
 
 Linux 
-`source myenv/bin/activate`
+`source venv/bin/activate`
 
 
 
 ### 3.  Installing Selenium
-
 Selenium does not need to be installed on a per-project basis. To see if you
 already have it installed, you can run the following command:
 
