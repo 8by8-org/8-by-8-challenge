@@ -87,23 +87,21 @@ Be sure to install pytest:
 pip install pytest
 ```
 
-## Before Running Selenium Tests
+## 5.  Before Running Selenium Tests
 
 To ensure that Selenium tests run efficiently, it is recommended to first compile your project using `npm run build`. This step improves performance by compiling and optimizing the code, which can make the tests smoother.
 
-### Steps to Run Selenium Tests
-
-1. **Build the Project:**
+I. **Build the Project:**
 ```
 npm run build
 ```
 
-2. **Start Development Server:**
+II. **Start Development Server:**
 ```
 npm run start
 ```
 
-###  Run the tests
+### 7.   Run the tests
 
 To run the Selenium tests, navigate into `src/__tests__/e2e` and run
 `python -m pytest`.
