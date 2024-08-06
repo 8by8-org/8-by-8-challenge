@@ -124,3 +124,69 @@ Semi-colons are required at the end of each statement. This requirement can be t
 ## Simplicity and Consistency
 
 Prefer the simplest words possible (while maintaining precision and clarity) when naming your variables, functions, etc, and use those terms consistently. Follow the principle of least surprise: if two functions serve a similar purpose, or have similar parameters, try to structure their signatures in similar ways. By following this principle, we can create a codebase that is highly intuitive to work with.
+
+
+
+# Python Style Guide
+
+## Naming Conventions
+
+### Variables
+- Use `snake_case` for variable names.
+```python
+example_variable = 10
+```
+
+### Functions and Methods
+- Use `snake_case` for function and method names.
+```python
+def example_function():
+    pass
+```
+
+## Documentation
+
+### Docstrings
+- Use docstrings to comment and document your code. Docstrings should be used for modules, classes, methods, and functions.
+```python
+def example_function(param1, param2):
+    """
+    This is an example function.
+
+    Args:
+        param1 (int): The first parameter.
+        param2 (str): The second parameter.
+
+    Returns:
+        bool: The return value. True for success, False otherwise.
+    """
+    return True
+```
+
+## Code Layout
+
+### Indentation
+- Use 4 spaces per indentation level.
+```python
+def example_function():
+    if True:
+        print("Hello, world!")
+```
+
+
+### Blank Lines
+- Use blank lines to separate top-level functions and class definitions.
+- Use blank lines sparingly inside functions to indicate logical sections.
+
+```python
+class ExampleClass:
+    def __init__(self, value):
+        self.value = value
+
+    def example_method(self):
+        if self.value:
+            return True
+
+        return False
+```
+

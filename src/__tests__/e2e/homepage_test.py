@@ -1,10 +1,7 @@
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support.ui import Select
 
 
 class NextJSTests(unittest.TestCase):
@@ -34,9 +31,9 @@ class NextJSTests(unittest.TestCase):
         """Test if the logo image is rendered correctly"""
         image_element = self.driver.find_element(
             By.XPATH, "//img[@alt='8by8 Logo']")
-        src = image_element.get_attribute("src")
+        logo_src = image_element.get_attribute("src")
         formatted_url = f"{self.host}/_next/static/media/8by8-logo.a39d7aad.svg"
-        self.assertEqual(src, formatted_url)
+        self.assertEqual(logo_src, formatted_url)
 
     def test_h1_exists(self):
         """Test if the h1 element is displayed"""
@@ -54,14 +51,15 @@ class NextJSTests(unittest.TestCase):
         else:
             self.fail(
                 f"expected texted TAKE THE CHALLENGE but got {button_element.text}")
+            
 # HamBurger Menu    
     def test_hamburger_menu(self):
         """Test if the hambuger menu functions as intended"""
         prevState = self.driver.find_element(By.CLASS_NAME, 'hidden').is_selected()
         if not prevState:
             alterState = self.driver.find_element(By.CLASS_NAME, 'styles_outer_container__ppLtJ')
-            actions = ActionChains(self.driver)
-            actions.move_to_element(alterState).click().perform()
+            events = ActionChains(self.driver)
+            events.move_to_element(alterState).click().perform()
         else:
             self.fail('Hamburger Menu Tests have failed!')
     
@@ -80,13 +78,13 @@ class NextJSTests(unittest.TestCase):
                 content = self.driver.find_element(By.TAG_NAME, 'li').is_displayed()
                 if content:
                     test_button = self.driver.find_element(By.TAG_NAME, 'button')
-                    actions = ActionChains(self.driver)
-                    actions.move_to_element(test_button).click().perform()
+                    click_action = ActionChains(self.driver)
+                    click_action.move_to_element(test_button).click().perform()
             else:
                 self.fail('TAG_NAME not found!')
                     
             
-
+            
 # SECTION_01
     def test_section_1_render(self):
         """Test if Section 1 is rendered correctly"""
@@ -98,18 +96,18 @@ class NextJSTests(unittest.TestCase):
         """Test the link tag content in Section 1"""
         link_tag = self.driver.find_element(By.PARTIAL_LINK_TEXT, 'See')
         link_tag.get_attribute('href') == '/why8by8'
-        actions = ActionChains(self.driver)
-        actions.move_to_element(link_tag)
-        actions.click()
-        actions.perform()
+        click_nav = ActionChains(self.driver)
+        click_nav.move_to_element(link_tag)
+        click_nav.click()
+        click_nav.perform()
 
     def test_image_exists(self):
         """Test if the image in Section 1 exists"""
         image_element = self.driver.find_element(
             By.XPATH, "//img[@alt='yellow curve']")
-        src = image_element.get_attribute("src")
+        image_src = image_element.get_attribute("src")
         formatted_url = f"{self.host}/_next/static/media/yellow-curve.0236528a.svg"
-        self.assertEqual(src, formatted_url)
+        self.assertEqual(image_src, formatted_url)
 
 
 # SECTION_02
@@ -132,9 +130,9 @@ class NextJSTests(unittest.TestCase):
         """Test if the father_daughter image in Section 2 is displayed"""
         image_displayed = self.driver.find_element(
             By.XPATH, "//img[@alt='sign']")
-        src = image_displayed.get_attribute("src")
+        secondary_src = image_displayed.get_attribute("src")
         formatted_url = f"{self.host}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ffather-and-daughter-with-sign.1f060e65.png&w=750&q=75"
-        self.assertEqual(src, formatted_url)
+        self.assertEqual(secondary_src, formatted_url)
         
 
 # SECTION_03        
@@ -158,9 +156,9 @@ class NextJSTests(unittest.TestCase):
         """Test if the image in the div of Section 3 is displayed correctly"""
         image_displayed = self.driver.find_element(
             By.XPATH, "//img[@alt='teal curve']")
-        src = image_displayed.get_attribute("src")
+        div_src = image_displayed.get_attribute("src")
         formatted_url = f"{self.host}/_next/static/media/teal-curve.8a426c54.svg"
-        self.assertEqual(src, formatted_url)
+        self.assertEqual(div_src, formatted_url)
 
 
 # SECTION_04
@@ -233,7 +231,6 @@ class NextJSTests(unittest.TestCase):
             'but only',
             'of Congress is Asian or AAPI'
         ]
-
 
         for i, expected_text in enumerate(expected_texts):
             self.assertEqual(h3_elements[i].text, expected_text)
