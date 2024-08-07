@@ -48,6 +48,19 @@ If you do not have Python 3 installed, you can download it from the [official Py
 python --version
 ```
 
+### Note
+The command to run Python might be `python3` on some systems (like Ubuntu and WSL), while in other environments it might just be `python`. Please adjust the commands accordingly based on your environment.
+
+### Systems using Python 3
+* Ubuntu (including WSL)
+* CentOS/RHEL (recent versions)
+* Fedora
+* macOS (often default)
+
+### Systems using Python  (depends on configuration)
+* Older Linux distributions (e.g., Ubuntu 12.04, CentOS 6)
+* Conda Environments
+* Docker Containers
 
 ### 1. Create Virtual Enviornment 
 
