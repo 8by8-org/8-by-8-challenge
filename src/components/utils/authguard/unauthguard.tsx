@@ -5,22 +5,22 @@ import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 
 interface UnAuthGuardProps {
-    children?: ReactNode;
+  children?: ReactNode;
 }
 
 /**
  * Ensures the user does not access child components if they are not signed in.
- * 
+ *
  * @param props - {@link UnAuthGuardProps}
  * @returns child components
  */
 export function UnAuthGuard({ children }: UnAuthGuardProps) {
-    const { user } = useContextSafely(UserContext, 'UnAuthGuard');
-    const router = useRouter();
+  const { user } = useContextSafely(UserContext, 'UnAuthGuard');
+  const router = useRouter();
 
-    if (user) {
-        router.push('/progress');
-    }
+  if (user) {
+    router.push('/progress');
+  }
 
-    return <>{children}</>;
+  return <>{children}</>;
 }

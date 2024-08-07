@@ -13,7 +13,7 @@
     "test": "jest --no-watch --runInBand",
     "test:ci": "jest --ci --runInBand -u",
     "lint": "next lint",
-    "format": "prettier --write \"**/*.+(js|ts|json)\"",
+    "format": "prettier --write \"**/*.+(js|ts|tsx|json)\"",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
