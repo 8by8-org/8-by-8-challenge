@@ -4,6 +4,7 @@ import { PageContainer } from '@/components/utils/page-container';
 
 describe('PageContainer', () => {
   afterEach(cleanup);
+
   it('renders the PageContainer unchanged.', () => {
     const { container } = render(<PageContainer />);
     expect(container).toMatchSnapshot();

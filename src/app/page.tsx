@@ -35,6 +35,7 @@ export default function Home() {
           id="why8by8"
           src={yellowCurve}
           alt="yellow curve"
+          priority={true}
         />
       </div>
 
