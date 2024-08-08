@@ -1,0 +1,72 @@
+@use '../../../../styles/partials' as *;
+@use '../variables' as *;
+
+.menu_container {
+  min-width: 100%;
+  width: fit-content;
+  position: absolute;
+  top: calc(100% - $border-width);
+  left: 0;
+}
+
+.menu {
+  min-width: 100%;
+  width: fit-content;
+  max-height: 40vh;
+  overflow-y: scroll;
+  list-style-type: none;
+  margin: 0;
+  padding: $menu-padding;
+  border: $border-width solid $color-black-text;
+  background-color: $color-white;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.option {
+  @extend .b1;
+  cursor: default;
+  padding: $option-padding;
+}
+
+.option:focus {
+  background-color: $color-yellow;
+  outline: none;
+}
+
+.scroll_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: 100%;
+  background-color: white;
+  border-left: $border-width solid $color-black-text;
+  border-right: $border-width solid $color-black-text;
+  border-radius: 0;
+}
+
+.scroll_up {
+  @extend .scroll_button;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-top: $border-width solid $color-black-text;
+  border-bottom: none;
+}
+
+.scroll_down {
+  @extend .scroll_button;
+
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-bottom: $border-width solid $color-black-text;
+  border-top: none;
+}

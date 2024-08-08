@@ -13,7 +13,7 @@
     "test": "jest --no-watch --runInBand",
     "test:ci": "jest --ci --runInBand -u",
     "lint": "next lint",
-    "format": "prettier --write \"**/*.+(js|ts|json)\"",
+    "format": "prettier --write \"**/*.+(js|ts|tsx|json)\"",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -30,6 +30,7 @@
     "react-turnstile": "^1.1.3",
     "server-only": "^0.0.1",
     "undecorated-di": "^2.0.0",
+    "zip-state": "^1.0.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -63,7 +64,7 @@
     "prettier": "^3.2.5",
     "sass": "^1.72.0",
     "storybook": "^8.1.9",
-    "supabase": "^1.183.5",
+    "supabase": "^1.187.10",
     "typescript": "^5",
     "uuid": "^10.0.0"
   }

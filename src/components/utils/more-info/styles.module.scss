@@ -1,0 +1,12 @@
+@use '../../../styles/partials' as *;
+
+.open_more_info_button {
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+}
+
+.close_modal_button {
+  margin-top: $spacing-lg;
+}
