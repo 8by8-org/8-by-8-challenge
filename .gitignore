@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
+src/__tests__/supabase/migrations/
 
 
 # testing
@@ -47,7 +48,3 @@ next-env.d.ts
 /venv
 __pycache__
 .pytest_cache
-
-
-
-

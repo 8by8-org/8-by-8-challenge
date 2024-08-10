@@ -83,6 +83,31 @@ create policy "Users can view their own contributed to data."
 on public.contributed_to for select
 using ((select auth.uid()) = player_id);
 
+-- Create registration_information table, enable row level security, and set a policy
+create table public.registration_information (
+  id serial,
+  user_id uuid not null references public.users on delete cascade, 
+  us_state varchar(255) not null,
+  city varchar(255) not null, 
+  street varchar(255) not null,
+  name_first varchar(255) not null, 
+  name_last varchar(255) not null, 
+  dob varchar(255) not null, 
+  zip varchar(255) not null, 
+  email varchar(255) not null, 
+  citizen varchar(255) not null, 
+  eighteenPlus varchar(255) not null, 
+  party varchar(255) not null, 
+  idNumber varchar(255) not null, 
+  primary key (id, user_id)
+);
+
+alter table public.registration_information enable row level security;
+
+create policy "Users can view their own registration information."
+on public.registration_information for select
+using ((select auth.uid()) = user_id);
+
 -- Create a function that creates new rows in public.users and public.completed_actions
 create function public.handle_new_user()
 returns trigger
