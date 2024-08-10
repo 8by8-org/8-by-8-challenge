@@ -47,7 +47,7 @@ function isEnvironmentGithubActions() {
 }
 
 function copyMigrations() {
-  fs.copyFileSync(source, destination);
+  fs.cpSync(source, destination, { recursive: true });
   console.log('Successfully copied migrations.');
 }
 
