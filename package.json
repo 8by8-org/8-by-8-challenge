@@ -5,7 +5,7 @@
   "scripts": {
     "supabase-dev:start": "supabase start",
     "supabase-dev:stop": "supabase stop --project-id 8by8-challenge",
-    "supabase-test:start": "cd src/__tests__ && supabase start",
+    "supabase-test:start": "node scripts/link-or-copy-migrations.js && cd src/__tests__ && supabase start",
     "supabase-test:stop": "cd src/__tests__ && supabase stop --project-id 8by8-challenge-test --no-backup",
     "dev": "next dev",
     "build": "next build",
@@ -15,9 +15,7 @@
     "lint": "next lint",
     "format": "prettier --write \"**/*.+(js|ts|tsx|json)\"",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "create-symlink-supabase-to-src": "node scripts/create-symlink-supabase-to-src.js",
-    "copy-migration-to-test-folder": "node scripts/copy-migration-to-test-folder.js"
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
