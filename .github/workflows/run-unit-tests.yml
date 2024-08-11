@@ -22,6 +22,5 @@ jobs:
         with:
           version: latest
       - run: npm ci
-      - run: npm run copy-migration-to-test-folder
       - run: npm run supabase-test:start
       - run: npm run test:ci
