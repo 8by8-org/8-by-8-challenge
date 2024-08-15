@@ -22,7 +22,6 @@ function SignIn() {
   const { sendOTPToEmail } = useContextSafely(UserContext, 'SignIn');
   const { showAlert } = useContextSafely(AlertsContext, 'SignIn');
   const [isLoading, setIsLoading] = useState(false);
-
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
     if (isLoading) return;
