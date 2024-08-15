@@ -1,0 +1,33 @@
+# A reusable workflow that runs a specified Selenium test
+name: 'Run Selenium Test'
+
+on:
+  workflow_call:
+    inputs:
+      test:
+        required: true
+        type: string
+      preview-url:
+        required: true
+        type: string
+    secrets:
+      VERCEL_AUTOMATION_SECRET:
+        required: true
+
+jobs:
+  run-e2e-tests:
+    runs-on: ubuntu-latest
+    env:
+      PREVIEW_URL: ${{ inputs.preview-url }}
+      ACCESS_TOKEN: ${{ secrets.VERCEL_AUTOMATION_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 127
+          install-chromedriver: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: pip install selenium
+      - run: cd src/__tests__/e2e && python ${{ inputs.test }}

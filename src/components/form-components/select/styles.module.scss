@@ -1,0 +1,18 @@
+@use './variables' as *;
+
+.select {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+}
+
+.combobox_container {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.open_more_info {
+  margin-left: $more-info-margin;
+}

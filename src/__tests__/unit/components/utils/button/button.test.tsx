@@ -19,13 +19,13 @@ describe('Button component', () => {
   });
 
   it('renders correctly with variant set to btn_inverted', () => {
-    render(<Button variant="btn_inverted">Click Me</Button>);
+    render(<Button variant="inverted">Click Me</Button>);
     const buttonElement = screen.getByText(/Click Me/i);
     expect(buttonElement).toBeInTheDocument();
   });
 
   it('renders correctly with size set to btn_sm', () => {
-    render(<Button size="btn_sm">Click Me</Button>);
+    render(<Button size="sm">Click Me</Button>);
     const buttonElement = screen.getByText(/Click Me/i);
     expect(buttonElement).toBeInTheDocument();
   });
@@ -34,7 +34,7 @@ describe('Button component', () => {
     render(
       <>
         {Array.from({ length: 100 }, (_, i) => (
-          <Button key={i} variant="btn_inverted" size="btn_lg" wide>
+          <Button key={i} variant="inverted" size="lg" wide>
             Button {i + 1}
           </Button>
         ))}
@@ -46,5 +46,12 @@ describe('Button component', () => {
     buttons.forEach((button, index) => {
       expect(button).toHaveTextContent(`Button ${index + 1}`);
     });
+  });
+
+  it('appends a className it receives as prop to its className.', () => {
+    const className = 'test';
+    render(<Button className={className}>Click Me</Button>);
+    const button = document.getElementsByTagName('button')[0];
+    expect(button.classList).toContain(className);
   });
 });

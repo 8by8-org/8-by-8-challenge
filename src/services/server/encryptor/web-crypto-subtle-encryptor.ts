@@ -1,5 +1,4 @@
 import { Encryptor } from './encryptor';
-import { TextEncoder, TextDecoder } from 'util';
 import { inject } from 'undecorated-di';
 
 export const WebCryptoSubtleEncryptor = inject(
@@ -15,7 +14,7 @@ export const WebCryptoSubtleEncryptor = inject(
      * @encryptData
      * @param data - string to encrypt
      * @param key - a cryptoKey for encryption and decryption
-     * @returns A string with the initialization vector concatenated with the encrypted data
+     * @returns A string with the initialization vector concatenated with the encrypted data. The return value will have length of 12 (length of iv) + X (length of plaintext to encrypt) + 16 (authentication tag)
      */
     async encrypt(data: string, key: CryptoKey): Promise<string> {
       const encoder = new TextEncoder();

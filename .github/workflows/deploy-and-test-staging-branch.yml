@@ -1,0 +1,48 @@
+name: 'Deploy and Test Staging Branch'
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  reset-db:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.STAGING_SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_ID: ${{ secrets.STAGING_SUPABASE_PROJECT_ID }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - run: supabase link --project-ref $SUPABASE_PROJECT_ID
+      - run: yes | supabase db reset --linked
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: reset-db
+    outputs:
+      preview-url: ${{ steps.deploy.outputs.preview-url }}
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install --global vercel@canary
+      - run: vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+      - run: vercel build --token=$VERCEL_TOKEN
+      - id: deploy
+        run: echo "preview-url=$(vercel deploy --prebuilt --token=$VERCEL_TOKEN)" >> $GITHUB_OUTPUT
+
+  test_homepage:
+    needs: deploy
+    uses: ./.github/workflows/run-selenium-test.yml
+    with:
+      test: homepage_test.py
+      preview-url: ${{ needs.deploy.outputs.preview-url }}
+    secrets: inherit

@@ -1,0 +1,18 @@
+@use '../variables' as *;
+
+.width_setter {
+  width: fit-content;
+  max-width: 100%;
+  height: 0;
+  overflow: hidden;
+  padding: 0 (2 * ($menu-padding + $option-padding + $border-width));
+}
+
+.width_setter_with_more_info {
+  width: fit-content;
+  max-width: 100%;
+  height: 0;
+  overflow: hidden;
+  padding: 0 (2 * ($menu-padding + $option-padding + $border-width)) +
+    $more-info-width-with-margin;
+}
