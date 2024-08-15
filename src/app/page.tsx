@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { PageContainer } from '@/components/utils/page-container';
-import { Button } from '@/components/utils/button'; 
+import { Button } from '@/components/utils/button';
 import logo from '../../public/static/images/shared/8by8-logo.svg';
 import yellowCurve from '../../public/static/images/pages/home/yellow-curve.svg';
 import tealCurve from '../../public/static/images/pages/home/teal-curve.svg';
@@ -32,7 +32,11 @@ export default function Home() {
             GET <u className="underline">8 AAPI FRIENDS</u> TO REGISTER TO VOTE
             IN <u className="underline">8 DAYS</u>
           </h1>
-          <Button onClick={() => router.push('/challengerwelcome')} >
+          <Button
+            onClick={() => router.push('/challengerwelcome')}
+            className={styles.challenge_btn}
+            wide
+          >
             Take the Challenge
           </Button>
           <Link href="/why8by8" className={styles.link}>
