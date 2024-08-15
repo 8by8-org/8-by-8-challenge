@@ -2,7 +2,6 @@ import {
   render,
   screen,
   cleanup,
-  queryAllByRole,
 } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
