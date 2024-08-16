@@ -18,7 +18,7 @@ export default meta;
 
 type Story = StoryObj<typeof PageContainer>;
 
-export const empty: Story = {
+export const Empty: Story = {
   render: () => {
     return (
       <GlobalStylesProvider>
