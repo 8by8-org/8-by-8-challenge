@@ -13,14 +13,14 @@ describe('WebCryptoSubtleEncryptor class', () => {
       ['encrypt', 'decrypt'],
     );
     const encryptedEmail = await dataEncryptor.encrypt(userEmail, newKey);
-    await expect(encryptedEmail.length).toBeGreaterThan(12);
-    await expect(encryptedEmail).not.toBe(userEmail);
+    expect(encryptedEmail.length).toBeGreaterThan(12);
+    expect(encryptedEmail).not.toBe(userEmail);
     const decryptedData = await dataEncryptor.decrypt(encryptedEmail, newKey);
-    await expect(decryptedData).toBe(userEmail);
+    expect(decryptedData).toBe(userEmail);
 
     const test = await dataEncryptor.encrypt('', newKey);
-    await expect(test.length).toBeGreaterThan(12);
-    await expect(test).not.toBe('');
+    expect(test.length).toBeGreaterThan(12);
+    expect(test).not.toBe('');
   });
 
   it('throws an error when trying to decrypt an empty string', async () => {

@@ -4,7 +4,6 @@ exports[`Progress renders progress page unchanged 1`] = `
 <div>
   <div
     class="outer_container"
-    data-testid="page-container"
   >
     <div
       class="inner_container"
