@@ -48,6 +48,7 @@ export function ClientSideUserContextProvider(
     setEmailForSignIn(params.email);
 
     router.push('/signin-with-otp');
+    
   }
 
   async function sendOTPToEmail(params: SendOTPToEmailParams) {

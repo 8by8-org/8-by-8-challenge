@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import type { User } from '@/model/types/user';
 import styles from './styles.module.scss';
+import { useRouter } from 'next/navigation';
 
 interface ChallengeButtonProps {
   user: User | null;
@@ -42,19 +43,24 @@ export function ChallengeButton({
   const [button, setButton] = useState<JSX.Element | null>(
     <button
       className={styles.gradient}
-      onClick={() => toggleInvite.current?.()}
+      onClick={() => toggleInvite.current?.()
+      }
     >
       <span>Invite friends</span>
     </button>,
   );
-
+  const [buttonText, setButtonText] = useState<string>('')
+  const router = useRouter(); 
+  const challengeStarted = user ? true : false 
+  
   useEffect(() => {
     let challengeFinished = user?.completedChallenge;
     if (challengeFinished) {
       setButton(
         <button
           className={styles.inverted}
-          onClick={() => toggleInvite.current?.()}
+          onClick={() => toggleInvite.current?.()
+          }
         >
           <span>Share</span>
         </button>,
@@ -68,7 +74,9 @@ export function ChallengeButton({
             setButton(
               <button
                 className={styles.gradient}
-                onClick={() => toggleInvite.current?.()}
+                onClick={() => toggleInvite.current?.()
+                }
+        
               >
                 <span>Invite friends</span>
               </button>,
@@ -79,8 +87,8 @@ export function ChallengeButton({
         </button>,
       );
       setOpenModal(true);
-    }
-  }, [user, daysLeft, toggleInvite, restartChallenge, setOpenModal]);
+    } 
+  }, [user, daysLeft, toggleInvite, restartChallenge, setOpenModal,]);
 
   return button;
 }

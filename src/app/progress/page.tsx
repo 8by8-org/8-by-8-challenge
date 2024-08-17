@@ -24,6 +24,8 @@ export default isSignedIn(function Progress() {
   const [openModal, setOpenModal] = useState(false);
   const toggleInvite = useRef(null);
 
+  
+ 
   return (
     <PageContainer>
       <article className={styles.progress_page}>
@@ -116,6 +118,7 @@ export default isSignedIn(function Progress() {
             restartChallenge={restartChallenge}
             setOpenModal={setOpenModal}
           />
+  
           {!user?.completedActions.registerToVote && (
             <div>
               <p className={styles.register}>

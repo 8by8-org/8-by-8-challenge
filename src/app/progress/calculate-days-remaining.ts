@@ -35,3 +35,4 @@ export function calculateDaysRemaining(user: User | null): number {
 
   return daysLeft;
 }
+

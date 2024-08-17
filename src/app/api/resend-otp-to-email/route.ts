@@ -28,3 +28,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Bad data.' }, { status: 400 });
   }
 }
+
