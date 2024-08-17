@@ -14,3 +14,7 @@ Section Three
 step 1. 
 
 
+
+notes 
+looks like the useRef behaves differently than useState because it doesn't rerender the page when the value is changed. 
+

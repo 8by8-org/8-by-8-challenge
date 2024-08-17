@@ -49,9 +49,9 @@ export function ChallengeButton({
       <span>Invite friends</span>
     </button>,
   );
-  const [buttonText, setButtonText] = useState<string>('')
+
   const router = useRouter(); 
-  const challengeStarted = user ? true : false 
+
   
   useEffect(() => {
     let challengeFinished = user?.completedChallenge;
@@ -65,30 +65,32 @@ export function ChallengeButton({
           <span>Share</span>
         </button>,
       );
+    } else if (!challengeFinished && daysLeft > 0) {
+            setButton(
+              <button
+                className={styles.gradient}
+                onClick={() => router.push('/share')
+                }
+        
+              >
+                <span>Invite Friends</span>
+              </button>,
+            );
+  
     } else if (!challengeFinished && daysLeft == 0) {
       setButton(
         <button
           className={styles.gradient}
           onClick={() => {
             restartChallenge();
-            setButton(
-              <button
-                className={styles.gradient}
-                onClick={() => toggleInvite.current?.()
-                }
-        
-              >
-                <span>Invite friends</span>
-              </button>,
-            );
           }}
         >
           <span>Restart Challenge</span>
         </button>,
       );
       setOpenModal(true);
-    } 
-  }, [user, daysLeft, toggleInvite, restartChallenge, setOpenModal,]);
+    }
+  }, [user, daysLeft, toggleInvite, restartChallenge, setOpenModal, router]);
 
   return button;
 }
