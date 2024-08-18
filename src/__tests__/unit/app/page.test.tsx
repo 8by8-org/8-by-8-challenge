@@ -1,12 +1,9 @@
-import {
-  render,
-  screen,
-  cleanup,
-} from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 import navigation from 'next/navigation';
 import { Builder } from 'builder-pattern';
+import { useRouter } from 'next/navigation';
 import Home from '@/app/page';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
