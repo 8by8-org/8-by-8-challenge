@@ -63,5 +63,4 @@ export const serverContainer = ContainerBuilder.createBuilder()
   .registerFunction(SERVER_SERVICE_KEYS.refreshSession, refreshSupabaseSession)
   .registerClass(SERVER_SERVICE_KEYS.UserRepository, SupabaseUserRepository)
   .registerClass(SERVER_SERVICE_KEYS.Encryptor, WebCryptoSubtleEncryptor)
-
   .build();
