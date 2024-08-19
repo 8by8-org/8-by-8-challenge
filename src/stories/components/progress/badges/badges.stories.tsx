@@ -47,11 +47,12 @@ export const SinglePlayerBadge: Story = {
   },
 };
 
-export const AllBadges: Story = {
+export const AllBadgeTypes: Story = {
   render: () => {
     const badges: Badge[] = [
       { action: Actions.VoterRegistration },
       { action: Actions.SharedChallenge },
+      { action: Actions.ElectionReminders },
       { playerName: 'Player', playerAvatar: '1' },
     ];
     return (

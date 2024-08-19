@@ -1,5 +1,5 @@
 import type { PlayerBadge } from '@/model/types/player-badge';
-import type { Avatar } from '@/model/types/avatar';
+import { AVATARS } from '@/constants/avatars';
 import styles from './styles.module.scss';
 import Image from 'next/image';
 
@@ -18,11 +18,7 @@ interface PlayerBadgeProps {
  * @returns A React component that displays a badge of a player's name and icon
  */
 export function PlayerBadge({ badge, index }: PlayerBadgeProps): JSX.Element {
-  let name: string | null = null;
-  let icon: Avatar | null = null;
-
-  name = badge.playerName;
-  icon = badge.playerAvatar;
+  const { playerName: name, playerAvatar: avatar } = badge;
 
   return (
     <div className={styles.badges}>
@@ -37,11 +33,9 @@ export function PlayerBadge({ badge, index }: PlayerBadgeProps): JSX.Element {
       </div>
       <div className={styles.blob_content}>
         <Image
-          alt="player badge icon"
+          src={AVATARS[avatar].image}
+          alt={AVATARS[avatar].altText}
           className={styles.icon}
-          src={require(
-            `../../../../public/static/images/shared/avatars/avatar-${icon}.svg`,
-          )}
         />
         <h3>{name}</h3>
       </div>
