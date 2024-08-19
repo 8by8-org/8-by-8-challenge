@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
     const { email } = requestBodySchema.parse(data);
+   
 
     await auth.sendOTPToEmail(email);
     await cookies.setEmailForSignIn(email);

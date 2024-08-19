@@ -18,3 +18,14 @@ step 1.
 notes 
 looks like the useRef behaves differently than useState because it doesn't rerender the page when the value is changed. 
 
+
+you don't need to hit the api for the random userID data instead u need to just retrive that data from the userID supabase which is already ppresnt from this dir services/auth/auth.ts
+
+
+actually this is for when the user copies the id I need to push this into the supabase file from subabase-user-repository.ts   (also remember to go to the supabase dir)
+
+tips read through the docs -- understand design patterns, not system design lol 
+
+
+if the user shares then hit the API
+if the user copies the link and shares 

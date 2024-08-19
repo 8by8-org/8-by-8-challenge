@@ -3,6 +3,7 @@ import type { User } from '@/model/types/user';
 import styles from './styles.module.scss';
 import { useRouter } from 'next/navigation';
 
+
 interface ChallengeButtonProps {
   user: User | null;
   daysLeft: number;
@@ -51,8 +52,12 @@ export function ChallengeButton({
   );
 
   const router = useRouter(); 
+  const trigger_API = () => {
+    console.log('Triggering API req')
+    // if router.push('/share) is triggered then hit that API 
 
-  
+  }
+
   useEffect(() => {
     let challengeFinished = user?.completedChallenge;
     if (challengeFinished) {

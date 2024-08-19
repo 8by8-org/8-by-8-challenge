@@ -108,6 +108,15 @@ export function ClientSideUserContextProvider(
     throw new Error('not implemented.');
   }
 
+
+  // define a shareChallenge here 
+    async function shareChallenge() {
+      const response = await fetch( '/api/share-challenge', {
+        method: 'PUT',
+      }); 
+      
+}
+  
   return (
     <UserContext.Provider
       value={{

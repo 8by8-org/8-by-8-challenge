@@ -43,9 +43,11 @@ exports[`Home renders homepage unchanged 1`] = `
             </u>
           </h1>
           <button
-            class="challenge_btn"
+            class="gradient lg wide challenge_btn"
           >
-            Take the Challenge
+            <span>
+              Take the Challenge
+            </span>
           </button>
           <a
             class="link"
@@ -292,9 +294,11 @@ exports[`Home renders homepage unchanged 1`] = `
            and registering 8 of their friends to vote in 8 days.
         </h2>
         <button
-          class="btn_gradient btn_wide btn_lg"
+          class="gradient lg wide"
         >
-          Take the Challenge
+          <span>
+            Take the Challenge
+          </span>
         </button>
         <div
           class="content_container"
