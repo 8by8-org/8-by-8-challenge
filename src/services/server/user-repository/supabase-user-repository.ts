@@ -22,6 +22,7 @@ export const SupabaseUserRepository = inject(
       const supabase = this.createSupabaseClient();
 
       const { data: dbUser, error } = await supabase
+        
         .from('users')
         .select(
           `*,
@@ -46,6 +47,22 @@ export const SupabaseUserRepository = inject(
       } catch (e) {
         throw new ServerError('Failed to parse user data.', 400);
       }
+    }
+
+    async awardUserBadge(userId: string): Promise<User | null> {
+      const supabase = this.createSupabaseClient();
+      const { data, error } = await supabase
+        .from('users')
+        .update({ 'completed_actions.share_challenge': true })
+        .eq('id', userId)
+        .maybeSingle(); 
+    
+      if (error) {
+        console.error('Error updating user:', error);
+        return null;
+      }
+    
+      return data;
     }
   },
   [

@@ -128,6 +128,7 @@ export function ClientSideUserContextProvider(
         signInWithOTP,
         signOut,
         restartChallenge,
+    
       }}
     >
       {props.children}
