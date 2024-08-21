@@ -23,6 +23,9 @@ const MIN_AGE_16_STATES = [
 const MIN_AGE_17_STATES = ['ME', 'NV', 'NJ', 'WV'];
 const MIN_AGE_17_5_STATES = ['GA', 'IA', 'MO'];
 
+/*
+  Verify this information. this can also be simplified a bit to match the figma.
+*/
 export function getEligibilityStatusMessage(dob: string, zip: string) {
   const age = calculateAge(dob);
 
@@ -99,7 +102,4 @@ export function getEligibilityStatusMessage(dob: string, zip: string) {
   }
   //case for all other states except ND which does not require registration
   return 'Your state does not specifically address an age for preregistration. You may register if you will be 18 by the next election. Please reach out to your state election officials for details.';
-  // if(state === "ND") {
-  // ND residents do not need to register to vote, however this may simply be handled at the end by not redirecting them to their state website
-  // }
 }

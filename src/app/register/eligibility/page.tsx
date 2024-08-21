@@ -1,33 +1,37 @@
 'use client';
-import { useState } from 'react';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { useState, useEffect, type FormEventHandler } from 'react';
+import { useRouter } from 'next/navigation';
+import { ValidityUtils, usePipe, useValue } from 'fully-formed';
+import { useContextSafely } from '@/hooks/use-context-safely';
 import { VoterRegistrationContext } from '../voter-registration-context';
+import { Label } from '@/components/form-components/label';
 import { Checkbox } from '@/components/form-components/checkbox';
 import { InputGroup } from '@/components/form-components/input-group';
-import { ValidityUtils, usePipe, useValue } from 'fully-formed';
-import { FormEventHandler } from 'react';
-import { useRouter } from 'next/navigation';
-import { VOTER_REGISTRATION_PATHNAMES } from '../constants/voter-registration-pathnames';
-import { Label } from '@/components/form-components/label';
+import { Modal } from '@/components/utils/modal';
+import { VoterRegistrationPathNames } from '../constants/voter-registration-pathnames';
 import { getEligibilityStatusMessage } from './get-eligibility-status-message';
 import styles from './styles.module.scss';
-import { Modal } from '@/components/utils/modal';
-import { usePrefetch } from '@/hooks/functions/use-prefetch';
 
 export default function Eligibility() {
   const { voterRegistrationForm } = useContextSafely(
     VoterRegistrationContext,
     'Eligibility',
   );
+
   const eligibilityForm = voterRegistrationForm.fields.eligibility;
+
   const eligibilityStatusMessage = usePipe(eligibilityForm, state => {
     if (!ValidityUtils.isValid(state)) return '';
 
     return getEligibilityStatusMessage(state.value.dob, state.value.zip);
   });
+
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
-  usePrefetch('/register/names');
+
+  useEffect(() => {
+    router.prefetch(VoterRegistrationPathNames.NAMES);
+  }, [router]);
 
   const onSubmit: FormEventHandler = e => {
     e.preventDefault();
@@ -38,7 +42,7 @@ export default function Eligibility() {
     if (eligibilityStatusMessage) {
       setShowModal(true);
     } else {
-      router.push(VOTER_REGISTRATION_PATHNAMES[1]);
+      router.push(VoterRegistrationPathNames.NAMES);
     }
   };
 
@@ -120,7 +124,7 @@ export default function Eligibility() {
             className={styles.modal_button}
             type="button"
             onClick={() => {
-              router.push(VOTER_REGISTRATION_PATHNAMES[1]);
+              router.push(VoterRegistrationPathNames.NAMES);
             }}
           >
             <span>Keep Going</span>

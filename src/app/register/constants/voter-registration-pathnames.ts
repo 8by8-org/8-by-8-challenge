@@ -7,19 +7,19 @@ export class VoterRegistrationPathNames {
   ]);
 
   public static get ELIGIBILITY() {
-    return this.pathNames.get('ELIGIBILITY');
+    return this.pathNames.get('ELIGIBILITY')!;
   }
 
   public static get NAMES() {
-    return this.pathNames.get('NAMES');
+    return this.pathNames.get('NAMES')!;
   }
 
   public static get ADDRESSES() {
-    return this.pathNames.get('ADDRESSES');
+    return this.pathNames.get('ADDRESSES')!;
   }
 
   public static get OTHER_INFO() {
-    return this.pathNames.get('OTHER_INFO');
+    return this.pathNames.get('OTHER_INFO')!;
   }
 
   public static getPathIndex(path: string) {
