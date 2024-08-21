@@ -49,20 +49,24 @@ export const SupabaseUserRepository = inject(
       }
     }
 
-    async awardUserBadge(userId: string): Promise<User | null> {
+    async awardUserBadge(userId: string): Promise<void> {
       const supabase = this.createSupabaseClient();
       const { data, error } = await supabase
-        .from('users')
-        .update({ 'completed_actions.share_challenge': true })
+        .from('completed_actions')
+        .update({ 'share_challenge': true })
         .eq('id', userId)
         .maybeSingle(); 
     
-      if (error) {
-        console.error('Error updating user:', error);
-        return null;
-      }
-    
-      return data;
+      // add badges 
+      const { data: badgeData, error: badgeError } = await supabase
+      .from('badges')
+      .insert({ challenger_id: userId, badge: 'shared_challenge' });
+  
+    if (badgeError) {
+      throw new Error(`Error adding badge: ${badgeError.message}`);
+    }
+      // get user 
+    const user = await this.getUserById(userId);
     }
   },
   [
