@@ -7,7 +7,7 @@ import type { IUserRecordParser } from './i-user-record-parser';
 import type { User } from '@/model/types/user';
 
 interface DBActionBadge {
-  action: Actions.VoterRegistration | Actions.SharedChallenge;
+  action: Actions;
   player_name: null;
   player_avatar: null;
 }
@@ -26,7 +26,7 @@ export const UserRecordParser = inject(
 
     private dbBadgeSchema = z.union([
       z.object({
-        action: z.enum([Actions.VoterRegistration, Actions.SharedChallenge]),
+        action: z.nativeEnum(Actions),
         player_name: z.null(),
         player_avatar: z.null(),
       }),

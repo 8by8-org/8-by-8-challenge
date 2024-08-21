@@ -15,13 +15,23 @@ describe('UserRecordParser', () => {
     completed_challenge: false,
     invite_code: 'test-invite-code',
     completed_actions: {
-      election_reminders: false,
-      register_to_vote: false,
-      shared_challenge: false,
+      election_reminders: true,
+      register_to_vote: true,
+      shared_challenge: true,
     },
     badges: [
       {
         action: Actions.SharedChallenge,
+        player_name: null,
+        player_avatar: null,
+      },
+      {
+        action: Actions.VoterRegistration,
+        player_name: null,
+        player_avatar: null,
+      },
+      {
+        action: Actions.ElectionReminders,
         player_name: null,
         player_avatar: null,
       },
@@ -55,13 +65,19 @@ describe('UserRecordParser', () => {
       completedChallenge: false,
       inviteCode: 'test-invite-code',
       completedActions: {
-        electionReminders: false,
-        registerToVote: false,
-        sharedChallenge: false,
+        electionReminders: true,
+        registerToVote: true,
+        sharedChallenge: true,
       },
       badges: [
         {
           action: Actions.SharedChallenge,
+        },
+        {
+          action: Actions.VoterRegistration,
+        },
+        {
+          action: Actions.ElectionReminders,
         },
         {
           playerName: 'user 2',

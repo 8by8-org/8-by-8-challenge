@@ -2,6 +2,13 @@ import { render, cleanup } from '@testing-library/react';
 import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 import Home from '@/app/page';
 
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    prefetch: jest.fn(),
+    push: jest.fn(),
+  }),
+}));
+
 describe('Home', () => {
   mockDialogMethods();
   afterEach(cleanup);
