@@ -10,11 +10,6 @@ step 2.  the user is directed to the facebook page
 step 3. when a random user clicks on the share link then the user is directed to the 8by8 page 
 step 4. the 8by8 page is the homepage with a "GET STARTED BUTTON" where the user can sign up and doo all the stuff 
 
-Section Three 
-step 1. 
-
-
-
 notes 
 looks like the useRef behaves differently than useState because it doesn't rerender the page when the value is changed. 
 
