@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { Select } from '@/components/form-components/select';
 import { Field, StringValidators, Validator } from 'fully-formed';
 import { GlobalStylesProvider } from '@/stories/global-styles-provider';
-import { US_STATES_AND_TERRITORIES } from '@/constants/us-states-and-territories';
+import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 
 const meta: Meta<typeof Select> = {
   component: Select,
@@ -62,7 +62,7 @@ export const ManyOptions: Story = {
         <Select
           label="State"
           field={state}
-          options={US_STATES_AND_TERRITORIES.map(abbr => {
+          options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
             return {
               text: abbr,
               value: abbr,

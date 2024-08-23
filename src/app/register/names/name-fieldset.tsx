@@ -1,9 +1,9 @@
 'use client';
 import { Select } from '@/components/form-components/select';
 import { InputGroup } from '@/components/form-components/input-group';
+import { Messages } from '@/components/form-components/messages';
 import type { FieldOfType } from 'fully-formed';
 import type { ReactNode } from 'react';
-import { Messages } from '@/components/form-components/messages';
 
 interface NameForm {
   fields: {
@@ -28,7 +28,7 @@ export function NameFieldset({ title, form }: NameFieldsetProps) {
       </legend>
       <Select
         field={form.fields.title}
-        labelText="Title*"
+        label="Title*"
         options={[
           {
             text: 'Mr.',
@@ -63,7 +63,6 @@ export function NameFieldset({ title, form }: NameFieldsetProps) {
           width: '50%',
         }}
       />
-      <Messages field={form.fields.title} />
       <InputGroup
         field={form.fields.first}
         labelContent="First Name*"
@@ -94,7 +93,7 @@ export function NameFieldset({ title, form }: NameFieldsetProps) {
       />
       <Select
         field={form.fields.suffix}
-        labelText="Suffix"
+        label="Suffix"
         options={[
           {
             text: 'Jr.',

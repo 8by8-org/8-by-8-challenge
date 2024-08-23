@@ -1,5 +1,5 @@
 'use client';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { useContextSafely } from '@/hooks/use-context-safely';
 import { VoterRegistrationContext } from '../voter-registration-context';
 import { Select } from '@/components/form-components/select';
 import { ExcludableContent } from '@/components/form-components/excludable-content/excludable-content';
@@ -18,7 +18,7 @@ export default function OtherDetails() {
       <h2>Other Details</h2>
       <Select
         field={otherDetailsForm.fields.party}
-        labelText="Political party"
+        label="Political party"
         options={[
           {
             text: 'Democratic',

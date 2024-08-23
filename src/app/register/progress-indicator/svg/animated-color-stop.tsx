@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ProgressBarContext } from '../progress-bar-context';
 import { calculateColorStopOffset } from './util/calculate-color-stop-offset';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { useContextSafely } from '@/hooks/use-context-safely';
 
 interface AnimatedColorStopProps {
   color: string;

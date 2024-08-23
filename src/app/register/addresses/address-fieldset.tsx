@@ -1,8 +1,8 @@
 'use client';
 import { InputGroup } from '@/components/form-components/input-group';
 import { Select } from '@/components/form-components/select';
-import { US_STATES_AND_TERRITORIES } from '@/constants/us-states-and-territories';
-import { FieldOfType, IGroup, useMessages, useValidity } from 'fully-formed';
+import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
+import { FieldOfType, IGroup, useMessages } from 'fully-formed';
 import { ReactNode } from 'react';
 
 interface AddressForm {
@@ -86,18 +86,13 @@ export function AddressFieldset({ form, title }: AddressFieldsetProps) {
           <Select
             field={form.fields.state}
             label="State"
-            options={US_STATES_AND_TERRITORIES.map(abbr => ({
+            options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => ({
               text: abbr,
               value: abbr,
             }))}
             style={{ width: '100px' }}
           />
         </div>
-      </div>
-      <div style={{ display: 'block', minHeight: '19px' }}>
-        {useMessages(form.groups.addressGroup).map(({ text }, index) => {
-          return <span key={index}>{text}</span>;
-        })}
       </div>
     </fieldset>
   );

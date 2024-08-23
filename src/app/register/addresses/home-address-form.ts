@@ -10,6 +10,7 @@ import {
 } from 'fully-formed';
 import { ZipCodeValidator } from '../utils/zip-code-validator';
 import zipState from 'zip-state';
+import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 
 export const HomeAddressForm = FormFactory.createSubForm(
   class HomeAddressTemplate extends SubFormTemplate {
@@ -41,21 +42,35 @@ export const HomeAddressForm = FormFactory.createSubForm(
         name: 'state',
         controller: zip,
         initFn: controllerState => {
-          return ValidityUtils.isValid(controllerState) ?
-              zipState(controllerState.value)!
-            : 'AL';
+          if (!ValidityUtils.isValid(controllerState)) {
+            return 'AL';
+          }
+
+          const state = zipState(controllerState.value);
+          if (!state || !Object.values(US_STATE_ABBREVIATIONS).includes(state))
+            return 'AL';
+
+          return state;
         },
         controlFn: controllerState => {
+          console.log(controllerState);
+          console.log(ValidityUtils.isValid(controllerState));
+          console.log(controllerState.didPropertyChange('value'));
+
           if (
             !ValidityUtils.isValid(controllerState) ||
             !controllerState.didPropertyChange('value')
           )
             return;
 
-          const value = zipState(controllerState.value.trim());
-          if (!value) return;
-
-          return value;
+          const state = zipState(controllerState.value.trim());
+          if (
+            !state ||
+            !Object.values(US_STATE_ABBREVIATIONS).includes(state)
+          ) {
+            return;
+          }
+          return state;
         },
       });
 

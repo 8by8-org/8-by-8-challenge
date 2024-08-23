@@ -60,11 +60,28 @@ class EligibilityTemplate extends SubFormTemplate {
         name: 'eighteenPlus',
         defaultValue: false,
         transient: true,
+        validatorTemplates: [
+          {
+            predicate: value => {
+              return value;
+            },
+            invalidMessage:
+              'You must be at least 18 years old by the next election to vote.',
+          },
+        ],
       }),
       new Field({
         name: 'isCitizen',
         defaultValue: false,
         transient: true,
+        validatorTemplates: [
+          {
+            predicate: value => {
+              return value;
+            },
+            invalidMessage: 'You must be a US Citizen to vote.',
+          },
+        ],
       }),
     ];
 

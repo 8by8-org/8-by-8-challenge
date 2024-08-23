@@ -1,15 +1,20 @@
 'use client';
-import { useState, useEffect, type FormEventHandler } from 'react';
+import { useState, type FormEventHandler } from 'react';
 import { useRouter } from 'next/navigation';
 import { ValidityUtils, usePipe, useValue } from 'fully-formed';
+import zipState from 'zip-state';
 import { useContextSafely } from '@/hooks/use-context-safely';
+import { usePrefetch } from '@/hooks/use-prefetch';
 import { VoterRegistrationContext } from '../voter-registration-context';
+import { VoterRegistrationPathNames } from '../constants/voter-registration-pathnames';
 import { Label } from '@/components/form-components/label';
 import { Checkbox } from '@/components/form-components/checkbox';
 import { InputGroup } from '@/components/form-components/input-group';
-import { Modal } from '@/components/utils/modal';
-import { VoterRegistrationPathNames } from '../constants/voter-registration-pathnames';
-import { getEligibilityStatusMessage } from './get-eligibility-status-message';
+import { Messages } from '@/components/form-components/messages';
+import { PreregistrationInfoModal } from './preregistration-info-modal';
+import { NorthDakotaInfoModal } from './north-dakota-info-modal';
+import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
+import { calculateAge } from './utils/calculate-age';
 import styles from './styles.module.scss';
 
 export default function Eligibility() {
@@ -17,21 +22,15 @@ export default function Eligibility() {
     VoterRegistrationContext,
     'Eligibility',
   );
-
   const eligibilityForm = voterRegistrationForm.fields.eligibility;
 
-  const eligibilityStatusMessage = usePipe(eligibilityForm, state => {
-    if (!ValidityUtils.isValid(state)) return '';
+  const [showPreregistrationInfoModal, setShowPreregistrationInfoModal] =
+    useState(false);
+  const [showNorthDakotaInfoModal, setShowNorthDakotaInfoModal] =
+    useState(false);
 
-    return getEligibilityStatusMessage(state.value.dob, state.value.zip);
-  });
-
-  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    router.prefetch(VoterRegistrationPathNames.NAMES);
-  }, [router]);
+  usePrefetch(VoterRegistrationPathNames.NAMES);
 
   const onSubmit: FormEventHandler = e => {
     e.preventDefault();
@@ -39,8 +38,13 @@ export default function Eligibility() {
 
     if (!ValidityUtils.isValid(eligibilityForm)) return;
 
-    if (eligibilityStatusMessage) {
-      setShowModal(true);
+    if (
+      zipState(eligibilityForm.fields.zip.state.value) ===
+      US_STATE_ABBREVIATIONS.NORTH_DAKOTA
+    ) {
+      setShowNorthDakotaInfoModal(true);
+    } else if (calculateAge(eligibilityForm.fields.dob.state.value) < 18) {
+      setShowPreregistrationInfoModal(true);
     } else {
       router.push(VoterRegistrationPathNames.NAMES);
     }
@@ -89,6 +93,16 @@ export default function Eligibility() {
           eligibilityForm.fields.eighteenPlus.setValue(e.target.checked);
         }}
         labelContent="I will be 18 years-old or older by the next election.*"
+      />
+      <Messages
+        messageBearers={[eligibilityForm.fields.eighteenPlus]}
+        hideMessages={usePipe(eligibilityForm.fields.eighteenPlus, state => {
+          return !(
+            state.hasBeenBlurred ||
+            state.hasBeenModified ||
+            state.submitted
+          );
+        })}
         containerStyle={{
           marginBottom: '24px',
         }}
@@ -100,6 +114,16 @@ export default function Eligibility() {
           eligibilityForm.fields.isCitizen.setValue(e.target.checked);
         }}
         labelContent="I am a US citizen.*"
+      />
+      <Messages
+        messageBearers={[eligibilityForm.fields.isCitizen]}
+        hideMessages={usePipe(eligibilityForm.fields.isCitizen, state => {
+          return !(
+            state.hasBeenBlurred ||
+            state.hasBeenModified ||
+            state.submitted
+          );
+        })}
         containerStyle={{
           marginBottom: '40px',
         }}
@@ -107,37 +131,19 @@ export default function Eligibility() {
       <button type="submit" className="btn_gradient btn_lg btn_wide">
         Get Started
       </button>
-      <Modal
-        ariaLabel=""
-        theme="light"
-        isOpen={showModal}
-        closeModal={() => setShowModal(false)}
-      >
-        <h3 className="b1" style={{ marginBottom: '30px' }}>
-          Hey there!
-          <br />
-          Looks like you&apos;re not 18 yet.
-        </h3>
-        <p>{eligibilityStatusMessage}</p>
-        <div className={styles.modal_button_container}>
-          <button
-            className={styles.modal_button}
-            type="button"
-            onClick={() => {
-              router.push(VoterRegistrationPathNames.NAMES);
-            }}
-          >
-            <span>Keep Going</span>
-          </button>
-          <button
-            className={styles.modal_button}
-            type="button"
-            onClick={() => setShowModal(false)}
-          >
-            <span>Nevermind</span>
-          </button>
-        </div>
-      </Modal>
+      {showNorthDakotaInfoModal && (
+        <NorthDakotaInfoModal
+          showModal={showNorthDakotaInfoModal}
+          setShowModal={setShowNorthDakotaInfoModal}
+        />
+      )}
+      {showPreregistrationInfoModal && (
+        <PreregistrationInfoModal
+          zipCodeField={eligibilityForm.fields.zip}
+          showModal={showPreregistrationInfoModal}
+          setShowModal={setShowPreregistrationInfoModal}
+        />
+      )}
     </form>
   );
 }

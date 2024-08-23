@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, ReactNode } from 'react';
-import { createNamedContext } from '@/hooks/functions/create-named-context';
+import { createNamedContext } from '@/hooks/create-named-context';
 import { ProgressPercent } from './progress-percent';
 
 interface ProgressBarContextType {

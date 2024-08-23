@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { Field, StringValidators, Validator, Group } from 'fully-formed';
 import zipState from 'zip-state';
-import { US_STATES_AND_TERRITORIES } from '@/constants/us-states-and-territories';
+import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 
 describe('Combobox', () => {
   afterEach(cleanup);
@@ -282,7 +282,7 @@ describe('Combobox', () => {
         label="State"
         field={state}
         groups={[zipCodeAndState]}
-        options={US_STATES_AND_TERRITORIES.map(abbr => {
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
           return {
             text: abbr,
             value: abbr,
@@ -344,7 +344,7 @@ describe('Combobox', () => {
         label="State"
         field={state}
         groups={[zipCodeAndState]}
-        options={US_STATES_AND_TERRITORIES.map(abbr => {
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
           return {
             text: abbr,
             value: abbr,
@@ -406,7 +406,7 @@ describe('Combobox', () => {
         label="State"
         field={state}
         groups={[zipCodeAndState]}
-        options={US_STATES_AND_TERRITORIES.map(abbr => {
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
           return {
             text: abbr,
             value: abbr,
@@ -516,7 +516,7 @@ describe('Combobox', () => {
         label="State"
         field={state}
         groups={[zipCodeAndState]}
-        options={US_STATES_AND_TERRITORIES.map(abbr => {
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
           return {
             text: abbr,
             value: abbr,

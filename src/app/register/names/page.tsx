@@ -1,36 +1,32 @@
 'use client';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { useRouter } from 'next/navigation';
+import { ValidityUtils, useExclude } from 'fully-formed';
+import { useContextSafely } from '@/hooks/use-context-safely';
+import { usePrefetch } from '@/hooks/use-prefetch';
+import { useScrollToTop } from '@/hooks/use-scroll-to-top';
 import { VoterRegistrationContext } from '../voter-registration-context';
+import { VoterRegistrationPathNames } from '../constants/voter-registration-pathnames';
 import { NameFieldset } from './name-fieldset';
 import { ExcludableContent } from '@/components/form-components/excludable-content/excludable-content';
 import { Checkbox } from '@/components/form-components/checkbox';
-import { ValidityUtils, useExclude } from 'fully-formed';
-import { FormEventHandler, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { VOTER_REGISTRATION_PATHNAMES } from '../constants/voter-registration-pathnames';
-import { usePrefetch } from '@/hooks/functions/use-prefetch';
+import type { FormEventHandler } from 'react';
 
 export default function Names() {
-  usePrefetch('/register/addresses');
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   const { voterRegistrationForm } = useContextSafely(
     VoterRegistrationContext,
     'Names',
   );
   const namesForm = voterRegistrationForm.fields.names;
   const router = useRouter();
+  usePrefetch(VoterRegistrationPathNames.ADDRESSES);
+  useScrollToTop();
 
   const onSubmit: FormEventHandler = e => {
     e.preventDefault();
     namesForm.setSubmitted();
-
     if (!ValidityUtils.isValid(namesForm)) return;
 
-    router.push(VOTER_REGISTRATION_PATHNAMES[2]);
+    router.push(VoterRegistrationPathNames.ADDRESSES);
   };
 
   return (

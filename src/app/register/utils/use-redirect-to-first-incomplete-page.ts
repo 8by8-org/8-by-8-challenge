@@ -1,7 +1,7 @@
 import { useLayoutEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { usePipe, ValidityUtils } from 'fully-formed';
-import { VOTER_REGISTRATION_PATHNAMES } from '../constants/voter-registration-pathnames';
+import { VoterRegistrationPathNames } from '../constants/voter-registration-pathnames';
 import type { VoterRegistrationForm } from '../voter-registration-form';
 
 export function useRedirectToFirstIncompletePage(
@@ -14,9 +14,12 @@ export function useRedirectToFirstIncompletePage(
   });
 
   useLayoutEffect(() => {
-    const currentPageIndex = Array.from(VOTER_REGISTRATION_PATHNAMES.values())
-    if (currentPage > firstIncompletePage) {
-      router.push(VOTER_REGISTRATION_PATHNAMES[firstIncompletePage]);
+    const currentPageIndex = VoterRegistrationPathNames.getPathIndex(pathname);
+    const firstIncompletePageIndex =
+      VoterRegistrationPathNames.getPathIndex(firstIncompletePage);
+
+    if (currentPageIndex > firstIncompletePageIndex) {
+      router.push(firstIncompletePage);
     }
   }, [firstIncompletePage, pathname, router]);
 }
@@ -24,17 +27,17 @@ export function useRedirectToFirstIncompletePage(
 function getFirstIncompletePage({
   fields,
 }: InstanceType<typeof VoterRegistrationForm>) {
-  if (!ValidityUtils.isValid(fields.eligibility)) {
-    return 0;
+  if (!ValidityUtils.isValidOrCaution(fields.eligibility)) {
+    return VoterRegistrationPathNames.ELIGIBILITY;
   }
 
-  if (!ValidityUtils.isValid(fields.names)) {
-    return 1;
+  if (!ValidityUtils.isValidOrCaution(fields.names)) {
+    return VoterRegistrationPathNames.NAMES;
   }
 
-  if (!ValidityUtils.isValid(fields.addresses)) {
-    return 2;
+  if (!ValidityUtils.isValidOrCaution(fields.addresses)) {
+    return VoterRegistrationPathNames.ADDRESSES;
   }
 
-  return 3;
+  return VoterRegistrationPathNames.OTHER_INFO;
 }

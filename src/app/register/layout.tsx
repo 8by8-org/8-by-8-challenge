@@ -1,5 +1,5 @@
 'use client';
-import { useContextSafely } from '@/hooks/functions/use-context-safely';
+import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
 import { useForm } from 'fully-formed';
 import { useRedirectToFirstIncompletePage } from './utils/use-redirect-to-first-incomplete-page';

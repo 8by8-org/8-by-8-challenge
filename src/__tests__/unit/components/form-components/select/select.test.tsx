@@ -14,7 +14,7 @@ import { mockScrollMethods } from '@/utils/test/mock-scroll-methods';
 import * as scrollUtils from '../../../../../components/form-components/select/menu/utils/scroll';
 import * as useMenuModule from '../../../../../components/form-components/select/menu/hooks/use-menu';
 import zipState from 'zip-state';
-import { US_STATES_AND_TERRITORIES } from '@/constants/us-states-and-territories';
+import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 
 /*
   The individual modules within utils must be mocked so that when they are 
@@ -666,7 +666,7 @@ describe('Select', () => {
             displayMessages: true,
           },
         ]}
-        options={US_STATES_AND_TERRITORIES.map(abbr => {
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
           return {
             text: abbr,
             value: abbr,
@@ -726,7 +726,7 @@ describe('Select', () => {
             displayMessages: false,
           },
         ]}
-        options={US_STATES_AND_TERRITORIES.map(abbr => {
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
           return {
             text: abbr,
             value: abbr,

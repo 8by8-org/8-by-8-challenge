@@ -37,7 +37,12 @@ export function Label({ field, variant, children }: LabelProps) {
 
     if (
       variant === 'floating' &&
-      !(state.isInFocus || state.hasBeenBlurred || state.submitted)
+      !(
+        state.value ||
+        state.isInFocus ||
+        state.hasBeenBlurred ||
+        state.submitted
+      )
     ) {
       classNames.push(styles.pristine_floating_label);
     }
