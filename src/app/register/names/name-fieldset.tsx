@@ -100,8 +100,20 @@ export function NameFieldset({ title, form }: NameFieldsetProps) {
             value: 'Jr.',
           },
           {
-            text: 'Esq.',
-            value: 'Esq.',
+            text: 'Sr.',
+            value: 'Sr.',
+          },
+          {
+            text: 'II',
+            value: 'II',
+          },
+          {
+            text: 'III',
+            value: 'III',
+          },
+          {
+            text: 'IV',
+            value: 'IV',
           },
         ]}
         style={{

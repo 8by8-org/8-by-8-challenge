@@ -1,3 +1,4 @@
+'use client';
 import { useExclude, type Excludable } from 'fully-formed';
 import type { ReactNode } from 'react';
 

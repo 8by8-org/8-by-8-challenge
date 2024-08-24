@@ -1,72 +1,47 @@
 'use client';
+import { useRef, useEffect } from 'react';
 import {
-  useUserInput,
-  useFocusEvents,
+  usePipe,
   useMultiPipe,
+  useFocusEvents,
   ValidityUtils,
   type FieldOfType,
   type IGroup,
-  type Field,
-  type Group,
 } from 'fully-formed';
+import { PhoneInputInternals } from './phone-input-internals';
 import type { CSSProperties } from 'react';
 import styles from './styles.module.scss';
 
-interface InputProps {
-  /**
-   * A {@link Field} that will control the state of the input.
-   */
+interface PhoneInputProps {
   field: FieldOfType<string>;
-  /**
-   * An array of {@link Group}s. If these groups' validators have
-   * executed and returned an invalid result, the input will appear invalid.
-   */
   groups?: IGroup[];
-  type: string;
-  /**
-   * If true, the placeholder and value text will be opaque even before the user
-   * has interacted with the field. Set this to true if you are pairing the
-   * input with a stationary label. Set this to false if you are pairing the
-   * input with a floating label.
-   */
   showText?: boolean;
   placeholder?: string;
   disabled?: boolean;
   autoComplete?: string;
-  maxLength?: number;
   className?: string;
   style?: CSSProperties;
   ['aria-required']?: boolean;
   ['aria-describedby']?: string;
 }
 
-/**
- * Renders an HTML input element whose value and appearance are controlled by
- * the state of a {@link Field}.
- *
- * @param props - {@link InputProps}
- *
- * @remarks
- * If the provide field is invalid, the returned input element will appear
- * invalid once the user has interacted with it.
- *
- * If `groups` are provided, the field will appear invalid if any of those
- * groups' validators have failed and the user has interacted with it.
- */
-export function Input({
+export function PhoneInput({
   field,
   groups = [],
-  type,
   showText,
   placeholder,
   disabled,
   autoComplete,
-  maxLength,
   className: classNameProp,
   style,
   ['aria-required']: ariaRequired,
   ['aria-describedby']: ariaDescribedBy,
-}: InputProps) {
+}: PhoneInputProps) {
+  const value = usePipe(field, ({ value }) => {
+    return PhoneInputInternals.formatPhoneNumber(value);
+  });
+  const inputRef = useRef<HTMLInputElement>(null);
+  const cursorPositionRef = useRef<number | null>(null);
   const className = useMultiPipe([field, ...groups], states => {
     const classNames = [styles.input];
     const fieldState = states[0];
@@ -112,20 +87,46 @@ export function Input({
     );
   });
 
+  useEffect(() => {
+    function handleBeforeInput(event: InputEvent) {
+      PhoneInputInternals.handleBeforeInput(event, field, cursorPositionRef);
+    }
+
+    inputRef.current?.addEventListener('beforeinput', handleBeforeInput);
+
+    return () => {
+      inputRef.current?.removeEventListener('beforeinput', handleBeforeInput);
+    };
+  }, [field]);
+
+  useEffect(() => {
+    if (inputRef.current && cursorPositionRef.current !== null) {
+      inputRef.current.setSelectionRange(
+        cursorPositionRef.current,
+        cursorPositionRef.current,
+      );
+    }
+  }, [value]);
+
   return (
     <input
       name={field.name}
       id={field.id}
-      type={type}
-      placeholder={placeholder}
+      type="tel"
+      inputMode="numeric"
+      ref={inputRef}
+      value={value}
+      {...useFocusEvents(field)}
+      onKeyDown={event => PhoneInputInternals.handleKeyDown(event)}
+      onChange={e => {
+        PhoneInputInternals.handleAutoComplete(e, field);
+      }}
       disabled={disabled}
+      placeholder={placeholder}
       autoComplete={autoComplete}
-      maxLength={maxLength}
       aria-required={ariaRequired}
       aria-describedby={ariaDescribedBy}
       aria-invalid={ariaInvalid}
-      {...useUserInput(field)}
-      {...useFocusEvents(field)}
       className={className}
       style={style}
     />

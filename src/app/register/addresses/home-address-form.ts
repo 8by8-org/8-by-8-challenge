@@ -8,8 +8,9 @@ import {
   FormFactory,
   ValidityUtils,
 } from 'fully-formed';
-import { ZipCodeValidator } from '../utils/zip-code-validator';
 import zipState from 'zip-state';
+import { ZipCodeValidator } from '../utils/zip-code-validator';
+import { PhoneValidator } from '../utils/phone-validator';
 import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 
 export const HomeAddressForm = FormFactory.createSubForm(
@@ -23,6 +24,8 @@ export const HomeAddressForm = FormFactory.createSubForm(
       IField<'city', string, false>,
       IField<'state', string, false>,
       IField<'zip', string, false>,
+      IField<'phone', string, false>,
+      IField<'phoneType', string, false>,
     ];
 
     public constructor(externalZipCodeField: FieldOfType<string>) {
@@ -53,10 +56,6 @@ export const HomeAddressForm = FormFactory.createSubForm(
           return state;
         },
         controlFn: controllerState => {
-          console.log(controllerState);
-          console.log(ValidityUtils.isValid(controllerState));
-          console.log(controllerState.didPropertyChange('value'));
-
           if (
             !ValidityUtils.isValid(controllerState) ||
             !controllerState.didPropertyChange('value')
@@ -103,6 +102,15 @@ export const HomeAddressForm = FormFactory.createSubForm(
         }),
         state,
         zip,
+        new Field({
+          name: 'phone',
+          defaultValue: '',
+          validators: [new PhoneValidator()],
+        }),
+        new Field({
+          name: 'phoneType',
+          defaultValue: 'Mobile',
+        }),
       ];
     }
   },

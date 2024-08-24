@@ -3,7 +3,7 @@ export class VoterRegistrationPathNames {
     ['ELIGIBILITY', '/register/eligibility'],
     ['NAMES', '/register/names'],
     ['ADDRESSES', '/register/addresses'],
-    ['OTHER_INFO', '/register/otherinfo'],
+    ['OTHER_INFO', '/register/other-info'],
   ]);
 
   public static get ELIGIBILITY() {

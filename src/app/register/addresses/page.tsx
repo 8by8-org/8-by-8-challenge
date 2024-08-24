@@ -2,10 +2,10 @@
 import { useExclude, ValidityUtils } from 'fully-formed';
 import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/use-context-safely';
-import { usePrefetch } from '@/hooks/use-prefetch';
 import { useScrollToTop } from '@/hooks/use-scroll-to-top';
 import { VoterRegistrationContext } from '../voter-registration-context';
 import { VoterRegistrationPathNames } from '../constants/voter-registration-pathnames';
+import { HomeAddressFieldset } from './home-address-fieldset';
 import { AddressFieldset } from './address-fieldset';
 import { ExcludableContent } from '@/components/form-components/excludable-content/excludable-content';
 import { Checkbox } from '@/components/form-components/checkbox';
@@ -19,7 +19,6 @@ export default function Addresses() {
   const addressesForm = voterRegistrationForm.fields.addresses;
 
   const router = useRouter();
-  usePrefetch(VoterRegistrationPathNames.OTHER_INFO);
   useScrollToTop();
 
   const onSubmit: FormEventHandler = e => {
@@ -27,12 +26,16 @@ export default function Addresses() {
     addressesForm.setSubmitted();
     if (!ValidityUtils.isValid(addressesForm)) return;
 
-    router.push(VoterRegistrationPathNames.OTHER_INFO);
+    router.push(
+      VoterRegistrationPathNames.OTHER_INFO +
+        `/${addressesForm.state.value.homeAddress.state}` +
+        `/${addressesForm.state.value.homeAddress.zip}`,
+    );
   };
 
   return (
     <form onSubmit={onSubmit}>
-      <AddressFieldset
+      <HomeAddressFieldset
         title="Home Address"
         form={addressesForm.fields.homeAddress}
       />

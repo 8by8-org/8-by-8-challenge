@@ -5,7 +5,7 @@ import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 import { FieldOfType } from 'fully-formed';
 import { ReactNode } from 'react';
 
-interface AddressForm {
+interface HomeAddressForm {
   fields: {
     streetLine1: FieldOfType<string>;
     streetLine2: FieldOfType<string>;
@@ -13,15 +13,17 @@ interface AddressForm {
     city: FieldOfType<string>;
     state: FieldOfType<string>;
     zip: FieldOfType<string>;
+    phone: FieldOfType<string>;
+    phoneType: FieldOfType<string>;
   };
 }
 
-interface AddressFieldsetProps {
-  form: AddressForm;
+interface HomeAddressFieldsetProps {
+  form: HomeAddressForm;
   title: ReactNode;
 }
 
-export function AddressFieldset({ form, title }: AddressFieldsetProps) {
+export function HomeAddressFieldset({ form, title }: HomeAddressFieldsetProps) {
   return (
     <fieldset>
       <legend className="h2" style={{ marginBottom: '24px' }}>
@@ -73,7 +75,7 @@ export function AddressFieldset({ form, title }: AddressFieldsetProps) {
       >
         <InputGroup
           field={form.fields.zip}
-          type="number"
+          type="text"
           labelContent="Zip code*"
           labelVariant="floating"
           maxLength={5}
@@ -86,6 +88,48 @@ export function AddressFieldset({ form, title }: AddressFieldsetProps) {
               text: abbr,
               value: abbr,
             }))}
+            style={{ width: '100px' }}
+          />
+        </div>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          marginBottom: '30px',
+        }}
+      >
+        <InputGroup
+          field={form.fields.phone}
+          type="number"
+          labelContent="Phone number"
+          labelVariant="floating"
+          maxLength={10}
+          containerStyle={{ width: '200px', maxWidth: '200px' }}
+        />
+        <div style={{ paddingTop: '19px' }}>
+          <Select
+            field={form.fields.phoneType}
+            label="Phone Type"
+            options={[
+              {
+                text: 'Mobile',
+                value: 'Mobile',
+              },
+              {
+                text: 'Home',
+                value: 'Home',
+              },
+              {
+                text: 'Work',
+                value: 'Work',
+              },
+              {
+                text: 'Other',
+                value: 'Other',
+              },
+            ]}
             style={{ width: '100px' }}
           />
         </div>
