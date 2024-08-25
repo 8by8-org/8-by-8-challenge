@@ -16,7 +16,7 @@ const meta: Meta<typeof Select> = {
     Story => {
       document.body.setAttribute(
         'style',
-        'min-height: 100vh; max-height: 100vh; overflow: hidden;',
+        'min-height: 100vh; max-height: 100vh; overflow: hidden; position: absolute; top: 0; left: 0;',
       );
 
       return <Story />;
@@ -304,7 +304,7 @@ export const AtBottomOfPage: Story = {
               value: abbr,
             };
           })}
-          style={{ marginTop: '80vh' }}
+          style={{ marginTop: '70vh' }}
         />
       </GlobalStylesProvider>
     );

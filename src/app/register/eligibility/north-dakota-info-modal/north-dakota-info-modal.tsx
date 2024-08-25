@@ -35,9 +35,7 @@ export function NorthDakotaInfoModal({
       closeModal={() => setShowModal(false)}
     >
       <h3 className={styles.title}>
-        Hey there!
-        <br />
-        Looks like you&apos;re from North Dakota.
+        Hey there! Looks like you&apos;re from North Dakota.
       </h3>
       <p>
         North Dakota does not require voter registration. For more information

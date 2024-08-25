@@ -13,6 +13,11 @@
   margin-right: 12px;
 }
 
+.checkbox:focus {
+  outline: 1px solid $color-black-8by8;
+  outline-offset: 6px;
+}
+
 .label {
   @extend .b1;
 }

@@ -1,13 +1,21 @@
 @use '../../../styles/partials' as *;
 
+.form {
+  margin-bottom: $spacing-lg;
+}
+
 .readonly_input {
   @extend .b1;
   border: none;
-  margin-bottom: 30px;
+  margin-bottom: $spacing-sm;
 
   &:focus {
     outline: none;
   }
+}
+
+.zip_code {
+  margin-bottom: 10px;
 }
 
 .modal_button_container {
@@ -20,4 +28,14 @@
   @extend .btn_inverted;
   @extend .btn_sm;
   margin-top: 24px;
+}
+
+.eighteen_plus_checkbox_messages {
+  margin-bottom: 20px;
+  margin-top: 4px;
+}
+
+.is_citizen_checkbox_messages {
+  margin-bottom: $spacing-md;
+  margin-top: 4px;
 }

@@ -1,8 +1,9 @@
 'use client';
 import { useState, type FormEventHandler } from 'react';
 import { useRouter } from 'next/navigation';
-import { ValidityUtils, usePipe, useValue } from 'fully-formed';
+import { ValidityUtils, usePipe, useValidity, useValue } from 'fully-formed';
 import zipState from 'zip-state';
+import { DateTime } from 'luxon';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { usePrefetch } from '@/hooks/use-prefetch';
 import { VoterRegistrationContext } from '../voter-registration-context';
@@ -15,6 +16,8 @@ import { PreregistrationInfoModal } from './preregistration-info-modal';
 import { NorthDakotaInfoModal } from './north-dakota-info-modal';
 import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 import { calculateAge } from './utils/calculate-age';
+import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
+import { getFirstNonValidInputId } from './utils/get-first-non-valid-input-id';
 import styles from './styles.module.scss';
 
 export default function Eligibility() {
@@ -36,7 +39,10 @@ export default function Eligibility() {
     e.preventDefault();
     eligibilityForm.setSubmitted();
 
-    if (!ValidityUtils.isValid(eligibilityForm)) return;
+    if (!ValidityUtils.isValid(eligibilityForm)) {
+      focusOnElementById(getFirstNonValidInputId(eligibilityForm));
+      return;
+    }
 
     if (
       zipState(eligibilityForm.fields.zip.state.value) ===
@@ -51,11 +57,11 @@ export default function Eligibility() {
   };
 
   return (
-    <form onSubmit={onSubmit} style={{ marginBottom: '80px' }}>
-      <p style={{ marginBottom: '36px' }}>
+    <form onSubmit={onSubmit} className={styles.form}>
+      <p className="mb_md">
         Registering to vote is easy, and only takes a few minutes!
       </p>
-      <h2 style={{ marginBottom: '24px' }}>Eligibility</h2>
+      <h2 className="mb_sm">Eligibility</h2>
       <Label field={eligibilityForm.fields.email} variant="stationary">
         Email
       </Label>
@@ -65,6 +71,7 @@ export default function Eligibility() {
         value={useValue(eligibilityForm.fields.email) || 'user@example.com'}
         type="email"
         readOnly
+        aria-readonly
         className={styles.readonly_input}
       />
       <InputGroup
@@ -73,21 +80,26 @@ export default function Eligibility() {
         labelVariant="floating"
         labelContent="Zip Code*"
         maxLength={5}
-        containerStyle={{
-          marginBottom: '30px',
-        }}
+        containerClassName={styles.zip_code}
+        aria-required
       />
       <InputGroup
         type="date"
         field={eligibilityForm.fields.dob}
         labelVariant="floating"
         labelContent="Date of Birth*"
-        containerStyle={{
-          marginBottom: '30px',
-        }}
+        containerClassName="mb_md"
+        max={DateTime.now().toFormat('yyyy-MM-dd')}
+        aria-required
       />
       <Checkbox
         name={eligibilityForm.fields.eighteenPlus.name}
+        id={eligibilityForm.fields.eighteenPlus.id}
+        aria-required
+        aria-describedby={`${eligibilityForm.fields.eighteenPlus.id}-messages`}
+        aria-invalid={ValidityUtils.isInvalid(
+          useValidity(eligibilityForm.fields.eighteenPlus),
+        )}
         checked={useValue(eligibilityForm.fields.eighteenPlus)}
         onChange={e => {
           eligibilityForm.fields.eighteenPlus.setValue(e.target.checked);
@@ -95,6 +107,7 @@ export default function Eligibility() {
         labelContent="I will be 18 years-old or older by the next election.*"
       />
       <Messages
+        id={`${eligibilityForm.fields.eighteenPlus.id}-messages`}
         messageBearers={[eligibilityForm.fields.eighteenPlus]}
         hideMessages={usePipe(eligibilityForm.fields.eighteenPlus, state => {
           return !(
@@ -103,12 +116,16 @@ export default function Eligibility() {
             state.submitted
           );
         })}
-        containerStyle={{
-          marginBottom: '24px',
-        }}
+        containerClassName={styles.eighteen_plus_checkbox_messages}
       />
       <Checkbox
         name={eligibilityForm.fields.isCitizen.name}
+        id={eligibilityForm.fields.isCitizen.id}
+        aria-required
+        aria-describedby={`${eligibilityForm.fields.isCitizen.id}-messages`}
+        aria-invalid={ValidityUtils.isInvalid(
+          useValidity(eligibilityForm.fields.isCitizen),
+        )}
         checked={useValue(eligibilityForm.fields.isCitizen)}
         onChange={e => {
           eligibilityForm.fields.isCitizen.setValue(e.target.checked);
@@ -116,6 +133,7 @@ export default function Eligibility() {
         labelContent="I am a US citizen.*"
       />
       <Messages
+        id={`${eligibilityForm.fields.isCitizen.id}-messages`}
         messageBearers={[eligibilityForm.fields.isCitizen]}
         hideMessages={usePipe(eligibilityForm.fields.isCitizen, state => {
           return !(
@@ -124,9 +142,7 @@ export default function Eligibility() {
             state.submitted
           );
         })}
-        containerStyle={{
-          marginBottom: '40px',
-        }}
+        containerClassName={styles.is_citizen_checkbox_messages}
       />
       <button type="submit" className="btn_gradient btn_lg btn_wide">
         Get Started

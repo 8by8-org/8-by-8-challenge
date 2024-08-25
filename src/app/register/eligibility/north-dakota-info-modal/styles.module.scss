@@ -2,7 +2,7 @@
 
 .title {
   @extend .b1;
-  margin-bottom: 30px;
+  margin-bottom: 12px;
 }
 
 .buttons_container {
@@ -12,5 +12,5 @@
 }
 
 .button {
-  margin-top: 24px;
+  margin-top: $spacing-sm;
 }

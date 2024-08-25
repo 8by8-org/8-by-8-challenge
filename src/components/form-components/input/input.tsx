@@ -34,6 +34,7 @@ interface InputProps {
   disabled?: boolean;
   autoComplete?: string;
   maxLength?: number;
+  max?: string;
   className?: string;
   style?: CSSProperties;
   ['aria-required']?: boolean;
@@ -62,6 +63,7 @@ export function Input({
   disabled,
   autoComplete,
   maxLength,
+  max,
   className: classNameProp,
   style,
   ['aria-required']: ariaRequired,
@@ -121,6 +123,7 @@ export function Input({
       disabled={disabled}
       autoComplete={autoComplete}
       maxLength={maxLength}
+      max={max}
       aria-required={ariaRequired}
       aria-describedby={ariaDescribedBy}
       aria-invalid={ariaInvalid}

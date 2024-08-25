@@ -17,6 +17,7 @@ type InputGroupProps = {
   disabled?: boolean;
   autoComplete?: string;
   maxLength?: number;
+  max?: string;
   ['aria-required']?: boolean;
 };
 
@@ -50,6 +51,7 @@ export function InputGroup({
   disabled,
   autoComplete,
   maxLength,
+  max,
   ['aria-required']: ariaRequired,
 }: InputGroupProps) {
   const messagesId = `${field.id}-messages`;
@@ -73,6 +75,7 @@ export function InputGroup({
         aria-required={ariaRequired}
         aria-describedby={messagesId}
         maxLength={maxLength}
+        max={max}
       />
       <Messages
         messageBearers={[field, ...groups]}
