@@ -112,11 +112,14 @@ export function ClientSideUserContextProvider(
   // define a shareChallenge here 
   // this api should trigger share api and update the db so the user can be awarded a badge 
   
-    async function shareChallenge() {
+  async function shareChallenge() {
+    // if user has already shared the challeneg then return     
+    
       const response = await fetch( '/api/share-challenge', {
         method: 'PUT',
       }); 
-      
+
+    
 }
   
   return (

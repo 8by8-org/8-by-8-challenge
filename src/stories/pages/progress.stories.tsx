@@ -101,12 +101,12 @@ export const CompletedChallenge: Story = {
       badges: [
         { action: Actions.VoterRegistration },
         { action: Actions.SharedChallenge },
+        { action: Actions.ElectionReminders },
         { playerName: 'Player1', playerAvatar: '0' },
         { playerName: 'Player2', playerAvatar: '1' },
         { playerName: 'Player3', playerAvatar: '2' },
         { playerName: 'Player4', playerAvatar: '3' },
         { playerName: 'Player5', playerAvatar: '0' },
-        { playerName: 'Player6', playerAvatar: '1' },
       ],
       challengeEndTimestamp: DateTime.now().toUnixInteger(),
       completedChallenge: true,

@@ -17,19 +17,21 @@ export default isSignedIn(function Progress() {
   const [copied, setCopied] = useState(false);
   const toggleInvite = useRef(null);
   const router = useRouter()
+  const [apiProgress, setapiProgress] = useState(false); 
 
 
   const copyLink = () => {
     navigator.clipboard.writeText(`8by8.us/share/${user?.inviteCode}`)
     setCopied(true)
-    triggershareAPI()
+    setapiProgress(true)
+    // triggershareAPI()
   }
   
-  const triggershareAPI = () => {
+  // const triggershareAPI = () => {
     
-    console.log('this api has been triggered')
+  //   console.log('this api has been triggered')
     
-  }
+  // }
   
   return (
     <PageContainer>

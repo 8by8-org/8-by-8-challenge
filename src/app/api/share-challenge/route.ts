@@ -6,15 +6,18 @@ import { ServerError } from '@/errors/server-error';
 
 export async function PUT(request: NextRequest) {
   const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
-
+  const userRepo = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository);
+  
   try {
-    const data = await request.json();
-
-    await auth.loadSessionUser();
+    const user = await auth.loadSessionUser();
+    if (!user) {
+      return NextResponse.json({ message: 'user not found', status: 401 })
+    } 
+  
+    const updatedUser = await userRepo.awardSharedBadge(user.uid)
 
     return NextResponse.json(
-      { message: 'user message has been returned.' },
-      { status: 200 },
+      updatedUser,{status: 200}
     );
   } catch (e) {
     if (e instanceof ServerError) {
@@ -25,3 +28,4 @@ export async function PUT(request: NextRequest) {
   }
 }
 
+// if user not signed in return 40
