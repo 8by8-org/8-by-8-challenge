@@ -45,7 +45,12 @@ export function openMenu({
       isKeyboardNavigating.current = true;
     }
 
+    menuRef.current.setAttribute('style', 'max-height: 0;');
     containerRef.current.classList.remove('hidden');
+    menuRef.current.setAttribute(
+      'style',
+      `max-height: min(50vh, ${getDistanceToBottomOfScreen(containerRef)}px);`,
+    );
 
     focusOnOption({
       optionIndex: indexOfOptionToReceiveFocus,
@@ -67,4 +72,10 @@ export function openMenu({
 
     comboboxRef.current?.setAttribute('aria-expanded', 'true');
   }
+}
+
+function getDistanceToBottomOfScreen(ref: RefObject<HTMLElement>) {
+  const element = ref.current!;
+  const elementTop = element.getBoundingClientRect().top + scrollY;
+  return document.documentElement.scrollHeight - elementTop;
 }

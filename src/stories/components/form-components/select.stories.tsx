@@ -12,6 +12,16 @@ const meta: Meta<typeof Select> = {
       expanded: false,
     },
   },
+  decorators: [
+    Story => {
+      document.body.setAttribute(
+        'style',
+        'min-height: 100vh; max-height: 100vh; overflow: hidden;',
+      );
+
+      return <Story />;
+    },
+  ],
 };
 
 export default meta;
@@ -270,6 +280,31 @@ export const Wide: Story = {
             },
           ]}
           style={{ width: '300px' }}
+        />
+      </GlobalStylesProvider>
+    );
+  },
+};
+
+export const AtBottomOfPage: Story = {
+  render: () => {
+    const state = new Field({
+      name: 'state',
+      defaultValue: '',
+    });
+
+    return (
+      <GlobalStylesProvider>
+        <Select
+          label="State"
+          field={state}
+          options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
+            return {
+              text: abbr,
+              value: abbr,
+            };
+          })}
+          style={{ marginTop: '80vh' }}
         />
       </GlobalStylesProvider>
     );
