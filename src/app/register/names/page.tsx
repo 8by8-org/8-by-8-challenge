@@ -6,7 +6,7 @@ import { usePrefetch } from '@/hooks/use-prefetch';
 import { useScrollToTop } from '@/hooks/use-scroll-to-top';
 import { VoterRegistrationContext } from '../voter-registration-context';
 import { VoterRegistrationPathNames } from '../constants/voter-registration-pathnames';
-import { NameFieldset } from './name-fieldset';
+import { NameFieldset } from './names-fieldset/name-fieldset';
 import { ExcludableContent } from '@/components/form-components/excludable-content/excludable-content';
 import { Checkbox } from '@/components/form-components/checkbox';
 import type { FormEventHandler } from 'react';

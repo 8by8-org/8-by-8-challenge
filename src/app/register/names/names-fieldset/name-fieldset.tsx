@@ -1,7 +1,6 @@
 'use client';
 import { Select } from '@/components/form-components/select';
 import { InputGroup } from '@/components/form-components/input-group';
-import { Messages } from '@/components/form-components/messages';
 import type { FieldOfType } from 'fully-formed';
 import type { ReactNode } from 'react';
 
@@ -95,6 +94,10 @@ export function NameFieldset({ title, form }: NameFieldsetProps) {
         field={form.fields.suffix}
         label="Suffix"
         options={[
+          {
+            text: '',
+            value: '',
+          },
           {
             text: 'Jr.',
             value: 'Jr.',

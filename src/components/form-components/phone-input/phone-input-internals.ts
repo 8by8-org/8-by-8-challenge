@@ -132,12 +132,16 @@ export class PhoneInputInternals {
       unformattedSelectionEnd,
     );
 
-    cursorPositionRef.current = this.unformattedSelectionPositionToFormatted(
-      unformattedSelectionStart + filteredAndTruncatedInput.length,
-      updatedValue.length,
-    );
+    if (updatedValue !== currentUnformattedValue) {
+      cursorPositionRef.current = this.unformattedSelectionPositionToFormatted(
+        unformattedSelectionStart + filteredAndTruncatedInput.length,
+        updatedValue.length,
+      );
 
-    field.setValue(updatedValue);
+      field.setValue(updatedValue);
+    } else {
+      target.setSelectionRange(selectionEnd, selectionEnd);
+    }
   }
 
   private static handleBackwardsDelete(

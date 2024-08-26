@@ -1,5 +1,5 @@
-import { YourNameForm } from './your-name-form';
-import { PreviousNameForm } from './previous-name-form';
+import { YourNameForm } from './subforms/your-name-form';
+import { PreviousNameForm } from './subforms/previous-name-form';
 import { SubFormTemplate, FormFactory } from 'fully-formed';
 
 class NameTemplate extends SubFormTemplate {

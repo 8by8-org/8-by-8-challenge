@@ -92,10 +92,12 @@ export function PhoneInput({
       PhoneInputInternals.handleBeforeInput(event, field, cursorPositionRef);
     }
 
-    inputRef.current?.addEventListener('beforeinput', handleBeforeInput);
+    const input = inputRef.current;
+
+    input?.addEventListener('beforeinput', handleBeforeInput);
 
     return () => {
-      inputRef.current?.removeEventListener('beforeinput', handleBeforeInput);
+      input?.removeEventListener('beforeinput', handleBeforeInput);
     };
   }, [field]);
 
