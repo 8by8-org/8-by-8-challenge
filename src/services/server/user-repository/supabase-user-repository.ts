@@ -50,13 +50,13 @@ export const SupabaseUserRepository = inject(
       }
     }
 // todos - 
-    //  return the user
+    // return the user
     // double check row names aganist the schema
     // handling all errors
     // use the server error class
     // chek if  the user has already completed the action
     // check how many badges the user has
-    // if the user has 8 badge then don't then don't award a badge 
+    // if the user has 8 badges then don't then don't award a badge 
     // write tests for the api endpoints 
     async awardSharedBadge(userId: string): Promise<User> {
       const supabase = this.createSupabaseClient();
@@ -64,8 +64,6 @@ export const SupabaseUserRepository = inject(
         .from('completed_actions')
         .update({ 'share_challenge': true })
         .eq('user_id', userId)
-      // return the user 
-      // if userId matches the user in the other db then the user has already completed the challenge 
       
   // throw error 
       if (completedActionsError) {
@@ -74,20 +72,64 @@ export const SupabaseUserRepository = inject(
   // add badges 
       const { error: badgeError } = await supabase
       .from('badges')
-        .insert({ challenger_id: userId, action: Actions.SharedChallenge });
-      // check the number of badges the user already has ? 
-      
-  // insertion not successfull so throw error 
-    if (badgeError) {
-      throw new Error(`Error adding badge: ${badgeError.message}`);
+        .insert({ challenger_id: userId, action: Actions.SharedChallenge })
+        .select()
+
+ 
+      if (badgeError) {
+        throw new Error(`Error adding badge: ${badgeError.message}`);
+      }
+// count badges 
+      const { count, error } = await supabase
+      .from('badges')
+      .select('challenger_id', { count: 'exact' })
+      .eq('challenger_id', userId);
+  
+    if (error) {
+      throw new ServerError(`Error counting badges: ${error.message}`);
     }
-  // get user 
+      const maxBadges = 8
       const user = await this.getUserById(userId);
       if (!user) {
-        throw new Error(`User not found: ${userId}`)
+        throw new ServerError(`User not found: ${userId}`)
       }
-    return user; 
+    // Check if the count exceeds the maxBadges threshold
+      if (count && count > maxBadges) {
+      return user;
     }
+      
+// still add badges if count !== maxBadges
+      if (count && count < maxBadges) {
+        const { error: badgeInsertError } = await supabase
+        .from('badges')
+          .insert({ challenger_id: userId, action: Actions.SharedChallenge })
+          .select()
+        if (badgeInsertError) {
+          throw new ServerError(`Error adding badge: ${badgeInsertError.message}`);
+        }
+        
+      }
+      // If awarding the badge causes the user to gain 8 badges, set user.completed_challenge to true.
+      if (count && count + 1 === maxBadges) {
+        // update `user.completed_challenge` to true
+        const { error: userUpdateError } = await supabase
+          .from('users')
+          .update({ 'completed_challenge': true })
+          .eq('id', userId);
+  
+        if (userUpdateError) {
+          throw new ServerError(`Error updating user completed challenge: ${userUpdateError.message}`);
+        }
+      }
+      // return user 
+  if (!user) {
+    throw new ServerError(`User not found: ${userId}`);
+  }
+
+  return user;
+    
+  }
+  
   },
   [
     SERVER_SERVICE_KEYS.createSupabaseClient,
