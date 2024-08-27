@@ -54,7 +54,7 @@ export const SupabaseUserRepository = inject(
     // double check row names aganist the schema
     // handling all errors
     // use the server error class
-    // chek if  the user has already completed the action
+    // check if  the user has already completed the action
     // check how many badges the user has
     // if the user has 8 badges then don't then don't award a badge 
     // write tests for the api endpoints 
@@ -67,7 +67,7 @@ export const SupabaseUserRepository = inject(
       
   // throw error 
       if (completedActionsError) {
-        throw new Error(`Error updating completed actions: ${completedActionsError.message}`);
+        throw new ServerError(`Error updating completed actions: ${completedActionsError.message}`);
       }
   // add badges 
       const { error: badgeError } = await supabase
@@ -75,9 +75,9 @@ export const SupabaseUserRepository = inject(
         .insert({ challenger_id: userId, action: Actions.SharedChallenge })
         .select()
 
- 
+// badgeError
       if (badgeError) {
-        throw new Error(`Error adding badge: ${badgeError.message}`);
+        throw new ServerError(`Error adding badge: ${badgeError.message}`);
       }
 // count badges 
       const { count, error } = await supabase
@@ -93,6 +93,7 @@ export const SupabaseUserRepository = inject(
       if (!user) {
         throw new ServerError(`User not found: ${userId}`)
       }
+      
     // Check if the count exceeds the maxBadges threshold
       if (count && count > maxBadges) {
       return user;
@@ -137,5 +138,4 @@ export const SupabaseUserRepository = inject(
   ],
 );
 
-// when we are talking about user where which db are we retreving user from ? 
-// 
+

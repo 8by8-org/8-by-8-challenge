@@ -30,6 +30,7 @@ interface UserContextType {
   signInWithOTP(params: SignInWithOTPParams): Promise<void>;
   signOut(): Promise<void>;
   restartChallenge(): Promise<void>;
+  shareChallenge(): Promise<void>;
 }
 
 const UserContext = createNamedContext<UserContextType>('UserContext');

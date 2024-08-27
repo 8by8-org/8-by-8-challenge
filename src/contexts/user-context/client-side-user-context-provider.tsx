@@ -9,6 +9,7 @@ import {
 import { useRouter } from 'next/navigation';
 import type { User } from '@/model/types/user';
 
+
 /**
  * Props that can be passed from a server component into a
  * {@link ClientSideUserContextProvider} in order to pre-render child components
@@ -18,6 +19,7 @@ interface ClientSideUserContextProviderProps {
   user: User | null;
   emailForSignIn: string;
   children?: ReactNode;
+
 }
 
 /**
@@ -112,9 +114,7 @@ export function ClientSideUserContextProvider(
   // define a shareChallenge here 
   // this api should trigger share api and update the db so the user can be awarded a badge 
   
-  async function shareChallenge() {
-    // if user has already shared the challeneg then return     
-    
+  async function shareChallenge() { 
       const response = await fetch( '/api/share-challenge', {
         method: 'PUT',
       }); 
@@ -133,6 +133,7 @@ export function ClientSideUserContextProvider(
         signInWithOTP,
         signOut,
         restartChallenge,
+        shareChallenge,
     
       }}
     >
