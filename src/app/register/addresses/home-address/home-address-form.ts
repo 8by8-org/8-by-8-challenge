@@ -4,23 +4,19 @@ import {
   ControlledField,
   StringValidators,
   IField,
+  FieldOfType,
   FormFactory,
   ValidityUtils,
-  type ExcludableTemplate,
 } from 'fully-formed';
 import zipState from 'zip-state';
-import { ZipCodeValidator } from '../utils/zip-code-validator';
+import { ZipCodeValidator } from '../../utils/zip-code-validator';
+import { PhoneValidator } from '../../utils/phone-validator';
 import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 
-export const PreviousAddressForm = FormFactory.createExcludableSubForm(
-  class PreviousAddressTemplate
-    extends SubFormTemplate
-    implements ExcludableTemplate
-  {
-    public readonly name = 'previousAddress';
-    public readonly autoTrim = {
-      include: ['unit', 'city', 'zip'],
-    };
+export const HomeAddressForm = FormFactory.createSubForm(
+  class HomeAddressTemplate extends SubFormTemplate {
+    public readonly name = 'homeAddress';
+    public readonly autoTrim = true;
     public readonly fields: [
       IField<'streetLine1', string, true>,
       IField<'streetLine2', string, true>,
@@ -28,16 +24,20 @@ export const PreviousAddressForm = FormFactory.createExcludableSubForm(
       IField<'city', string, false>,
       IField<'state', string, false>,
       IField<'zip', string, false>,
+      IField<'phone', string, false>,
+      IField<'phoneType', string, false>,
     ];
 
-    public readonly excludeByDefault = true;
-
-    public constructor() {
+    public constructor(externalZipCodeField: FieldOfType<string>) {
       super();
-      const zip = new Field({
+
+      const zip = new ControlledField({
         name: 'zip',
-        id: 'previous-zip',
-        defaultValue: '',
+        controller: externalZipCodeField,
+        initFn: controllerState => {
+          return controllerState.value;
+        },
+        controlFn: controllerState => controllerState.value,
         validators: [new ZipCodeValidator()],
       });
 
@@ -50,7 +50,7 @@ export const PreviousAddressForm = FormFactory.createExcludableSubForm(
           }
 
           const state = zipState(controllerState.value);
-          if (!state || !!Object.values(US_STATE_ABBREVIATIONS).includes(state))
+          if (!state || !Object.values(US_STATE_ABBREVIATIONS).includes(state))
             return 'AL';
 
           return state;
@@ -63,9 +63,12 @@ export const PreviousAddressForm = FormFactory.createExcludableSubForm(
             return;
 
           const state = zipState(controllerState.value.trim());
-          if (!state || !Object.values(US_STATE_ABBREVIATIONS).includes(state))
+          if (
+            !state ||
+            !Object.values(US_STATE_ABBREVIATIONS).includes(state)
+          ) {
             return;
-
+          }
           return state;
         },
       });
@@ -73,7 +76,6 @@ export const PreviousAddressForm = FormFactory.createExcludableSubForm(
       this.fields = [
         new Field({
           name: 'streetLine1',
-          id: 'previous-street-line-1',
           defaultValue: '',
           validators: [
             StringValidators.required({
@@ -83,17 +85,14 @@ export const PreviousAddressForm = FormFactory.createExcludableSubForm(
         }),
         new Field({
           name: 'streetLine2',
-          id: 'previous-street-line-2',
           defaultValue: '',
         }),
         new Field({
           name: 'unit',
-          id: 'previous-unit',
           defaultValue: '',
         }),
         new Field({
           name: 'city',
-          id: 'previous-city',
           defaultValue: '',
           validators: [
             StringValidators.required({
@@ -103,6 +102,15 @@ export const PreviousAddressForm = FormFactory.createExcludableSubForm(
         }),
         state,
         zip,
+        new Field({
+          name: 'phone',
+          defaultValue: '',
+          validators: [new PhoneValidator()],
+        }),
+        new Field({
+          name: 'phoneType',
+          defaultValue: 'Mobile',
+        }),
       ];
     }
   },

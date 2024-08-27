@@ -67,7 +67,7 @@ export default function Names() {
       <ExcludableContent excludableField={namesForm.fields.previousName}>
         <PreviousName />
       </ExcludableContent>
-      <Button type="submit" size="lg" wide>
+      <Button type="submit" size="lg" wide className="mb_lg">
         Next
       </Button>
     </form>

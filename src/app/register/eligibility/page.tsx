@@ -12,6 +12,7 @@ import { Label } from '@/components/form-components/label';
 import { Checkbox } from '@/components/form-components/checkbox';
 import { InputGroup } from '@/components/form-components/input-group';
 import { Messages } from '@/components/form-components/messages';
+import { Button } from '@/components/utils/button';
 import { PreregistrationInfoModal } from './preregistration-info-modal';
 import { NorthDakotaInfoModal } from './north-dakota-info-modal';
 import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
@@ -144,9 +145,9 @@ export default function Eligibility() {
         })}
         containerClassName={styles.is_citizen_checkbox_messages}
       />
-      <button type="submit" className="btn_gradient btn_lg btn_wide">
+      <Button type="submit" size="lg" wide className="mb_lg">
         Get Started
-      </button>
+      </Button>
       {showNorthDakotaInfoModal && (
         <NorthDakotaInfoModal
           showModal={showNorthDakotaInfoModal}

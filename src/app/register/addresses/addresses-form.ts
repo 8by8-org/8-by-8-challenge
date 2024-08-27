@@ -1,7 +1,7 @@
 import { SubFormTemplate, FormFactory, type FieldOfType } from 'fully-formed';
-import { HomeAddressForm } from './home-address-form';
-import { MailingAddressForm } from './mailing-address-form';
-import { PreviousAddressForm } from './previous-address-form';
+import { HomeAddressForm } from './home-address/home-address-form';
+import { MailingAddressForm } from './mailing-address/mailing-address-form';
+import { PreviousAddressForm } from './previous-address/previous-address-form';
 
 export const AddressesForm = FormFactory.createSubForm(
   class AddressesTemplate extends SubFormTemplate {
