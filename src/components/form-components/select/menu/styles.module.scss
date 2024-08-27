@@ -32,6 +32,7 @@
   @extend .b1;
   cursor: default;
   padding: $option-padding;
+  min-height: $line-height-sm + 2 * $option-padding;
 }
 
 .option:focus {

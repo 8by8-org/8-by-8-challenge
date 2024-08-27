@@ -1,29 +1,34 @@
 'use client';
+import { useContextSafely } from '@/hooks/use-context-safely';
+import { VoterRegistrationContext } from '../../voter-registration-context';
 import { Select } from '@/components/form-components/select';
 import { InputGroup } from '@/components/form-components/input-group';
-import type { FieldOfType } from 'fully-formed';
-import type { ReactNode } from 'react';
+import { MoreInfo } from '@/components/utils/more-info';
+import styles from './styles.module.scss';
 
-interface NameForm {
-  fields: {
-    title: FieldOfType<string>;
-    first: FieldOfType<string>;
-    middle: FieldOfType<string>;
-    last: FieldOfType<string>;
-    suffix: FieldOfType<string>;
-  };
-}
+export function YourName() {
+  const { voterRegistrationForm } = useContextSafely(
+    VoterRegistrationContext,
+    'YourName',
+  );
+  const form = voterRegistrationForm.fields.names.fields.yourName;
 
-interface NameFieldsetProps {
-  title: ReactNode;
-  form: NameForm;
-}
-
-export function NameFieldset({ title, form }: NameFieldsetProps) {
   return (
-    <fieldset style={{ marginBottom: '30px' }}>
-      <legend className="h2" style={{ marginBottom: '24px' }}>
-        {title}
+    <fieldset className={styles.fieldset}>
+      <legend className={styles.legend}>
+        Your Name
+        <MoreInfo
+          buttonAltText={'Click for more information about providing your name'}
+          dialogAriaLabel={'More infornation about providing your name'}
+          info={
+            <p>
+              Provide your full name. Do not use nicknames or initials. If
+              you&apos;ve changed your name, you will be asked for your previous
+              name below
+            </p>
+          }
+          className={styles.more_info}
+        />
       </legend>
       <Select
         field={form.fields.title}
@@ -58,37 +63,28 @@ export function NameFieldset({ title, form }: NameFieldsetProps) {
             value: 'srta.',
           },
         ]}
-        style={{
-          width: '50%',
-        }}
+        className={styles.select}
       />
       <InputGroup
         field={form.fields.first}
         labelContent="First Name*"
         labelVariant="floating"
         type="text"
-        containerStyle={{
-          marginTop: '30px',
-          marginBottom: '30px',
-        }}
+        containerClassName={styles.input}
       />
       <InputGroup
         field={form.fields.middle}
         labelContent="Middle Name"
         labelVariant="floating"
         type="text"
-        containerStyle={{
-          marginBottom: '30px',
-        }}
+        containerClassName={styles.input}
       />
       <InputGroup
         field={form.fields.last}
         labelContent="Last Name*"
         labelVariant="floating"
         type="text"
-        containerStyle={{
-          marginBottom: '30px',
-        }}
+        containerClassName={styles.input}
       />
       <Select
         field={form.fields.suffix}
@@ -119,9 +115,7 @@ export function NameFieldset({ title, form }: NameFieldsetProps) {
             value: 'IV',
           },
         ]}
-        style={{
-          width: '50%',
-        }}
+        className={styles.select}
       />
     </fieldset>
   );

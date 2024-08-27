@@ -1,0 +1,17 @@
+@use '../../../styles/partials' as *;
+
+.checkbox {
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox_label {
+  display: flex;
+  align-items: center;
+}
+
+.more_info_button {
+  margin-left: 12px;
+  margin-top: 3px;
+}

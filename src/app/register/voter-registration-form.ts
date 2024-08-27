@@ -1,7 +1,7 @@
-import { EligibilityForm } from './eligibility/eligibility-form';
-import { AddressesForm } from './addresses/addresses-form';
 import { FormTemplate, FormFactory } from 'fully-formed';
+import { EligibilityForm } from './eligibility/eligibility-form';
 import { NamesForm } from './names/names-form';
+import { AddressesForm } from './addresses/addresses-form';
 import { OtherInfoForm } from './other-info/[state]/[zip]/other-details-form';
 import type { User } from '@/model/types/user';
 

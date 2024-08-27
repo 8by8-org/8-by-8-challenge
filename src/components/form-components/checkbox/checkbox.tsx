@@ -13,6 +13,7 @@ type CheckboxProps = {
   checked: boolean;
   onChange: ChangeEventHandler<HTMLInputElement>;
   id?: string;
+  containerClassName?: string;
   containerStyle?: CSSProperties;
   ['aria-required']?: boolean;
   ['aria-describedby']?: string;
@@ -25,6 +26,7 @@ export function Checkbox({
   checked,
   onChange,
   id,
+  containerClassName,
   containerStyle,
   ['aria-required']: ariaRequired,
   ['aria-describedby']: ariaDescribedBy,
@@ -33,7 +35,14 @@ export function Checkbox({
   const defaultId = useId();
 
   return (
-    <div className={styles.container} style={containerStyle}>
+    <div
+      className={
+        containerClassName ?
+          `${styles.container} ${containerClassName}`
+        : styles.container
+      }
+      style={containerStyle}
+    >
       <input
         type="checkbox"
         name={name}
