@@ -30,7 +30,7 @@ export default function Addresses() {
     if (!ValidityUtils.isValid(addressesForm)) return;
 
     router.push(
-      VoterRegistrationPathNames.OTHER_INFO +
+      VoterRegistrationPathNames.OTHER_DETAILS +
         `/${addressesForm.state.value.homeAddress.state}` +
         `/${addressesForm.state.value.homeAddress.zip}`,
     );

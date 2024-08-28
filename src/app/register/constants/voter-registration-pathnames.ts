@@ -3,7 +3,7 @@ export class VoterRegistrationPathNames {
     ['ELIGIBILITY', '/register/eligibility'],
     ['NAMES', '/register/names'],
     ['ADDRESSES', '/register/addresses'],
-    ['OTHER_INFO', '/register/other-info'],
+    ['OTHER_DETAILS', '/register/other-details'],
   ]);
 
   public static get ELIGIBILITY() {
@@ -18,8 +18,8 @@ export class VoterRegistrationPathNames {
     return this.pathNames.get('ADDRESSES')!;
   }
 
-  public static get OTHER_INFO() {
-    return this.pathNames.get('OTHER_INFO')!;
+  public static get OTHER_DETAILS() {
+    return this.pathNames.get('OTHER_DETAILS')!;
   }
 
   public static getPathIndex(path: string) {

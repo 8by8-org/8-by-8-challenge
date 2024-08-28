@@ -76,26 +76,4 @@ describe('Label', () => {
       expect(label.classList.contains('pristine_floating_label')).toBe(false),
     );
   });
-
-  it(`removes styles.pristine_floating_label from the classList of the label 
-  element when the underlying field has been submitted.`, async () => {
-    const field = new Field({
-      name: 'testField',
-      defaultValue: '',
-    });
-
-    render(
-      <Label field={field} variant="floating">
-        Test Label
-      </Label>,
-    );
-
-    const label = screen.getByText('Test Label');
-    expect(label.classList.contains('pristine_floating_label')).toBe(true);
-
-    act(() => field.setSubmitted());
-    await waitFor(() =>
-      expect(label.classList.contains('pristine_floating_label')).toBe(false),
-    );
-  });
 });

@@ -2,7 +2,7 @@ import { FormTemplate, FormFactory } from 'fully-formed';
 import { EligibilityForm } from './eligibility/eligibility-form';
 import { NamesForm } from './names/names-form';
 import { AddressesForm } from './addresses/addresses-form';
-import { OtherInfoForm } from './other-info/[state]/[zip]/other-details-form';
+import { OtherDetailsForm } from './other-details/[state]/[zip]/other-details-form';
 import type { User } from '@/model/types/user';
 
 export const VoterRegistrationForm = FormFactory.createForm(
@@ -11,7 +11,7 @@ export const VoterRegistrationForm = FormFactory.createForm(
       InstanceType<typeof EligibilityForm>,
       InstanceType<typeof NamesForm>,
       InstanceType<typeof AddressesForm>,
-      InstanceType<typeof OtherInfoForm>,
+      InstanceType<typeof OtherDetailsForm>,
     ];
 
     public constructor(user: User | null) {
@@ -23,7 +23,7 @@ export const VoterRegistrationForm = FormFactory.createForm(
         eligibilityForm,
         new NamesForm(),
         addressesForm,
-        new OtherInfoForm(),
+        new OtherDetailsForm(),
       ];
     }
   },

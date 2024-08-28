@@ -1,11 +1,15 @@
 import { IValidator, ValidatorResult, Validity } from 'fully-formed';
 
+interface ZipCodeValidatorOpts {
+  trimBeforeValidation?: boolean;
+}
+
 export class ZipCodeValidator implements IValidator<string> {
   private trimBeforeValidation: boolean;
   private pattern = /^\d{5}$/;
 
-  public constructor(trimBeforeValidation?: boolean) {
-    this.trimBeforeValidation = !!trimBeforeValidation;
+  public constructor(opts?: ZipCodeValidatorOpts) {
+    this.trimBeforeValidation = !!opts?.trimBeforeValidation;
   }
 
   validate(value: string): ValidatorResult {
@@ -15,7 +19,7 @@ export class ZipCodeValidator implements IValidator<string> {
       return {
         validity: Validity.Invalid,
         message: {
-          text: 'Please enter your zip code.',
+          text: 'Please enter your ZIP code.',
           validity: Validity.Invalid,
         },
       };
@@ -27,7 +31,7 @@ export class ZipCodeValidator implements IValidator<string> {
       return {
         validity: Validity.Invalid,
         message: {
-          text: 'Please enter a 5-digit zip code.',
+          text: 'Please enter a 5-digit ZIP code.',
           validity: Validity.Invalid,
         },
       };

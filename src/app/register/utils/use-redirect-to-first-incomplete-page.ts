@@ -39,5 +39,5 @@ function getFirstIncompletePage({
     return VoterRegistrationPathNames.ADDRESSES;
   }
 
-  return VoterRegistrationPathNames.OTHER_INFO;
+  return VoterRegistrationPathNames.OTHER_DETAILS;
 }

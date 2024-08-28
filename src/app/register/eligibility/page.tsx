@@ -36,7 +36,7 @@ export default function Eligibility() {
   const router = useRouter();
   usePrefetch(VoterRegistrationPathNames.NAMES);
 
-  const onSubmit: FormEventHandler = e => {
+  const onSubmit: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault();
     eligibilityForm.setSubmitted();
 

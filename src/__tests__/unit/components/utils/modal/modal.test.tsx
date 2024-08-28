@@ -13,7 +13,11 @@ import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 
 describe('Modal', () => {
   mockDialogMethods();
-  afterEach(cleanup);
+
+  afterEach(() => {
+    cleanup();
+    jest.clearAllMocks();
+  });
 
   it('renders a child component', () => {
     render(
@@ -44,10 +48,9 @@ describe('Modal', () => {
       );
     }
     const user = userEvent.setup();
-    jest.spyOn(HTMLDialogElement.prototype, 'showModal');
-    jest.spyOn(HTMLDialogElement.prototype, 'close');
     render(<ModalWrapper />);
     expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalled();
+
     const closeBtn = screen.getByLabelText('close dialog');
     await user.click(closeBtn);
     await waitFor(() =>
@@ -57,6 +60,7 @@ describe('Modal', () => {
 
   it('calls closeModal() when the escape key is pressed.', async () => {
     const closeModal = jest.fn();
+
     render(
       <Modal
         ariaLabel="test modal"
@@ -65,12 +69,14 @@ describe('Modal', () => {
         closeModal={closeModal}
       ></Modal>,
     );
+
     const dialog = document.querySelector('dialog');
     if (dialog) {
       fireEvent.keyDown(dialog, {
         key: 'Escape',
       });
     }
+
     expect(closeModal).toHaveBeenCalled();
   });
 });

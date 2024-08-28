@@ -25,7 +25,7 @@ export default function Names() {
   usePrefetch(VoterRegistrationPathNames.ADDRESSES);
   useScrollToTop();
 
-  const onSubmit: FormEventHandler = e => {
+  const onSubmit: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault();
     namesForm.setSubmitted();
     if (!ValidityUtils.isValid(namesForm)) return;

@@ -5,8 +5,8 @@ import {
   StringValidators,
 } from 'fully-formed';
 
-export const OtherInfoForm = FormFactory.createSubForm(
-  class OtherInfoTemplate extends SubFormTemplate {
+export const OtherDetailsForm = FormFactory.createSubForm(
+  class OtherDetailsTemplate extends SubFormTemplate {
     public readonly name = 'otherDetails';
     public readonly autoTrim = true;
     public readonly fields = [

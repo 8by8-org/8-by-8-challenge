@@ -5,13 +5,13 @@ import { Select } from '@/components/form-components/select';
 import { Checkbox } from '@/components/form-components/checkbox';
 import { useValue } from 'fully-formed';
 
-interface OtherInfoFormComponentProps {
+interface OtherDetailsFormComponentProps {
   politicalParties: string[];
 }
 
-export function OtherInfoFormComponent({
+export function OtherDetailsFormComponent({
   politicalParties,
-}: OtherInfoFormComponentProps) {
+}: OtherDetailsFormComponentProps) {
   const { voterRegistrationForm } = useContextSafely(
     VoterRegistrationContext,
     'OtherDetails',

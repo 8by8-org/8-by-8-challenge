@@ -1,12 +1,12 @@
 import {
+  FormFactory,
   SubFormTemplate,
   Field,
   ControlledField,
   StringValidators,
-  IField,
-  FieldOfType,
-  FormFactory,
   ValidityUtils,
+  type IField,
+  type FieldOfType,
 } from 'fully-formed';
 import zipState from 'zip-state';
 import { ZipCodeValidator } from '../../utils/zip-code-validator';
