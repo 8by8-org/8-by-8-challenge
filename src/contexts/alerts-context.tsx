@@ -2,6 +2,7 @@
 import { createNamedContext } from '@/hooks/create-named-context';
 import { Alert, useAlert } from '@/components/utils/alert';
 import type { PropsWithChildren } from 'react';
+import { useContext } from 'react';
 
 /**
  * The value provided to consumers of the {@link AlertsContext}.
@@ -60,6 +61,16 @@ export function AlertsContextProvider({ children }: PropsWithChildren) {
     <AlertsContext.Provider value={{ showAlert }}>
       <Alert ref={alertRef} />
       {children}
+    </AlertsContext.Provider>
+  );
+}
+export function useAlertsContext() {
+  const { alertRef, showAlert } = useAlert();
+
+  return (
+    <AlertsContext.Provider value={{ showAlert }}>
+      <Alert ref={alertRef} />
+      {'rerun'}
     </AlertsContext.Provider>
   );
 }

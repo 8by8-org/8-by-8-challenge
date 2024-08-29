@@ -5,7 +5,7 @@ import type { UserRepository } from './user-repository';
 import type { User } from '@/model/types/user';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '../user-record-parser/i-user-record-parser';
-
+import { DateTime } from 'luxon';
 /**
  * An implementation of {@link UserRepository} that interacts with
  * a [Supabase](https://supabase.com/) database and parses rows returned from
@@ -17,6 +17,15 @@ export const SupabaseUserRepository = inject(
       private createSupabaseClient: CreateSupabaseClient,
       private userRecordParser: IUserRecordParser,
     ) {}
+    //public method
+    async restartChallenge(userId: string): Promise<number> {
+      const newTimestamp = DateTime.now().plus({ days: 8 }).toUnixInteger();
+      // Assuming there is a method to update the user's challengeEndTimestamp in the database
+      await this.updateUserChallengeEndTimestamp(userId, newTimestamp);
+      return newTimestamp;
+      //follow the style of getUserById AND  supabase->throw an error
+    }
+
 
     async getUserById(userId: string): Promise<User | null> {
       const supabase = this.createSupabaseClient();
@@ -46,6 +55,11 @@ export const SupabaseUserRepository = inject(
       } catch (e) {
         throw new ServerError('Failed to parse user data.', 400);
       }
+    }
+    
+    private async updateUserChallengeEndTimestamp(userId: string, timestamp: number) {
+      // Update the user's challengeEndTimestamp in the database
+      // Implementation depends on your database setup
     }
   },
   [
