@@ -12,6 +12,8 @@ import { PreviousName } from './previous-name';
 import { Checkbox } from '@/components/form-components/checkbox';
 import { MoreInfo } from '@/components/utils/more-info';
 import { Button } from '@/components/utils/button';
+import { getFirstNonValidInputId } from './utils/get-first-non-valid-input-id';
+import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
 import type { FormEventHandler } from 'react';
 import styles from './styles.module.scss';
 
@@ -28,13 +30,18 @@ export default function Names() {
   const onSubmit: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault();
     namesForm.setSubmitted();
-    if (!ValidityUtils.isValid(namesForm)) return;
+
+    if (!ValidityUtils.isValid(namesForm)) {
+      const firstNonValidInputId = getFirstNonValidInputId(namesForm);
+      firstNonValidInputId && focusOnElementById(firstNonValidInputId);
+      return;
+    }
 
     router.push(VoterRegistrationPathNames.ADDRESSES);
   };
 
   return (
-    <form onSubmit={onSubmit} style={{ marginBottom: '80px' }}>
+    <form onSubmit={onSubmit}>
       <YourName />
       <Checkbox
         checked={!useExclude(namesForm.fields.previousName)}

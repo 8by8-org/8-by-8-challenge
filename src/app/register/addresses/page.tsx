@@ -11,6 +11,8 @@ import { ExcludableContent } from '@/components/form-components/excludable-conte
 import { MailingAddress } from './mailing-address';
 import { PreviousAddress } from './previous-address';
 import { Button } from '@/components/utils/button';
+import { getFirstNonValidInputId } from './utils/get-first-nonvalid-input-id';
+import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
 import type { FormEventHandler } from 'react';
 import styles from './styles.module.scss';
 
@@ -27,12 +29,17 @@ export default function Addresses() {
   const onSubmit: FormEventHandler = e => {
     e.preventDefault();
     addressesForm.setSubmitted();
-    if (!ValidityUtils.isValid(addressesForm)) return;
+
+    if (!ValidityUtils.isValidOrCaution(addressesForm)) {
+      const firstNonValidInputId = getFirstNonValidInputId(addressesForm);
+      firstNonValidInputId && focusOnElementById(firstNonValidInputId);
+      return;
+    }
 
     router.push(
       VoterRegistrationPathNames.OTHER_DETAILS +
-        `/${addressesForm.state.value.homeAddress.state}` +
-        `/${addressesForm.state.value.homeAddress.zip}`,
+        `?state=${addressesForm.state.value.homeAddress.state}` +
+        `&zip=${addressesForm.state.value.homeAddress.zip}`,
     );
   };
 

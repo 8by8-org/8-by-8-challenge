@@ -24,7 +24,7 @@ export function YourName() {
             <p>
               Provide your full name. Do not use nicknames or initials. If
               you&apos;ve changed your name, you will be asked for your previous
-              name below
+              name below.
             </p>
           }
           className={styles.more_info}

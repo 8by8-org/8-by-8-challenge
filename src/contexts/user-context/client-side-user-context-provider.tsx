@@ -8,6 +8,8 @@ import {
 } from './user-context';
 import { useRouter } from 'next/navigation';
 import type { User } from '@/model/types/user';
+import { ValueOf } from 'fully-formed';
+import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
 
 /**
  * Props that can be passed from a server component into a
@@ -107,6 +109,17 @@ export function ClientSideUserContextProvider(
     throw new Error('not implemented.');
   }
 
+  /* istanbul ignore next */
+  async function registerToVote(
+    formData: ValueOf<InstanceType<typeof VoterRegistrationForm>>,
+  ): Promise<void> {
+    return new Promise<void>((_resolve, reject) => {
+      setTimeout(() => {
+        reject(new Error('not implemented.'));
+      }, 3000);
+    });
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -118,6 +131,7 @@ export function ClientSideUserContextProvider(
         signInWithOTP,
         signOut,
         restartChallenge,
+        registerToVote,
       }}
     >
       {props.children}

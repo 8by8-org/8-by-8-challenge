@@ -2,7 +2,7 @@ import { FormTemplate, FormFactory } from 'fully-formed';
 import { EligibilityForm } from './eligibility/eligibility-form';
 import { NamesForm } from './names/names-form';
 import { AddressesForm } from './addresses/addresses-form';
-import { OtherDetailsForm } from './other-details/[state]/[zip]/other-details-form';
+import { OtherDetailsForm } from './other-details/other-details-form';
 import type { User } from '@/model/types/user';
 
 export const VoterRegistrationForm = FormFactory.createForm(

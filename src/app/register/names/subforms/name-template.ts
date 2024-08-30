@@ -52,7 +52,7 @@ export class NameTemplate<T extends string> extends SubFormTemplate {
         defaultValue: '',
         validators: [
           StringValidators.required({
-            invalidMessage: 'Please enter your first name.',
+            invalidMessage: 'Please enter your last name.',
             trimBeforeValidation: true,
           }),
         ],

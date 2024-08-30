@@ -7,7 +7,7 @@ import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
 import { EligibilityForm } from '@/app/register/eligibility/eligibility-form';
 import { NamesForm } from '@/app/register/names/names-form';
 import { AddressesForm } from '@/app/register/addresses/addresses-form';
-import { OtherDetailsForm } from '@/app/register/other-details/[state]/[zip]/other-details-form';
+import { OtherDetailsForm } from '@/app/register/other-details/other-details-form';
 import { VoterRegistrationPathNames } from '@/app/register/constants/voter-registration-pathnames';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 

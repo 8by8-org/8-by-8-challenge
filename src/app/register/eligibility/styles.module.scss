@@ -1,9 +1,5 @@
 @use '../../../styles/partials' as *;
 
-.form {
-  margin-bottom: $spacing-lg;
-}
-
 .readonly_input {
   @extend .b1;
   border: none;

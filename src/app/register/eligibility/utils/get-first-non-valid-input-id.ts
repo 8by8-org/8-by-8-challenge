@@ -3,7 +3,7 @@ import type { EligibilityForm } from '../eligibility-form';
 
 export function getFirstNonValidInputId(
   eligibilityForm: InstanceType<typeof EligibilityForm>,
-): string {
+): string | null {
   if (!ValidityUtils.isValid(eligibilityForm.fields.zip)) {
     return eligibilityForm.fields.zip.id;
   }
@@ -20,5 +20,5 @@ export function getFirstNonValidInputId(
     return eligibilityForm.fields.isCitizen.id;
   }
 
-  return '';
+  return null;
 }

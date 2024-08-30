@@ -41,7 +41,8 @@ export default function Eligibility() {
     eligibilityForm.setSubmitted();
 
     if (!ValidityUtils.isValid(eligibilityForm)) {
-      focusOnElementById(getFirstNonValidInputId(eligibilityForm));
+      const firstNonValidInputId = getFirstNonValidInputId(eligibilityForm);
+      firstNonValidInputId && focusOnElementById(firstNonValidInputId);
       return;
     }
 
@@ -58,7 +59,7 @@ export default function Eligibility() {
   };
 
   return (
-    <form onSubmit={onSubmit} className={styles.form}>
+    <form onSubmit={onSubmit}>
       <p className="mb_md">
         Registering to vote is easy, and only takes a few minutes!
       </p>
