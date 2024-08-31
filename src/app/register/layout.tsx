@@ -6,9 +6,9 @@ import { useRedirectToFirstIncompletePage } from './utils/use-redirect-to-first-
 import { VoterRegistrationForm } from './voter-registration-form';
 import { VoterRegistrationContext } from './voter-registration-context';
 import { PageContainer } from '@/components/utils/page-container';
+import { ProgressBar } from './progress-indicator/progress-bar';
 import type { PropsWithChildren } from 'react';
 import styles from './styles.module.scss';
-import { ProgressBar } from './progress-indicator/progress-bar';
 
 export default function VoterRegistrationLayout({
   children,

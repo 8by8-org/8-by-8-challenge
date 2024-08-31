@@ -3,7 +3,6 @@ import { useContextSafely } from '@/hooks/use-context-safely';
 import { VoterRegistrationContext } from '../../voter-registration-context';
 import { Select } from '@/components/form-components/select';
 import { InputGroup } from '@/components/form-components/input-group';
-import { MoreInfo } from '@/components/utils/more-info';
 import styles from './styles.module.scss';
 
 export function PreviousName() {

@@ -1,9 +1,10 @@
 import {
   SubFormTemplate,
-  Field,
   FormFactory,
+  Field,
+  PersistentField,
+  PersistentControlledExcludableField,
   StringValidators,
-  ControlledExcludableField,
   Group,
   Adapter,
   type TransientField,
@@ -36,11 +37,14 @@ export const OtherDetailsForm = FormFactory.createSubForm(
 
     public readonly adapters: [IAdapter<'party', string>];
 
+    private readonly key = 'otherDetails';
+
     public constructor() {
       super();
 
-      const party = new Field({
+      const party = new PersistentField({
         name: 'party',
+        key: this.key + '.party',
         defaultValue: '',
         transient: true,
         validators: [
@@ -53,8 +57,9 @@ export const OtherDetailsForm = FormFactory.createSubForm(
 
       this.fields = [
         party,
-        new ControlledExcludableField({
+        new PersistentControlledExcludableField({
           name: 'otherParty',
+          key: this.key + '.otherParty',
           controller: party,
           initFn: ({ value }) => {
             return {
@@ -73,12 +78,14 @@ export const OtherDetailsForm = FormFactory.createSubForm(
             }),
           ],
         }),
-        new Field({
+        new PersistentField({
           name: 'changedParties',
+          key: this.key + '.changedParties',
           defaultValue: false,
         }),
-        new Field({
+        new PersistentField({
           name: 'race',
+          key: this.key + '.race',
           defaultValue: '',
           validators: [
             StringValidators.required({

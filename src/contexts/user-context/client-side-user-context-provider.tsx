@@ -8,7 +8,7 @@ import {
 } from './user-context';
 import { useRouter } from 'next/navigation';
 import type { User } from '@/model/types/user';
-import { ValueOf } from 'fully-formed';
+import { clearAllPersistentFormElements, ValueOf } from 'fully-formed';
 import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
 
 /**
@@ -102,6 +102,7 @@ export function ClientSideUserContextProvider(
     }
 
     setUser(null);
+    clearAllPersistentFormElements();
   }
 
   /* istanbul ignore next */

@@ -1,8 +1,8 @@
 import {
   FormFactory,
   SubFormTemplate,
-  Field,
-  ControlledField,
+  PersistentField,
+  PersistentControlledField,
   StringValidators,
   ValidityUtils,
   type IField,
@@ -28,11 +28,14 @@ export const HomeAddressForm = FormFactory.createSubForm(
       IField<'phoneType', string, false>,
     ];
 
+    private readonly key = 'addresses.home';
+
     public constructor(externalZipCodeField: FieldOfType<string>) {
       super();
 
-      const zip = new ControlledField({
+      const zip = new PersistentControlledField({
         name: 'zip',
+        key: this.key + '.zip',
         controller: externalZipCodeField,
         initFn: controllerState => {
           return controllerState.value;
@@ -41,9 +44,10 @@ export const HomeAddressForm = FormFactory.createSubForm(
         validators: [new ZipCodeValidator()],
       });
 
-      const state = new ControlledField({
+      const state = new PersistentControlledField({
         name: 'state',
         controller: zip,
+        key: this.key + '.state',
         initFn: controllerState => {
           if (!ValidityUtils.isValid(controllerState)) {
             return 'AL';
@@ -74,8 +78,9 @@ export const HomeAddressForm = FormFactory.createSubForm(
       });
 
       this.fields = [
-        new Field({
+        new PersistentField({
           name: 'streetLine1',
+          key: this.key + '.streetLine1',
           defaultValue: '',
           validators: [
             StringValidators.required({
@@ -83,16 +88,19 @@ export const HomeAddressForm = FormFactory.createSubForm(
             }),
           ],
         }),
-        new Field({
+        new PersistentField({
           name: 'streetLine2',
+          key: this.key + '.streetLine2',
           defaultValue: '',
         }),
-        new Field({
+        new PersistentField({
           name: 'unit',
+          key: this.key + '.unit',
           defaultValue: '',
         }),
-        new Field({
+        new PersistentField({
           name: 'city',
+          key: this.key + '.city',
           defaultValue: '',
           validators: [
             StringValidators.required({
@@ -102,13 +110,15 @@ export const HomeAddressForm = FormFactory.createSubForm(
         }),
         state,
         zip,
-        new Field({
+        new PersistentField({
           name: 'phone',
+          key: this.key + '.phone',
           defaultValue: '',
           validators: [new PhoneValidator()],
         }),
-        new Field({
+        new PersistentField({
           name: 'phoneType',
+          key: this.key + '.phoneType',
           defaultValue: 'Mobile',
         }),
       ];

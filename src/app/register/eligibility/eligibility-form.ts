@@ -2,6 +2,7 @@ import {
   SubFormTemplate,
   Adapter,
   Field,
+  PersistentField,
   FormFactory,
   IAdapter,
   IField,
@@ -15,6 +16,7 @@ class EligibilityTemplate extends SubFormTemplate {
   public readonly autoTrim = {
     include: ['email', 'zip'],
   };
+
   public readonly fields: [
     IField<'email', string, false>,
     IField<'zip', string, false>,
@@ -29,6 +31,8 @@ class EligibilityTemplate extends SubFormTemplate {
     IAdapter<'isCitizen', string>,
   ];
 
+  private readonly key = 'eligibility';
+
   public constructor(email: string) {
     super();
     this.fields = [
@@ -36,13 +40,15 @@ class EligibilityTemplate extends SubFormTemplate {
         name: 'email',
         defaultValue: email,
       }),
-      new Field({
+      new PersistentField({
         name: 'zip',
+        key: this.key + '.zip',
         defaultValue: '',
         validators: [new ZipCodeValidator()],
       }),
-      new Field({
+      new PersistentField({
         name: 'dob',
+        key: this.key + '.dob',
         defaultValue: '',
         validators: [
           new Validator({
@@ -56,8 +62,9 @@ class EligibilityTemplate extends SubFormTemplate {
         ],
         transient: true,
       }),
-      new Field({
+      new PersistentField({
         name: 'eighteenPlus',
+        key: this.key + '.eighteenPlus',
         defaultValue: false,
         transient: true,
         validatorTemplates: [
@@ -70,8 +77,9 @@ class EligibilityTemplate extends SubFormTemplate {
           },
         ],
       }),
-      new Field({
+      new PersistentField({
         name: 'isCitizen',
+        key: this.key + '.isCitizen',
         defaultValue: false,
         transient: true,
         validatorTemplates: [

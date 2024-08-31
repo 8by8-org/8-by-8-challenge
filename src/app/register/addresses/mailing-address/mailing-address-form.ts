@@ -1,26 +1,21 @@
 import {
-  SubFormTemplate,
-  Field,
-  ControlledField,
+  PersistentExcludableSubFormTemplate,
+  PersistentField,
+  PersistentControlledField,
   StringValidators,
   IField,
   FormFactory,
   ValidityUtils,
-  type ExcludableTemplate,
 } from 'fully-formed';
 import zipState from 'zip-state';
 import { ZipCodeValidator } from '../../utils/zip-code-validator';
 import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 
-export const MailingAddressForm = FormFactory.createExcludableSubForm(
-  class MailingAddressTemplate
-    extends SubFormTemplate
-    implements ExcludableTemplate
-  {
+export const MailingAddressForm = FormFactory.createPersistentExcludableSubForm(
+  class MailingAddressTemplate extends PersistentExcludableSubFormTemplate {
     public readonly name = 'mailingAddress';
-    public readonly autoTrim = {
-      include: ['unit', 'city', 'zip'],
-    };
+    public readonly key = 'addresses.mailing';
+    public readonly autoTrim = true;
 
     public readonly fields: [
       IField<'streetLine1', string, true>,
@@ -35,15 +30,18 @@ export const MailingAddressForm = FormFactory.createExcludableSubForm(
 
     public constructor() {
       super();
-      const zip = new Field({
+      const zip = new PersistentField({
         name: 'zip',
+        key: this.key + '.zip',
         id: 'mailing-zip',
         defaultValue: '',
         validators: [new ZipCodeValidator()],
       });
 
-      const state = new ControlledField({
+      const state = new PersistentControlledField({
         name: 'state',
+        id: 'mailing-state',
+        key: this.key + '.state',
         controller: zip,
         initFn: controllerState => {
           if (!ValidityUtils.isValid(controllerState)) {
@@ -72,9 +70,10 @@ export const MailingAddressForm = FormFactory.createExcludableSubForm(
       });
 
       this.fields = [
-        new Field({
+        new PersistentField({
           name: 'streetLine1',
           id: 'mailing-street-line-1',
+          key: this.key + '.streetLine1',
           defaultValue: '',
           validators: [
             StringValidators.required({
@@ -82,19 +81,22 @@ export const MailingAddressForm = FormFactory.createExcludableSubForm(
             }),
           ],
         }),
-        new Field({
+        new PersistentField({
           name: 'streetLine2',
           id: 'mailing-street-line-2',
+          key: this.key + '.streetLine2',
           defaultValue: '',
         }),
-        new Field({
+        new PersistentField({
           name: 'unit',
           id: 'mailing-unit',
+          key: this.key + '.unit',
           defaultValue: '',
         }),
-        new Field({
+        new PersistentField({
           name: 'city',
           id: 'mailing-city',
+          key: this.key + '.city',
           defaultValue: '',
           validators: [
             StringValidators.required({
