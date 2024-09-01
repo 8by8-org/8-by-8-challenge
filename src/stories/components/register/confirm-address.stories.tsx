@@ -55,37 +55,37 @@ export const Default: Story = {
             enteredAddress={{
               streetLine1: {
                 text: '1600 Ampitheatre Parkway',
-                isEmphasized: false,
+                hasIssue: false,
               },
               city: {
                 text: 'Montan View',
-                isEmphasized: true,
+                hasIssue: true,
               },
               state: {
                 text: 'CA',
-                isEmphasized: false,
+                hasIssue: false,
               },
               zip: {
                 text: '94043',
-                isEmphasized: false,
+                hasIssue: false,
               },
             }}
             recommendedAddress={{
               streetLine1: {
                 text: '1600 Ampitheatre Parkway',
-                isEmphasized: false,
+                hasIssue: false,
               },
               city: {
                 text: 'Mountain View',
-                isEmphasized: true,
+                hasIssue: true,
               },
               state: {
                 text: 'CA',
-                isEmphasized: false,
+                hasIssue: false,
               },
               zip: {
                 text: '94043',
-                isEmphasized: false,
+                hasIssue: false,
               },
             }}
             form={form}

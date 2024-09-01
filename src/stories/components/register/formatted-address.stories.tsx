@@ -53,23 +53,23 @@ export const AllEmphasizedItems: Story = {
           address={{
             streetLine1: {
               text: '123 Fake St',
-              isEmphasized: true,
+              hasIssue: true,
             },
             streetLine2: {
               text: 'Apt. 3',
-              isEmphasized: true,
+              hasIssue: true,
             },
             city: {
               text: 'Somewhereville',
-              isEmphasized: true,
+              hasIssue: true,
             },
             state: {
               text: 'PA',
-              isEmphasized: true,
+              hasIssue: true,
             },
             zip: {
               text: '12345',
-              isEmphasized: true,
+              hasIssue: true,
             },
           }}
         />
@@ -86,23 +86,23 @@ export const SomeEmphasizedItems: Story = {
           address={{
             streetLine1: {
               text: '123 Fake St',
-              isEmphasized: true,
+              hasIssue: true,
             },
             streetLine2: {
               text: 'Apt. 3',
-              isEmphasized: false,
+              hasIssue: false,
             },
             city: {
               text: 'Somewhereville',
-              isEmphasized: false,
+              hasIssue: false,
             },
             state: {
               text: 'PA',
-              isEmphasized: true,
+              hasIssue: true,
             },
             zip: {
               text: '12345',
-              isEmphasized: true,
+              hasIssue: true,
             },
           }}
         />
@@ -123,23 +123,23 @@ export const LongAddress: Story = {
           address={{
             streetLine1: {
               text: '12345 Jean Baptiste Point du Sable Lake Shore Drive',
-              isEmphasized: false,
+              hasIssue: false,
             },
             streetLine2: {
               text: 'Apartment no. 1234',
-              isEmphasized: false,
+              hasIssue: false,
             },
             city: {
               text: 'Chargoggagoggmanchauggagoggchaubunagungamaugg',
-              isEmphasized: false,
+              hasIssue: false,
             },
             state: {
               text: 'MA',
-              isEmphasized: false,
+              hasIssue: false,
             },
             zip: {
               text: '12345',
-              isEmphasized: false,
+              hasIssue: false,
             },
           }}
         />

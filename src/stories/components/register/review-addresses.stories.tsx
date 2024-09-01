@@ -5,11 +5,6 @@ import { GlobalStylesProvider } from '@/stories/global-styles-provider';
 
 const meta: Meta<typeof ReviewAddresses> = {
   component: ReviewAddresses,
-  parameters: {
-    nextjs: {
-      appDirectory: true,
-    },
-  },
 };
 
 export default meta;
@@ -48,6 +43,8 @@ export const AllAddresses: Story = {
               state: 'PA',
               zip: '12345',
             }}
+            returnToEditing={() => {}}
+            continueToNextPage={() => {}}
           />
         </Modal>
       </GlobalStylesProvider>
@@ -73,6 +70,8 @@ export const HomeAddressOnly: Story = {
               state: 'PA',
               zip: '12345',
             }}
+            returnToEditing={() => {}}
+            continueToNextPage={() => {}}
           />
         </Modal>
       </GlobalStylesProvider>
@@ -105,6 +104,8 @@ export const HomeAndMailing: Story = {
               state: 'PA',
               zip: '12345',
             }}
+            returnToEditing={() => {}}
+            continueToNextPage={() => {}}
           />
         </Modal>
       </GlobalStylesProvider>
@@ -137,6 +138,8 @@ export const HomeAndPrevious: Story = {
               state: 'PA',
               zip: '12345',
             }}
+            returnToEditing={() => {}}
+            continueToNextPage={() => {}}
           />
         </Modal>
       </GlobalStylesProvider>

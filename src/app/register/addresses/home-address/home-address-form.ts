@@ -5,7 +5,7 @@ import {
   PersistentControlledField,
   StringValidators,
   ValidityUtils,
-  type IField,
+  type NonTransientField,
   type FieldOfType,
 } from 'fully-formed';
 import zipState from 'zip-state';
@@ -18,13 +18,13 @@ export const HomeAddressForm = FormFactory.createSubForm(
     public readonly name = 'homeAddress';
     public readonly autoTrim = true;
     public readonly fields: [
-      IField<'streetLine1', string, true>,
-      IField<'streetLine2', string, true>,
-      IField<'city', string, false>,
-      IField<'state', string, false>,
-      IField<'zip', string, false>,
-      IField<'phone', string, false>,
-      IField<'phoneType', string, false>,
+      NonTransientField<'streetLine1', string>,
+      NonTransientField<'streetLine2', string>,
+      NonTransientField<'city', string>,
+      NonTransientField<'state', string>,
+      NonTransientField<'zip', string>,
+      NonTransientField<'phone', string>,
+      NonTransientField<'phoneType', string>,
     ];
 
     private readonly key = 'addresses.home';

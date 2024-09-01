@@ -1,7 +1,4 @@
-'use client';
-import { useRouter } from 'next/navigation';
 import { FormattedAddress } from '../formatted-address';
-import { VoterRegistrationPathnames } from '@/app/register/constants/voter-registration-pathnames';
 import { Button } from '@/components/utils/button';
 import type { Address } from '../types/address';
 import styles from './styles.module.scss';
@@ -10,7 +7,8 @@ interface ReviewAddressesProps {
   homeAddress: Address;
   mailingAddress?: Address;
   previousAddress?: Address;
-  returnToEditing?: () => void;
+  returnToEditing: () => void;
+  continueToNextPage: () => void;
 }
 
 export function ReviewAddresses({
@@ -18,9 +16,8 @@ export function ReviewAddresses({
   mailingAddress,
   previousAddress,
   returnToEditing,
+  continueToNextPage,
 }: ReviewAddressesProps) {
-  const router = useRouter();
-
   return (
     <div>
       <p className={styles.title}>
@@ -63,12 +60,7 @@ export function ReviewAddresses({
           variant="inverted"
           size="sm"
           wide
-          onClick={() => {
-            router.push(
-              VoterRegistrationPathnames.OTHER_DETAILS +
-                `?state=${homeAddress.state}&zip=${homeAddress.zip}`,
-            );
-          }}
+          onClick={continueToNextPage}
         >
           Continue
         </Button>

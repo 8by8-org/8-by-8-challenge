@@ -29,7 +29,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/__tests__/unit/middleware/.test.ts",
-    "src/app/register/constants/generate-state-requirements.js"
+    "src/app/register/constants/generate-state-requirements.js",
+    "src/app/register/addresses/address-confirmation-modal/types/address-error-type.ts"
   ],
   "exclude": ["node_modules"]
 }

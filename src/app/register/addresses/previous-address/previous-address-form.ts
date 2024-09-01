@@ -3,7 +3,7 @@ import {
   PersistentField,
   PersistentControlledField,
   StringValidators,
-  IField,
+  NonTransientField,
   FormFactory,
   ValidityUtils,
 } from 'fully-formed';
@@ -20,11 +20,11 @@ export const PreviousAddressForm =
       public readonly autoTrim = true;
 
       public readonly fields: [
-        IField<'streetLine1', string, true>,
-        IField<'streetLine2', string, true>,
-        IField<'city', string, false>,
-        IField<'state', string, false>,
-        IField<'zip', string, false>,
+        NonTransientField<'streetLine1', string>,
+        NonTransientField<'streetLine2', string>,
+        NonTransientField<'city', string>,
+        NonTransientField<'state', string>,
+        NonTransientField<'zip', string>,
       ];
 
       public constructor() {

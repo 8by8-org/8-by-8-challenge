@@ -25,19 +25,19 @@ export const Default: Story = {
             enteredAddress={{
               streetLine1: {
                 text: '1600 Hamilton Parkway',
-                isEmphasized: true,
+                hasIssue: true,
               },
               city: {
                 text: 'Mountain View',
-                isEmphasized: false,
+                hasIssue: false,
               },
               state: {
                 text: 'CA',
-                isEmphasized: true,
+                hasIssue: true,
               },
               zip: {
                 text: '12345',
-                isEmphasized: true,
+                hasIssue: true,
               },
             }}
             errorNumber={1}
