@@ -20,7 +20,6 @@ export const MailingAddressForm = FormFactory.createPersistentExcludableSubForm(
     public readonly fields: [
       IField<'streetLine1', string, true>,
       IField<'streetLine2', string, true>,
-      IField<'unit', string, false>,
       IField<'city', string, false>,
       IField<'state', string, false>,
       IField<'zip', string, false>,
@@ -85,12 +84,6 @@ export const MailingAddressForm = FormFactory.createPersistentExcludableSubForm(
           name: 'streetLine2',
           id: 'mailing-street-line-2',
           key: this.key + '.streetLine2',
-          defaultValue: '',
-        }),
-        new PersistentField({
-          name: 'unit',
-          id: 'mailing-unit',
-          key: this.key + '.unit',
           defaultValue: '',
         }),
         new PersistentField({

@@ -8,7 +8,7 @@ import { EligibilityForm } from '@/app/register/eligibility/eligibility-form';
 import { NamesForm } from '@/app/register/names/names-form';
 import { AddressesForm } from '@/app/register/addresses/addresses-form';
 import { OtherDetailsForm } from '@/app/register/other-details/other-details-form';
-import { VoterRegistrationPathNames } from '@/app/register/constants/voter-registration-pathnames';
+import { VoterRegistrationPathnames } from '@/app/register/constants/voter-registration-pathnames';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 jest.mock('next/navigation', () => ({
@@ -85,9 +85,9 @@ describe('useRedirectToFirstIncompletePage', () => {
     });
 
     const pathnames = [
-      VoterRegistrationPathNames.NAMES,
-      VoterRegistrationPathNames.ADDRESSES,
-      VoterRegistrationPathNames.OTHER_DETAILS,
+      VoterRegistrationPathnames.NAMES,
+      VoterRegistrationPathnames.ADDRESSES,
+      VoterRegistrationPathnames.OTHER_DETAILS,
     ];
 
     for (const pathname of pathnames) {
@@ -98,7 +98,7 @@ describe('useRedirectToFirstIncompletePage', () => {
       render(<TestComponent form={form} />);
       expect(router.push).toHaveBeenCalledTimes(1);
       expect(router.push).toHaveBeenCalledWith(
-        VoterRegistrationPathNames.ELIGIBILITY,
+        VoterRegistrationPathnames.ELIGIBILITY,
       );
 
       cleanup();
@@ -117,8 +117,8 @@ describe('useRedirectToFirstIncompletePage', () => {
     });
 
     const pathnames = [
-      VoterRegistrationPathNames.ADDRESSES,
-      VoterRegistrationPathNames.OTHER_DETAILS,
+      VoterRegistrationPathnames.ADDRESSES,
+      VoterRegistrationPathnames.OTHER_DETAILS,
     ];
 
     for (const pathname of pathnames) {
@@ -129,7 +129,7 @@ describe('useRedirectToFirstIncompletePage', () => {
       render(<TestComponent form={form} />);
       expect(router.push).toHaveBeenCalledTimes(1);
       expect(router.push).toHaveBeenCalledWith(
-        VoterRegistrationPathNames.NAMES,
+        VoterRegistrationPathnames.NAMES,
       );
 
       cleanup();
@@ -149,12 +149,12 @@ describe('useRedirectToFirstIncompletePage', () => {
 
     jest
       .spyOn(navigation, 'usePathname')
-      .mockImplementationOnce(() => VoterRegistrationPathNames.OTHER_DETAILS);
+      .mockImplementationOnce(() => VoterRegistrationPathnames.OTHER_DETAILS);
 
     render(<TestComponent form={form} />);
     expect(router.push).toHaveBeenCalledTimes(1);
     expect(router.push).toHaveBeenCalledWith(
-      VoterRegistrationPathNames.ADDRESSES,
+      VoterRegistrationPathnames.ADDRESSES,
     );
   });
 
@@ -169,7 +169,7 @@ describe('useRedirectToFirstIncompletePage', () => {
 
     jest
       .spyOn(navigation, 'usePathname')
-      .mockImplementationOnce(() => VoterRegistrationPathNames.ELIGIBILITY);
+      .mockImplementationOnce(() => VoterRegistrationPathnames.ELIGIBILITY);
 
     render(<TestComponent form={form} />);
     expect(router.push).not.toHaveBeenCalled();
@@ -186,8 +186,8 @@ describe('useRedirectToFirstIncompletePage', () => {
     });
 
     const pathnames = [
-      VoterRegistrationPathNames.ELIGIBILITY,
-      VoterRegistrationPathNames.NAMES,
+      VoterRegistrationPathnames.ELIGIBILITY,
+      VoterRegistrationPathnames.NAMES,
     ];
 
     for (const pathname of pathnames) {
@@ -214,9 +214,9 @@ describe('useRedirectToFirstIncompletePage', () => {
     });
 
     const pathnames = [
-      VoterRegistrationPathNames.ELIGIBILITY,
-      VoterRegistrationPathNames.NAMES,
-      VoterRegistrationPathNames.ADDRESSES,
+      VoterRegistrationPathnames.ELIGIBILITY,
+      VoterRegistrationPathnames.NAMES,
+      VoterRegistrationPathnames.ADDRESSES,
     ];
 
     for (const pathname of pathnames) {
@@ -241,10 +241,10 @@ describe('useRedirectToFirstIncompletePage', () => {
     });
 
     const pathnames = [
-      VoterRegistrationPathNames.ELIGIBILITY,
-      VoterRegistrationPathNames.NAMES,
-      VoterRegistrationPathNames.ADDRESSES,
-      VoterRegistrationPathNames.OTHER_DETAILS,
+      VoterRegistrationPathnames.ELIGIBILITY,
+      VoterRegistrationPathnames.NAMES,
+      VoterRegistrationPathnames.ADDRESSES,
+      VoterRegistrationPathnames.OTHER_DETAILS,
     ];
 
     for (const pathname of pathnames) {

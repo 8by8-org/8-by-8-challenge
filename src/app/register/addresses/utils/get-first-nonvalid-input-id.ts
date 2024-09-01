@@ -38,10 +38,6 @@ function getFirstNonValidHomeAddressFieldId(
     return homeAddress.fields.streetLine2.id;
   }
 
-  if (!ValidityUtils.isValid(homeAddress.fields.unit)) {
-    return homeAddress.fields.unit.id;
-  }
-
   if (!ValidityUtils.isValid(homeAddress.fields.city)) {
     return homeAddress.fields.city.id;
   }
@@ -76,10 +72,6 @@ function getFirstNonValidMailingAddressFieldId(
     return mailingAddress.fields.streetLine2.id;
   }
 
-  if (!ValidityUtils.isValid(mailingAddress.fields.unit)) {
-    return mailingAddress.fields.unit.id;
-  }
-
   if (!ValidityUtils.isValid(mailingAddress.fields.city)) {
     return mailingAddress.fields.city.id;
   }
@@ -103,10 +95,6 @@ function getFirstNonValidPreviousAddressFieldId(
 
   if (!ValidityUtils.isValid(previousAddress.fields.streetLine2)) {
     return previousAddress.fields.streetLine2.id;
-  }
-
-  if (!ValidityUtils.isValid(previousAddress.fields.unit)) {
-    return previousAddress.fields.unit.id;
   }
 
   if (!ValidityUtils.isValid(previousAddress.fields.city)) {

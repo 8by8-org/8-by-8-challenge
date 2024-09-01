@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Modal } from '@/components/utils/modal';
 import { Button } from '@/components/utils/button';
-import { VoterRegistrationPathNames } from '../../constants/voter-registration-pathnames';
+import { VoterRegistrationPathnames } from '../../constants/voter-registration-pathnames';
 import type { Dispatch, SetStateAction } from 'react';
 import styles from './styles.module.scss';
 
@@ -49,7 +49,7 @@ export function NorthDakotaInfoModal({
         <Button
           type="button"
           onClick={() => {
-            router.push(VoterRegistrationPathNames.NAMES);
+            router.push(VoterRegistrationPathnames.NAMES);
           }}
           className={styles.button}
           variant="inverted"

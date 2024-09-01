@@ -7,7 +7,7 @@ import { DateTime } from 'luxon';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { usePrefetch } from '@/hooks/use-prefetch';
 import { VoterRegistrationContext } from '../voter-registration-context';
-import { VoterRegistrationPathNames } from '../constants/voter-registration-pathnames';
+import { VoterRegistrationPathnames } from '../constants/voter-registration-pathnames';
 import { Label } from '@/components/form-components/label';
 import { Checkbox } from '@/components/form-components/checkbox';
 import { InputGroup } from '@/components/form-components/input-group';
@@ -34,7 +34,7 @@ export function Eligibility() {
     useState(false);
 
   const router = useRouter();
-  usePrefetch(VoterRegistrationPathNames.NAMES);
+  usePrefetch(VoterRegistrationPathnames.NAMES);
 
   const onSubmit: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault();
@@ -54,7 +54,7 @@ export function Eligibility() {
     } else if (calculateAge(eligibilityForm.fields.dob.state.value) < 18) {
       setShowPreregistrationInfoModal(true);
     } else {
-      router.push(VoterRegistrationPathNames.NAMES);
+      router.push(VoterRegistrationPathnames.NAMES);
     }
   };
 

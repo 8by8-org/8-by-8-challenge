@@ -1,4 +1,4 @@
-export class VoterRegistrationPathNames {
+export class VoterRegistrationPathnames {
   private static readonly pathNames = new Map([
     ['ELIGIBILITY', '/register/eligibility'],
     ['NAMES', '/register/names'],

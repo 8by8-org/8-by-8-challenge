@@ -23,22 +23,13 @@ export function PreviousAddress() {
         labelVariant="floating"
         containerClassName={styles.input_row_margin}
       />
-      <div className={styles.input_row}>
-        <InputGroup
-          field={form.fields.streetLine2}
-          type="text"
-          labelContent="Address Line 2"
-          labelVariant="floating"
-          containerClassName={styles.address_line_2}
-        />
-        <InputGroup
-          field={form.fields.unit}
-          type="text"
-          labelContent="Unit #"
-          labelVariant="floating"
-          containerClassName={styles.unit}
-        />
-      </div>
+      <InputGroup
+        field={form.fields.streetLine2}
+        type="text"
+        labelContent="Address Line 2"
+        labelVariant="floating"
+        containerClassName={styles.input_row_margin}
+      />
       <InputGroup
         field={form.fields.city}
         type="text"

@@ -5,7 +5,7 @@ import { useContextSafely } from '@/hooks/use-context-safely';
 import { usePrefetch } from '@/hooks/use-prefetch';
 import { useScrollToTop } from '@/hooks/use-scroll-to-top';
 import { VoterRegistrationContext } from '../voter-registration-context';
-import { VoterRegistrationPathNames } from '../constants/voter-registration-pathnames';
+import { VoterRegistrationPathnames } from '../constants/voter-registration-pathnames';
 import { YourName } from './your-name';
 import { ExcludableContent } from '@/components/form-components/excludable-content/excludable-content';
 import { PreviousName } from './previous-name';
@@ -24,7 +24,7 @@ export function Names() {
   );
   const namesForm = voterRegistrationForm.fields.names;
   const router = useRouter();
-  usePrefetch(VoterRegistrationPathNames.ADDRESSES);
+  usePrefetch(VoterRegistrationPathnames.ADDRESSES);
   useScrollToTop();
 
   const onSubmit: FormEventHandler<HTMLFormElement> = e => {
@@ -37,7 +37,7 @@ export function Names() {
       return;
     }
 
-    router.push(VoterRegistrationPathNames.ADDRESSES);
+    router.push(VoterRegistrationPathnames.ADDRESSES);
   };
 
   return (

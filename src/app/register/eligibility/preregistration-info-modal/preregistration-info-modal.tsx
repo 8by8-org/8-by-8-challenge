@@ -5,7 +5,7 @@ import { Modal } from '@/components/utils/modal';
 import { Button } from '@/components/utils/button';
 import zipState from 'zip-state';
 import { getPreregistrationInfo } from '../utils/get-preregistration-info';
-import { VoterRegistrationPathNames } from '../../constants/voter-registration-pathnames';
+import { VoterRegistrationPathnames } from '../../constants/voter-registration-pathnames';
 import type { Dispatch, SetStateAction } from 'react';
 import styles from './styles.module.scss';
 
@@ -47,7 +47,7 @@ export function PreregistrationInfoModal({
         <Button
           type="button"
           onClick={() => {
-            router.push(VoterRegistrationPathNames.NAMES);
+            router.push(VoterRegistrationPathnames.NAMES);
           }}
           className={styles.button}
           variant="inverted"

@@ -22,7 +22,6 @@ export const PreviousAddressForm =
       public readonly fields: [
         IField<'streetLine1', string, true>,
         IField<'streetLine2', string, true>,
-        IField<'unit', string, false>,
         IField<'city', string, false>,
         IField<'state', string, false>,
         IField<'zip', string, false>,
@@ -91,12 +90,6 @@ export const PreviousAddressForm =
             name: 'streetLine2',
             id: 'previous-street-line-2',
             key: this.key + '.streetLine2',
-            defaultValue: '',
-          }),
-          new PersistentField({
-            name: 'unit',
-            id: 'previous-unit',
-            key: this.key + '.unit',
             defaultValue: '',
           }),
           new PersistentField({

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { useScrollToTop } from '@/hooks/use-scroll-to-top';
 import { VoterRegistrationContext } from '../voter-registration-context';
-import { VoterRegistrationPathNames } from '../constants/voter-registration-pathnames';
+import { VoterRegistrationPathnames } from '../constants/voter-registration-pathnames';
 import { HomeAddress } from './home-address';
 import { Checkbox } from '@/components/form-components/checkbox';
 import { ExcludableContent } from '@/components/form-components/excludable-content/excludable-content';
@@ -37,7 +37,7 @@ export function Addresses() {
     }
 
     router.push(
-      VoterRegistrationPathNames.OTHER_DETAILS +
+      VoterRegistrationPathnames.OTHER_DETAILS +
         `?state=${addressesForm.state.value.homeAddress.state}` +
         `&zip=${addressesForm.state.value.homeAddress.zip}`,
     );

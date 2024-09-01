@@ -1,13 +1,13 @@
-import { VoterRegistrationPathNames } from '../constants/voter-registration-pathnames';
+import { VoterRegistrationPathnames } from '../constants/voter-registration-pathnames';
 import type { ProgressPercent } from './progress-percent';
 
 export function getProgressPercent(pathname: string): ProgressPercent {
   switch (pathname) {
-    case VoterRegistrationPathNames.ELIGIBILITY:
+    case VoterRegistrationPathnames.ELIGIBILITY:
       return 25;
-    case VoterRegistrationPathNames.NAMES:
+    case VoterRegistrationPathnames.NAMES:
       return 50;
-    case VoterRegistrationPathNames.ADDRESSES:
+    case VoterRegistrationPathnames.ADDRESSES:
       return 75;
     default:
       return 100;
