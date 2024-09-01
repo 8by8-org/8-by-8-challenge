@@ -13,6 +13,7 @@ import { PreviousAddress } from './previous-address';
 import { Button } from '@/components/utils/button';
 import { getFirstNonValidInputId } from './utils/get-first-nonvalid-input-id';
 import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
+import { usePrefetchOtherDetailsWithStateAndZip } from './use-prefetch-other-details-with-state-and-zip';
 import type { FormEventHandler } from 'react';
 import styles from './styles.module.scss';
 
@@ -25,6 +26,7 @@ export function Addresses() {
 
   const router = useRouter();
   useScrollToTop();
+  usePrefetchOtherDetailsWithStateAndZip(addressesForm.fields.homeAddress);
 
   const onSubmit: FormEventHandler = e => {
     e.preventDefault();
