@@ -52,23 +52,23 @@ export const AllEmphasizedItems: Story = {
         <FormattedAddress
           address={{
             streetLine1: {
-              text: '123 Fake St',
+              value: '123 Fake St',
               hasIssue: true,
             },
             streetLine2: {
-              text: 'Apt. 3',
+              value: 'Apt. 3',
               hasIssue: true,
             },
             city: {
-              text: 'Somewhereville',
+              value: 'Somewhereville',
               hasIssue: true,
             },
             state: {
-              text: 'PA',
+              value: 'PA',
               hasIssue: true,
             },
             zip: {
-              text: '12345',
+              value: '12345',
               hasIssue: true,
             },
           }}
@@ -85,23 +85,23 @@ export const SomeEmphasizedItems: Story = {
         <FormattedAddress
           address={{
             streetLine1: {
-              text: '123 Fake St',
+              value: '123 Fake St',
               hasIssue: true,
             },
             streetLine2: {
-              text: 'Apt. 3',
+              value: 'Apt. 3',
               hasIssue: false,
             },
             city: {
-              text: 'Somewhereville',
+              value: 'Somewhereville',
               hasIssue: false,
             },
             state: {
-              text: 'PA',
+              value: 'PA',
               hasIssue: true,
             },
             zip: {
-              text: '12345',
+              value: '12345',
               hasIssue: true,
             },
           }}
@@ -122,23 +122,23 @@ export const LongAddress: Story = {
           }}
           address={{
             streetLine1: {
-              text: '12345 Jean Baptiste Point du Sable Lake Shore Drive',
+              value: '12345 Jean Baptiste Point du Sable Lake Shore Drive',
               hasIssue: false,
             },
             streetLine2: {
-              text: 'Apartment no. 1234',
+              value: 'Apartment no. 1234',
               hasIssue: false,
             },
             city: {
-              text: 'Chargoggagoggmanchauggagoggchaubunagungamaugg',
+              value: 'Chargoggagoggmanchauggagoggchaubunagungamaugg',
               hasIssue: false,
             },
             state: {
-              text: 'MA',
+              value: 'MA',
               hasIssue: false,
             },
             zip: {
-              text: '12345',
+              value: '12345',
               hasIssue: false,
             },
           }}

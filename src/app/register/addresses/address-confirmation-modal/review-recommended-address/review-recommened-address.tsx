@@ -2,11 +2,11 @@
 import { useState, useId } from 'react';
 import { FormattedAddress } from '../formatted-address';
 import { Button } from '@/components/utils/button';
-import type { AddressComponents } from '../../../../../model/types/addresses/address-components';
+import type { AddressComponents } from '@/model/types/addresses/address-components';
 import type { AddressForm } from '../types/address-form';
 import styles from './styles.module.scss';
 
-interface ConfirmAddressProps {
+interface ReviewRecommendedAddressProps {
   enteredAddress: AddressComponents;
   recommendedAddress: AddressComponents;
   form: AddressForm;
@@ -15,29 +15,29 @@ interface ConfirmAddressProps {
   nextOrContinue: () => void;
 }
 
-export function ConfirmAddress({
+export function ReviewRecommendedAddress({
   enteredAddress,
   recommendedAddress,
   form,
   errorNumber,
   errorCount,
   nextOrContinue,
-}: ConfirmAddressProps) {
+}: ReviewRecommendedAddressProps) {
   const [useRecommended, setUseRecommended] = useState(true);
   const enteredAddressRadioButtonId = useId();
   const recommendedAddressRadioButtonId = useId();
 
   const confirmChoice = () => {
     if (useRecommended) {
-      form.fields.streetLine1.setValue(recommendedAddress.streetLine1.text);
+      form.fields.streetLine1.setValue(recommendedAddress.streetLine1.value);
       form.fields.streetLine2.setValue(
         recommendedAddress.streetLine2 ?
-          recommendedAddress.streetLine2.text
+          recommendedAddress.streetLine2.value
         : '',
       );
-      form.fields.city.setValue(recommendedAddress.city.text);
-      form.fields.zip.setValue(recommendedAddress.zip.text);
-      form.fields.state.setValue(recommendedAddress.state.text);
+      form.fields.city.setValue(recommendedAddress.city.value);
+      form.fields.zip.setValue(recommendedAddress.zip.value);
+      form.fields.state.setValue(recommendedAddress.state.value);
     }
 
     nextOrContinue();

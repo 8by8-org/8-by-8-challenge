@@ -1,15 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { CouldNotConfirm } from '@/app/register/addresses/address-confirmation-modal/could-not-confirm/could-not-confirm';
+import { UnconfirmedComponents } from '@/app/register/addresses/address-confirmation-modal/unconfirmed-components/unconfirmed-components';
 import { Modal } from '@/components/utils/modal';
 import { GlobalStylesProvider } from '@/stories/global-styles-provider';
 
-const meta: Meta<typeof CouldNotConfirm> = {
-  component: CouldNotConfirm,
+const meta: Meta<typeof UnconfirmedComponents> = {
+  component: UnconfirmedComponents,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof CouldNotConfirm>;
+type Story = StoryObj<typeof UnconfirmedComponents>;
 
 export const Default: Story = {
   render: () => {
@@ -21,22 +21,22 @@ export const Default: Story = {
           isOpen={true}
           closeModal={() => {}}
         >
-          <CouldNotConfirm
-            enteredAddress={{
+          <UnconfirmedComponents
+            unconfirmedComponents={{
               streetLine1: {
-                text: '1600 Hamilton Parkway',
+                value: '1600 Hamilton Parkway',
                 hasIssue: true,
               },
               city: {
-                text: 'Mountain View',
+                value: 'Mountain View',
                 hasIssue: false,
               },
               state: {
-                text: 'CA',
+                value: 'CA',
                 hasIssue: true,
               },
               zip: {
-                text: '12345',
+                value: '12345',
                 hasIssue: true,
               },
             }}

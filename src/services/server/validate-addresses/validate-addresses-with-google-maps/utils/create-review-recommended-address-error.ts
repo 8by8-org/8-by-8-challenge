@@ -1,15 +1,16 @@
 import { AddressErrorTypes } from '@/model/types/addresses/address-error-types';
 import type { ReviewRecommendedAddressError } from '@/model/types/addresses/review-recommended-address-error';
 import type { Address } from '@/model/types/addresses/address';
+import type { ProcessableResponse } from '../types/processable-response';
 import type { AddressFormNames } from '@/model/types/addresses/address-form-names';
 import type { AddressComponents } from '@/model/types/addresses/address-components';
 
 export function createReviewRecommendedAddressError(
   address: Address,
-  result: any,
+  response: ProcessableResponse,
   form: AddressFormNames,
 ): ReviewRecommendedAddressError {
-  const recommendedAddress = getRecommendedAddressFromResult(result);
+  const recommendedAddress = getRecommendedAddressFromResult(response);
 
   return {
     type: AddressErrorTypes.ReviewRecommendedAddress,
@@ -25,16 +26,16 @@ export function createReviewRecommendedAddressError(
   };
 }
 
-function getRecommendedAddressFromResult(result: any): Address {
-  const { address } = result;
+function getRecommendedAddressFromResult(
+  response: ProcessableResponse,
+): Address {
+  const { address } = response.result;
 
   const recommendedAddress: Address = {
     streetLine1: address.postalAddress.addressLines[0],
     city: address.postalAddress.locality,
     state: address.postalAddress.administrativeArea,
-    zip: address.addressComponents.find(
-      (component: any) => component.componentType === 'postal_code',
-    ).componentName.text,
+    zip: address.postalAddress.postalCode.slice(0, 5),
   };
 
   const streetLine2 = address.postalAddress.addressLines[1];

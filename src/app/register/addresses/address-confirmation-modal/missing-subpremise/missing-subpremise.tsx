@@ -2,25 +2,22 @@ import { FormattedAddress } from '../formatted-address';
 import { Label } from '@/components/form-components/label';
 import { Input } from '@/components/form-components/input';
 import { Button } from '@/components/utils/button';
-import type { Address } from '../../../../../model/types/addresses/address';
 import type { AddressForm } from '../types/address-form';
 import styles from './styles.module.scss';
 
-interface MissingUnitProps {
-  enteredAddress: Address;
+interface MissingSubPremiseProps {
   form: AddressForm;
   errorNumber: number;
   errorCount: number;
   nextOrContinue: () => void;
 }
 
-export function MissingUnit({
-  enteredAddress,
+export function MissingSubpremise({
   form,
   errorNumber,
   errorCount,
   nextOrContinue,
-}: MissingUnitProps) {
+}: MissingSubPremiseProps) {
   return (
     <div className={styles.container}>
       <p className={styles.title}>Missing Information</p>
@@ -30,7 +27,7 @@ export function MissingUnit({
       </p>
 
       <p className={styles.what_you_entered}>What you entered</p>
-      <FormattedAddress address={enteredAddress} className={styles.address} />
+      <FormattedAddress address={form.state.value} className={styles.address} />
 
       <p className={styles.missing_information}>Missing Information</p>
       <Label field={form.fields.streetLine2} variant="floating">

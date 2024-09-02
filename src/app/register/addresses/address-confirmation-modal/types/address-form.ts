@@ -1,11 +1,8 @@
-import type { FieldOfType } from 'fully-formed';
+import { HomeAddressForm } from '../../home-address/home-address-form';
+import { MailingAddressForm } from '../../mailing-address/mailing-address-form';
+import { PreviousAddressForm } from '../../previous-address/previous-address-form';
 
-export interface AddressForm {
-  fields: {
-    streetLine1: FieldOfType<string>;
-    streetLine2: FieldOfType<string>;
-    city: FieldOfType<string>;
-    state: FieldOfType<string>;
-    zip: FieldOfType<string>;
-  };
-}
+export type AddressForm =
+  | InstanceType<typeof HomeAddressForm>
+  | InstanceType<typeof MailingAddressForm>
+  | InstanceType<typeof PreviousAddressForm>;

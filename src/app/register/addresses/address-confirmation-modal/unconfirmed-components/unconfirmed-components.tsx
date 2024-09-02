@@ -1,23 +1,23 @@
 import { FormattedAddress } from '../formatted-address';
 import { Button } from '@/components/utils/button';
-import type { AddressComponents } from '../../../../../model/types/addresses/address-components';
+import type { AddressComponents } from '@/model/types/addresses/address-components';
 import styles from './styles.module.scss';
 
-interface CouldNotConfirmProps {
-  enteredAddress: AddressComponents;
+interface UnconfirmedComponentsProps {
+  unconfirmedComponents: AddressComponents;
   errorNumber: number;
   errorCount: number;
   returnToEditing: () => void;
   nextOrContinue: () => void;
 }
 
-export function CouldNotConfirm({
-  enteredAddress,
+export function UnconfirmedComponents({
+  unconfirmedComponents,
   errorNumber,
   errorCount,
   returnToEditing,
   nextOrContinue,
-}: CouldNotConfirmProps) {
+}: UnconfirmedComponentsProps) {
   return (
     <div className={styles.container}>
       <p className={styles.title}>We couldn&apos;t confirm the address.</p>
@@ -29,7 +29,10 @@ export function CouldNotConfirm({
         {errorNumber} / {errorCount}
       </p>
       <p className={styles.subtitle}>What you entered</p>
-      <FormattedAddress address={enteredAddress} className={styles.address} />
+      <FormattedAddress
+        address={unconfirmedComponents}
+        className={styles.address}
+      />
       <Button
         type="button"
         onClick={returnToEditing}

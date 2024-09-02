@@ -1,19 +1,20 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { Field, FormFactory, FormTemplate, useForm } from 'fully-formed';
 import { Modal } from '@/components/utils/modal';
-import { MissingUnit } from '@/app/register/addresses/address-confirmation-modal/missing-unit';
+import { MissingSubpremise } from '@/app/register/addresses/address-confirmation-modal/missing-subpremise';
 import { GlobalStylesProvider } from '@/stories/global-styles-provider';
+import type { AddressForm } from '@/app/register/addresses/address-confirmation-modal/types/address-form';
 
-const meta: Meta<typeof MissingUnit> = {
-  component: MissingUnit,
+const meta: Meta<typeof MissingSubpremise> = {
+  component: MissingSubpremise,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof MissingUnit>;
+type Story = StoryObj<typeof MissingSubpremise>;
 
-const AddressForm = FormFactory.createForm(
-  class AddressFormTemplate extends FormTemplate {
+const MockAddressForm = FormFactory.createForm(
+  class MockAddressFormTemplate extends FormTemplate {
     public readonly fields = [
       new Field({
         name: 'streetLine1',
@@ -41,7 +42,7 @@ const AddressForm = FormFactory.createForm(
 
 export const Default: Story = {
   render: () => {
-    const form = new AddressForm();
+    const form = useForm(new MockAddressForm() as unknown as AddressForm);
 
     return (
       <GlobalStylesProvider>
@@ -51,13 +52,7 @@ export const Default: Story = {
           isOpen={true}
           closeModal={() => {}}
         >
-          <MissingUnit
-            enteredAddress={{
-              streetLine1: form.state.value.streetLine1,
-              city: form.state.value.city,
-              state: form.state.value.state,
-              zip: form.state.value.zip,
-            }}
+          <MissingSubpremise
             form={form}
             errorNumber={2}
             errorCount={3}

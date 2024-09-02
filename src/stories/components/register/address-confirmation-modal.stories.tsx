@@ -4,7 +4,7 @@ import { useForm, Field } from 'fully-formed';
 import { AddressConfirmationModal } from '@/app/register/addresses/address-confirmation-modal/address-confirmation-modal';
 import { AddressesForm } from '@/app/register/addresses/addresses-form';
 import { GlobalStylesProvider } from '@/stories/global-styles-provider';
-import { AddressErrorType } from '@/model/enums/address-error-type';
+import { AddressErrorTypes } from '@/model/types/addresses/address-error-types';
 
 const meta: Meta<typeof AddressConfirmationModal> = {
   component: AddressConfirmationModal,
@@ -52,72 +52,66 @@ export const AllErrorTypes: Story = {
           addressesForm={form}
           errors={[
             {
-              type: AddressErrorType.ConfirmationNeeded,
-              affectedForm: 'homeAddress',
+              type: AddressErrorTypes.ReviewRecommendedAddress,
+              form: 'homeAddress',
               enteredAddress: {
                 streetLine1: {
-                  text: '123 Mapel Lane',
+                  value: '123 Mapel Lane',
                   hasIssue: true,
                 },
                 city: {
-                  text: 'Springfield',
+                  value: 'Springfield',
                   hasIssue: false,
                 },
                 state: {
-                  text: 'IL',
+                  value: 'IL',
                   hasIssue: false,
                 },
                 zip: {
-                  text: '62701',
+                  value: '62701',
                   hasIssue: false,
                 },
               },
               recommendedAddress: {
                 streetLine1: {
-                  text: '123 Maple Lane',
+                  value: '123 Maple Lane',
                   hasIssue: true,
                 },
                 city: {
-                  text: 'Springfield',
+                  value: 'Springfield',
                   hasIssue: false,
                 },
                 state: {
-                  text: 'IL',
+                  value: 'IL',
                   hasIssue: false,
                 },
                 zip: {
-                  text: '62701',
+                  value: '62701',
                   hasIssue: false,
                 },
               },
             },
             {
-              type: AddressErrorType.MissingUnit,
-              affectedForm: 'mailingAddress',
-              enteredAddress: {
-                streetLine1: '789 Elm St',
-                city: 'Brookside',
-                state: 'NY',
-                zip: '10001',
-              },
+              type: AddressErrorTypes.MissingSubpremise,
+              form: 'mailingAddress',
             },
             {
-              type: AddressErrorType.FailedToConfirm,
-              enteredAddress: {
+              type: AddressErrorTypes.UnconfirmedComponents,
+              unconfirmedAddressComponents: {
                 streetLine1: {
-                  text: '456 Oakwood Ave',
+                  value: '456 Oakwood Ave',
                   hasIssue: false,
                 },
                 city: {
-                  text: 'Riverton',
+                  value: 'Riverton',
                   hasIssue: true,
                 },
                 state: {
-                  text: 'CA',
+                  value: 'CA',
                   hasIssue: false,
                 },
                 zip: {
-                  text: '90210',
+                  value: '90210',
                   hasIssue: false,
                 },
               },
@@ -161,7 +155,7 @@ export const FailedToValidate: Story = {
       <GlobalStylesProvider>
         <AddressConfirmationModal
           addressesForm={form}
-          errors={[{ type: AddressErrorType.FailedToValidate }]}
+          errors={[{ type: AddressErrorTypes.ValidationFailed }]}
           returnToEditing={() => {}}
         />
       </GlobalStylesProvider>

@@ -1,6 +1,6 @@
 import 'server-only';
 import { bind } from 'undecorated-di';
-import { validateAddressWithGoogleMaps } from './validate-address-with-google-maps';
+import { validateAddressWithGoogleMaps } from './utils/validate-address-with-google-maps';
 import type { ValidateAddressesParams } from '../validate-addresses';
 import type { AddressErrors } from '@/model/types/addresses/address-errors';
 

@@ -1,19 +1,20 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { Field, FormFactory, FormTemplate, useForm } from 'fully-formed';
 import { Modal } from '@/components/utils/modal';
-import { ConfirmAddress } from '@/app/register/addresses/address-confirmation-modal/confirm-address';
+import { ReviewRecommendedAddress } from '@/app/register/addresses/address-confirmation-modal/review-recommended-address';
 import { GlobalStylesProvider } from '@/stories/global-styles-provider';
+import type { AddressForm } from '@/app/register/addresses/address-confirmation-modal/types/address-form';
 
-const meta: Meta<typeof ConfirmAddress> = {
-  component: ConfirmAddress,
+const meta: Meta<typeof ReviewRecommendedAddress> = {
+  component: ReviewRecommendedAddress,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof ConfirmAddress>;
+type Story = StoryObj<typeof ReviewRecommendedAddress>;
 
-const AddressForm = FormFactory.createForm(
-  class AddressFormTemplate extends FormTemplate {
+const MockAddressForm = FormFactory.createForm(
+  class MockAddressFormTemplate extends FormTemplate {
     public readonly fields = [
       new Field({
         name: 'streetLine1',
@@ -41,7 +42,7 @@ const AddressForm = FormFactory.createForm(
 
 export const Default: Story = {
   render: () => {
-    const form = useForm(new AddressForm());
+    const form = useForm(new MockAddressForm() as unknown as AddressForm);
 
     return (
       <GlobalStylesProvider>
@@ -51,40 +52,40 @@ export const Default: Story = {
           isOpen={true}
           closeModal={() => {}}
         >
-          <ConfirmAddress
+          <ReviewRecommendedAddress
             enteredAddress={{
               streetLine1: {
-                text: '1600 Ampitheatre Parkway',
+                value: '1600 Ampitheatre Parkway',
                 hasIssue: false,
               },
               city: {
-                text: 'Montan View',
+                value: 'Montan View',
                 hasIssue: true,
               },
               state: {
-                text: 'CA',
+                value: 'CA',
                 hasIssue: false,
               },
               zip: {
-                text: '94043',
+                value: '94043',
                 hasIssue: false,
               },
             }}
             recommendedAddress={{
               streetLine1: {
-                text: '1600 Ampitheatre Parkway',
+                value: '1600 Ampitheatre Parkway',
                 hasIssue: false,
               },
               city: {
-                text: 'Mountain View',
+                value: 'Mountain View',
                 hasIssue: true,
               },
               state: {
-                text: 'CA',
+                value: 'CA',
                 hasIssue: false,
               },
               zip: {
-                text: '94043',
+                value: '94043',
                 hasIssue: false,
               },
             }}
