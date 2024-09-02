@@ -1,6 +1,6 @@
-import { UserType } from '../../enums/user-type';
+import { UserType } from '../enums/user-type';
 import type { Avatar } from './avatar';
-import type { Badge } from '../badges/badge';
+import type { Badge } from './badges/badge';
 
 export interface User {
   uid: string;

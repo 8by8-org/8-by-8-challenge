@@ -83,10 +83,6 @@ function addressLineMatchesUnconfirmedStreetAddress(
   const streetAddress = getStreetAddressFromResponse(response);
   if (!streetAddress) return false;
 
-  console.log(streetAddressIsUnconfirmed(response));
-  console.log(collapseWhitespace(addressLine));
-  console.log(collapseWhitespace(streetAddress));
-
   return (
     streetAddressIsUnconfirmed(response) &&
     collapseWhitespace(addressLine) === collapseWhitespace(streetAddress)

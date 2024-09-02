@@ -1,5 +1,4 @@
 import 'server-only';
-import { AddressValidationClient } from '@googlemaps/addressvalidation/build/src/v1';
 import { PRIVATE_ENVIRONMENT_VARIABLES } from '@/constants/private-environment-variables';
 import { getAddressLines } from './get-address-lines';
 import { isProcessableResponse } from './is-processable-response';
@@ -17,12 +16,8 @@ export async function validateAddressWithGoogleMaps(
   address: Address,
   form: AddressFormNames,
 ) {
-  const client = new AddressValidationClient({
-    apiKey: PRIVATE_ENVIRONMENT_VARIABLES.GOOGLE_MAPS_API_KEY,
-  });
-
+  const endpoint = `https://addressvalidation.googleapis.com/v1:validateAddress?key=${PRIVATE_ENVIRONMENT_VARIABLES.GOOGLE_MAPS_API_KEY}`;
   const addressLines = getAddressLines(address);
-
   const request = {
     address: {
       regionCode: 'US',
@@ -30,23 +25,37 @@ export async function validateAddressWithGoogleMaps(
     },
   };
 
-  const [response] = await client.validateAddress(request);
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
 
-  if (!isProcessableResponse(response)) {
+  if (!response.ok) {
+    throw new ServerError(
+      `Failed to validate address: ${response.statusText}`,
+      response.status,
+    );
+  }
+
+  const responseBody = await response.json();
+
+  if (!isProcessableResponse(responseBody)) {
     throw new ServerError('Unprocessable response.', 400);
   }
 
-  if (shouldCreateUnconfirmedComponentsError(response)) {
-    return [createUnconfirmedComponentsError(address, response)];
+  if (shouldCreateUnconfirmedComponentsError(responseBody)) {
+    return [createUnconfirmedComponentsError(address, responseBody)];
   }
 
   const errors = [];
 
-  if (shouldCreateReviewRecommendedAddressError(address, response)) {
-    errors.push(createReviewRecommendedAddressError(address, response, form));
+  if (shouldCreateReviewRecommendedAddressError(address, responseBody)) {
+    errors.push(
+      createReviewRecommendedAddressError(address, responseBody, form),
+    );
   }
 
-  if (shouldCreateMissingSubpremiseError(response)) {
+  if (shouldCreateMissingSubpremiseError(responseBody)) {
     errors.push(createMissingSubpremiseError(form));
   }
 

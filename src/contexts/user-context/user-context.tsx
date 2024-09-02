@@ -1,7 +1,7 @@
 'use client';
 import { createNamedContext } from '../../hooks/create-named-context';
 import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
-import type { User } from '../../model/types/user/user';
+import type { User } from '../../model/types/user';
 import type { Avatar } from '@/model/types/avatar';
 import type { UserType } from '@/model/enums/user-type';
 import type { ValueOf } from 'fully-formed';

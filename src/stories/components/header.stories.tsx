@@ -8,7 +8,7 @@ import {
 import { AlertsContextProvider } from '@/contexts/alerts-context';
 import { GlobalStylesProvider } from '../global-styles-provider';
 import { UserType } from '../../model/enums/user-type';
-import type { User } from '../../model/types/user/user';
+import type { User } from '../../model/types/user';
 import { DateTime } from 'luxon';
 
 const meta: Meta<typeof Header> = {
