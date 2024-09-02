@@ -8,8 +8,8 @@ export function shouldCreateReviewRecommendedAddressError(
   return (
     address.streetLine1 !==
       response.result.address.postalAddress.addressLines[0] ||
-    address.streetLine2 !==
-      response.result.address.postalAddress.addressLines[1] ||
+    (address.streetLine2 ?? '') !==
+      (response.result.address.postalAddress.addressLines[1] ?? '') ||
     address.city !== response.result.address.postalAddress.locality ||
     address.state !==
       response.result.address.postalAddress.administrativeArea ||
