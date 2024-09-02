@@ -69,6 +69,7 @@ export const SupabaseUserRepository = inject(
       if (completedActionsError) {
         throw new ServerError(`Error updating completed actions: ${completedActionsError.message}`);
       }
+
   // add badges 
       const { error: badgeError } = await supabase
       .from('badges')
@@ -79,6 +80,7 @@ export const SupabaseUserRepository = inject(
       if (badgeError) {
         throw new ServerError(`Error adding badge: ${badgeError.message}`);
       }
+      
 // count badges 
       const { count, error } = await supabase
       .from('badges')

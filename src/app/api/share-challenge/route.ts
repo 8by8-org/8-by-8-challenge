@@ -6,10 +6,13 @@ import { ServerError } from '@/errors/server-error';
 
 export async function PUT(request: NextRequest) {
   const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
+ 
   const userRepo = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository);
-  
+ 
+
   try {
     const user = await auth.loadSessionUser();
+    console.log(user)
     if (!user) {
       return NextResponse.json({ message: 'user not found', status: 401 })
     } 
@@ -28,4 +31,3 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// if user not signed in return 40

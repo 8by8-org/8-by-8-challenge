@@ -119,7 +119,10 @@ export function ClientSideUserContextProvider(
         method: 'PUT',
       }); 
 
-    
+    if (!response.ok) {
+      throw new Error('Put request failed')
+    }
+
 }
   
   return (

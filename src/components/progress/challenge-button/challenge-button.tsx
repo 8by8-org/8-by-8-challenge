@@ -53,11 +53,7 @@ export function ChallengeButton({
   );
 
   const router = useRouter(); 
-  const trigger_API = () => {
-    console.log('Triggering API req')
-    // if router.push('/share) is triggered then hit that API 
 
-  }
 
   useEffect(() => {
     let challengeFinished = user?.completedChallenge;
