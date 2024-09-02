@@ -4,7 +4,7 @@ import { useForm, Field } from 'fully-formed';
 import { AddressConfirmationModal } from '@/app/register/addresses/address-confirmation-modal/address-confirmation-modal';
 import { AddressesForm } from '@/app/register/addresses/addresses-form';
 import { GlobalStylesProvider } from '@/stories/global-styles-provider';
-import { AddressErrorType } from '@/app/register/addresses/address-confirmation-modal/types/address-error-type';
+import { AddressErrorType } from '@/model/enums/address-error-type';
 
 const meta: Meta<typeof AddressConfirmationModal> = {
   component: AddressConfirmationModal,
@@ -123,7 +123,7 @@ export const AllErrorTypes: Story = {
               },
             },
           ]}
-          clearErrors={() => {}}
+          returnToEditing={() => {}}
         />
       </GlobalStylesProvider>
     );
@@ -162,7 +162,7 @@ export const FailedToValidate: Story = {
         <AddressConfirmationModal
           addressesForm={form}
           errors={[{ type: AddressErrorType.FailedToValidate }]}
-          clearErrors={() => {}}
+          returnToEditing={() => {}}
         />
       </GlobalStylesProvider>
     );

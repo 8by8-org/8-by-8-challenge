@@ -1,4 +1,4 @@
 export interface AddressComponent {
-  text: string;
+  value: string;
   hasIssue: boolean;
 }

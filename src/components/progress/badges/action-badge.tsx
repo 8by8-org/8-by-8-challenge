@@ -1,4 +1,4 @@
-import type { ActionBadge } from '@/model/types/action-badge';
+import type { ActionBadge } from '@/model/types/badges/action-badge';
 import { Actions } from '@/model/enums/actions';
 import styles from './styles.module.scss';
 import Image from 'next/image';

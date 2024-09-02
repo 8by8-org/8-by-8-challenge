@@ -1,4 +1,4 @@
-import { Actions } from '../enums/actions';
+import { Actions } from '../../enums/actions';
 
 /**
  * Represents a badge awarded to the user through their own actions.

@@ -2,7 +2,7 @@
 import { useState, useId } from 'react';
 import { FormattedAddress } from '../formatted-address';
 import { Button } from '@/components/utils/button';
-import type { AddressComponents } from '../types/address-components';
+import type { AddressComponents } from '../../../../../model/types/addresses/address-components';
 import type { AddressForm } from '../types/address-form';
 import styles from './styles.module.scss';
 

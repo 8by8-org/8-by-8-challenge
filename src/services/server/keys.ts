@@ -9,6 +9,7 @@ import type { IUserRecordParser } from './user-record-parser/i-user-record-parse
 import type { Encryptor } from './encryptor/encryptor';
 import type { CreateSupabaseClient } from './create-supabase-client/create-supabase-client';
 import type { USStateInformation } from './us-state-information/us-state-information';
+import type { ValidateAddresses } from './validate-addresses/validate-addresses';
 
 const { keys } = Keys.createKeys()
   .addKey('Auth')
@@ -36,7 +37,9 @@ const { keys } = Keys.createKeys()
   .addKey('Encryptor')
   .forType<Encryptor>()
   .addKey('USStateInformation')
-  .forType<USStateInformation>();
+  .forType<USStateInformation>()
+  .addKey('validateAddresses')
+  .forType<ValidateAddresses>();
 
 /**
  * Keys that can be used to retrieve service classes, functions, etc. from an

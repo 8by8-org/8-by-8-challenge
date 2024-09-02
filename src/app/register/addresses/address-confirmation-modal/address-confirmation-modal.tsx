@@ -7,20 +7,20 @@ import { ConfirmAddress } from './confirm-address';
 import { MissingUnit } from './missing-unit';
 import { CouldNotConfirm } from './could-not-confirm';
 import { ReviewAddresses } from './review-addresses';
-import { AddressErrorType } from './types/address-error-type';
+import { AddressErrorType } from '../../../../model/enums/address-error-type';
 import type { AddressesForm } from '../addresses-form';
-import type { AddressError } from './types/address-error';
+import type { AddressError } from '../../../../model/types/addresses/address-errors';
 
 interface AddressConfirmationModalProps {
   addressesForm: InstanceType<typeof AddressesForm>;
   errors: AddressError[];
-  clearErrors: () => void;
+  returnToEditing: () => void;
 }
 
 export function AddressConfirmationModal({
   addressesForm,
   errors,
-  clearErrors,
+  returnToEditing,
 }: AddressConfirmationModalProps) {
   const [currentErrorIndex, setCurrentErrorIndex] = useState(0);
   const router = useRouter();
@@ -45,7 +45,7 @@ export function AddressConfirmationModal({
       ariaLabel="Correct address validation errors"
       theme="light"
       isOpen={!!errors.length}
-      closeModal={clearErrors}
+      closeModal={returnToEditing}
     >
       {(() => {
         const error = errors[currentErrorIndex];
@@ -78,7 +78,7 @@ export function AddressConfirmationModal({
                 enteredAddress={error.enteredAddress}
                 errorNumber={currentErrorIndex + 1}
                 errorCount={errors.length}
-                returnToEditing={clearErrors}
+                returnToEditing={returnToEditing}
                 nextOrContinue={nextOrContinue}
               />
             );
@@ -88,7 +88,7 @@ export function AddressConfirmationModal({
                 homeAddress={addressesForm.state.value.homeAddress}
                 mailingAddress={addressesForm.state.value.mailingAddress}
                 previousAddress={addressesForm.state.value.previousAddress}
-                returnToEditing={clearErrors}
+                returnToEditing={returnToEditing}
                 continueToNextPage={continueToNextPage}
               />
             );

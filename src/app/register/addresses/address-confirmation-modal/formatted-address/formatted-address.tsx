@@ -1,8 +1,8 @@
 import { isEmphasized } from './utils/is-emphasized';
 import { getText } from './utils/get-text';
 import type { CSSProperties } from 'react';
-import type { Address } from '../types/address';
-import type { AddressComponents } from '../types/address-components';
+import type { Address } from '../../../../../model/types/addresses/address';
+import type { AddressComponents } from '../../../../../model/types/addresses/address-components';
 import styles from './styles.module.scss';
 
 interface FormattedAddressProps {

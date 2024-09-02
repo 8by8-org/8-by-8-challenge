@@ -19,5 +19,11 @@ export function readPrivateEnvironmentVariables() {
           'Could not load environment variable SUPABASE_SERVICE_ROLE_KEY',
       })
       .parse(process.env.SUPABASE_SERVICE_ROLE_KEY),
+    GOOGLE_MAPS_API_KEY: z
+      .string({
+        required_error:
+          'Could not load environment variable GOOGLE_MAPS_API_KEY',
+      })
+      .parse(process.env.GOOGLE_MAPS_API_KEY),
   };
 }

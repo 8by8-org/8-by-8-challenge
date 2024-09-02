@@ -2,7 +2,7 @@ import { FormattedAddress } from '../formatted-address';
 import { Label } from '@/components/form-components/label';
 import { Input } from '@/components/form-components/input';
 import { Button } from '@/components/utils/button';
-import type { Address } from '../types/address';
+import type { Address } from '../../../../../model/types/addresses/address';
 import type { AddressForm } from '../types/address-form';
 import styles from './styles.module.scss';
 

@@ -1,6 +1,6 @@
 import { FormattedAddress } from '../formatted-address';
 import { Button } from '@/components/utils/button';
-import type { Address } from '../types/address';
+import type { Address } from '../../../../../model/types/addresses/address';
 import styles from './styles.module.scss';
 
 interface ReviewAddressesProps {

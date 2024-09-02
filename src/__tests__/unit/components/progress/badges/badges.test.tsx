@@ -3,8 +3,8 @@ import { render, screen, cleanup } from '@testing-library/react';
 import { Badges } from '@/components/progress/badges';
 import { Actions } from '@/model/enums/actions';
 import { AVATARS } from '@/constants/avatars';
-import type { Badge } from '@/model/types/badge';
-import type { PlayerBadge } from '@/model/types/player-badge';
+import type { Badge } from '@/model/types/badges/badge';
+import type { PlayerBadge } from '@/model/types/badges/player-badge';
 
 describe('Bagdes', () => {
   afterEach(cleanup);

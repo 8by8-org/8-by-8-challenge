@@ -14,6 +14,7 @@ import { refreshSupabaseSession } from './refresh-session/refresh-supabase-sessi
 import { SupabaseUserRepository } from './user-repository/supabase-user-repository';
 import { WebCryptoSubtleEncryptor } from './encryptor/web-crypto-subtle-encryptor';
 import { MockUSStateInformation } from './us-state-information/mock-us-state-information';
+import { validateAddressesWithGoogleMaps } from './validate-addresses/validate-addresses-with-google-maps';
 
 /**
  * An inversion of control container that should be used to obtain instances of
@@ -65,4 +66,8 @@ export const serverContainer = ContainerBuilder.createBuilder()
   .registerClass(SERVER_SERVICE_KEYS.UserRepository, SupabaseUserRepository)
   .registerClass(SERVER_SERVICE_KEYS.Encryptor, WebCryptoSubtleEncryptor)
   .registerClass(SERVER_SERVICE_KEYS.USStateInformation, MockUSStateInformation)
+  .registerFunction(
+    SERVER_SERVICE_KEYS.validateAddresses,
+    validateAddressesWithGoogleMaps,
+  )
   .build();

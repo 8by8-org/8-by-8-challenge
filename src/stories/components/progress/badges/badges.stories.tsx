@@ -4,7 +4,7 @@ import { NumberBadge } from '@/components/progress/badges/number-badge';
 import { ActionBadge } from '@/components/progress/badges/action-badge';
 import { PlayerBadge } from '@/components/progress/badges/player-badge';
 import { Badges } from '@/components/progress/badges';
-import type { Badge } from '@/model/types/badge';
+import type { Badge } from '@/model/types/badges/badge';
 import { Actions } from '@/model/enums/actions';
 
 const meta: Meta<typeof Badges> = {

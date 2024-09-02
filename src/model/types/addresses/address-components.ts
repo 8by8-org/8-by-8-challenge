@@ -1,4 +1,4 @@
-import type { AddressComponent } from './address-component';
+import { AddressComponent } from './address-component';
 
 export interface AddressComponents {
   streetLine1: AddressComponent;

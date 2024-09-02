@@ -5,7 +5,7 @@ import {
   UserContextType,
 } from '../../contexts/user-context/user-context';
 import { UserType } from '../../model/enums/user-type';
-import type { User } from '../../model/types/user';
+import type { User } from '../../model/types/user/user';
 import { GlobalStylesProvider } from '../global-styles-provider';
 import { DateTime } from 'luxon';
 import { Actions } from '@/model/enums/actions';
