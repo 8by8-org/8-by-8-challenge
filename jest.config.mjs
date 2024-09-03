@@ -23,7 +23,11 @@ const config = {
     '<rootDir>/src/constants/',
     'fonts',
     '<rootDir>/src/model/',
-    'user-context/user-context-provider.tsx',
+    '<rootDir>/src/contexts/user-context/user-context-provider.tsx',
+    '<rootDir>/src/app/register/addresses/page.tsx',
+    '<rootDir>/src/app/register/eligibility/page.tsx',
+    '<rootDir>/src/app/register/names/page.tsx',
+    '<rootDir>/src/app/register/other-details/page.tsx',
   ],
   //require 100% code coverage for the tests to pass
   coverageThreshold: {

@@ -117,8 +117,8 @@ export function isProcessableResponse(
   if (
     'missingComponentTypes' in address &&
     (!Array.isArray(address.missingComponentTypes) ||
-      !address.missingComponentTypes.every(
-        componentType => typeof componentType === 'string',
+      address.missingComponentTypes.some(
+        componentType => typeof componentType !== 'string',
       ))
   ) {
     return false;

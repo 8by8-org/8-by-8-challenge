@@ -31,10 +31,7 @@ export async function validateAddressWithGoogleMaps(
   });
 
   if (!response.ok) {
-    throw new ServerError(
-      `Failed to validate address: ${response.statusText}`,
-      response.status,
-    );
+    throw new ServerError(`Failed to validate address.`, response.status);
   }
 
   const responseBody = await response.json();
