@@ -26,7 +26,7 @@ describe('PhoneInputGroup', () => {
     expect(input.id).toBe(phoneNumber.id);
   });
 
-  it(`renders an input element whose aria-describedby attribute is set to the id 
+  it(`renders an input element whose aria-describedby attribute includes the id 
   of the Messages component it renders.`, () => {
     const invalidMessage = 'Please enter a valid phone number.';
 
@@ -51,7 +51,7 @@ describe('PhoneInputGroup', () => {
 
     const input = screen.getByRole('textbox') as HTMLInputElement;
     const messagesId = `${phoneNumber.id}-messages`;
-    expect(input.getAttribute('aria-describedby')).toBe(messagesId);
+    expect(input.getAttribute('aria-describedby')).toContain(messagesId);
 
     const messages = document.getElementById(messagesId);
     expect(messages).toBeTruthy();

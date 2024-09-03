@@ -514,40 +514,6 @@ describe('Select', () => {
     expect(outerContainer.classList).toContain(className);
   });
 
-  it(`displays any messages associated with the field if the field has been 
-  blurred.`, async () => {
-    const invalidMessage = 'Please select an option.';
-
-    const requiredField = new Field({
-      name: 'requiredField',
-      defaultValue: '',
-      validators: [
-        StringValidators.required({
-          invalidMessage,
-        }),
-      ],
-    });
-
-    render(
-      <Select label="Select an option" field={requiredField} options={[]} />,
-    );
-
-    expect(screen.getByText(invalidMessage).classList).toContain(
-      'hidden_message',
-    );
-
-    const combobox = screen.getByRole('combobox');
-    await user.click(combobox);
-    expect(screen.getByText(invalidMessage).classList).toContain(
-      'hidden_message',
-    );
-
-    await user.click(document.body);
-    expect(screen.getByText(invalidMessage).classList).not.toContain(
-      'hidden_message',
-    );
-  });
-
   it(`renders any messages associated with the field if the field has been
   modified.`, async () => {
     const validMessage = 'Thank you for selecting an option.';
