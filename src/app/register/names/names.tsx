@@ -43,34 +43,30 @@ export function Names() {
   return (
     <form onSubmit={onSubmit}>
       <YourName />
-      <Checkbox
-        checked={!useExclude(namesForm.fields.previousName)}
-        onChange={e => {
-          namesForm.fields.previousName.setExclude(!e.target.checked);
-        }}
-        labelContent={
-          <span className={styles.checkbox_label}>
-            I&apos;ve changed my name.
-            <MoreInfo
-              buttonAltText={
-                'Click for more information about entering a previous name.'
-              }
-              dialogAriaLabel={
-                'More information about entering a previous name.'
-              }
-              info={
-                <p>
-                  If you have changed your name since your last registration,
-                  check this box and enter your previous name below.
-                </p>
-              }
-              className={styles.more_info_button}
-            />
-          </span>
-        }
-        name="changedName"
-        containerClassName={styles.checkbox}
-      />
+      <div className={styles.checkbox_container}>
+        <Checkbox
+          checked={!useExclude(namesForm.fields.previousName)}
+          onChange={e => {
+            namesForm.fields.previousName.setExclude(!e.target.checked);
+          }}
+          labelContent="I've changed my name."
+          name="changedName"
+          containerClassName={styles.checkbox}
+        />
+        <MoreInfo
+          buttonAltText={
+            'Click for more information about entering a previous name.'
+          }
+          dialogAriaLabel={'More information about entering a previous name.'}
+          info={
+            <p>
+              If you have changed your name since your last registration, check
+              this box and enter your previous name below.
+            </p>
+          }
+          className={styles.more_info_button}
+        />
+      </div>
       <ExcludableContent excludableField={namesForm.fields.previousName}>
         <PreviousName />
       </ExcludableContent>

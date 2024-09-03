@@ -36,6 +36,7 @@ export function MailingAddress() {
         labelContent="Street Address*"
         labelVariant="floating"
         containerClassName={styles.input_row_margin}
+        aria-required
       />
       <InputGroup
         field={form.fields.streetLine2}
@@ -50,6 +51,7 @@ export function MailingAddress() {
         labelContent="City*"
         labelVariant="floating"
         containerClassName={styles.input_row_margin}
+        aria-required
       />
       <div className={styles.input_row}>
         <InputGroup
@@ -59,6 +61,7 @@ export function MailingAddress() {
           labelVariant="floating"
           maxLength={5}
           containerClassName={styles.zip}
+          aria-required
         />
         <Select
           field={form.fields.state}
@@ -68,6 +71,7 @@ export function MailingAddress() {
             value: abbr,
           }))}
           className={styles.state}
+          aria-required
         />
       </div>
     </fieldset>

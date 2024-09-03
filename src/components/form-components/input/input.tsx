@@ -1,4 +1,5 @@
 'use client';
+import { useId, type CSSProperties } from 'react';
 import {
   useUserInput,
   useFocusEvents,
@@ -9,7 +10,6 @@ import {
   type Field,
   type Group,
 } from 'fully-formed';
-import type { CSSProperties } from 'react';
 import styles from './styles.module.scss';
 
 interface InputProps {
@@ -117,7 +117,7 @@ export function Input({
     );
   });
 
-  const ariaDescription = useMultiPipe([field, ...groups], states => {
+  const warningMessage = useMultiPipe([field, ...groups], states => {
     const validity = ValidityUtils.minValidity(states);
     const fieldState = states[0];
 
@@ -131,24 +131,37 @@ export function Input({
       : undefined;
   });
 
+  const warningMessageId = useId();
+
   return (
-    <input
-      name={field.name}
-      id={field.id}
-      type={type}
-      placeholder={placeholder}
-      disabled={disabled}
-      autoComplete={autoComplete}
-      maxLength={maxLength}
-      max={max}
-      aria-required={ariaRequired}
-      aria-describedby={ariaDescribedBy}
-      aria-description={ariaDescription}
-      aria-invalid={ariaInvalid}
-      {...useUserInput(field)}
-      {...useFocusEvents(field)}
-      className={className}
-      style={style}
-    />
+    <>
+      <input
+        name={field.name}
+        id={field.id}
+        type={type}
+        placeholder={placeholder}
+        disabled={disabled}
+        autoComplete={autoComplete}
+        maxLength={maxLength}
+        max={max}
+        aria-required={ariaRequired}
+        aria-describedby={
+          ariaDescribedBy ?
+            `${ariaDescribedBy} ${warningMessageId}`
+          : warningMessageId
+        }
+        aria-invalid={ariaInvalid}
+        {...useUserInput(field)}
+        {...useFocusEvents(field)}
+        className={className}
+        style={style}
+      />
+      <span
+        style={{ position: 'fixed', visibility: 'hidden' }}
+        id={warningMessageId}
+      >
+        {warningMessage}
+      </span>
+    </>
   );
 }

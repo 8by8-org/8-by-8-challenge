@@ -4,6 +4,7 @@ import { useExclude, ValidityUtils } from 'fully-formed';
 import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { useScrollToTop } from '@/hooks/use-scroll-to-top';
+import { usePrefetchOtherDetailsWithStateAndZip } from './hooks/use-prefetch-other-details-with-state-and-zip';
 import { VoterRegistrationContext } from '../voter-registration-context';
 import { VoterRegistrationPathnames } from '../constants/voter-registration-pathnames';
 import { HomeAddress } from './home-address';
@@ -16,7 +17,6 @@ import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { AddressConfirmationModal } from './address-confirmation-modal';
 import { getFirstNonValidInputId } from './utils/get-first-nonvalid-input-id';
 import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
-import { usePrefetchOtherDetailsWithStateAndZip } from './hooks/use-prefetch-other-details-with-state-and-zip';
 import { validateAddresses } from './utils/validate-addresses';
 import { applyCautionValidityToFormFields } from './utils/apply-caution-validity-to-form-fields';
 import type { FormEventHandler } from 'react';
@@ -74,7 +74,6 @@ export function Addresses() {
     <form onSubmit={onSubmit}>
       {isLoading && <LoadingWheel />}
       <HomeAddress />
-
       <Checkbox
         checked={!useExclude(addressesForm.fields.mailingAddress)}
         onChange={e => {
@@ -88,11 +87,9 @@ export function Addresses() {
           : styles.has_mailing_address_checked
         }
       />
-
       <ExcludableContent excludableField={addressesForm.fields.mailingAddress}>
         <MailingAddress />
       </ExcludableContent>
-
       <Checkbox
         checked={!useExclude(addressesForm.fields.previousAddress)}
         onChange={e => {
@@ -102,15 +99,12 @@ export function Addresses() {
         name="hasPreviousAddress"
         containerClassName="mb_md"
       />
-
       <ExcludableContent excludableField={addressesForm.fields.previousAddress}>
         <PreviousAddress />
       </ExcludableContent>
-
       <Button type="submit" size="lg" wide className="mb_lg">
         Next
       </Button>
-
       {!!errors.length && (
         <AddressConfirmationModal
           addressesForm={addressesForm}

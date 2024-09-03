@@ -64,6 +64,7 @@ export function YourName() {
           },
         ]}
         className={styles.select}
+        aria-required
       />
       <InputGroup
         field={form.fields.first}
@@ -71,6 +72,7 @@ export function YourName() {
         labelVariant="floating"
         type="text"
         containerClassName={styles.input}
+        aria-required
       />
       <InputGroup
         field={form.fields.middle}
@@ -85,6 +87,7 @@ export function YourName() {
         labelVariant="floating"
         type="text"
         containerClassName={styles.input}
+        aria-required
       />
       <Select
         field={form.fields.suffix}

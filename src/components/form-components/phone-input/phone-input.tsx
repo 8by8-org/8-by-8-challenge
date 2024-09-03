@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useId } from 'react';
 import {
   usePipe,
   useMultiPipe,
@@ -90,7 +90,7 @@ export function PhoneInput({
     );
   });
 
-  const ariaDescription = useMultiPipe([field, ...groups], states => {
+  const warningMessage = useMultiPipe([field, ...groups], states => {
     const validity = ValidityUtils.minValidity(states);
     const fieldState = states[0];
 
@@ -103,6 +103,8 @@ export function PhoneInput({
         'The value of this field could not be confirmed. Please verify that it is correct.'
       : undefined;
   });
+
+  const warningMessageId = useId();
 
   useEffect(() => {
     function handleBeforeInput(event: InputEvent) {
@@ -128,27 +130,38 @@ export function PhoneInput({
   }, [value]);
 
   return (
-    <input
-      name={field.name}
-      id={field.id}
-      type="tel"
-      inputMode="numeric"
-      ref={inputRef}
-      value={value}
-      {...useFocusEvents(field)}
-      onKeyDown={event => PhoneInputInternals.handleKeyDown(event)}
-      onChange={e => {
-        PhoneInputInternals.handleAutoComplete(e, field);
-      }}
-      disabled={disabled}
-      placeholder={placeholder}
-      autoComplete={autoComplete}
-      aria-required={ariaRequired}
-      aria-describedby={ariaDescribedBy}
-      aria-description={ariaDescription}
-      aria-invalid={ariaInvalid}
-      className={className}
-      style={style}
-    />
+    <>
+      <input
+        name={field.name}
+        id={field.id}
+        type="tel"
+        inputMode="numeric"
+        ref={inputRef}
+        value={value}
+        {...useFocusEvents(field)}
+        onKeyDown={event => PhoneInputInternals.handleKeyDown(event)}
+        onChange={e => {
+          PhoneInputInternals.handleAutoComplete(e, field);
+        }}
+        disabled={disabled}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        aria-required={ariaRequired}
+        aria-describedby={
+          ariaDescribedBy ?
+            `${ariaDescribedBy} ${warningMessageId}`
+          : warningMessageId
+        }
+        aria-invalid={ariaInvalid}
+        className={className}
+        style={style}
+      />
+      <span
+        style={{ position: 'fixed', visibility: 'hidden' }}
+        id={warningMessageId}
+      >
+        {warningMessage}
+      </span>
+    </>
   );
 }

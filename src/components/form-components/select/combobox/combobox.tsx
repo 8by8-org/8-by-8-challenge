@@ -1,6 +1,7 @@
 'use client';
 import {
   forwardRef,
+  useId,
   type ForwardedRef,
   type KeyboardEventHandler,
   type RefObject,
@@ -134,7 +135,7 @@ export const Combobox = forwardRef(function Combobox(
     );
   });
 
-  const ariaDescription = useMultiPipe(
+  const warningMessage = useMultiPipe(
     [props.field, ...props.groups],
     states => {
       const validity = ValidityUtils.minValidity(states);
@@ -150,6 +151,8 @@ export const Combobox = forwardRef(function Combobox(
         : undefined;
     },
   );
+
+  const warningMessageId = useId();
 
   const handleKeyboardInput: KeyboardEventHandler = event => {
     const { key } = event;
@@ -243,8 +246,11 @@ export const Combobox = forwardRef(function Combobox(
         aria-controls={props.menuId}
         aria-expanded={false}
         aria-label={props.label}
-        aria-describedby={props['aria-describedby']}
-        aria-description={ariaDescription}
+        aria-describedby={
+          props['aria-describedby'] ?
+            `${props['aria-describedby']} ${warningMessageId}`
+          : warningMessageId
+        }
         aria-invalid={ariaInvalid}
         aria-required={props['aria-required']}
         type="text"
@@ -254,6 +260,12 @@ export const Combobox = forwardRef(function Combobox(
         autoComplete="off"
         readOnly
       />
+      <span
+        style={{ position: 'fixed', visibility: 'hidden' }}
+        id={warningMessageId}
+      >
+        {warningMessage}
+      </span>
     </div>
   );
 });

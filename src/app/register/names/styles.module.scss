@@ -1,14 +1,14 @@
 @use '../../../styles/partials' as *;
 
 .checkbox {
-  margin-bottom: $spacing-md;
   display: flex;
   align-items: center;
 }
 
-.checkbox_label {
+.checkbox_container {
   display: flex;
   align-items: center;
+  margin-bottom: $spacing-md;
 }
 
 .more_info_button {

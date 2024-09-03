@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { useValue, ValidityUtils } from 'fully-formed';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { VoterRegistrationContext } from '../voter-registration-context';
@@ -30,6 +30,7 @@ export function OtherDetails({
     'OtherDetails',
   );
   const form = voterRegistrationForm.fields.otherDetails;
+  const idFieldDescriptionId = useId();
   const { registerToVote } = useContextSafely(UserContext, 'OtherDetails');
   const { showAlert } = useContextSafely(AlertsContext, 'OtherDetails');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,7 +61,7 @@ export function OtherDetails({
       <h2>Other Details</h2>
       <Select
         field={form.fields.party}
-        label="Political party"
+        label="Political party*"
         options={ballotQualifiedPoliticalParties
           .map(party => ({
             text: party,
@@ -73,14 +74,16 @@ export function OtherDetails({
             },
           ])}
         className={styles.select}
+        aria-required
       />
       <ExcludableContent excludableField={form.fields.otherParty}>
         <InputGroup
           field={form.fields.otherParty}
           type="text"
           labelVariant="floating"
-          labelContent="If other, please specify"
+          labelContent="If other, please specify*"
           containerClassName={styles.other_party}
+          aria-required
         />
       </ExcludableContent>
       <Checkbox
@@ -122,12 +125,18 @@ export function OtherDetails({
             </p>
           ),
         }}
+        aria-required
       />
       <Label field={form.fields.id} variant="floating">
         ID number*
       </Label>
-      <Input field={form.fields.id} type="text" />
-      <p className={styles.id_explainer}>
+      <Input
+        field={form.fields.id}
+        type="text"
+        aria-required
+        aria-describedby={idFieldDescriptionId}
+      />
+      <p className={styles.id_explainer} id={idFieldDescriptionId}>
         Provide your driver&apos;s license, state identification card number, or
         the last 4 digits of your social security number.
       </p>

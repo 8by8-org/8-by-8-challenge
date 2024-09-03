@@ -56,6 +56,7 @@ export function HomeAddress() {
         labelContent="Street Address*"
         labelVariant="floating"
         containerClassName={styles.input_row_margin}
+        aria-required
       />
       <InputGroup
         field={form.fields.streetLine2}
@@ -70,6 +71,7 @@ export function HomeAddress() {
         labelContent="City*"
         labelVariant="floating"
         containerClassName={styles.input_row_margin}
+        aria-required
       />
       <div className={styles.input_row}>
         <InputGroup
@@ -79,6 +81,7 @@ export function HomeAddress() {
           labelVariant="floating"
           maxLength={5}
           containerClassName={styles.zip}
+          aria-required
         />
         <Select
           field={form.fields.state}
@@ -88,6 +91,7 @@ export function HomeAddress() {
             value: abbr,
           }))}
           className={styles.state}
+          aria-required
         />
       </div>
       <div className={styles.input_row}>

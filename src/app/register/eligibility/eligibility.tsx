@@ -27,9 +27,9 @@ export function Eligibility() {
     'Eligibility',
   );
   const eligibilityForm = voterRegistrationForm.fields.eligibility;
-
   const [showPreregistrationInfoModal, setShowPreregistrationInfoModal] =
     useState(false);
+
   const [showNorthDakotaInfoModal, setShowNorthDakotaInfoModal] =
     useState(false);
 
