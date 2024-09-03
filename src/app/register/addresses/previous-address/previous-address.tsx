@@ -1,9 +1,12 @@
 'use client';
+import { usePipe, ValidityUtils } from 'fully-formed';
+import Image from 'next/image';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { VoterRegistrationContext } from '../../voter-registration-context';
 import { InputGroup } from '@/components/form-components/input-group';
 import { Select } from '@/components/form-components/select';
 import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
+import warningIconDark from '@/../public/static/images/components/shared/warning-icon-dark.svg';
 import styles from './styles.module.scss';
 
 export function PreviousAddress() {
@@ -12,10 +15,23 @@ export function PreviousAddress() {
     'PreviousAddress',
   );
   const form = voterRegistrationForm.fields.addresses.fields.previousAddress;
+  const displayWarningMessage = usePipe(form, ({ validity }) =>
+    ValidityUtils.isCaution(validity),
+  );
 
   return (
     <fieldset className={styles.fieldset}>
       <legend className={styles.legend}>Previous Address</legend>
+      {displayWarningMessage && (
+        <p className={styles.warning_message}>
+          Please double-check fields marked with a{' '}
+          <Image
+            src={warningIconDark}
+            alt="Warning icon"
+            className={styles.warning_icon}
+          />
+        </p>
+      )}
       <InputGroup
         field={form.fields.streetLine1}
         type="text"

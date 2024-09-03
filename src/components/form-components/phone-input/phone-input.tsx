@@ -60,12 +60,15 @@ export function PhoneInput({
     });
 
     if (
-      ValidityUtils.isInvalid(validity) &&
-      (fieldState.hasBeenModified ||
-        fieldState.hasBeenBlurred ||
-        fieldState.submitted)
+      fieldState.hasBeenModified ||
+      fieldState.hasBeenBlurred ||
+      fieldState.submitted
     ) {
-      classNames.push(styles.invalid);
+      if (ValidityUtils.isCaution(validity)) {
+        classNames.push(styles.caution);
+      } else if (ValidityUtils.isInvalid(validity)) {
+        classNames.push(styles.invalid);
+      }
     }
 
     if (classNameProp) {
@@ -85,6 +88,20 @@ export function PhoneInput({
         fieldState.hasBeenBlurred ||
         fieldState.submitted)
     );
+  });
+
+  const ariaDescription = useMultiPipe([field, ...groups], states => {
+    const validity = ValidityUtils.minValidity(states);
+    const fieldState = states[0];
+
+    return (
+        ValidityUtils.isCaution(validity) &&
+          (fieldState.hasBeenModified ||
+            fieldState.hasBeenBlurred ||
+            fieldState.submitted)
+      ) ?
+        'The value of this field could not be confirmed. Please verify that it is correct.'
+      : undefined;
   });
 
   useEffect(() => {
@@ -128,6 +145,7 @@ export function PhoneInput({
       autoComplete={autoComplete}
       aria-required={ariaRequired}
       aria-describedby={ariaDescribedBy}
+      aria-description={ariaDescription}
       aria-invalid={ariaInvalid}
       className={className}
       style={style}

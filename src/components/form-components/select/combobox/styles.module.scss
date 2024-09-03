@@ -37,6 +37,10 @@
   border-color: $color-error;
 }
 
+.caution {
+  border-color: $color-review-light;
+}
+
 .selection {
   overflow: hidden;
   white-space: nowrap;

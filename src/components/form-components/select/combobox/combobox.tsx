@@ -107,12 +107,15 @@ export const Combobox = forwardRef(function Combobox(
       });
 
       if (
-        ValidityUtils.isInvalid(validity) &&
-        (fieldState.hasBeenBlurred ||
-          fieldState.hasBeenModified ||
-          fieldState.submitted)
+        fieldState.hasBeenModified ||
+        fieldState.hasBeenBlurred ||
+        fieldState.submitted
       ) {
-        classNames.push(styles.invalid);
+        if (ValidityUtils.isCaution(validity)) {
+          classNames.push(styles.caution);
+        } else if (ValidityUtils.isInvalid(validity)) {
+          classNames.push(styles.invalid);
+        }
       }
 
       return classNames.join(' ');
@@ -130,6 +133,23 @@ export const Combobox = forwardRef(function Combobox(
         fieldState.submitted)
     );
   });
+
+  const ariaDescription = useMultiPipe(
+    [props.field, ...props.groups],
+    states => {
+      const validity = ValidityUtils.minValidity(states);
+      const fieldState = states[0];
+
+      return (
+          ValidityUtils.isCaution(validity) &&
+            (fieldState.hasBeenModified ||
+              fieldState.hasBeenBlurred ||
+              fieldState.submitted)
+        ) ?
+          'The value of this field could not be confirmed. Please verify that it is correct.'
+        : undefined;
+    },
+  );
 
   const handleKeyboardInput: KeyboardEventHandler = event => {
     const { key } = event;
@@ -224,6 +244,7 @@ export const Combobox = forwardRef(function Combobox(
         aria-expanded={false}
         aria-label={props.label}
         aria-describedby={props['aria-describedby']}
+        aria-description={ariaDescription}
         aria-invalid={ariaInvalid}
         aria-required={props['aria-required']}
         type="text"

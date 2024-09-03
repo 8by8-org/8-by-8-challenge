@@ -1,5 +1,6 @@
 'use client';
 import { usePipe, ValidityUtils } from 'fully-formed';
+import Image from 'next/image';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { VoterRegistrationContext } from '../../voter-registration-context';
 import { MoreInfo } from '@/components/utils/more-info';
@@ -7,6 +8,7 @@ import { InputGroup } from '@/components/form-components/input-group';
 import { Select } from '@/components/form-components/select';
 import { PhoneInputGroup } from '@/components/form-components/phone-input-group/phone-input-group';
 import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
+import warningIconDark from '@/../public/static/images/components/shared/warning-icon-dark.svg';
 import styles from './styles.module.scss';
 
 export function HomeAddress() {
@@ -42,7 +44,12 @@ export function HomeAddress() {
       </legend>
       {displayWarningMessage && (
         <p className={styles.warning_message}>
-          Please double-check fields marked with
+          Please double-check fields marked with a{' '}
+          <Image
+            src={warningIconDark}
+            alt="Warning icon"
+            className={styles.warning_icon}
+          />
         </p>
       )}
       <InputGroup

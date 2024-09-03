@@ -30,3 +30,14 @@
   width: 70px !important;
   margin-top: 17px;
 }
+
+.warning_message {
+  @extend .b6;
+  color: $color-review-dark;
+  margin-bottom: 16px;
+}
+
+.warning_icon {
+  height: 14px;
+  width: 16.55px;
+}

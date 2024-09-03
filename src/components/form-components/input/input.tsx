@@ -117,6 +117,20 @@ export function Input({
     );
   });
 
+  const ariaDescription = useMultiPipe([field, ...groups], states => {
+    const validity = ValidityUtils.minValidity(states);
+    const fieldState = states[0];
+
+    return (
+        ValidityUtils.isCaution(validity) &&
+          (fieldState.hasBeenModified ||
+            fieldState.hasBeenBlurred ||
+            fieldState.submitted)
+      ) ?
+        'The value of this field could not be confirmed. Please verify that it is correct.'
+      : undefined;
+  });
+
   return (
     <input
       name={field.name}
@@ -129,6 +143,7 @@ export function Input({
       max={max}
       aria-required={ariaRequired}
       aria-describedby={ariaDescribedBy}
+      aria-description={ariaDescription}
       aria-invalid={ariaInvalid}
       {...useUserInput(field)}
       {...useFocusEvents(field)}
