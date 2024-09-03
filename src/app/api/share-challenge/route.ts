@@ -8,11 +8,9 @@ export async function PUT(request: NextRequest) {
   const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
  
   const userRepo = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository);
- 
-
+  
   try {
     const user = await auth.loadSessionUser();
-    console.log(user)
     if (!user) {
       return NextResponse.json({ message: 'user not found', status: 401 })
     } 
@@ -22,6 +20,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(
       updatedUser,{status: 200}
     );
+
   } catch (e) {
     if (e instanceof ServerError) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });
@@ -30,4 +29,6 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Bad data.' }, { status: 400 });
   }
 }
+
+
 

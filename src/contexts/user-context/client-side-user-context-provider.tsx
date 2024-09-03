@@ -111,18 +111,14 @@ export function ClientSideUserContextProvider(
   }
 
 
-  // define a shareChallenge here 
-  // this api should trigger share api and update the db so the user can be awarded a badge 
-  
+// share Challnege Function to call the share-challenge API 
   async function shareChallenge() { 
       const response = await fetch( '/api/share-challenge', {
         method: 'PUT',
       }); 
-
-    if (!response.ok) {
-      throw new Error('Put request failed')
-    }
-
+    if (!repsonse.ok) {
+  throw new Error('Put request is not successfull.')
+}
 }
   
   return (

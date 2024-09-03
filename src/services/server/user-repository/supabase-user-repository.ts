@@ -56,13 +56,15 @@ export const SupabaseUserRepository = inject(
     // use the server error class
     // check if  the user has already completed the action
     // check how many badges the user has
-    // if the user has 8 badges then don't then don't award a badge 
+    // if the user has 8 badges then don't then don't award a badge
     // write tests for the api endpoints 
+    
     async awardSharedBadge(userId: string): Promise<User> {
+
       const supabase = this.createSupabaseClient();
       const { error: completedActionsError } = await supabase
         .from('completed_actions')
-        .update({ 'share_challenge': true })
+        .update({ 'shared_challenge': true })
         .eq('user_id', userId)
       
   // throw error 
@@ -80,7 +82,7 @@ export const SupabaseUserRepository = inject(
       if (badgeError) {
         throw new ServerError(`Error adding badge: ${badgeError.message}`);
       }
-      
+
 // count badges 
       const { count, error } = await supabase
       .from('badges')
@@ -91,13 +93,14 @@ export const SupabaseUserRepository = inject(
       throw new ServerError(`Error counting badges: ${error.message}`);
     }
       const maxBadges = 8
-      const user = await this.getUserById(userId);
+      let user = await this.getUserById(userId);
+      console.log(user)
       if (!user) {
         throw new ServerError(`User not found: ${userId}`)
       }
       
     // Check if the count exceeds the maxBadges threshold
-      if (count && count > maxBadges) {
+      if (count && count >= maxBadges) {
       return user;
     }
       
@@ -125,6 +128,7 @@ export const SupabaseUserRepository = inject(
         }
       }
       // return user 
+  user = await this.getUserById(userId);
   if (!user) {
     throw new ServerError(`User not found: ${userId}`);
   }
