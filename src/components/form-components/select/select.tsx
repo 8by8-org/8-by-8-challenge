@@ -145,7 +145,6 @@ export function Select({
       }
 
       menuRef.current?.closeMenu();
-      field.blur();
     }
 
     document.addEventListener('click', handleClickOutsideSelect);

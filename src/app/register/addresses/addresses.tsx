@@ -16,7 +16,7 @@ import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { AddressConfirmationModal } from './address-confirmation-modal';
 import { getFirstNonValidInputId } from './utils/get-first-nonvalid-input-id';
 import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
-import { usePrefetchOtherDetailsWithStateAndZip } from './use-prefetch-other-details-with-state-and-zip';
+import { usePrefetchOtherDetailsWithStateAndZip } from './hooks/use-prefetch-other-details-with-state-and-zip';
 import { validateAddresses } from './utils/validate-addresses';
 import { applyCautionValidityToFormFields } from './utils/apply-caution-validity-to-form-fields';
 import type { FormEventHandler } from 'react';

@@ -1,7 +1,7 @@
 'use client';
-import { usePipe, ValidityUtils } from 'fully-formed';
 import Image from 'next/image';
 import { useContextSafely } from '@/hooks/use-context-safely';
+import { useHasFieldWithCautionValidity } from '../hooks/use-has-field-with-caution-validity';
 import { VoterRegistrationContext } from '../../voter-registration-context';
 import { InputGroup } from '@/components/form-components/input-group';
 import { Select } from '@/components/form-components/select';
@@ -15,9 +15,7 @@ export function MailingAddress() {
     'MailingAddress',
   );
   const form = voterRegistrationForm.fields.addresses.fields.mailingAddress;
-  const displayWarningMessage = usePipe(form, ({ validity }) =>
-    ValidityUtils.isCaution(validity),
-  );
+  const displayWarningMessage = useHasFieldWithCautionValidity(form);
 
   return (
     <fieldset className={styles.fieldset}>

@@ -1,8 +1,8 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { HomeAddressForm } from './home-address/home-address-form';
+import { HomeAddressForm } from '../home-address/home-address-form';
 import { ValidityUtils } from 'fully-formed';
-import { VoterRegistrationPathnames } from '../constants/voter-registration-pathnames';
+import { VoterRegistrationPathnames } from '../../constants/voter-registration-pathnames';
 
 /**
  * Prefetches the JavaScript for the other details page when the value of either
