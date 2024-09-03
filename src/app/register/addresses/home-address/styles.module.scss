@@ -44,3 +44,9 @@
   margin-top: 17px;
   width: 100px !important;
 }
+
+.warning_message {
+  @extend .b6;
+  color: $color-review-dark;
+  margin-bottom: 16px;
+}

@@ -87,12 +87,15 @@ export function Input({
     });
 
     if (
-      ValidityUtils.isInvalid(validity) &&
-      (fieldState.hasBeenModified ||
-        fieldState.hasBeenBlurred ||
-        fieldState.submitted)
+      fieldState.hasBeenModified ||
+      fieldState.hasBeenBlurred ||
+      fieldState.submitted
     ) {
-      classNames.push(styles.invalid);
+      if (ValidityUtils.isCaution(validity)) {
+        classNames.push(styles.caution);
+      } else if (ValidityUtils.isInvalid(validity)) {
+        classNames.push(styles.invalid);
+      }
     }
 
     if (classNameProp) {

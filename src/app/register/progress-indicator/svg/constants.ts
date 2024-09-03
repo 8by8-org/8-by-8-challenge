@@ -7,15 +7,15 @@ export enum Dimensions {
   VIEWBOX_HEIGHT = CIRCLE_RADIUS * 2 + VERTICAL_PADDING * 2,
   VIEWBOX_WIDTH = BAR_WIDTH + CIRCLE_RADIUS * 2,
   VERTICAL_CENTER = VIEWBOX_HEIGHT / 2,
-};
+}
 
 export enum LinearGradientIds {
-  TEAL_YELLOW_GRADIENT_ID = "teal_yellow_gradient",
-  TRANSPARENT_GRAY_GRADIENT_ID = "transparent_gray_gradient"
-};
+  TEAL_YELLOW_GRADIENT_ID = 'teal_yellow_gradient',
+  TRANSPARENT_GRAY_GRADIENT_ID = 'transparent_gray_gradient',
+}
 
 export enum Colors {
-  LIGHT_GRAY = "#dedede",
-  TEAL = "#02ddc3",
-  YELLOW = "#ffed10"
+  LIGHT_GRAY = '#dedede',
+  TEAL = '#02ddc3',
+  YELLOW = '#ffed10',
 }

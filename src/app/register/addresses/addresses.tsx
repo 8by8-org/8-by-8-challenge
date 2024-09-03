@@ -18,6 +18,7 @@ import { getFirstNonValidInputId } from './utils/get-first-nonvalid-input-id';
 import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
 import { usePrefetchOtherDetailsWithStateAndZip } from './use-prefetch-other-details-with-state-and-zip';
 import { validateAddresses } from './utils/validate-addresses';
+import { applyCautionValidityToFormFields } from './utils/apply-caution-validity-to-form-fields';
 import type { FormEventHandler } from 'react';
 import type { AddressErrors } from '@/model/types/addresses/address-errors';
 import styles from './styles.module.scss';
@@ -35,11 +36,6 @@ export function Addresses() {
   useScrollToTop();
   usePrefetchOtherDetailsWithStateAndZip(addressesForm.fields.homeAddress);
 
-  const returnToEditing = () => {
-    // focus on first caution field
-    setErrors([]);
-  };
-
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
     if (isLoading) return;
@@ -55,11 +51,10 @@ export function Addresses() {
     setIsLoading(true);
     const errors = await validateAddresses(addressesForm.state.value);
 
-    // if errors, update address form fields' validies
-
     if (errors.length) {
       setIsLoading(false);
       setErrors(errors);
+      applyCautionValidityToFormFields(addressesForm, errors);
     } else {
       router.push(
         VoterRegistrationPathnames.OTHER_DETAILS +
@@ -67,6 +62,12 @@ export function Addresses() {
           `&zip=${addressesForm.state.value.homeAddress.zip}`,
       );
     }
+  };
+
+  const returnToEditing = () => {
+    setErrors([]);
+    const firstNonValidInputId = getFirstNonValidInputId(addressesForm);
+    firstNonValidInputId && focusOnElementById(firstNonValidInputId);
   };
 
   return (

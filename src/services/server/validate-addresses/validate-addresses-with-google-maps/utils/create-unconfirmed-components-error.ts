@@ -1,13 +1,15 @@
 import { AddressErrorTypes } from '@/model/types/addresses/address-error-types';
+import { collapseWhitespace } from '@/utils/shared/collapse-whitespace';
 import type { Address } from '@/model/types/addresses/address';
 import type { UnconfirmedComponentsError } from '@/model/types/addresses/unconfirmed-components-error';
 import type { AddressComponents } from '@/model/types/addresses/address-components';
 import type { ProcessableResponse } from '../types/processable-response';
-import { collapseWhitespace } from '@/utils/shared/collapse-whitespace';
+import type { AddressFormNames } from '@/model/types/addresses/address-form-names';
 
 export function createUnconfirmedComponentsError(
   address: Address,
   response: ProcessableResponse,
+  form: AddressFormNames,
 ): UnconfirmedComponentsError {
   const unconfirmedAddressComponents: AddressComponents = {
     streetLine1: {
@@ -37,6 +39,7 @@ export function createUnconfirmedComponentsError(
 
   return {
     type: AddressErrorTypes.UnconfirmedComponents,
+    form,
     unconfirmedAddressComponents,
   };
 }

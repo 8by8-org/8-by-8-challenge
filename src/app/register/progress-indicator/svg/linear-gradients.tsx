@@ -1,5 +1,5 @@
-import { TealYellowGradient } from "./teal-yellow-gradient";
-import { TransparentGrayGradient } from "./transparent-gray-gradient";
+import { TealYellowGradient } from './teal-yellow-gradient';
+import { TransparentGrayGradient } from './transparent-gray-gradient';
 
 export function LinearGradients() {
   return (
@@ -7,5 +7,5 @@ export function LinearGradients() {
       <TealYellowGradient />
       <TransparentGrayGradient />
     </defs>
-  )
+  );
 }

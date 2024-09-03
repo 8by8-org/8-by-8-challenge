@@ -1,4 +1,5 @@
 'use client';
+import { usePipe, ValidityUtils } from 'fully-formed';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { VoterRegistrationContext } from '../../voter-registration-context';
 import { MoreInfo } from '@/components/utils/more-info';
@@ -14,6 +15,9 @@ export function HomeAddress() {
     'HomeAddress',
   );
   const form = voterRegistrationForm.fields.addresses.fields.homeAddress;
+  const displayWarningMessage = usePipe(form, ({ validity }) =>
+    ValidityUtils.isCaution(validity),
+  );
 
   return (
     <fieldset className={styles.fieldset}>
@@ -36,6 +40,11 @@ export function HomeAddress() {
           className={styles.more_info_button}
         />
       </legend>
+      {displayWarningMessage && (
+        <p className={styles.warning_message}>
+          Please double-check fields marked with
+        </p>
+      )}
       <InputGroup
         field={form.fields.streetLine1}
         type="text"
