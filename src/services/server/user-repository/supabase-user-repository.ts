@@ -60,7 +60,6 @@ export const SupabaseUserRepository = inject(
     // write tests for the api endpoints 
     
     async awardSharedBadge(userId: string): Promise<User> {
-
       const supabase = this.createSupabaseClient();
       const { error: completedActionsError } = await supabase
         .from('completed_actions')

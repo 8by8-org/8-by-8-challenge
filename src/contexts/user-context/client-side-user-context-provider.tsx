@@ -113,10 +113,11 @@ export function ClientSideUserContextProvider(
 
 // share Challnege Function to call the share-challenge API 
   async function shareChallenge() { 
+    debugger;
       const response = await fetch( '/api/share-challenge', {
         method: 'PUT',
       }); 
-    if (!repsonse.ok) {
+    if (!response.ok) {
   throw new Error('Put request is not successfull.')
 }
 }
