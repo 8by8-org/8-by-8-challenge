@@ -7,13 +7,13 @@ import {
   type RefObject,
 } from 'react';
 import {
+  Field,
   usePipe,
   useMultiPipe,
   useValue,
   ValidityUtils,
   type FieldOfType,
   type IGroup,
-  type Field,
 } from 'fully-formed';
 import Image from 'next/image';
 import { isPrintableCharacterKey } from '../utils/is-printable-character-key';

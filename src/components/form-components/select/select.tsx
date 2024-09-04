@@ -12,6 +12,7 @@ import {
   ValidityUtils,
   type Field,
   type FieldOfType,
+  useCancelFocusOnUnmount,
 } from 'fully-formed';
 import Image from 'next/image';
 import { Combobox } from './combobox';
@@ -145,6 +146,10 @@ export function Select({
       }
 
       menuRef.current?.closeMenu();
+
+      if (field.state.isInFocus) {
+        field.blur();
+      }
     }
 
     document.addEventListener('click', handleClickOutsideSelect);
@@ -153,12 +158,15 @@ export function Select({
       document.removeEventListener('click', handleClickOutsideSelect);
   }, [field]);
 
+  useCancelFocusOnUnmount(field);
+
   return (
     <div
       className={classNames.join(' ')}
       ref={selectRef}
       style={style}
       title={label}
+      onFocus={() => field.focus()}
     >
       <div className={styles.combobox_container}>
         <Combobox

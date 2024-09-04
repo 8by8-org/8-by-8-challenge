@@ -237,7 +237,7 @@ describe('Select', () => {
     expect(menuContainer.classList).toContain('hidden');
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('{Enter}');
 
     await waitFor(() =>
@@ -279,7 +279,7 @@ describe('Select', () => {
     expect(menuContainer.classList).toContain('hidden');
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('{Enter}');
 
     await waitFor(() =>
@@ -317,7 +317,7 @@ describe('Select', () => {
     expect(menuContainer.classList).toContain('hidden');
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('{ArrowDown}');
 
     await waitFor(() =>
@@ -357,7 +357,7 @@ describe('Select', () => {
     expect(menuContainer.classList).toContain('hidden');
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('{ArrowUp}');
 
     await waitFor(() =>
@@ -400,7 +400,7 @@ describe('Select', () => {
     // options[1] should be selected when G is typed (regardless of case)
     // First, try uppercase G
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('G');
     await waitFor(() =>
       expect(menuContainer.classList).not.toContain('hidden'),
@@ -448,7 +448,7 @@ describe('Select', () => {
     const menuContainer = document.getElementsByClassName('menu_container')[0];
     expect(menuContainer.classList).toContain('hidden');
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('z');
     await waitFor(() =>
       expect(menuContainer.classList).not.toContain('hidden'),
@@ -488,7 +488,7 @@ describe('Select', () => {
     const menuContainer = document.getElementsByClassName('menu_container')[0];
     expect(menuContainer.classList).toContain('hidden');
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('z');
     await waitFor(() =>
       expect(menuContainer.classList).not.toContain('hidden'),
@@ -960,7 +960,7 @@ describe('Select', () => {
     );
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('{Enter}');
 
     expect(isKeyboardNavigating.current).toBe(true);
