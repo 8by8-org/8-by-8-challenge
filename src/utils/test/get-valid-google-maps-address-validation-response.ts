@@ -17,14 +17,19 @@ export function getValidGoogleMapsAddressValidationResponse(address: Address) {
         addressComponents: [
           {
             componentName: {
-              text: address.streetLine1.slice(0, 4),
+              text: address.streetLine1.slice(
+                0,
+                address.streetLine1.indexOf(' '),
+              ),
             },
             componentType: 'street_number',
             confirmationLevel: 'CONFIRMED',
           },
           {
             componentName: {
-              text: address.streetLine1.slice(5),
+              text: address.streetLine1.slice(
+                address.streetLine1.indexOf(' ') + 1,
+              ),
             },
             componentType: 'route',
             confirmationLevel: 'CONFIRMED',

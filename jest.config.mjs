@@ -23,6 +23,7 @@ const config = {
     '<rootDir>/src/constants/',
     'fonts',
     '<rootDir>/src/model/',
+    // ignore async server components as the test environment doesn't support rendering them at this time
     '<rootDir>/src/contexts/user-context/user-context-provider.tsx',
     '<rootDir>/src/app/register/addresses/page.tsx',
     '<rootDir>/src/app/register/eligibility/page.tsx',
