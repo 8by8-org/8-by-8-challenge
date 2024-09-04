@@ -21,7 +21,10 @@ export function usePrefetchOtherDetailsWithStateAndZip(
   const router = useRouter();
 
   useEffect(() => {
-    if (ValidityUtils.isValidOrCaution(homeAddressForm)) {
+    if (
+      ValidityUtils.isValidOrCaution(homeAddressForm.fields.state) &&
+      ValidityUtils.isValidOrCaution(homeAddressForm.fields.zip)
+    ) {
       router.prefetch(
         VoterRegistrationPathnames.OTHER_DETAILS +
           `?state=${homeAddressForm.state.value.state}&zip=${homeAddressForm.state.value.zip}`,
@@ -29,9 +32,10 @@ export function usePrefetchOtherDetailsWithStateAndZip(
     }
 
     const usStateSubscription = homeAddressForm.fields.state.subscribeToState(
-      ({ value, didPropertyChange }) => {
+      ({ value, validity, didPropertyChange }) => {
         if (
-          ValidityUtils.isValidOrCaution(homeAddressForm) &&
+          ValidityUtils.isValidOrCaution(validity) &&
+          ValidityUtils.isValidOrCaution(homeAddressForm.fields.zip) &&
           didPropertyChange('value')
         ) {
           router.prefetch(
@@ -43,9 +47,10 @@ export function usePrefetchOtherDetailsWithStateAndZip(
     );
 
     const zipSubscription = homeAddressForm.fields.zip.subscribeToState(
-      ({ value, didPropertyChange }) => {
+      ({ value, validity, didPropertyChange }) => {
         if (
-          ValidityUtils.isValidOrCaution(homeAddressForm) &&
+          ValidityUtils.isValidOrCaution(validity) &&
+          ValidityUtils.isValidOrCaution(homeAddressForm.fields.state) &&
           didPropertyChange('value')
         ) {
           router.prefetch(
