@@ -1,3 +1,4 @@
+import 'server-only';
 import { Encryptor } from './encryptor';
 import { inject } from 'undecorated-di';
 

@@ -1,3 +1,4 @@
+import 'server-only';
 import { inject } from 'undecorated-di';
 import { init } from '@paralleldrive/cuid2';
 import { SERVER_SERVICE_KEYS } from '../keys';

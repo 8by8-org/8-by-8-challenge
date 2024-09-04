@@ -1,3 +1,4 @@
+import 'server-only';
 import { inject } from 'undecorated-di';
 import { SERVER_SERVICE_KEYS } from '../keys';
 import { ServerError } from '@/errors/server-error';
