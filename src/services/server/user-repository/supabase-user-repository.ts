@@ -49,7 +49,7 @@ export const SupabaseUserRepository = inject(
     }
   },
   [
-    SERVER_SERVICE_KEYS.createSupabaseClient,
+    SERVER_SERVICE_KEYS.createSupabaseServiceRoleClient,
     SERVER_SERVICE_KEYS.UserRecordParser,
   ],
 );

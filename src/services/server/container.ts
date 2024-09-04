@@ -4,7 +4,7 @@ import { SERVER_SERVICE_KEYS } from './keys';
 import { CloudflareTurnstileValidator } from './captcha-validator/cloudflare-turnstile-validator';
 import { SupabaseAuth } from './auth/supabase-auth';
 import { Cookies } from './cookies/cookies';
-import { createSupabaseServerClient } from './create-supabase-client/create-supabase-server-client';
+import { createSupabaseSSRClient } from './create-supabase-client/create-supabase-ssr-client';
 import { UserRecordParser } from './user-record-parser/user-record-parser';
 import { Middleware } from './middleware/middleware';
 import { redirectIfOTPNotSent } from './redirect-if-otp-not-sent/redirect-if-otp-not-sent';
@@ -13,6 +13,7 @@ import { redirectIfSignedOutFromSupabase } from './redirect-if-signed-out/redire
 import { refreshSupabaseSession } from './refresh-session/refresh-supabase-session';
 import { SupabaseUserRepository } from './user-repository/supabase-user-repository';
 import { WebCryptoSubtleEncryptor } from './encryptor/web-crypto-subtle-encryptor';
+import { createSupabaseServiceRoleClient } from './create-supabase-client/create-supabase-service-role-client';
 
 /**
  * An inversion of control container that should be used to obtain instances of
@@ -43,8 +44,12 @@ export const serverContainer = ContainerBuilder.createBuilder()
   )
   .registerClass(SERVER_SERVICE_KEYS.Cookies, Cookies)
   .registerFunction(
-    SERVER_SERVICE_KEYS.createSupabaseClient,
-    createSupabaseServerClient,
+    SERVER_SERVICE_KEYS.createSupabaseSSRClient,
+    createSupabaseSSRClient,
+  )
+  .registerFunction(
+    SERVER_SERVICE_KEYS.createSupabaseServiceRoleClient,
+    createSupabaseServiceRoleClient,
   )
   .registerClass(SERVER_SERVICE_KEYS.UserRecordParser, UserRecordParser)
   .registerClass(SERVER_SERVICE_KEYS.Middleware, Middleware)

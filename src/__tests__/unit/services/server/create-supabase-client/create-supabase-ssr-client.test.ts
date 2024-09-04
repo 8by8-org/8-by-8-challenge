@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from '@/services/server/create-supabase-client/create-supabase-server-client';
+import { createSupabaseSSRClient } from '@/services/server/create-supabase-client/create-supabase-ssr-client';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { MockNextCookies } from '@/utils/test/mock-next-cookies';
 import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
@@ -11,8 +11,8 @@ jest.mock('next/headers', () => ({
   cookies: () => mockCookies.cookies(),
 }));
 
-describe('createSupabaseServerClient', () => {
-  const supabase = createSupabaseServerClient();
+describe('createSupabaseSSRClient', () => {
+  const supabase = createSupabaseSSRClient();
 
   afterEach(() => {
     mockCookies.cookies().clear();

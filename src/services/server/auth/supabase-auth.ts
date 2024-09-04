@@ -132,7 +132,7 @@ export const SupabaseAuth = inject(
     }
   },
   [
-    SERVER_SERVICE_KEYS.createSupabaseClient,
+    SERVER_SERVICE_KEYS.createSupabaseSSRClient,
     SERVER_SERVICE_KEYS.UserRepository,
   ],
 );

@@ -18,7 +18,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
  * row-level security in order to perform actions such as awarding one user
  * a badge in response to an action taken by another.
  */
-export const createSupabaseServerClient = bind(
+export const createSupabaseSSRClient = bind(
   function createSupabaseServerClient() {
     const cookieStore = cookies();
     const { NEXT_PUBLIC_SUPABASE_URL: url } = PUBLIC_ENVIRONMENT_VARIABLES;
