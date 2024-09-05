@@ -64,12 +64,12 @@ export const OtherDetailsForm = FormFactory.createSubForm(
           initFn: ({ value }) => {
             return {
               value: '',
-              exclude: value !== 'other',
+              exclude: !/^other$/i.test(value),
             };
           },
           controlFn: ({ value }) => {
             return {
-              exclude: value !== 'other',
+              exclude: !/^other$/i.test(value),
             };
           },
           validators: [

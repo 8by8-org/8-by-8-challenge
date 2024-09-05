@@ -7,15 +7,15 @@ import { VoterRegistrationContext } from '@/app/register/voter-registration-cont
 import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
 import { EligibilityForm } from '@/app/register/eligibility/eligibility-form';
 import { Builder } from 'builder-pattern';
+import { DateTime } from 'luxon';
 import navigation from 'next/navigation';
 import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 import { mockScrollMethods } from '@/utils/test/mock-scroll-methods';
 import { VoterRegistrationPathnames } from '@/app/register/constants/voter-registration-pathnames';
+import { getPreregistrationInfo } from '@/app/register/eligibility/utils/get-preregistration-info';
 import type { User } from '@/model/types/user';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import type { FunctionComponent } from 'react';
-import { DateTime } from 'luxon';
-import { getPreregistrationInfo } from '@/app/register/eligibility/utils/get-preregistration-info';
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
@@ -31,7 +31,7 @@ jest.mock(
   }),
 );
 
-describe('Addresses', () => {
+describe('Eligibility', () => {
   let router: AppRouterInstance;
   let voterRegistrationForm: InstanceType<typeof VoterRegistrationForm>;
   let eligibilityForm: InstanceType<typeof EligibilityForm>;

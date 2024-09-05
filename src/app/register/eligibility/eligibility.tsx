@@ -70,7 +70,7 @@ export function Eligibility() {
       <input
         name={eligibilityForm.fields.email.name}
         id={eligibilityForm.fields.email.id}
-        value={useValue(eligibilityForm.fields.email) || 'user@example.com'}
+        value={useValue(eligibilityForm.fields.email)}
         type="email"
         readOnly
         aria-readonly

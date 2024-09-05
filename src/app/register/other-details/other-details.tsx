@@ -18,7 +18,7 @@ import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
 import type { FormEventHandler } from 'react';
 import styles from './styles.module.scss';
 
-interface OtherDetailsProps {
+export interface OtherDetailsProps {
   ballotQualifiedPoliticalParties: string[];
 }
 
