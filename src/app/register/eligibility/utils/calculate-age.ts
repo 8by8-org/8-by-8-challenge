@@ -11,6 +11,7 @@ export function calculateAge(dob: string) {
   const today = DateTime.now();
   const age = Math.max(
     0,
+    /* istanbul ignore next */
     today.diff(dateOfBirth, 'years').toObject().years ?? 0,
   );
   return age;

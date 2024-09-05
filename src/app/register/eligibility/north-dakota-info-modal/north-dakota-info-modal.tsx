@@ -26,13 +26,14 @@ export function NorthDakotaInfoModal({
   const router = useRouter();
   const votingInNorthDakota =
     'https://www.sos.nd.gov/elections/voter/voting-north-dakota';
+  const closeModal = () => setShowModal(false);
 
   return (
     <Modal
       ariaLabel={`Voting in North Dakota`}
       theme="light"
       isOpen={showModal}
-      closeModal={() => setShowModal(false)}
+      closeModal={closeModal}
     >
       <h3 className={styles.title}>
         Hey there! Looks like you&apos;re from North Dakota.
@@ -59,7 +60,7 @@ export function NorthDakotaInfoModal({
         </Button>
         <Button
           type="button"
-          onClick={() => setShowModal(false)}
+          onClick={closeModal}
           className={styles.button}
           variant="inverted"
           size="sm"
