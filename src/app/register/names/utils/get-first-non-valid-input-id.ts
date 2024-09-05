@@ -14,16 +14,8 @@ export function getFirstNonValidInputId(
     return yourName.fields.first.id;
   }
 
-  if (!ValidityUtils.isValid(yourName.fields.middle)) {
-    return yourName.fields.middle.id;
-  }
-
   if (!ValidityUtils.isValid(yourName.fields.last)) {
     return yourName.fields.last.id;
-  }
-
-  if (!ValidityUtils.isValid(yourName.fields.suffix)) {
-    return yourName.fields.suffix.id;
   }
 
   if (!previousName.state.exclude) {
@@ -35,16 +27,8 @@ export function getFirstNonValidInputId(
       return previousName.fields.first.id;
     }
 
-    if (!ValidityUtils.isValid(previousName.fields.middle)) {
-      return previousName.fields.middle.id;
-    }
-
     if (!ValidityUtils.isValid(previousName.fields.last)) {
       return previousName.fields.last.id;
-    }
-
-    if (!ValidityUtils.isValid(yourName.fields.suffix)) {
-      return previousName.fields.suffix.id;
     }
   }
 

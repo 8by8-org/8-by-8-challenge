@@ -207,10 +207,12 @@ describe('Addresses', () => {
       document.getElementById(homeAddressForm.fields.streetLine1.id)!,
       '500 W 2nd St',
     );
+
     await user.type(
       document.getElementById(homeAddressForm.fields.city.id)!,
       'Austin',
     );
+
     await user.type(
       document.getElementById(homeAddressForm.fields.zip.id)!,
       '78701',
@@ -220,9 +222,145 @@ describe('Addresses', () => {
     await user.click(submitBtn);
 
     expect(validateAddressesSpy).toHaveBeenCalledTimes(1);
+    expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledTimes(1);
+
+    validateAddressesSpy.mockRestore();
+  });
+
+  it('closes the modal when the modal\'s "Edit address" button is clicked.', async () => {
+    const validateAddressesSpy = jest
+      .spyOn(validateAddressesModule, 'validateAddresses')
+      .mockImplementationOnce(() => {
+        return Promise.resolve([
+          {
+            type: AddressErrorTypes.UnconfirmedComponents,
+            form: 'homeAddress',
+            unconfirmedAddressComponents: {
+              streetLine1: {
+                value: '2930 Pearl St.',
+                hasIssue: false,
+              },
+              streetLine2: {
+                value: 'Suite 100',
+                hasIssue: true,
+              },
+              city: {
+                value: 'Boulder',
+                hasIssue: false,
+              },
+              state: {
+                value: 'CO',
+                hasIssue: false,
+              },
+              zip: {
+                value: '80301',
+                hasIssue: false,
+              },
+            },
+          },
+        ]);
+      });
+
+    await user.type(
+      document.getElementById(homeAddressForm.fields.streetLine1.id)!,
+      '2930 Pearl St.',
+    );
+
+    await user.type(
+      document.getElementById(homeAddressForm.fields.streetLine2.id)!,
+      'Suite 100',
+    );
+
+    await user.type(
+      document.getElementById(homeAddressForm.fields.city.id)!,
+      'Boulder',
+    );
+
+    await user.type(
+      document.getElementById(homeAddressForm.fields.zip.id)!,
+      '80301',
+    );
+
+    const submitBtn = screen.getByText('Next');
+    await user.click(submitBtn);
+
+    expect(validateAddressesSpy).toHaveBeenCalledTimes(1);
     validateAddressesSpy.mockRestore();
 
-    expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledTimes(1);
+    const returnToEditing = screen.getByText(/edit address/i);
+    await user.click(returnToEditing);
+
+    expect(HTMLDialogElement.prototype.close).toHaveBeenCalledTimes(1);
+    validateAddressesSpy.mockRestore();
+  });
+
+  it("advances to the next page when the modal's Continue button is clicked.", async () => {
+    const validateAddressesSpy = jest
+      .spyOn(validateAddressesModule, 'validateAddresses')
+      .mockImplementationOnce(() => {
+        return Promise.resolve([
+          {
+            type: AddressErrorTypes.UnconfirmedComponents,
+            form: 'homeAddress',
+            unconfirmedAddressComponents: {
+              streetLine1: {
+                value: '2930 Pearl St.',
+                hasIssue: false,
+              },
+              streetLine2: {
+                value: 'Suite 100',
+                hasIssue: true,
+              },
+              city: {
+                value: 'Boulder',
+                hasIssue: false,
+              },
+              state: {
+                value: 'CO',
+                hasIssue: false,
+              },
+              zip: {
+                value: '80301',
+                hasIssue: false,
+              },
+            },
+          },
+        ]);
+      });
+
+    await user.type(
+      document.getElementById(homeAddressForm.fields.streetLine1.id)!,
+      '2930 Pearl St.',
+    );
+
+    await user.type(
+      document.getElementById(homeAddressForm.fields.streetLine2.id)!,
+      'Suite 100',
+    );
+
+    await user.type(
+      document.getElementById(homeAddressForm.fields.city.id)!,
+      'Boulder',
+    );
+
+    await user.type(
+      document.getElementById(homeAddressForm.fields.zip.id)!,
+      '80301',
+    );
+
+    const submitBtn = screen.getByText('Next');
+    await user.click(submitBtn);
+
+    expect(validateAddressesSpy).toHaveBeenCalledTimes(1);
+    validateAddressesSpy.mockRestore();
+
+    const continueAnyway = screen.getByText(/continue anyway/i);
+    await user.click(continueAnyway);
+
+    expect(router.push).toHaveBeenCalledWith(
+      VoterRegistrationPathnames.OTHER_DETAILS + '?state=CO&zip=80301',
+    );
+    validateAddressesSpy.mockRestore();
   });
 
   it('cannot be submitted while loading.', async () => {
@@ -238,10 +376,12 @@ describe('Addresses', () => {
       document.getElementById(homeAddressForm.fields.streetLine1.id)!,
       '1600 Amphitheatre Pkwy',
     );
+
     await user.type(
       document.getElementById(homeAddressForm.fields.city.id)!,
       'Mountain View',
     );
+
     await user.type(
       document.getElementById(homeAddressForm.fields.zip.id)!,
       '94043',
