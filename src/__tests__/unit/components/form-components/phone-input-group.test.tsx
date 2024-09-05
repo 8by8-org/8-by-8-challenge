@@ -1,7 +1,8 @@
 import { render, screen, cleanup, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
 import { PhoneInputGroup } from '@/components/form-components/phone-input-group/phone-input-group';
-import { Field, Group } from 'fully-formed';
+import { Field, Group, Validity } from 'fully-formed';
 
 describe('PhoneInputGroup', () => {
   afterEach(cleanup);
@@ -200,5 +201,88 @@ describe('PhoneInputGroup', () => {
         ),
       ).toBe(false),
     );
+  });
+
+  it(`displays a warning icon when the field's validity is Validity.Caution and 
+  the field has been blurred.`, () => {
+    const field = new Field({
+      name: 'phone',
+      defaultValue: '',
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(
+      <PhoneInputGroup
+        field={field}
+        labelVariant="floating"
+        labelContent="Phone number"
+      />,
+    );
+    expect(screen.queryByAltText(/warning icon/i)).not.toBeInTheDocument();
+
+    act(() => field.blur());
+    expect(screen.queryByAltText(/warning icon/i)).toBeInTheDocument();
+  });
+
+  it(`displays a warning icon when the field's validity is Validity.Caution and 
+  the field has been modified.`, async () => {
+    const field = new Field({
+      name: 'testField',
+      defaultValue: '',
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(
+      <PhoneInputGroup
+        field={field}
+        labelVariant="floating"
+        labelContent="Phone number"
+      />,
+    );
+
+    expect(screen.queryByAltText(/warning icon/i)).not.toBeInTheDocument();
+
+    act(() => field.setValue('0123456789'));
+    expect(screen.queryByAltText(/warning icon/i)).toBeInTheDocument();
+  });
+
+  it(`displays a warning icon when the field's validity is Validity.Caution and 
+  the field has been submitted.`, () => {
+    const field = new Field({
+      name: 'testField',
+      defaultValue: '',
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(
+      <PhoneInputGroup
+        field={field}
+        labelVariant="floating"
+        labelContent="Phone number"
+      />,
+    );
+
+    expect(screen.queryByAltText(/warning icon/i)).not.toBeInTheDocument();
+
+    act(() => field.setSubmitted());
+    expect(screen.queryByAltText(/warning icon/i)).toBeInTheDocument();
   });
 });
