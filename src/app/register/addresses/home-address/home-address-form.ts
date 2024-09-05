@@ -21,8 +21,8 @@ export const HomeAddressForm = FormFactory.createSubForm(
       NonTransientField<'streetLine1', string>,
       NonTransientField<'streetLine2', string>,
       NonTransientField<'city', string>,
-      NonTransientField<'state', string>,
       NonTransientField<'zip', string>,
+      NonTransientField<'state', string>,
       NonTransientField<'phone', string>,
       NonTransientField<'phoneType', string>,
     ];
@@ -102,8 +102,8 @@ export const HomeAddressForm = FormFactory.createSubForm(
             }),
           ],
         }),
-        state,
         zip,
+        state,
         new PersistentField({
           name: 'phone',
           key: this.key + '.phone',

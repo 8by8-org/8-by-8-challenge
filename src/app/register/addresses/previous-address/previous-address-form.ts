@@ -23,8 +23,8 @@ export const PreviousAddressForm =
         NonTransientField<'streetLine1', string>,
         NonTransientField<'streetLine2', string>,
         NonTransientField<'city', string>,
-        NonTransientField<'state', string>,
         NonTransientField<'zip', string>,
+        NonTransientField<'state', string>,
       ];
 
       public constructor() {
@@ -103,8 +103,8 @@ export const PreviousAddressForm =
               }),
             ],
           }),
-          state,
           zip,
+          state,
         ];
       }
     },

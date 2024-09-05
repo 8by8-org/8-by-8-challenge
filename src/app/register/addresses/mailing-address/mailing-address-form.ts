@@ -21,8 +21,8 @@ export const MailingAddressForm = FormFactory.createPersistentExcludableSubForm(
       NonTransientField<'streetLine1', string>,
       NonTransientField<'streetLine2', string>,
       NonTransientField<'city', string>,
-      NonTransientField<'state', string>,
       NonTransientField<'zip', string>,
+      NonTransientField<'state', string>,
     ];
 
     public readonly excludeByDefault = true;
@@ -97,8 +97,8 @@ export const MailingAddressForm = FormFactory.createPersistentExcludableSubForm(
             }),
           ],
         }),
-        state,
         zip,
+        state,
       ];
     }
   },
