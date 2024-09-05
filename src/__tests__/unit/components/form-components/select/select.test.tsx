@@ -9,7 +9,7 @@ import {
 } from '@testing-library/react';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { Field, StringValidators, Group } from 'fully-formed';
+import { Field, StringValidators, Group, Validity } from 'fully-formed';
 import { mockScrollMethods } from '@/utils/test/mock-scroll-methods';
 import * as scrollUtils from '../../../../../components/form-components/select/menu/utils/scroll';
 import * as useMenuModule from '../../../../../components/form-components/select/menu/hooks/use-menu';
@@ -969,5 +969,81 @@ describe('Select', () => {
     expect(isKeyboardNavigating.current).toBe(false);
 
     useMenuSpy.mockRestore();
+  });
+
+  it(`displays a warning icon when the field's validity is Validity.Caution and 
+  the field has been blurred.`, () => {
+    const field = new Field({
+      name: 'testField',
+      defaultValue: '',
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(<Select label="Select an option" field={field} options={[]} />);
+
+    expect(screen.queryByAltText(/warning icon/i)).not.toBeInTheDocument();
+
+    act(() => field.blur());
+    expect(screen.queryByAltText(/warning icon/i)).toBeInTheDocument();
+  });
+
+  it(`displays a warning icon when the field's validity is Validity.Caution and 
+  the field has been modified.`, async () => {
+    const field = new Field({
+      name: 'testField',
+      defaultValue: '',
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(
+      <Select
+        label="Select an option"
+        field={field}
+        options={[{ value: 'a', text: 'Option A' }]}
+      />,
+    );
+
+    expect(screen.queryByAltText(/warning icon/i)).not.toBeInTheDocument();
+
+    const combobox = screen.getByRole('combobox');
+    await user.click(combobox);
+
+    const options = screen.getAllByRole('option');
+    await user.click(options[0]);
+    expect(screen.queryByAltText(/warning icon/i)).toBeInTheDocument();
+  });
+
+  it(`displays a warning icon when the field's validity is Validity.Caution and 
+  the field has been submitted.`, () => {
+    const field = new Field({
+      name: 'testField',
+      defaultValue: '',
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(<Select label="Select an option" field={field} options={[]} />);
+
+    expect(screen.queryByAltText(/warning icon/i)).not.toBeInTheDocument();
+
+    act(() => field.setSubmitted());
+    expect(screen.queryByAltText(/warning icon/i)).toBeInTheDocument();
   });
 });
