@@ -42,28 +42,16 @@ export const PreviousAddressForm =
           id: 'previous-state',
           key: this.key + '.state',
           controller: zip,
-          initFn: controllerState => {
-            if (!ValidityUtils.isValid(controllerState)) {
-              return 'AL';
-            }
-
-            const state = zipState(controllerState.value);
-            if (
-              !state ||
-              !!Object.values(US_STATE_ABBREVIATIONS).includes(state)
-            )
-              return 'AL';
-
-            return state;
-          },
+          initFn: () => 'AL',
           controlFn: controllerState => {
             if (
-              !ValidityUtils.isValid(controllerState) ||
+              !ValidityUtils.isValidOrCaution(controllerState) ||
               !controllerState.didPropertyChange('value')
             )
               return;
 
             const state = zipState(controllerState.value.trim());
+
             if (
               !state ||
               !Object.values(US_STATE_ABBREVIATIONS).includes(state)
