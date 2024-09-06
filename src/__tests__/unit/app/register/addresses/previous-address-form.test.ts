@@ -1,6 +1,5 @@
 import { PreviousAddressForm } from '@/app/register/addresses/previous-address/previous-address-form';
 import { clearAllPersistentFormElements } from 'fully-formed';
-import zipState from 'zip-state';
 
 describe('PreviousAddressForm', () => {
   let form: InstanceType<typeof PreviousAddressForm>;

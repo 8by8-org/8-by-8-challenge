@@ -17,7 +17,7 @@ export function FormattedAddress({
   style,
 }: FormattedAddressProps) {
   return (
-    <p className={className} style={style}>
+    <address className={className ? `b4 ${className}` : 'b4'} style={style}>
       <span
         className={
           isEmphasized(address.streetLine1) ?
@@ -74,6 +74,6 @@ export function FormattedAddress({
           </span>
         </span>
       </span>
-    </p>
+    </address>
   );
 }
