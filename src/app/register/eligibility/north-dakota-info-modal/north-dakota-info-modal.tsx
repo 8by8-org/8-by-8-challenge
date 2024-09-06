@@ -41,7 +41,12 @@ export function NorthDakotaInfoModal({
       <p>
         North Dakota does not require voter registration. For more information
         on voting in North Dakota, please see{' '}
-        <Link target="_blank" rel="noreferrer" href={votingInNorthDakota}>
+        <Link
+          target="_blank"
+          rel="noreferrer"
+          href={votingInNorthDakota}
+          className="link"
+        >
           Voting in North Dakota
         </Link>
         .

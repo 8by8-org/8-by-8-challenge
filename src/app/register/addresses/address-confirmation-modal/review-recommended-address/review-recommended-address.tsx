@@ -76,6 +76,7 @@ export function ReviewRecommendedAddress({
           id={recommendedAddressRadioButtonId}
           name="selectAddress"
           className={styles.radio}
+          defaultChecked
         />
         <label
           htmlFor={recommendedAddressRadioButtonId}

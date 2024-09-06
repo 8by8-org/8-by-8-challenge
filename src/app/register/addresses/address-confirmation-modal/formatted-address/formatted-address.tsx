@@ -17,7 +17,7 @@ export function FormattedAddress({
   style,
 }: FormattedAddressProps) {
   return (
-    <address className={className ? `b4 ${className}` : 'b4'} style={style}>
+    <address className={className} style={style}>
       <span
         className={
           isEmphasized(address.streetLine1) ?
