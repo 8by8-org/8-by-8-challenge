@@ -48,7 +48,7 @@ export const HomeAddressForm = FormFactory.createSubForm(
         controller: zip,
         key: this.key + '.state',
         initFn: controllerState => {
-          if (!ValidityUtils.isValid(controllerState)) {
+          if (!ValidityUtils.isValidOrCaution(controllerState)) {
             return 'AL';
           }
 
@@ -60,7 +60,7 @@ export const HomeAddressForm = FormFactory.createSubForm(
         },
         controlFn: controllerState => {
           if (
-            !ValidityUtils.isValid(controllerState) ||
+            !ValidityUtils.isValidOrCaution(controllerState) ||
             !controllerState.didPropertyChange('value')
           )
             return;

@@ -1,1 +1,1 @@
-export { ReviewRecommendedAddress } from './review-recommened-address';
+export { ReviewRecommendedAddress } from './review-recommended-address';

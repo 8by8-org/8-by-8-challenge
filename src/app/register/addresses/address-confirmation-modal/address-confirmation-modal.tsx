@@ -81,7 +81,6 @@ export function AddressConfirmationModal({
                 nextOrContinue={nextOrContinue}
               />
             );
-
           case AddressErrorTypes.ValidationFailed:
             return (
               <ReviewAddresses
