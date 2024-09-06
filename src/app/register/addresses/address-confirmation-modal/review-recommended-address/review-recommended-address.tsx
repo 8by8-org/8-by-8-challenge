@@ -1,5 +1,5 @@
 'use client';
-import { useState, useId } from 'react';
+import { useRef, useId } from 'react';
 import { FormattedAddress } from '../formatted-address';
 import { Button } from '@/components/utils/button';
 import type { AddressComponents } from '@/model/types/addresses/address-components';
@@ -23,12 +23,12 @@ export function ReviewRecommendedAddress({
   errorCount,
   nextOrContinue,
 }: ReviewRecommendedAddressProps) {
-  const [useRecommended, setUseRecommended] = useState(true);
+  const useRecommendedRef = useRef<HTMLInputElement>(null);
   const enteredAddressRadioButtonId = useId();
   const recommendedAddressRadioButtonId = useId();
 
   const confirmChoice = () => {
-    if (useRecommended) {
+    if (useRecommendedRef.current?.checked) {
       form.fields.streetLine1.setValue(recommendedAddress.streetLine1.value);
       form.fields.streetLine2.setValue(
         recommendedAddress.streetLine2 ?
@@ -56,8 +56,6 @@ export function ReviewRecommendedAddress({
       <div className={styles.radio_group}>
         <input
           type="radio"
-          checked={!useRecommended}
-          onChange={() => setUseRecommended(false)}
           id={enteredAddressRadioButtonId}
           name="selectAddress"
           className={styles.radio}
@@ -74,8 +72,7 @@ export function ReviewRecommendedAddress({
       <div className={styles.radio_group}>
         <input
           type="radio"
-          checked={useRecommended}
-          onChange={() => setUseRecommended(true)}
+          ref={useRecommendedRef}
           id={recommendedAddressRadioButtonId}
           name="selectAddress"
           className={styles.radio}
