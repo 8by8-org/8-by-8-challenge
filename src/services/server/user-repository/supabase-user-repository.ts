@@ -1,3 +1,4 @@
+import 'server-only';
 import { inject } from 'undecorated-di';
 import { SERVER_SERVICE_KEYS } from '../keys';
 import { ServerError } from '@/errors/server-error';
@@ -49,7 +50,7 @@ export const SupabaseUserRepository = inject(
     }
   },
   [
-    SERVER_SERVICE_KEYS.createSupabaseClient,
+    SERVER_SERVICE_KEYS.createSupabaseServiceRoleClient,
     SERVER_SERVICE_KEYS.UserRecordParser,
   ],
 );

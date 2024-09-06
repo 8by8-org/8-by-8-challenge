@@ -1,7 +1,5 @@
 import { SupabaseUserRepository } from '@/services/server/user-repository/supabase-user-repository';
-import { createBrowserClient } from '@supabase/ssr';
-import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
-import { PRIVATE_ENVIRONMENT_VARIABLES } from '@/constants/private-environment-variables';
+import { createSupabaseServiceRoleClient } from '@/services/server/create-supabase-client/create-supabase-service-role-client';
 import { UserRecordParser } from '@/services/server/user-record-parser/user-record-parser';
 import { v4 as uuid } from 'uuid';
 import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
@@ -18,12 +16,7 @@ describe('SupabaseUserRepository', () => {
   let createSupabaseClient: CreateSupabaseClient;
 
   beforeEach(() => {
-    createSupabaseClient = () => {
-      return createBrowserClient(
-        PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_URL,
-        PRIVATE_ENVIRONMENT_VARIABLES.SUPABASE_SERVICE_ROLE_KEY,
-      );
-    };
+    createSupabaseClient = createSupabaseServiceRoleClient;
 
     userRepository = new SupabaseUserRepository(
       createSupabaseClient,
