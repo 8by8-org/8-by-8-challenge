@@ -14,6 +14,7 @@ import type { ICookies } from './i-cookies';
 export const Cookies = inject(
   class Cookies implements ICookies {
     private emailForSignInCookieName = '8by8-email-for-signin';
+    private inviteCodeCookieName = '8by8-invite-code';
 
     setEmailForSignIn(email: string): Promise<void> {
       return new Promise(resolve => {
@@ -34,6 +35,20 @@ export const Cookies = inject(
 
     clearEmailForSignIn(): void {
       cookies().delete(this.emailForSignInCookieName);
+    }
+
+    setInviteCode(inviteCode: string): void {
+      cookies().set(this.inviteCodeCookieName, inviteCode, {
+        sameSite: 'strict',
+      });
+    }
+
+    getInviteCode(): string | undefined {
+      return cookies().get(this.inviteCodeCookieName)?.value;
+    }
+
+    clearInviteCode(): void {
+      cookies().delete(this.inviteCodeCookieName);
     }
 
     private getEmailForSignInCookieExpiry() {

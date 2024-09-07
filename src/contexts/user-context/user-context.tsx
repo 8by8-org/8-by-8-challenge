@@ -2,13 +2,12 @@
 import { createNamedContext } from '../../hooks/create-named-context';
 import type { User } from '../../model/types/user';
 import type { Avatar } from '@/model/types/avatar';
-import type { UserType } from '@/model/enums/user-type';
+import type { InvitedBy } from '@/model/types/invited-by';
 
 interface SignUpWithEmailParams {
   email: string;
   name: string;
   avatar: Avatar;
-  type: UserType;
   captchaToken: string;
 }
 
@@ -24,6 +23,7 @@ interface SignInWithOTPParams {
 interface UserContextType {
   user: User | null;
   emailForSignIn: string;
+  invitedBy: InvitedBy | null;
   signUpWithEmail(params: SignUpWithEmailParams): Promise<void>;
   sendOTPToEmail(params: SendOTPToEmailParams): Promise<void>;
   resendOTP(): Promise<void>;

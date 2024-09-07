@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const user = await auth.signInWithEmailAndOTP(email, otp);
     cookies.clearEmailForSignIn();
 
-    return NextResponse.json({ user }, { status: 200 });
+    return NextResponse.json({ user, invitedBy: null }, { status: 200 });
   } catch (e) {
     if (e instanceof ServerError) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });

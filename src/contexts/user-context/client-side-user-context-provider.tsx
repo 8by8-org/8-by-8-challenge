@@ -8,6 +8,7 @@ import {
 } from './user-context';
 import { useRouter } from 'next/navigation';
 import type { User } from '@/model/types/user';
+import type { InvitedBy } from '@/model/types/invited-by';
 
 /**
  * Props that can be passed from a server component into a
@@ -17,6 +18,7 @@ import type { User } from '@/model/types/user';
 interface ClientSideUserContextProviderProps {
   user: User | null;
   emailForSignIn: string;
+  invitedBy: InvitedBy | null;
   children?: ReactNode;
 }
 
@@ -33,6 +35,7 @@ export function ClientSideUserContextProvider(
 ) {
   const [user, setUser] = useState<User | null>(props.user);
   const [emailForSignIn, setEmailForSignIn] = useState(props.emailForSignIn);
+  const [invitedBy, setInvitedBy] = useState<InvitedBy | null>(props.invitedBy);
   const router = useRouter();
 
   async function signUpWithEmail(params: SignUpWithEmailParams) {
@@ -88,6 +91,7 @@ export function ClientSideUserContextProvider(
 
     const data = await response.json();
     setUser(data.user as User);
+    setInvitedBy(data.invitedBy as InvitedBy);
   }
 
   async function signOut() {
@@ -100,6 +104,7 @@ export function ClientSideUserContextProvider(
     }
 
     setUser(null);
+    setInvitedBy(null);
   }
 
   /* istanbul ignore next */
@@ -112,6 +117,7 @@ export function ClientSideUserContextProvider(
       value={{
         user,
         emailForSignIn,
+        invitedBy,
         signUpWithEmail,
         sendOTPToEmail,
         resendOTP,
