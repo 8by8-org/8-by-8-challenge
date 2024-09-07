@@ -67,12 +67,12 @@ export const SupabaseUserRepository = inject(
         .update({ 'shared_challenge': true })
         .eq('user_id', userId)
       
-  // throw error 
+// throw error 
       if (completedActionsError) {
         throw new ServerError(`Error updating completed actions: ${completedActionsError.message}`);
       }
 
-  // add badges 
+// add badges 
       const { error: badgeError } = await supabase
       .from('badges')
         .insert({ challenger_id: userId, action: Actions.SharedChallenge })
@@ -127,7 +127,7 @@ export const SupabaseUserRepository = inject(
           throw new ServerError(`Error updating user completed challenge: ${userUpdateError.message}`);
         }
       }
-      // return user 
+// return user 
   user = await this.getUserById(userId);
   if (!user) {
     throw new ServerError(`User not found: ${userId}`);

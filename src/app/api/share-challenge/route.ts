@@ -11,7 +11,6 @@ export async function PUT(request: NextRequest) {
   
   try {
     const user = await auth.loadSessionUser();
-    console.log(user)
     if (!user) {
       return NextResponse.json({ message: 'user not found', status: 401 })
     } 

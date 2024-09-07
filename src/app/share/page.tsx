@@ -7,6 +7,7 @@ import { useContextSafely } from '@/hooks/use-context-safely';
 import { isSignedIn } from '@/components/guards/is-signed-in';
 import { useRouter } from 'next/navigation';
 import styles from './styles.module.scss';
+import SocialShare from '../socialshare/page';
 
 export default isSignedIn(function Progress() {
   const { user, restartChallenge, shareChallenge } = useContextSafely(
@@ -40,6 +41,9 @@ export default isSignedIn(function Progress() {
       <p className={styles.paragraph}>
         Invite friends to support your challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge. If you are curious, preview what they will see.
       </p>
+      <div>
+      <SocialShare/> 
+      </div>
       <div className={styles.copyLink}>
         <p>Copy your unique link:</p>
 
