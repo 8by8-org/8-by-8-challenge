@@ -101,19 +101,6 @@ describe('SupabaseUserRepository', () => {
 
     const authPlayer = playerData.user!;
 
-    const { error: invitedByInsertionError } = await supabase
-      .from('invited_by')
-      .insert({
-        player_id: authPlayer.id,
-        challenger_name: challengerMetadata.name,
-        challenger_avatar: challengerMetadata.avatar,
-        challenger_invite_code: challengerMetadata.invite_code,
-      });
-
-    if (invitedByInsertionError) {
-      throw new Error(invitedByInsertionError.message);
-    }
-
     // Complete an action on behalf of the challenger.
     const playerActionBadge = {
       action: Actions.VoterRegistration,
@@ -223,11 +210,6 @@ describe('SupabaseUserRepository', () => {
         },
       ],
       inviteCode: playerMetadata.invite_code,
-      invitedBy: {
-        inviteCode: challengerMetadata.invite_code,
-        name: challengerMetadata.name,
-        avatar: challengerMetadata.avatar,
-      },
     });
   });
 
