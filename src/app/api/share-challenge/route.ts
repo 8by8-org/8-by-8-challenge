@@ -26,7 +26,6 @@ export async function PUT(request: NextRequest) {
     if (e instanceof ServerError) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });
     }
-
     return NextResponse.json({ error: 'Bad data.' }, { status: 400 });
   }
 }

@@ -111,16 +111,16 @@ export function ClientSideUserContextProvider(
   }
 
 
-// share Challnege Function to call the share-challenge API 
+// share Challenge Function to call the share-challenge API 
   async function shareChallenge() { 
-    debugger;
       const response = await fetch( '/api/share-challenge', {
         method: 'PUT',
       }); 
     if (!response.ok) {
   throw new Error('Put request is not successfull.')
-}
-}
+   }
+} 
+  
   
   return (
     <UserContext.Provider

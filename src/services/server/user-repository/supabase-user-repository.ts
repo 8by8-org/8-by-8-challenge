@@ -98,7 +98,7 @@ export const SupabaseUserRepository = inject(
         throw new ServerError(`User not found: ${userId}`)
       }
       
-    // Check if the count exceeds the maxBadges threshold
+ // Check if the count exceeds the maxBadges threshold
       if (count && count >= maxBadges) {
       return user;
     }
@@ -114,7 +114,7 @@ export const SupabaseUserRepository = inject(
         }
         
       }
-      // If awarding the badge causes the user to gain 8 badges, set user.completed_challenge to true.
+// If awarding the badge causes the user to gain 8 badges, set user.completed_challenge to true.
       if (count && count + 1 === maxBadges) {
         // update `user.completed_challenge` to true
         const { error: userUpdateError } = await supabase
