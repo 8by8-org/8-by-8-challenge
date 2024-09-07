@@ -1,3 +1,4 @@
+import 'server-only';
 import { inject } from 'undecorated-di';
 import { init } from '@paralleldrive/cuid2';
 import { SERVER_SERVICE_KEYS } from '../keys';
@@ -132,7 +133,7 @@ export const SupabaseAuth = inject(
     }
   },
   [
-    SERVER_SERVICE_KEYS.createSupabaseClient,
+    SERVER_SERVICE_KEYS.createSupabaseSSRClient,
     SERVER_SERVICE_KEYS.UserRepository,
   ],
 );
