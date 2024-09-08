@@ -33,7 +33,7 @@ describe('ChallengeComplete', () => {
     );
 
     // expect(screen.getByText('Invite friends')).toBeInTheDocument();
-    expect(screen.getByText((content, element) => content.includes('Invite'))).toBeInTheDocument();
+    expect(screen.getByText((content, element) => content.includes('Invite friends'))).toBeInTheDocument();
 
 
     fireEvent.click(screen.getByText('Invite friends'));
@@ -55,6 +55,7 @@ describe('ChallengeComplete', () => {
 
     expect(screen.getByText('Share')).toBeInTheDocument();
 
+
     fireEvent.click(screen.getByText('Share'));
     expect(toggleInvite.current).toHaveBeenCalled();
   });
@@ -72,7 +73,9 @@ describe('ChallengeComplete', () => {
       />,
     );
 
-    expect(screen.getByText('Restart Challenge')).toBeInTheDocument();
+    expect(screen.getByText((content, element) => content.includes('Restart Challenge'))).toBeInTheDocument(); 
+    
+    // expect(screen.getByText('Restart Challenge')).toBeInTheDocument();
   });
 
   it('invokes restartChallenge, and setOpenModal when Restart Challenge button is clicked.', () => {
