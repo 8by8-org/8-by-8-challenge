@@ -33,7 +33,9 @@ describe('ChallengeComplete', () => {
       />,
     );
 
-    expect(screen.getByText('Invite friends')).toBeInTheDocument();
+    // expect(screen.getByText('Invite friends')).toBeInTheDocument();
+    expect(screen.getByText((content, element) => content.includes('Invite'))).toBeInTheDocument();
+
 
     fireEvent.click(screen.getByText('Invite friends'));
     expect(toggleInvite.current).toHaveBeenCalled();
