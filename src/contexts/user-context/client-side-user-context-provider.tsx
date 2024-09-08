@@ -1,12 +1,13 @@
 'use client';
-import { useState, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   SendOTPToEmailParams,
   SignUpWithEmailParams,
   SignInWithOTPParams,
   UserContext,
 } from './user-context';
-import { useRouter } from 'next/navigation';
+import { clearInviteCode } from './clear-invite-code-cookie';
 import type { User } from '@/model/types/user';
 import type { InvitedBy } from '@/model/types/invited-by';
 
@@ -37,6 +38,12 @@ export function ClientSideUserContextProvider(
   const [emailForSignIn, setEmailForSignIn] = useState(props.emailForSignIn);
   const [invitedBy, setInvitedBy] = useState<InvitedBy | null>(props.invitedBy);
   const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      clearInviteCode();
+    }
+  }, [user]);
 
   async function signUpWithEmail(params: SignUpWithEmailParams) {
     const response = await fetch('/api/signup-with-email', {

@@ -14,5 +14,7 @@ export const setInviteCodeCookie = bind(function setInviteCodeCookie(
     response.cookies.set(CookieNames.InviteCode, inviteCode);
   }
 
+  console.log(inviteCode);
+
   return response;
 }, []);

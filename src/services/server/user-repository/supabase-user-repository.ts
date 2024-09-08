@@ -58,6 +58,13 @@ export const SupabaseUserRepository = inject(
           type: UserType.Hybrid,
         })
         .eq('id', userId)
+        .select(
+          `*,
+          completed_actions (election_reminders, register_to_vote, shared_challenge),
+          badges (action, player_name, player_avatar),
+          contributed_to (challenger_name, challenger_avatar)`,
+        )
+        .order('id')
         .limit(1)
         .maybeSingle();
 

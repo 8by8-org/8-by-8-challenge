@@ -42,7 +42,6 @@ export const SupabaseAuth = inject(
     ): Promise<void> {
       const supabase = this.createSupabaseClient();
       const invitedBy = await this.loadInvitedByFromCookies();
-      this.cookies.clearInviteCode();
 
       const { data, error } = await supabase.auth.admin.createUser({
         email,
@@ -113,7 +112,6 @@ export const SupabaseAuth = inject(
       }
 
       let invitedBy = await this.loadInvitedByFromCookies();
-      this.cookies.clearInviteCode();
 
       if (invitedBy) {
         await this.invitationsRepository.insertOrUpdateInvitedBy(
@@ -136,7 +134,6 @@ export const SupabaseAuth = inject(
     async loadSession(): Promise<Session> {
       const supabase = this.createSupabaseClient();
       let invitedBy = await this.loadInvitedByFromCookies();
-
       const { data } = await supabase.auth.getUser();
 
       if (data.user) {
@@ -153,8 +150,6 @@ export const SupabaseAuth = inject(
               if (user.type === UserType.Challenger) {
                 user = await this.userRepository.makeHybrid(user.uid);
               }
-
-              this.cookies.clearInviteCode();
             } else if (user.type !== UserType.Challenger) {
               invitedBy =
                 await this.invitationsRepository.getInvitedByFromPlayerId(
