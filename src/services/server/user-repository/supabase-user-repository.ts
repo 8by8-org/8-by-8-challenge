@@ -2,6 +2,7 @@ import 'server-only';
 import { inject } from 'undecorated-di';
 import { SERVER_SERVICE_KEYS } from '../keys';
 import { ServerError } from '@/errors/server-error';
+import { UserType } from '@/model/enums/user-type';
 import type { UserRepository } from './user-repository';
 import type { User } from '@/model/types/user';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
@@ -39,6 +40,34 @@ export const SupabaseUserRepository = inject(
       }
 
       if (!dbUser) return null;
+
+      try {
+        const user = this.userRecordParser.parseUserRecord(dbUser);
+        return user;
+      } catch (e) {
+        throw new ServerError('Failed to parse user data.', 400);
+      }
+    }
+
+    async makeHybrid(userId: string): Promise<User> {
+      const supabase = this.createSupabaseClient();
+
+      const { data: dbUser, error } = await supabase
+        .from('users')
+        .update({
+          type: UserType.Hybrid,
+        })
+        .eq('id', userId)
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        throw new ServerError(error.message, 500);
+      }
+
+      if (!dbUser) {
+        throw new ServerError('Update operation returned null user.', 500);
+      }
 
       try {
         const user = this.userRecordParser.parseUserRecord(dbUser);

@@ -15,6 +15,7 @@ import { SupabaseUserRepository } from './user-repository/supabase-user-reposito
 import { WebCryptoSubtleEncryptor } from './encryptor/web-crypto-subtle-encryptor';
 import { createSupabaseServiceRoleClient } from './create-supabase-client/create-supabase-service-role-client';
 import { setInviteCodeCookie } from './set-invite-code-cookie/set-invite-code-cookie';
+import { SupabaseInvitationsRepository } from './invitations-repository/supabase-invitations-repository';
 
 /**
  * An inversion of control container that should be used to obtain instances of
@@ -72,5 +73,9 @@ export const serverContainer = ContainerBuilder.createBuilder()
   .registerFunction(
     SERVER_SERVICE_KEYS.setInviteCodeCookie,
     setInviteCodeCookie,
+  )
+  .registerClass(
+    SERVER_SERVICE_KEYS.InvitationsRepository,
+    SupabaseInvitationsRepository,
   )
   .build();

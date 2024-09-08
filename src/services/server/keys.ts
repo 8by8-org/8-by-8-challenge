@@ -3,11 +3,12 @@ import type { Auth } from './auth/auth';
 import type { CaptchaValidator } from './captcha-validator/captcha-validator';
 import type { ICookies } from './cookies/i-cookies';
 import type { IMiddleware } from './middleware/i-middleware.interface';
-import type { NextMiddleware, NextRequest } from 'next/server';
+import type { NextMiddleware } from 'next/server';
 import type { UserRepository } from './user-repository/user-repository';
 import type { IUserRecordParser } from './user-record-parser/i-user-record-parser';
 import type { Encryptor } from './encryptor/encryptor';
 import type { CreateSupabaseClient } from './create-supabase-client/create-supabase-client';
+import type { InvitationsRepository } from './invitations-repository/invitations-repository';
 
 const { keys } = Keys.createKeys()
   .addKey('Auth')
@@ -37,7 +38,9 @@ const { keys } = Keys.createKeys()
   .addKey('Encryptor')
   .forType<Encryptor>()
   .addKey('setInviteCodeCookie')
-  .forType<NextMiddleware>();
+  .forType<NextMiddleware>()
+  .addKey('InvitationsRepository')
+  .forType<InvitationsRepository>();
 
 /**
  * Keys that can be used to retrieve service classes, functions, etc. from an
