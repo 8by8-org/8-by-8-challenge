@@ -4,7 +4,6 @@ import { requestBodySchema } from './request-body-schema';
 import { serverContainer } from '@/services/server/container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 import { ServerError } from '@/errors/server-error';
-import { UserType } from '@/model/enums/user-type';
 
 export async function POST(request: NextRequest) {
   const captchaValidator = serverContainer.get(
@@ -24,12 +23,7 @@ export async function POST(request: NextRequest) {
         { status: 401 },
       );
 
-    await auth.signUpWithEmailAndSendOTP(
-      email,
-      name,
-      avatar,
-      UserType.Challenger,
-    );
+    await auth.signUpWithEmailAndSendOTP(email, name, avatar);
     await cookies.setEmailForSignIn(email);
 
     return NextResponse.json(
