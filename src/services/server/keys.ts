@@ -3,7 +3,7 @@ import type { Auth } from './auth/auth';
 import type { CaptchaValidator } from './captcha-validator/captcha-validator';
 import type { ICookies } from './cookies/i-cookies';
 import type { IMiddleware } from './middleware/i-middleware.interface';
-import type { NextMiddleware } from 'next/server';
+import type { NextMiddleware, NextRequest } from 'next/server';
 import type { UserRepository } from './user-repository/user-repository';
 import type { IUserRecordParser } from './user-record-parser/i-user-record-parser';
 import type { Encryptor } from './encryptor/encryptor';
@@ -35,7 +35,9 @@ const { keys } = Keys.createKeys()
   .addKey('UserRepository')
   .forType<UserRepository>()
   .addKey('Encryptor')
-  .forType<Encryptor>();
+  .forType<Encryptor>()
+  .addKey('setInviteCodeCookie')
+  .forType<NextMiddleware>();
 
 /**
  * Keys that can be used to retrieve service classes, functions, etc. from an

@@ -10,6 +10,7 @@ import type {
   NextMiddleware,
   NextMiddlewareResult,
 } from 'next/dist/server/web/types';
+import { SearchParams } from '@/constants/search-params';
 
 /**
  * An implementation of {@link IMiddleware} that potentially redirects the user
@@ -19,6 +20,7 @@ import type {
 export const Middleware = inject(
   class Middleware implements IMiddleware {
     constructor(
+      private setInviteCodeCookie: NextMiddleware,
       private redirectIfOTPNotSent: NextMiddleware,
       private redirectIfSignedIn: NextMiddleware,
       private redirectIfSignedOut: NextMiddleware,
@@ -29,6 +31,10 @@ export const Middleware = inject(
       request: NextRequest,
       event: NextFetchEvent,
     ): Promise<NextMiddlewareResult> {
+      if (this.shouldSetInviteCodeCookie(request)) {
+        return await this.setInviteCodeCookie(request, event);
+      }
+
       if (this.isSignedInOnlyRoute(request.nextUrl.pathname)) {
         return await this.redirectIfSignedOut(request, event);
       }
@@ -44,6 +50,10 @@ export const Middleware = inject(
       }
 
       return await this.refreshSession(request, event);
+    }
+
+    private shouldSetInviteCodeCookie(request: NextRequest) {
+      return request.nextUrl.searchParams.has(SearchParams.InviteCode);
     }
 
     private isSignedInOnlyRoute(pathname: string) {
@@ -65,6 +75,7 @@ export const Middleware = inject(
     }
   },
   [
+    SERVER_SERVICE_KEYS.setInviteCodeCookie,
     SERVER_SERVICE_KEYS.redirectIfOTPNotSent,
     SERVER_SERVICE_KEYS.redirectIfSignedIn,
     SERVER_SERVICE_KEYS.redirectIfSignedOut,
