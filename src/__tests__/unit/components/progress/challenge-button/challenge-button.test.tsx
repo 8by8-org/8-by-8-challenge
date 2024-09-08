@@ -4,7 +4,6 @@ import { ChallengeButton } from '@/components/progress/challenge-button';
 import type { User } from '@/model/types/user';
 import { Dispatch, RefObject, SetStateAction } from 'react';
 
-
 jest.mock('next/navigation', () => require('next-router-mock'));
 
 describe('ChallengeComplete', () => {

@@ -75,7 +75,7 @@ export function ChallengeButton({
                 }
         
               >
-                <span>Invite Friends</span>
+                Invite Friends
               </button>,
             );
   
@@ -87,7 +87,7 @@ export function ChallengeButton({
             restartChallenge();
           }}
         >
-          <span>Restart Challenge</span>
+        Restart Challenge
         </button>,
       );
       setOpenModal(true);
