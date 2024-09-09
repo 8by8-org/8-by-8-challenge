@@ -72,6 +72,7 @@ using ((select auth.uid()) = player_id);
 create table public.contributed_to (
   id serial,
   player_id uuid not null references public.users on delete cascade,
+  challenger_invite_code varchar not null,
   challenger_name varchar(255) not null,
   challenger_avatar char(1) not null,
   primary key (id, player_id)
