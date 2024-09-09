@@ -111,62 +111,25 @@ export const SupabaseAuth = inject(
         );
       }
 
-      let invitedBy = await this.loadInvitedByFromCookies();
-
-      if (invitedBy) {
-        await this.invitationsRepository.insertOrUpdateInvitedBy(
-          data.user.id,
-          invitedBy,
-        );
-
-        if (user.type === UserType.Challenger) {
-          user = await this.userRepository.makeHybrid(user.uid);
-        }
-      } else if (user.type !== UserType.Challenger) {
-        invitedBy = await this.invitationsRepository.getInvitedByFromPlayerId(
-          user.uid,
-        );
-      }
-
-      return { user, invitedBy };
+      return await this.loadInvitedByAndUpdateUser(user);
     }
 
     async loadSession(): Promise<Session> {
       const supabase = this.createSupabaseClient();
-      let invitedBy = await this.loadInvitedByFromCookies();
       const { data } = await supabase.auth.getUser();
 
       if (data.user) {
         try {
-          let user = await this.userRepository.getUserById(data.user.id);
-
+          const user = await this.userRepository.getUserById(data.user.id);
           if (user) {
-            if (invitedBy) {
-              await this.invitationsRepository.insertOrUpdateInvitedBy(
-                data.user.id,
-                invitedBy,
-              );
-
-              if (user.type === UserType.Challenger) {
-                user = await this.userRepository.makeHybrid(user.uid);
-              }
-            } else if (user.type !== UserType.Challenger) {
-              invitedBy =
-                await this.invitationsRepository.getInvitedByFromPlayerId(
-                  user.uid,
-                );
-            }
+            return await this.loadInvitedByAndUpdateUser(user);
           }
-
-          return {
-            user,
-            invitedBy,
-          };
         } catch (e) {
           console.error(e);
         }
       }
 
+      const invitedBy = await this.loadInvitedByForGuest();
       return { user: null, invitedBy };
     }
 
@@ -194,6 +157,34 @@ export const SupabaseAuth = inject(
       }
     }
 
+    private async loadInvitedByAndUpdateUser(user: User): Promise<Session> {
+      const invitedByCookieValue = await this.loadInvitedByFromCookies();
+
+      if (
+        invitedByCookieValue &&
+        this.isInvitedByValid(invitedByCookieValue, user)
+      ) {
+        await this.invitationsRepository.insertOrUpdateInvitedBy(
+          user.uid,
+          invitedByCookieValue,
+        );
+
+        if (user.type === UserType.Challenger) {
+          user = await this.userRepository.makeHybrid(user.uid);
+        }
+
+        return { user, invitedBy: invitedByCookieValue };
+      }
+
+      const invitedBy =
+        await this.invitationsRepository.getInvitedByFromPlayerId(user.uid);
+      return { user, invitedBy };
+    }
+
+    private async loadInvitedByForGuest(): Promise<InvitedBy | null> {
+      return this.loadInvitedByFromCookies();
+    }
+
     private async loadInvitedByFromCookies(): Promise<InvitedBy | null> {
       const inviteCode = this.cookies.getInviteCode();
 
@@ -207,6 +198,10 @@ export const SupabaseAuth = inject(
       }
 
       return null;
+    }
+
+    private isInvitedByValid(invitedBy: InvitedBy, user: User) {
+      return invitedBy.challengerInviteCode !== user.inviteCode;
     }
   },
   [
