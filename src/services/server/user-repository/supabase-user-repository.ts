@@ -27,7 +27,7 @@ export const SupabaseUserRepository = inject(
         .select(
           `*,
           completed_actions (election_reminders, register_to_vote, shared_challenge),
-          badges (action, player_name, player_avatar),
+          badges (action_type, player_name, player_avatar),
           invited_by (challenger_invite_code, challenger_name, challenger_avatar),
           contributed_to (challenger_name, challenger_avatar)`,
         )
