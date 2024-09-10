@@ -22,7 +22,8 @@ create function award_badge(
   player_avatar char(1)
 )
 returns void
-language plpgsql strict
+-- this function should not be run in strict mode as several parameters can be null
+language plpgsql
 security invoker
 as
 $$
@@ -36,9 +37,9 @@ begin
     values (award_badge.user_id, award_badge.action_type, award_badge.player_name, award_badge.player_avatar);
 
     badge_count = count_badges(user_id);
-    
+
     if badge_count >= 8 then
-      update users 
+      update users
       set completed_challenge = true
       where users.id = user_id;
     end if;
