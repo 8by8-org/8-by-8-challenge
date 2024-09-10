@@ -1,12 +1,13 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import type { User } from '@/model/types/user';
 import styles from './styles.module.scss';
-
+import { useAlertsContext} from '@/contexts/alerts-context';
+import { Alert, useAlert } from '@/components/utils/alert';
 interface ChallengeButtonProps {
   user: User | null;
   daysLeft: number;
   toggleInvite: React.RefObject<() => null>;
-  restartChallenge: () => void;
+  restartChallenge: () => Promise<void>;
   setOpenModal: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -39,15 +40,13 @@ export function ChallengeButton({
   restartChallenge,
   setOpenModal,
 }: ChallengeButtonProps) {
-  const [button, setButton] = useState<JSX.Element | null>(
-    <button
-      className={styles.gradient}
-      onClick={() => toggleInvite.current?.()}
-    >
-      <span>Invite friends</span>
-    </button>,
-  );
 
+  const [button, setButton] = useState<JSX.Element | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  //open a model of challenge restart no close? any page move it user context
+  //global uesr context above
+  // first progress page
+  //regardless page 
   useEffect(() => {
     let challengeFinished = user?.completedChallenge;
     if (challengeFinished) {
@@ -59,26 +58,35 @@ export function ChallengeButton({
           <span>Share</span>
         </button>,
       );
-    } else if (!challengeFinished && daysLeft == 0) {
+    } else if (!challengeFinished && daysLeft === 0) {
       setButton(
         <button
           className={styles.gradient}
-          onClick={() => {
-            restartChallenge();
-            setButton(
-              <button
-                className={styles.gradient}
-                onClick={() => toggleInvite.current?.()}
-              >
-                <span>Invite friends</span>
-              </button>,
-            );
+          onClick={async () => {
+            setIsLoading(true);
+            try {
+              await restartChallenge();
+              setOpenModal(false);
+            } catch (error) {
+              alert('Error restarting challenge');
+            } finally {
+              setIsLoading(false);
+            }
           }}
         >
-          <span>Restart Challenge</span>
+          <span>{isLoading ? 'Restarting...' : 'Restart Challenge'}</span>
         </button>,
       );
       setOpenModal(true);
+    } else {
+      setButton(
+        <button
+          className={styles.gradient}
+          onClick={() => toggleInvite.current?.()}
+        >
+          <span>Invite friends</span>
+        </button>,
+      );
     }
   }, [user, daysLeft, toggleInvite, restartChallenge, setOpenModal]);
 

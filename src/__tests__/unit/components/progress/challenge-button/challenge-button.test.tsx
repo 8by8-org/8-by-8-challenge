@@ -1,12 +1,11 @@
 import '@testing-library/jest-dom';
-import { render, cleanup, screen, fireEvent } from '@testing-library/react';
+import { waitFor,render, cleanup, screen, fireEvent } from '@testing-library/react';
 import { ChallengeButton } from '@/components/progress/challenge-button';
 import type { User } from '@/model/types/user';
 import { Dispatch, RefObject, SetStateAction } from 'react';
-
 describe('ChallengeComplete', () => {
   let toggleInvite: RefObject<() => null>;
-  let restartChallenge: () => null;
+  let restartChallenge: () => Promise<void>;
   let setOpenModal: Dispatch<SetStateAction<boolean>>;
 
   beforeEach(() => {
@@ -89,7 +88,7 @@ describe('ChallengeComplete', () => {
     expect(setOpenModal).toHaveBeenCalled();
   });
 
-  it('sets button to an Invite friends button when Restart Challenge button is clicked and invokes toggleInvite when Invite friends button is clicked.', () => {
+  it('sets button to an Invite friends button when Restart Challenge button is clicked and invokes toggleInvite when Invite friends button is clicked.', async () => {
     const user: User = { completedChallenge: false } as User;
     const daysLeft = 0;
     render(
@@ -103,7 +102,11 @@ describe('ChallengeComplete', () => {
     );
 
     fireEvent.click(screen.getByText('Restart Challenge'));
-    expect(screen.getByText('Invite friends')).toBeInTheDocument();
+    //find text invited frineds  text is not right
+    //one more meeting
+    //next Tuesday 5:00 ETS
+    await waitFor(() => expect(screen.getByText('invited friends')).toBeInTheDocument());
+
     fireEvent.click(screen.getByText('Invite friends'));
     expect(toggleInvite.current).toHaveBeenCalled();
   });
