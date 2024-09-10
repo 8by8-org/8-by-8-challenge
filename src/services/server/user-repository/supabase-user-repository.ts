@@ -41,6 +41,13 @@ export const SupabaseUserRepository = inject(
 
       if (!dbUser) return null;
 
+      const rpcResult = await supabase.rpc('get_user_by_id', {
+        user_id: userId,
+      });
+
+      console.log(rpcResult);
+      console.log(dbUser);
+
       try {
         const user = this.userRecordParser.parseUserRecord(dbUser);
         return user;
