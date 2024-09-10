@@ -1,6 +1,7 @@
 create function count_badges(user_id uuid)
 returns integer
-language plpgsql
+language plpgsql strict
+security invoker
 as
 $$
 declare
@@ -21,7 +22,8 @@ create function award_badge(
   player_avatar char(1)
 )
 returns void
-language plpgsql
+language plpgsql strict
+security invoker
 as
 $$
 declare
@@ -34,11 +36,11 @@ begin
     values (award_badge.user_id, award_badge.action_type, award_badge.player_name, award_badge.player_avatar);
 
     badge_count = count_badges(user_id);
-
+    
     if badge_count >= 8 then
-      update users
+      update users 
       set completed_challenge = true
-      where users.id = award_badge.user_id;
+      where users.id = user_id;
     end if;
   end if;
 end;
@@ -51,7 +53,8 @@ create function update_contributed_to(
   challenger_avatar char(1)
 )
 returns void
-language plpgsql
+language plpgsql strict
+security invoker
 as
 $$
 begin
@@ -73,7 +76,8 @@ $$;
 
 create function award_badge_to_challenger(player_id uuid, challenger_invite_code varchar)
 returns void
-language plpgsql
+language plpgsql strict
+security invoker
 as $$
 declare
   challenger_id uuid;
@@ -116,6 +120,7 @@ create function award_action_badge(
 )
 returns void
 language plpgsql strict
+security invoker
 as $$
 <<award_action_badge_body>>
 declare
@@ -133,25 +138,34 @@ begin
 end;
 $$;
 
+create function should_award_election_reminders_badge(user_id uuid)
+returns boolean
+language plpgsql strict
+security invoker
+as 
+$$
+begin
+  update completed_actions
+  set election_reminders = true
+  where completed_actions.user_id = should_award_election_reminders_badge.user_id
+  and completed_actions.election_reminders = false;
+
+  return found;
+end;
+$$;
+
 create function award_election_reminders_badge(user_id uuid)
 returns void
 language plpgsql strict
-as $$
+security invoker
+as 
+$$
 declare
-  completed_election_reminders boolean; 
+  should_award_badge boolean;
 begin
-  select election_reminders from completed_actions
-  into completed_election_reminders
-  where completed_actions.user_id = award_election_reminders_badge.user_id;
+  should_award_badge = should_award_election_reminders_badge(user_id);
 
-  assert completed_election_reminders is not null, 
-    'award_election_reminders_badge() ERROR: completed_actions.election_reminders must not be null';
-
-  if completed_election_reminders != true then
-    update completed_actions
-    set election_reminders = true
-    where completed_actions.user_id = award_election_reminders_badge.user_id;
-
+  if should_award_badge = true then
     perform award_action_badge(award_election_reminders_badge.user_id, 'electionReminders');
   end if;
 end;
