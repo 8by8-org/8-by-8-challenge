@@ -90,11 +90,6 @@ export class SupabaseUserRecordBuilder {
     };
   }
 
-  email(email: string) {
-    this.userRecord.email = email;
-    return this;
-  }
-
   name(name: string) {
     this.userRecord.user_name = name;
     return this;
@@ -110,6 +105,11 @@ export class SupabaseUserRecordBuilder {
     return this;
   }
 
+  inviteCode(inviteCode: string) {
+    this.userRecord.invite_code = inviteCode;
+    return this;
+  }
+
   challengeEndTimestamp(challengeEndTimestamp: number) {
     this.userRecord.challenge_end_timestamp = challengeEndTimestamp;
     return this;
@@ -117,11 +117,6 @@ export class SupabaseUserRecordBuilder {
 
   completedChallenge(completedChallenge: boolean) {
     this.userRecord.completed_challenge = completedChallenge;
-    return this;
-  }
-
-  inviteCode(inviteCode: string) {
-    this.userRecord.invite_code = inviteCode;
     return this;
   }
 
@@ -138,20 +133,6 @@ export class SupabaseUserRecordBuilder {
         player_avatar: badge.playerAvatar,
       };
     });
-
-    return this;
-  }
-
-  contributedTo(contributedTo: Array<ContributedTo>) {
-    this.contributedToRecords = contributedTo.map(
-      ({ name, inviteCode, avatar }) => {
-        return {
-          challenger_name: name,
-          challenger_invite_code: inviteCode,
-          challenger_avatar: avatar,
-        };
-      },
-    );
 
     return this;
   }
@@ -176,6 +157,20 @@ export class SupabaseUserRecordBuilder {
     return this;
   }
 
+  contributedTo(contributedTo: Array<ContributedTo>) {
+    this.contributedToRecords = contributedTo.map(
+      ({ name, inviteCode, avatar }) => {
+        return {
+          challenger_name: name,
+          challenger_invite_code: inviteCode,
+          challenger_avatar: avatar,
+        };
+      },
+    );
+
+    return this;
+  }
+
   async build(): Promise<User> {
     const supabase = createClient(
       PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_URL,
@@ -196,6 +191,7 @@ export class SupabaseUserRecordBuilder {
         user_metadata: userMetadata,
       });
 
+    /* istanbul ignore next */
     if (userInsertionError) {
       throw new Error(userInsertionError.message);
     }
@@ -208,6 +204,7 @@ export class SupabaseUserRecordBuilder {
       })
       .eq('id', userData.user.id);
 
+    /* istanbul ignore next */
     if (updateUserError) {
       throw new Error(updateUserError.message);
     }
@@ -220,6 +217,7 @@ export class SupabaseUserRecordBuilder {
           ...badgeRecord,
         });
 
+      /* istanbul ignore next */
       if (badgeInsertionError) {
         throw new Error(badgeInsertionError.message);
       }
@@ -233,6 +231,7 @@ export class SupabaseUserRecordBuilder {
           ...contributedToRecord,
         });
 
+      /* istanbul ignore next */
       if (contributedToInsertionError) {
         throw new Error(contributedToInsertionError.message);
       }
@@ -244,6 +243,7 @@ export class SupabaseUserRecordBuilder {
         .update(this.completedActionsRecord)
         .eq('user_id', userData.user.id);
 
+      /* istanbul ignore next */
       if (completedActionsInsertionRecord) {
         throw new Error(completedActionsInsertionRecord.message);
       }
@@ -257,6 +257,7 @@ export class SupabaseUserRecordBuilder {
           ...this.invitedByRecord,
         });
 
+      /* istanbul ignore next */
       if (invitedByInsertionError) {
         throw new Error(invitedByInsertionError.message);
       }
@@ -269,6 +270,7 @@ export class SupabaseUserRecordBuilder {
       },
     );
 
+    /* istanbul ignore next */
     if (getUserError) {
       throw new Error(getUserError.message);
     }
