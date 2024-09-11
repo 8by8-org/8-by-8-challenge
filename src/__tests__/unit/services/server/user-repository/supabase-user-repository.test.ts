@@ -7,7 +7,7 @@ import { UserType } from '@/model/enums/user-type';
 import { Actions } from '@/model/enums/actions';
 import { createId } from '@paralleldrive/cuid2';
 import { ServerError } from '@/errors/server-error';
-import { AuthError } from '@supabase/supabase-js';
+import { SupabaseUserRecordBuilder } from '@/utils/test/supabase-user-record-builder';
 import type { CreateSupabaseClient } from '@/services/server/create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '@/services/server/user-record-parser/i-user-record-parser';
 
@@ -35,147 +35,66 @@ describe('SupabaseUserRepository', () => {
   it('returns a user when getUserById is called with an existing user id.', async () => {
     const supabase = createSupabaseClient();
 
-    // Create a challenger and award them an action badge.
-    const challengerMetadata = {
-      name: 'Challenger',
-      avatar: '0',
-      type: UserType.Challenger,
-      invite_code: createId(),
-    };
+    const challengerEmail = 'challenger@example.com';
+    const challengerName = 'Challenger';
+    const challengerAvatar = '0';
+    const challengerInviteCode = 'test-invite-code';
 
-    const { data: challengerData, error: challengerInsertionError } =
-      await supabase.auth.admin.createUser({
-        email: 'challenger@example.com',
-        email_confirm: true,
-        user_metadata: challengerMetadata,
-      });
+    const playerEmail = 'player@example.com';
+    const playerName = 'Player';
+    const playerAvatar = '1';
 
-    if (challengerInsertionError) {
-      throw new Error(challengerInsertionError.message);
-    }
-
-    const authChallenger = challengerData.user!;
-
-    const challengerActionBadge = {
-      action_type: Actions.SharedChallenge,
-      challenger_id: authChallenger!.id,
-    };
-
-    const { error: challengerActionBadgeInsertionError } = await supabase
-      .from('badges')
-      .insert(challengerActionBadge);
-
-    if (challengerActionBadgeInsertionError) {
-      throw new Error(challengerActionBadgeInsertionError.message);
-    }
-
-    const { error: challengerUpdateError } = await supabase
-      .from('completed_actions')
-      .update({
-        shared_challenge: true,
-      })
-      .eq('user_id', authChallenger.id);
-
-    if (challengerUpdateError) {
-      throw new Error(challengerUpdateError.message);
-    }
+    const { uid: challengerId } = await new SupabaseUserRecordBuilder(
+      challengerEmail,
+    )
+      .name(challengerName)
+      .avatar(challengerAvatar)
+      .completedActions({ sharedChallenge: true })
+      .badges([
+        {
+          action: Actions.SharedChallenge,
+        },
+        {
+          playerName,
+          playerAvatar,
+        },
+      ])
+      .inviteCode(challengerInviteCode)
+      .build();
 
     // Create a player who has been invited by the challenger.
-    const playerMetadata = {
-      name: 'Player',
-      avatar: '1',
-      type: UserType.Player,
-      invite_code: createId(),
-    };
-
-    const { data: playerData, error: playerInsertionError } =
-      await supabase.auth.admin.createUser({
-        email: 'player@example.com',
-        email_confirm: true,
-        user_metadata: playerMetadata,
-      });
-
-    if (playerInsertionError) {
-      throw new Error(playerInsertionError.message);
-    }
-
-    const authPlayer = playerData.user!;
-
-    const { error: invitedByInsertionError } = await supabase
-      .from('invited_by')
-      .insert({
-        player_id: authPlayer.id,
-        challenger_name: challengerMetadata.name,
-        challenger_avatar: challengerMetadata.avatar,
-        challenger_invite_code: challengerMetadata.invite_code,
-      });
-
-    if (invitedByInsertionError) {
-      throw new Error(invitedByInsertionError.message);
-    }
-
-    // Complete an action on behalf of the challenger.
-    const playerActionBadge = {
-      action_type: Actions.VoterRegistration,
-      challenger_id: authPlayer!.id,
-    };
-
-    const { error: playerActionBadgeInsertionError } = await supabase
-      .from('badges')
-      .insert(playerActionBadge);
-
-    if (playerActionBadgeInsertionError)
-      throw new Error(playerActionBadgeInsertionError.message);
-
-    const playerContributedTo = {
-      player_id: authPlayer.id,
-      challenger_invite_code: challengerMetadata.invite_code,
-      challenger_name: challengerMetadata.name,
-      challenger_avatar: challengerMetadata.avatar,
-    };
-
-    const { error: contributedToInsertionError } = await supabase
-      .from('contributed_to')
-      .insert(playerContributedTo);
-
-    if (contributedToInsertionError) {
-      throw new Error(contributedToInsertionError.message);
-    }
-
-    const { error: playerUpdateError } = await supabase
-      .from('completed_actions')
-      .update({
-        register_to_vote: true,
+    const { uid: playerId } = await new SupabaseUserRecordBuilder(playerEmail)
+      .name(playerName)
+      .type(UserType.Player)
+      .avatar('1')
+      .completedActions({ registerToVote: true })
+      .invitedBy({
+        name: challengerName,
+        avatar: challengerAvatar,
+        inviteCode: challengerInviteCode,
       })
-      .eq('user_id', authPlayer.id);
-
-    if (playerUpdateError) {
-      throw new Error(playerUpdateError.message);
-    }
-
-    const playerAwardedBadge = {
-      player_name: playerMetadata.name,
-      player_avatar: playerMetadata.avatar,
-      challenger_id: authChallenger.id,
-    };
-
-    const { error: playerAwardedBadgeInsertionError } = await supabase
-      .from('badges')
-      .insert(playerAwardedBadge);
-
-    if (playerAwardedBadgeInsertionError) {
-      throw new Error(playerAwardedBadgeInsertionError.message);
-    }
+      .badges([
+        {
+          action: Actions.VoterRegistration,
+        },
+      ])
+      .contributedTo([
+        {
+          name: challengerName,
+          inviteCode: challengerInviteCode,
+          avatar: challengerAvatar,
+        },
+      ])
+      .build();
 
     // Evaluate whether the challenger is returned as expected.
-    const challenger = await userRepository.getUserById(authChallenger.id);
-
+    const challenger = await userRepository.getUserById(challengerId);
     expect(challenger).toEqual({
-      uid: authChallenger.id,
-      email: authChallenger.email,
-      name: challengerMetadata.name,
-      avatar: challengerMetadata.avatar,
-      type: challengerMetadata.type,
+      uid: challengerId,
+      email: challengerEmail,
+      name: challengerName,
+      avatar: challengerAvatar,
+      type: UserType.Challenger,
       completedActions: {
         sharedChallenge: true,
         electionReminders: false,
@@ -186,25 +105,26 @@ describe('SupabaseUserRepository', () => {
           action: Actions.SharedChallenge,
         },
         {
-          playerName: playerMetadata.name,
-          playerAvatar: playerMetadata.avatar,
+          playerName,
+          playerAvatar,
         },
       ],
       challengeEndTimestamp: expect.any(Number),
       completedChallenge: false,
       contributedTo: [],
-      inviteCode: challengerMetadata.invite_code,
+      inviteCode: challengerInviteCode,
+      invitedBy: undefined,
     });
 
     // Evaluate whether the player is returned as expected.
-    const player = await userRepository.getUserById(authPlayer.id);
+    const player = await userRepository.getUserById(playerId);
 
     expect(player).toEqual({
-      uid: authPlayer.id,
-      email: authPlayer.email,
-      name: playerMetadata.name,
-      avatar: playerMetadata.avatar,
-      type: playerMetadata.type,
+      uid: playerId,
+      email: playerEmail,
+      name: playerName,
+      avatar: playerAvatar,
+      type: UserType.Player,
       completedActions: {
         sharedChallenge: false,
         electionReminders: false,
@@ -219,15 +139,15 @@ describe('SupabaseUserRepository', () => {
       completedChallenge: false,
       contributedTo: [
         {
-          name: challengerMetadata.name,
-          avatar: challengerMetadata.avatar,
+          name: challengerName,
+          avatar: challengerAvatar,
         },
       ],
-      inviteCode: playerMetadata.invite_code,
+      inviteCode: expect.any(String),
       invitedBy: {
-        inviteCode: challengerMetadata.invite_code,
-        name: challengerMetadata.name,
-        avatar: challengerMetadata.avatar,
+        inviteCode: challengerInviteCode,
+        name: challengerName,
+        avatar: challengerAvatar,
       },
     });
   });
