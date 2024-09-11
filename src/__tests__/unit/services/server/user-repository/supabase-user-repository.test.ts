@@ -153,14 +153,18 @@ describe('SupabaseUserRepository', () => {
     });
   });
 
-  it(`throws a ServerError if supabase.rpc() throws an error when getUserById is 
+  it(`throws a ServerError if supabase.rpc() returns an error when getUserById is 
   called.`, async () => {
     const errorMessage = 'test error message';
 
     createSupabaseClient = jest.fn().mockImplementation(() => {
       return {
         rpc: () => {
-          throw new Error(errorMessage);
+          return {
+            data: null,
+            error: new Error(errorMessage),
+            status: 429,
+          };
         },
       };
     });
@@ -171,7 +175,7 @@ describe('SupabaseUserRepository', () => {
     );
 
     await expect(userRepository.getUserById('')).rejects.toThrow(
-      new ServerError(errorMessage, 500),
+      new ServerError(errorMessage, 429),
     );
   });
 
@@ -461,5 +465,77 @@ describe('SupabaseUserRepository', () => {
     const updatedChallenger = await userRepository.getUserById(challenger.uid);
     expect(updatedChallenger).not.toBeNull();
     expect(updatedChallenger?.badges).toHaveLength(8);
+  });
+
+  it(`throws a ServerError if supabase.rpc() returns an error when 
+  awardElectionRemindersBadge is called.`, async () => {
+    const errorMessage = 'test error message';
+
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        rpc: () => {
+          return {
+            data: null,
+            error: new Error(errorMessage),
+            status: 429,
+          };
+        },
+      };
+    });
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+
+    await expect(
+      userRepository.awardElectionRemindersBadge(''),
+    ).rejects.toThrow(new ServerError(errorMessage, 429));
+  });
+
+  it(`throws an error if the user returned by supabase.rpc() is null when 
+  awardElectionRemindersBadge is called.`, async () => {
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        rpc: () => {
+          return {
+            data: null,
+            error: null,
+          };
+        },
+      };
+    });
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+
+    await expect(
+      userRepository.awardElectionRemindersBadge(''),
+    ).rejects.toThrow(new ServerError('User was null after update.', 500));
+  });
+
+  it(`throws an error if the user returned by supabase.rpc() is cannot be parsed
+  awardElectionRemindersBadge is called.`, async () => {
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        rpc: () => {
+          return {
+            data: {},
+            error: null,
+          };
+        },
+      };
+    });
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+
+    await expect(
+      userRepository.awardElectionRemindersBadge(''),
+    ).rejects.toThrow(new ServerError('Failed to parse user data.', 400));
   });
 });
