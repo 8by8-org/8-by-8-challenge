@@ -10,6 +10,7 @@ import { ServerError } from '@/errors/server-error';
 import { SupabaseUserRecordBuilder } from '@/utils/test/supabase-user-record-builder';
 import type { CreateSupabaseClient } from '@/services/server/create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '@/services/server/user-record-parser/i-user-record-parser';
+import type { Badge } from '@/model/types/badge';
 
 describe('SupabaseUserRepository', () => {
   let userRepository: InstanceType<typeof SupabaseUserRepository>;
@@ -200,5 +201,265 @@ describe('SupabaseUserRepository', () => {
     await expect(userRepository.getUserById('')).rejects.toThrow(
       new ServerError('Failed to parse user data.', 400),
     );
+  });
+
+  it(`sets completedActions.electionReminders to true when 
+  awardElectionRemindersBadge is called.`, async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com').build();
+    expect(user.completedActions.electionReminders).toBe(false);
+
+    user = await userRepository.awardElectionRemindersBadge(user.uid);
+    expect(user.completedActions.electionReminders).toBe(true);
+  });
+
+  it(`awards the user a badge when awardElectionRemindersBadge is called and the
+  user has not completed this action and has fewer than 8 badges.`, async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com').build();
+    expect(user.badges).toStrictEqual([]);
+
+    user = await userRepository.awardElectionRemindersBadge(user.uid);
+    expect(user.badges).toStrictEqual([
+      {
+        action: Actions.ElectionReminders,
+      },
+    ]);
+  });
+
+  it(`sets completedChallenge to true if the user has 8 badges after
+  awardElectionRemindersBadge is called.`, async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com')
+      .badges(
+        new Array<Badge>(7).fill({
+          playerName: 'Player',
+          playerAvatar: '0',
+        }),
+      )
+      .build();
+    expect(user.completedChallenge).toBe(false);
+
+    user = await userRepository.awardElectionRemindersBadge(user.uid);
+    expect(user.completedChallenge).toBe(true);
+  });
+
+  it(`does not award the user a badge when awardElectionRemindersBadge is 
+  called and the user has already completed this action.`, async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com')
+      .completedActions({
+        electionReminders: true,
+      })
+      .badges([
+        {
+          action: Actions.ElectionReminders,
+        },
+      ])
+      .build();
+    expect(user.badges).toHaveLength(1);
+
+    user = await userRepository.awardElectionRemindersBadge(user.uid);
+    expect(user.badges).toHaveLength(1);
+  });
+
+  it(`does not award a badge when awardElectionRemindersBadge is called and the user
+  already has 8 badges.`, async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com')
+      .badges(
+        new Array<Badge>(8).fill({
+          playerName: 'Player',
+          playerAvatar: '0',
+        }),
+      )
+      .build();
+    expect(user.completedActions.electionReminders).toBe(false);
+    expect(user.badges).toHaveLength(8);
+
+    user = await userRepository.awardElectionRemindersBadge(user.uid);
+    expect(user.completedActions.electionReminders).toBe(true);
+    expect(user.badges).toHaveLength(8);
+  });
+
+  it(`awards a challenger a badge if the user is a player who has been invited
+  by the challenger, the challenger has fewer than 8 badges, and
+  awardElectionRemindersBadge is called.`, async () => {
+    const challenger = await new SupabaseUserRecordBuilder(
+      'challenger@example.com',
+    ).build();
+
+    const player = await new SupabaseUserRecordBuilder('player@example.com')
+      .type(UserType.Player)
+      .invitedBy({
+        inviteCode: challenger.inviteCode,
+        name: challenger.name,
+        avatar: challenger.avatar,
+      })
+      .name('Player')
+      .avatar('3')
+      .build();
+
+    await userRepository.awardElectionRemindersBadge(player.uid);
+
+    const updatedChallenger = await userRepository.getUserById(challenger.uid);
+    expect(updatedChallenger).not.toBeNull();
+    expect(updatedChallenger?.badges).toStrictEqual([
+      {
+        playerName: player.name,
+        playerAvatar: player.avatar,
+      },
+    ]);
+  });
+
+  it(`updates the player's contributedTo when awardElectionRemindersBadge is
+  called and the player has not yet contributed to the inviting challenger.`, async () => {
+    const challenger = await new SupabaseUserRecordBuilder(
+      'challenger@example.com',
+    ).build();
+
+    let player = await new SupabaseUserRecordBuilder('player@example.com')
+      .type(UserType.Player)
+      .invitedBy({
+        inviteCode: challenger.inviteCode,
+        name: challenger.name,
+        avatar: challenger.avatar,
+      })
+      .build();
+
+    player = await userRepository.awardElectionRemindersBadge(player.uid);
+    expect(player.contributedTo).toStrictEqual([
+      {
+        name: challenger.name,
+        avatar: challenger.avatar,
+      },
+    ]);
+  });
+
+  it(`does not update the player's contributedTo when
+  awardElectionRemindersBadge is called, but the player has already contributed
+  to the inviting challenger's challenge.`, async () => {
+    const playerName = 'Player';
+    const playerAvatar = '3';
+
+    const challenger = await new SupabaseUserRecordBuilder(
+      'challenger@example.com',
+    )
+      .badges([
+        {
+          playerName,
+          playerAvatar,
+        },
+      ])
+      .build();
+
+    let player = await new SupabaseUserRecordBuilder('player@example.com')
+      .type(UserType.Player)
+      .invitedBy({
+        inviteCode: challenger.inviteCode,
+        name: challenger.name,
+        avatar: challenger.avatar,
+      })
+      .completedActions({ registerToVote: true })
+      .badges([
+        {
+          action: Actions.VoterRegistration,
+        },
+      ])
+      .contributedTo([
+        {
+          inviteCode: challenger.inviteCode,
+          name: challenger.name,
+          avatar: challenger.avatar,
+        },
+      ])
+      .build();
+
+    expect(player.contributedTo).toStrictEqual([
+      {
+        name: challenger.name,
+        avatar: challenger.avatar,
+      },
+    ]);
+
+    player = await userRepository.awardElectionRemindersBadge(player.uid);
+
+    expect(player.contributedTo).toStrictEqual([
+      {
+        name: challenger.name,
+        avatar: challenger.avatar,
+      },
+    ]);
+  });
+
+  it(`does not award a challenger a badge when awardElectionRemindersBadge is
+  called for a player who has already completed that action.`, async () => {
+    const playerName = 'Player';
+    const playerAvatar = '2';
+
+    const challenger = await new SupabaseUserRecordBuilder(
+      'challenger@example.com',
+    )
+      .badges([
+        {
+          playerName,
+          playerAvatar,
+        },
+      ])
+      .build();
+
+    const { uid: playerId } = await new SupabaseUserRecordBuilder(
+      'player@example.com',
+    )
+      .type(UserType.Player)
+      .invitedBy({
+        inviteCode: challenger.inviteCode,
+        name: challenger.name,
+        avatar: challenger.avatar,
+      })
+      .completedActions({ electionReminders: true })
+      .badges([
+        {
+          action: Actions.ElectionReminders,
+        },
+      ])
+      .build();
+
+    expect(challenger.badges).toHaveLength(1);
+
+    await userRepository.awardElectionRemindersBadge(playerId);
+
+    const updatedChallenger = await userRepository.getUserById(challenger.uid);
+    expect(updatedChallenger).not.toBeNull();
+    expect(updatedChallenger?.badges).toHaveLength(1);
+  });
+
+  it(`does not award a challenger a badge if the challenger has 8 or more badges
+  when awardElectionRemindersBadge is called for a player.`, async () => {
+    const challenger = await new SupabaseUserRecordBuilder(
+      'challenger@example.com',
+    )
+      .badges(
+        new Array(8).fill({
+          playerName: 'Player',
+          playerAvatar: '0',
+        }),
+      )
+      .completedChallenge(true)
+      .build();
+
+    const { uid: playerId } = await new SupabaseUserRecordBuilder(
+      'player@example.com',
+    )
+      .type(UserType.Player)
+      .invitedBy({
+        inviteCode: challenger.inviteCode,
+        name: challenger.name,
+        avatar: challenger.avatar,
+      })
+      .build();
+
+    expect(challenger.badges).toHaveLength(8);
+
+    await userRepository.awardElectionRemindersBadge(playerId);
+
+    const updatedChallenger = await userRepository.getUserById(challenger.uid);
+    expect(updatedChallenger).not.toBeNull();
+    expect(updatedChallenger?.badges).toHaveLength(8);
   });
 });
