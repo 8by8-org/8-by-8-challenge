@@ -57,7 +57,7 @@ describe('SupabaseUserRepository', () => {
     const authChallenger = challengerData.user!;
 
     const challengerActionBadge = {
-      action: Actions.SharedChallenge,
+      action_type: Actions.SharedChallenge,
       challenger_id: authChallenger!.id,
     };
 
@@ -116,7 +116,7 @@ describe('SupabaseUserRepository', () => {
 
     // Complete an action on behalf of the challenger.
     const playerActionBadge = {
-      action: Actions.VoterRegistration,
+      action_type: Actions.VoterRegistration,
       challenger_id: authPlayer!.id,
     };
 
@@ -129,6 +129,7 @@ describe('SupabaseUserRepository', () => {
 
     const playerContributedTo = {
       player_id: authPlayer.id,
+      challenger_invite_code: challengerMetadata.invite_code,
       challenger_name: challengerMetadata.name,
       challenger_avatar: challengerMetadata.avatar,
     };
@@ -231,25 +232,15 @@ describe('SupabaseUserRepository', () => {
     });
   });
 
-  it('throws a ServerError if supabase.from().select() throws an error.', async () => {
+  it(`throws a ServerError if supabase.rpc() throws an error when getUserById is 
+  called.`, async () => {
     const errorMessage = 'test error message';
 
     createSupabaseClient = jest.fn().mockImplementation(() => {
       return {
-        from: () => ({
-          select: () => ({
-            eq: () => ({
-              limit: () => ({
-                maybeSingle: () => {
-                  return Promise.resolve({
-                    data: null,
-                    error: new AuthError(errorMessage, 500),
-                  });
-                },
-              }),
-            }),
-          }),
-        }),
+        rpc: () => {
+          throw new Error(errorMessage);
+        },
       };
     });
 
@@ -263,23 +254,15 @@ describe('SupabaseUserRepository', () => {
     );
   });
 
-  it('throws a ServerError if UserRecordParser.parseUserRecord throws an error.', async () => {
+  it(`throws a ServerError if UserRecordParser.parseUserRecord throws an error 
+  when getUserById is called.`, async () => {
     createSupabaseClient = jest.fn().mockImplementation(() => {
       return {
-        from: () => ({
-          select: () => ({
-            eq: () => ({
-              limit: () => ({
-                maybeSingle: () => {
-                  return Promise.resolve({
-                    data: {},
-                    error: null,
-                  });
-                },
-              }),
-            }),
+        rpc: () =>
+          Promise.resolve({
+            data: {},
+            error: null,
           }),
-        }),
       };
     });
 

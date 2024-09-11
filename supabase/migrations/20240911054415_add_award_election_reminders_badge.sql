@@ -156,7 +156,7 @@ end;
 $$;
 
 create function award_election_reminders_badge(user_id uuid)
-returns user_obj
+returns record
 language plpgsql strict
 security invoker
 as 

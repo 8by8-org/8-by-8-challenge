@@ -42,7 +42,12 @@ create type user_obj as (
 );
 
 create function get_user_by_id(user_id uuid)
-returns user_obj
+/*
+  Returning a record instead of a user_obj allows null to be returned.
+  If the return type was user_obj, an object with each of its fields set to null
+  would be returned instead.
+*/
+returns record
 language plpgsql
 as
 $$
