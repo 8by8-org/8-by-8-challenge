@@ -5,7 +5,6 @@ import { v4 as uuid } from 'uuid';
 import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
 import { UserType } from '@/model/enums/user-type';
 import { Actions } from '@/model/enums/actions';
-import { createId } from '@paralleldrive/cuid2';
 import { ServerError } from '@/errors/server-error';
 import { SupabaseUserRecordBuilder } from '@/utils/test/supabase-user-record-builder';
 import type { CreateSupabaseClient } from '@/services/server/create-supabase-client/create-supabase-client';
