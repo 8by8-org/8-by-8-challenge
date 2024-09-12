@@ -12,7 +12,6 @@
     "start": "next start",
     "test": "jest --no-watch --runInBand",
     "test:ci": "jest --ci --runInBand -u",
-    "test:db": "cd src/__tests__ && supabase test db",
     "lint": "next lint",
     "format": "prettier --write \"**/*.+(js|ts|tsx|json)\"",
     "storybook": "storybook dev -p 6006",
