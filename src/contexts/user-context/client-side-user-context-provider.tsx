@@ -102,7 +102,10 @@ export function ClientSideUserContextProvider(
     }
 
     const data = await response.json();
-    setUser(data.user as User);
+
+    if (user) {
+      setUser(data.user as User);
+    }
   }
 
   async function signOut() {
