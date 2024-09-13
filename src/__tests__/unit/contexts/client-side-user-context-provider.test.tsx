@@ -14,7 +14,6 @@ import { Builder } from 'builder-pattern';
 import { DateTime } from 'luxon';
 import type {
   SendOTPToEmailParams,
-  SignInWithOTPParams,
   SignUpWithEmailParams,
 } from '@/contexts/user-context/user-context';
 import type { User } from '@/model/types/user';
@@ -24,6 +23,8 @@ import { NextResponse } from 'next/server';
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
+
+/* reminder -- a second request will only be made if the user is signed in */
 
 describe('ClientSideUserContextProvider', () => {
   let router: AppRouterInstance;
@@ -39,6 +40,9 @@ describe('ClientSideUserContextProvider', () => {
 
   it('provides the User it receives through props to consumers.', () => {
     let user: User | null = null;
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(jest.fn());
 
     function Consumer() {
       const userContextValue = useContextSafely(UserContext, 'Consumer');
@@ -67,16 +71,21 @@ describe('ClientSideUserContextProvider', () => {
     };
 
     render(
-      <ClientSideUserContextProvider user={expectedUser} emailForSignIn="">
+      <ClientSideUserContextProvider
+        user={expectedUser}
+        invitedBy={null}
+        emailForSignIn=""
+      >
         <Consumer />
       </ClientSideUserContextProvider>,
     );
 
     expect(user).toEqual(expectedUser);
+    fetchSpy.mockRestore();
   });
 
-  it(`makes a request to /api/signup-with-email when signUpWithEmail() is 
-  called, and if the response is ok, it sets emailForSignIn and redirects the 
+  it(`makes a request to /api/signup-with-email when signUpWithEmail() is
+  called, and if the response is ok, it sets emailForSignIn and redirects the
   user to /signin-with-otp.`, async () => {
     const fetchSpy = jest
       .spyOn(global, 'fetch')
@@ -86,7 +95,6 @@ describe('ClientSideUserContextProvider', () => {
       email: 'user@example.com',
       name: 'User',
       avatar: '0',
-      type: UserType.Challenger,
       captchaToken: 'test-token',
     };
 
@@ -105,7 +113,11 @@ describe('ClientSideUserContextProvider', () => {
     }
 
     render(
-      <ClientSideUserContextProvider user={null} emailForSignIn="">
+      <ClientSideUserContextProvider
+        user={null}
+        invitedBy={null}
+        emailForSignIn=""
+      >
         <SignUp />
       </ClientSideUserContextProvider>,
     );
@@ -144,7 +156,6 @@ describe('ClientSideUserContextProvider', () => {
                 email: 'user@example.com',
                 name: 'User',
                 avatar: '0',
-                type: UserType.Challenger,
                 captchaToken: 'test-token',
               });
             } catch (e) {
@@ -159,7 +170,11 @@ describe('ClientSideUserContextProvider', () => {
 
     render(
       <AlertsContextProvider>
-        <ClientSideUserContextProvider user={null} emailForSignIn="">
+        <ClientSideUserContextProvider
+          user={null}
+          invitedBy={null}
+          emailForSignIn=""
+        >
           <SignUp />
         </ClientSideUserContextProvider>
       </AlertsContextProvider>,
@@ -206,7 +221,11 @@ describe('ClientSideUserContextProvider', () => {
     }
 
     render(
-      <ClientSideUserContextProvider user={null} emailForSignIn="">
+      <ClientSideUserContextProvider
+        user={null}
+        invitedBy={null}
+        emailForSignIn=""
+      >
         <SignInWithEmail />
       </ClientSideUserContextProvider>,
     );
@@ -260,7 +279,11 @@ describe('ClientSideUserContextProvider', () => {
 
     render(
       <AlertsContextProvider>
-        <ClientSideUserContextProvider user={null} emailForSignIn="">
+        <ClientSideUserContextProvider
+          user={null}
+          invitedBy={null}
+          emailForSignIn=""
+        >
           <SignInWithEmail />
         </ClientSideUserContextProvider>
       </AlertsContextProvider>,
@@ -277,7 +300,7 @@ describe('ClientSideUserContextProvider', () => {
     fetchSpy.mockRestore();
   });
 
-  it(`makes a request to /api/resend-otp-to-email when resendOTP() is 
+  it(`makes a request to /api/resend-otp-to-email when resendOTP() is
   called.`, async () => {
     const fetchSpy = jest
       .spyOn(global, 'fetch')
@@ -292,7 +315,11 @@ describe('ClientSideUserContextProvider', () => {
     }
 
     render(
-      <ClientSideUserContextProvider user={null} emailForSignIn={email}>
+      <ClientSideUserContextProvider
+        user={null}
+        invitedBy={null}
+        emailForSignIn={email}
+      >
         <ResendOTP />
       </ClientSideUserContextProvider>,
     );
@@ -338,6 +365,7 @@ describe('ClientSideUserContextProvider', () => {
       <AlertsContextProvider>
         <ClientSideUserContextProvider
           user={null}
+          invitedBy={null}
           emailForSignIn="user@example.com"
         >
           <ResendOTP />
@@ -377,11 +405,18 @@ describe('ClientSideUserContextProvider', () => {
       inviteCode: 'invite-code',
     };
 
-    const fetchSpy = jest
-      .spyOn(global, 'fetch')
-      .mockResolvedValueOnce(
-        NextResponse.json({ user: expectedUser }, { status: 200 }),
-      );
+    const fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(route => {
+      if (route === '/api/signin-with-otp') {
+        return Promise.resolve(
+          NextResponse.json(
+            { user: expectedUser, invitedBy: null },
+            { status: 200 },
+          ),
+        );
+      }
+
+      return Promise.resolve(new Response(null, { status: 200 }));
+    });
 
     const otp = '123456';
 
@@ -405,6 +440,7 @@ describe('ClientSideUserContextProvider', () => {
     render(
       <ClientSideUserContextProvider
         user={null}
+        invitedBy={null}
         emailForSignIn={expectedUser.email}
       >
         <SignInWithOTP />
@@ -458,6 +494,7 @@ describe('ClientSideUserContextProvider', () => {
       <AlertsContextProvider>
         <ClientSideUserContextProvider
           user={null}
+          invitedBy={null}
           emailForSignIn="user@example.com"
         >
           <SignInWithOTP />
@@ -480,7 +517,7 @@ describe('ClientSideUserContextProvider', () => {
   user to null if the response is ok.`, async () => {
     const fetchSpy = jest
       .spyOn(global, 'fetch')
-      .mockResolvedValueOnce(new Response(null, { status: 200 }));
+      .mockResolvedValue(new Response(null, { status: 200 }));
 
     function SignOut() {
       const { user, signOut } = useContextSafely(UserContext, 'SignOut');
@@ -511,6 +548,7 @@ describe('ClientSideUserContextProvider', () => {
           contributedTo: [],
           inviteCode: 'invite-code',
         }}
+        invitedBy={null}
         emailForSignIn=""
       >
         <SignOut />
@@ -563,6 +601,7 @@ describe('ClientSideUserContextProvider', () => {
       <AlertsContextProvider>
         <ClientSideUserContextProvider
           user={null}
+          invitedBy={null}
           emailForSignIn="user@example.com"
         >
           <SignOut />
