@@ -103,7 +103,13 @@ export const SupabaseAuth = inject(
       let user = await this.userRepository.getUserById(data.user.id);
 
       if (!user) {
-        await this.signOut();
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+          throw new ServerError(
+            'User was authenticated, but user data was not found. Tried to sign out, but could not.',
+          );
+        }
 
         throw new ServerError(
           'User was authenticated, but user data was not found.',

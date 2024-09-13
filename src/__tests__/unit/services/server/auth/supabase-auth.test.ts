@@ -14,11 +14,15 @@ import {
 import type { UserRepository } from '@/services/server/user-repository/user-repository';
 import type { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';
 import type { User } from '@/model/types/user';
+import type { InvitationsRepository } from '@/services/server/invitations-repository/invitations-repository';
+import type { ICookies } from '@/services/server/cookies/i-cookies';
 
 describe('SupabaseAuth', () => {
   let supabaseAuth: InstanceType<typeof SupabaseAuth>;
   let supabaseAuthClient: SupabaseAuthClient;
   let userRepository: UserRepository;
+  let invitationsRepository: InvitationsRepository;
+  let cookies: ICookies;
 
   beforeEach(() => {
     const supabaseAuthAdmin = Builder<GoTrueAdminApi>()
@@ -40,7 +44,20 @@ describe('SupabaseAuth', () => {
 
     userRepository = Builder<UserRepository>().getUserById(jest.fn()).build();
 
-    supabaseAuth = new SupabaseAuth(createSupabaseClient, userRepository);
+    invitationsRepository = Builder<InvitationsRepository>()
+      .insertOrUpdateInvitedBy(jest.fn())
+      .getInvitedByFromPlayerId(jest.fn())
+      .getInvitedByFromChallengerInviteCode(jest.fn())
+      .build();
+
+    cookies = Builder<ICookies>().getInviteCode(jest.fn()).build();
+
+    supabaseAuth = new SupabaseAuth(
+      createSupabaseClient,
+      userRepository,
+      invitationsRepository,
+      cookies,
+    );
   });
 
   it(`calls supabase.auth.admin.createUser when signUpWithEmailandSendOTP is 
@@ -58,7 +75,7 @@ describe('SupabaseAuth', () => {
     const avatar = '0';
     const type = UserType.Challenger;
 
-    await supabaseAuth.signUpWithEmailAndSendOTP(email, name, avatar, type);
+    await supabaseAuth.signUpWithEmailAndSendOTP(email, name, avatar);
 
     expect(supabaseAuthClient.admin.createUser).toHaveBeenCalledWith({
       email,
@@ -84,12 +101,7 @@ describe('SupabaseAuth', () => {
 
     const email = 'user@example.com';
 
-    await supabaseAuth.signUpWithEmailAndSendOTP(
-      email,
-      'User',
-      '3',
-      UserType.Hybrid,
-    );
+    await supabaseAuth.signUpWithEmailAndSendOTP(email, 'User', '3');
 
     expect(supabaseAuthClient.signInWithOtp).toHaveBeenCalledWith({
       email,
@@ -109,12 +121,7 @@ describe('SupabaseAuth', () => {
     });
 
     await expect(
-      supabaseAuth.signUpWithEmailAndSendOTP(
-        'user@example.com',
-        'user',
-        '0',
-        UserType.Challenger,
-      ),
+      supabaseAuth.signUpWithEmailAndSendOTP('user@example.com', 'user', '0'),
     ).rejects.toThrow(new ServerError('Email exists.', 422));
   });
 
@@ -181,7 +188,7 @@ describe('SupabaseAuth', () => {
       .spyOn(userRepository, 'getUserById')
       .mockResolvedValueOnce(expectedUser);
 
-    const user = await supabaseAuth.signInWithEmailAndOTP(
+    const { user } = await supabaseAuth.signInWithEmailAndOTP(
       'user@example.com',
       '123456',
     );
