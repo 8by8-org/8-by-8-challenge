@@ -52,7 +52,11 @@ export const SupabaseUserRepository = inject(
     async makeHybrid(userId: string): Promise<User> {
       const supabase = this.createSupabaseClient();
 
-      const { data: dbUser, error } = await supabase
+      const {
+        data: dbUser,
+        error,
+        status,
+      } = await supabase
         .from('users')
         .update({
           type: UserType.Hybrid,
@@ -69,7 +73,7 @@ export const SupabaseUserRepository = inject(
         .maybeSingle();
 
       if (error) {
-        throw new ServerError(error.message, 500);
+        throw new ServerError(error.message, status);
       }
 
       if (!dbUser) {

@@ -280,4 +280,148 @@ describe('SupabaseUserRepository', () => {
       new ServerError('Failed to parse user data.', 400),
     );
   });
+
+  it(`updates the user to a hybrid type user and returns the updated user when 
+  makeHybrid() is called.`, async () => {
+    const supabase = createSupabaseClient();
+
+    const userMetadata = {
+      name: 'Challenger',
+      avatar: '0',
+      type: UserType.Challenger,
+      invite_code: createId(),
+    };
+
+    const { data: userData, error: userInsertionError } =
+      await supabase.auth.admin.createUser({
+        email: 'user@example.com',
+        email_confirm: true,
+        user_metadata: userMetadata,
+      });
+
+    if (userInsertionError) {
+      throw new Error(userInsertionError.message);
+    }
+
+    const user = await userRepository.getUserById(userData.user.id);
+    expect(user?.type).toBe(UserType.Challenger);
+
+    const updatedUser = await userRepository.makeHybrid(userData.user.id);
+    expect(updatedUser).toStrictEqual({
+      ...user,
+      type: UserType.Hybrid,
+    });
+  });
+
+  it(`throws a ServerError when the update operation initiated by 
+  makeHybrid fails.`, () => {
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        from: () => ({
+          update: () => ({
+            eq: () => ({
+              select: () => ({
+                order: () => ({
+                  limit: () => ({
+                    maybeSingle: () => {
+                      return Promise.resolve({
+                        data: null,
+                        error: new Error('Failed to update user.'),
+                        status: 422,
+                      });
+                    },
+                  }),
+                }),
+              }),
+            }),
+          }),
+        }),
+      };
+    });
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+
+    expect(userRepository.makeHybrid(uuid())).rejects.toThrow(
+      new ServerError('Failed to update user.', 422),
+    );
+  });
+
+  it(`throws a ServerError if the user returned after the update operation
+  initiated by makeHybrid is null.`, () => {
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        from: () => ({
+          update: () => ({
+            eq: () => ({
+              select: () => ({
+                order: () => ({
+                  limit: () => ({
+                    maybeSingle: () => {
+                      return Promise.resolve({
+                        data: null,
+                        error: null,
+                      });
+                    },
+                  }),
+                }),
+              }),
+            }),
+          }),
+        }),
+      };
+    });
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+
+    expect(userRepository.makeHybrid(uuid())).rejects.toThrow(
+      new ServerError('Update operation returned null user.', 500),
+    );
+  });
+
+  it(`throws a ServerError if the user record returned after the update
+  operation initiated by makeHybrid cannot be parsed.`, async () => {
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        from: () => ({
+          update: () => ({
+            eq: () => ({
+              select: () => ({
+                order: () => ({
+                  limit: () => ({
+                    maybeSingle: () => {
+                      return Promise.resolve({
+                        data: {},
+                        error: null,
+                      });
+                    },
+                  }),
+                }),
+              }),
+            }),
+          }),
+        }),
+      };
+    });
+
+    const userRecordParser: IUserRecordParser = {
+      parseUserRecord: () => {
+        throw new Error('Error parsing user.');
+      },
+    };
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      userRecordParser,
+    );
+
+    await expect(userRepository.makeHybrid(uuid())).rejects.toThrow(
+      new ServerError('Failed to parse user data.', 400),
+    );
+  });
 });
