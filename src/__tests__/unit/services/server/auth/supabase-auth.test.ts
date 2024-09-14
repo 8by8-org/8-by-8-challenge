@@ -3,6 +3,8 @@ import { Builder } from 'builder-pattern';
 import { UserType } from '@/model/enums/user-type';
 import { ServerError } from '@/errors/server-error';
 import { DateTime } from 'luxon';
+import { createId } from '@paralleldrive/cuid2';
+import { v4 as uuid } from 'uuid';
 import {
   AuthError,
   AuthResponse,
@@ -16,6 +18,7 @@ import type { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/S
 import type { User } from '@/model/types/user';
 import type { InvitationsRepository } from '@/services/server/invitations-repository/invitations-repository';
 import type { ICookies } from '@/services/server/cookies/i-cookies';
+import type { InvitedBy } from '@/model/types/invited-by';
 
 describe('SupabaseAuth', () => {
   let supabaseAuth: InstanceType<typeof SupabaseAuth>;
@@ -42,7 +45,10 @@ describe('SupabaseAuth', () => {
       .build();
     const createSupabaseClient = () => supabaseClient;
 
-    userRepository = Builder<UserRepository>().getUserById(jest.fn()).build();
+    userRepository = Builder<UserRepository>()
+      .getUserById(jest.fn())
+      .makeHybrid(jest.fn())
+      .build();
 
     invitationsRepository = Builder<InvitationsRepository>()
       .insertOrUpdateInvitedBy(jest.fn())
@@ -73,7 +79,6 @@ describe('SupabaseAuth', () => {
     const email = 'user@example.com';
     const name = 'User';
     const avatar = '0';
-    const type = UserType.Challenger;
 
     await supabaseAuth.signUpWithEmailAndSendOTP(email, name, avatar);
 
@@ -83,7 +88,7 @@ describe('SupabaseAuth', () => {
       user_metadata: {
         name,
         avatar,
-        type,
+        type: UserType.Challenger,
         invite_code: expect.any(String),
       },
     });
@@ -109,6 +114,59 @@ describe('SupabaseAuth', () => {
         shouldCreateUser: false,
       },
     });
+  });
+
+  it(`signs the user up as a player and creates a record in invited_by when 
+  an invite code is detected in cookies and signUpWithEmailAndSendOTP is 
+  called.`, async () => {
+    const inviteCode = createId();
+    const invitedBy: InvitedBy = {
+      challengerName: 'Challenger',
+      challengerInviteCode: inviteCode,
+      challengerAvatar: '0',
+    };
+    const playerId = uuid();
+
+    jest.spyOn(cookies, 'getInviteCode').mockReturnValueOnce(inviteCode);
+
+    jest
+      .spyOn(invitationsRepository, 'getInvitedByFromChallengerInviteCode')
+      .mockResolvedValueOnce(invitedBy);
+
+    jest.spyOn(supabaseAuthClient.admin, 'createUser').mockResolvedValueOnce({
+      data: {
+        user: {
+          id: playerId,
+        },
+      },
+      error: null,
+    } as UserResponse);
+
+    jest.spyOn(supabaseAuthClient, 'signInWithOtp').mockResolvedValueOnce({
+      error: null,
+    } as AuthOtpResponse);
+
+    const email = 'player@example.com';
+    const name = 'PlayerUser';
+    const avatar = '1';
+
+    await supabaseAuth.signUpWithEmailAndSendOTP(email, name, avatar);
+
+    expect(supabaseAuthClient.admin.createUser).toHaveBeenCalledWith({
+      email,
+      email_confirm: true,
+      user_metadata: {
+        name,
+        avatar,
+        type: UserType.Player,
+        invite_code: expect.any(String),
+      },
+    });
+
+    expect(invitationsRepository.insertOrUpdateInvitedBy).toHaveBeenCalledWith(
+      playerId,
+      invitedBy,
+    );
   });
 
   it(`throws a ServerError when supabase.auth.admin.createUser returns an 
@@ -400,6 +458,292 @@ describe('SupabaseAuth', () => {
 
     await expect(supabaseAuth.signOut()).rejects.toThrow(
       new ServerError('User already signed out.', 422),
+    );
+  });
+
+  it(`loads user data when loadSession is called if the user is signed in.`, async () => {
+    jest.spyOn(supabaseAuthClient, 'getUser').mockResolvedValueOnce({
+      data: {
+        user: {
+          id: '1',
+        },
+      },
+    } as UserResponse);
+
+    const expectedUser: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'user',
+      avatar: '0',
+      type: UserType.Challenger,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      completedActions: {
+        electionReminders: false,
+        sharedChallenge: false,
+        registerToVote: false,
+      },
+      badges: [],
+      completedChallenge: false,
+      contributedTo: [],
+      inviteCode: '1234',
+    };
+
+    jest
+      .spyOn(userRepository, 'getUserById')
+      .mockResolvedValueOnce(expectedUser);
+
+    const { user } = await supabaseAuth.loadSession();
+    expect(user).toEqual(expectedUser);
+  });
+
+  it(`makes the user a hybrid type user if the user is a player and
+  loadSession is called with an invite code cookie set.`, async () => {
+    jest.spyOn(supabaseAuthClient, 'getUser').mockResolvedValueOnce({
+      data: {
+        user: {
+          id: '1',
+        },
+      },
+    } as UserResponse);
+
+    const user: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'User',
+      avatar: '0',
+      type: UserType.Challenger,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      completedActions: {
+        electionReminders: false,
+        sharedChallenge: false,
+        registerToVote: false,
+      },
+      badges: [],
+      completedChallenge: false,
+      contributedTo: [],
+      inviteCode: createId(),
+    };
+
+    jest.spyOn(userRepository, 'getUserById').mockResolvedValueOnce(user);
+
+    jest.spyOn(userRepository, 'makeHybrid').mockResolvedValueOnce({
+      ...user,
+      type: UserType.Hybrid,
+    });
+
+    const otherUserInviteCode = createId();
+
+    jest
+      .spyOn(cookies, 'getInviteCode')
+      .mockReturnValueOnce(otherUserInviteCode);
+
+    jest
+      .spyOn(invitationsRepository, 'getInvitedByFromChallengerInviteCode')
+      .mockResolvedValueOnce({
+        challengerName: 'Challenger',
+        challengerInviteCode: otherUserInviteCode,
+        challengerAvatar: '1',
+      });
+
+    await supabaseAuth.loadSession();
+    expect(userRepository.makeHybrid).toHaveBeenCalled();
+  });
+
+  it(`updates the user's record in the invited_by table when loadSession is
+  called while the user is signed in and an invite cookie is set.`, async () => {
+    jest.spyOn(supabaseAuthClient, 'getUser').mockResolvedValueOnce({
+      data: {
+        user: {
+          id: '1',
+        },
+      },
+    } as UserResponse);
+
+    const user: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'User',
+      avatar: '0',
+      type: UserType.Player,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      completedActions: {
+        electionReminders: false,
+        sharedChallenge: false,
+        registerToVote: false,
+      },
+      badges: [],
+      completedChallenge: false,
+      contributedTo: [],
+      inviteCode: createId(),
+    };
+
+    jest.spyOn(userRepository, 'getUserById').mockResolvedValueOnce(user);
+
+    const otherUserInviteCode = createId();
+
+    jest
+      .spyOn(cookies, 'getInviteCode')
+      .mockReturnValueOnce(otherUserInviteCode);
+
+    const invitedBy: InvitedBy = {
+      challengerName: 'Challenger',
+      challengerInviteCode: otherUserInviteCode,
+      challengerAvatar: '1',
+    };
+
+    jest
+      .spyOn(invitationsRepository, 'getInvitedByFromChallengerInviteCode')
+      .mockResolvedValueOnce(invitedBy);
+
+    await supabaseAuth.loadSession();
+    expect(invitationsRepository.insertOrUpdateInvitedBy).toHaveBeenCalledWith(
+      user.uid,
+      invitedBy,
+    );
+  });
+
+  it(`does not update the user's type or their invited by record when the
+  value of the invite code cookie is the user's own invite code.`, async () => {
+    jest.spyOn(supabaseAuthClient, 'getUser').mockResolvedValueOnce({
+      data: {
+        user: {
+          id: '1',
+        },
+      },
+    } as UserResponse);
+
+    const user: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'User',
+      avatar: '0',
+      type: UserType.Challenger,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      completedActions: {
+        electionReminders: false,
+        sharedChallenge: false,
+        registerToVote: false,
+      },
+      badges: [],
+      completedChallenge: false,
+      contributedTo: [],
+      inviteCode: createId(),
+    };
+
+    jest.spyOn(userRepository, 'getUserById').mockResolvedValueOnce(user);
+
+    jest.spyOn(userRepository, 'makeHybrid').mockResolvedValueOnce({
+      ...user,
+      type: UserType.Hybrid,
+    });
+
+    jest.spyOn(cookies, 'getInviteCode').mockReturnValueOnce(user.inviteCode);
+
+    jest
+      .spyOn(invitationsRepository, 'getInvitedByFromChallengerInviteCode')
+      .mockResolvedValueOnce({
+        challengerName: user.name,
+        challengerInviteCode: user.inviteCode,
+        challengerAvatar: user.avatar,
+      });
+
+    await supabaseAuth.loadSession();
+    expect(userRepository.makeHybrid).not.toHaveBeenCalled();
+    expect(
+      invitationsRepository.insertOrUpdateInvitedBy,
+    ).not.toHaveBeenCalled();
+  });
+
+  it(`loads the user's record from the invited_by table when loadSession is
+  called and the user is signed in but there is no invite code cookie set.`, async () => {
+    jest.spyOn(supabaseAuthClient, 'getUser').mockResolvedValueOnce({
+      data: {
+        user: {
+          id: '1',
+        },
+      },
+    } as UserResponse);
+
+    const user: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'User',
+      avatar: '0',
+      type: UserType.Player,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      completedActions: {
+        electionReminders: false,
+        sharedChallenge: false,
+        registerToVote: false,
+      },
+      badges: [],
+      completedChallenge: false,
+      contributedTo: [],
+      inviteCode: createId(),
+    };
+
+    jest.spyOn(userRepository, 'getUserById').mockResolvedValueOnce(user);
+
+    const expectedInvitedBy: InvitedBy = {
+      challengerName: 'Challenger',
+      challengerInviteCode: createId(),
+      challengerAvatar: '1',
+    };
+
+    jest
+      .spyOn(invitationsRepository, 'getInvitedByFromPlayerId')
+      .mockResolvedValueOnce(expectedInvitedBy);
+
+    const { invitedBy: actualInvitedBy } = await supabaseAuth.loadSession();
+    expect(actualInvitedBy).toStrictEqual(expectedInvitedBy);
+  });
+
+  it(`loads invited by data from cookies when the user is signed out.`, async () => {
+    jest.spyOn(supabaseAuthClient, 'getUser').mockResolvedValueOnce({
+      data: {
+        user: null,
+      },
+    } as UserResponse);
+
+    const otherUserInviteCode = createId();
+
+    jest
+      .spyOn(cookies, 'getInviteCode')
+      .mockReturnValueOnce(otherUserInviteCode);
+
+    const expectedInvitedBy: InvitedBy = {
+      challengerName: 'Challenger',
+      challengerInviteCode: otherUserInviteCode,
+      challengerAvatar: '1',
+    };
+
+    jest
+      .spyOn(invitationsRepository, 'getInvitedByFromChallengerInviteCode')
+      .mockResolvedValueOnce(expectedInvitedBy);
+
+    const { invitedBy: actualInvitedBy } = await supabaseAuth.loadSession();
+    expect(actualInvitedBy).toStrictEqual(expectedInvitedBy);
+  });
+
+  it(`logs an error when userRepository.getUserById throws an error when it is
+  called within loadSession.`, async () => {
+    jest.spyOn(supabaseAuthClient, 'getUser').mockResolvedValueOnce({
+      data: {
+        user: {
+          id: '1',
+        },
+      },
+    } as UserResponse);
+
+    jest.spyOn(userRepository, 'getUserById').mockImplementationOnce(() => {
+      throw new ServerError('User not found.', 404);
+    });
+
+    jest.spyOn(console, 'error').mockImplementationOnce(jest.fn());
+
+    await supabaseAuth.loadSession();
+    expect(console.error).toHaveBeenCalledWith(
+      new ServerError('User not found.', 404),
     );
   });
 });
