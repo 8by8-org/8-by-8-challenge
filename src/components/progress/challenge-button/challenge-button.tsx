@@ -10,7 +10,7 @@ interface ChallengeButtonProps {
   toggleInvite: React.RefObject<() => null>;
   restartChallenge: () => void;
   setOpenModal: Dispatch<SetStateAction<boolean>>;
-  shareChallenge: () => void;
+
 }
 
 /**
@@ -75,7 +75,7 @@ export function ChallengeButton({
                 }
         
               >
-            <span>  Invite Friends </span>   
+            <span>Invite friends</span>   
               </button>,
             );
   
