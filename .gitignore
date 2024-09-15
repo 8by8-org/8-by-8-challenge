@@ -47,3 +47,6 @@ next-env.d.ts
 /venv
 __pycache__
 .pytest_cache
+
+# failing test 
+src/__tests__/unit/components/progress/challenge-button/challenge-button.test.tsx

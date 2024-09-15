@@ -22,9 +22,8 @@ interface SocialShareProps {
 
 // Use dynamic import without SSR for react-share library
 const SocialShare: FC<SocialShareProps> = ({ fullLink }) => {
-  const shareUrl = 'https://your-website.com'; // Change this to the URL you want to share
-  const title = 'Check out this awesome website!';
-  const emailBody = 'Check out this awesome website! Visit: ' + shareUrl;
+  const title = '8by8 Challenge';
+  const emailBody = 'Check out this website' + fullLink;
 
   return (
     <div className={styles.container}>
@@ -57,34 +56,25 @@ const SocialShare: FC<SocialShareProps> = ({ fullLink }) => {
       <h2 className={styles.sectionHeading}>Messaging</h2>
       <div className={styles.grid}>
         <div className={styles.group}>
-          <WhatsappShareButton url={shareUrl} title={title}>
+          <WhatsappShareButton url={fullLink} title={title}>
             <WhatsappIcon size={40} round />
           </WhatsappShareButton>
           <p className={styles.iconTitle}>WhatsApp</p>
         </div>
 
         <div className={styles.group}>
-          <FacebookMessengerShareButton url={shareUrl} appId="your-app-id">
+          <FacebookMessengerShareButton url={fullLink} appId="your-app-id">
             <FacebookMessengerIcon size={40} round />
           </FacebookMessengerShareButton>
           <p className={styles.iconTitle}>Messenger</p>
         </div>
 
         <div className={styles.group}>
-          <EmailShareButton url={shareUrl} subject={title} body={emailBody}>
+          <EmailShareButton url={fullLink} subject={title} body={emailBody}>
             <EmailIcon size={40} round />
           </EmailShareButton>
           <p className={styles.iconTitle}>Email</p>
         </div>
-
-        <div className={styles.group}>
-          <a href="sms:+1234567890?body=Check%20out%20this%20awesome%20website!" target="_blank" rel="noopener noreferrer">
-            <FaSms size={40} style={{ color: '#34B7F1' }} />
-          </a>
-          <p className={styles.iconTitle}>Text</p>
-        </div>
-
-    
 
         <div className={styles.group}>
           <a href="https://discord.com/channels/@me" target="_blank" rel="noopener noreferrer">
