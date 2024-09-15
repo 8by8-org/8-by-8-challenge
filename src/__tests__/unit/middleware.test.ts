@@ -133,7 +133,7 @@ describe('middleware', () => {
   inviteCode search parameter when the inviteCode search parameter is detected.`, async () => {
     const route = '/share';
     const inviteCode = createId();
-    const fullPath = `${host}/${route}?${SearchParams.InviteCode}=${inviteCode}`;
+    const fullPath = `${host}${route}?${SearchParams.InviteCode}=${inviteCode}`;
 
     const request = new NextRequest(fullPath, {
       method: 'GET',
