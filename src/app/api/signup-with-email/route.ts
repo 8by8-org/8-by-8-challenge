@@ -32,7 +32,6 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (e) {
-    console.log(e)
     if (e instanceof ServerError) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });
     }

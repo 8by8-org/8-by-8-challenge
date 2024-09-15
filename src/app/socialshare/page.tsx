@@ -1,3 +1,4 @@
+
 import dynamic from 'next/dynamic';
 import { FC } from 'react';
 import {
@@ -15,8 +16,12 @@ import {
 import { FaInstagram, FaPhoneAlt, FaSms, FaDiscord } from 'react-icons/fa';
 import styles from './styles.module.scss';
 
+interface SocialShareProps {
+  fullLink: string;
+}
+
 // Use dynamic import without SSR for react-share library
-const SocialShare: FC = () => {
+const SocialShare: FC<SocialShareProps> = ({ fullLink }) => {
   const shareUrl = 'https://your-website.com'; // Change this to the URL you want to share
   const title = 'Check out this awesome website!';
   const emailBody = 'Check out this awesome website! Visit: ' + shareUrl;
@@ -27,14 +32,14 @@ const SocialShare: FC = () => {
       <h2 className={styles.sectionHeading}>Social Media</h2>
       <div className={styles.grid}>
         <div className={styles.group}>
-          <FacebookShareButton url={shareUrl}>
+          <FacebookShareButton url={fullLink}>
             <FacebookIcon size={40} round />
           </FacebookShareButton>
           <p className={styles.iconTitle}>Facebook</p>
         </div>
 
         <div className={styles.group}>
-          <TwitterShareButton url={shareUrl} title={title}>
+          <TwitterShareButton url={fullLink} title={title}>
             <TwitterIcon size={40} round />
           </TwitterShareButton>
           <p className={styles.iconTitle}>Twitter</p>

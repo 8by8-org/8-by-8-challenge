@@ -16,8 +16,10 @@ import fatherAndDaughterWithSign from '../../public/static/images/pages/home/fat
 import speakerWithMicAndSign from '../../public/static/images/pages/home/speaker-with-mic-and-sign.png';
 import styles from './styles.module.scss';
 
+
 export default function Home() {
   const router = useRouter();
+
 
   useEffect(() => {
     router.prefetch('/challengerwelcome');
