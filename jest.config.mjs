@@ -24,6 +24,7 @@ const config = {
     'fonts',
     '<rootDir>/src/model/',
     'user-context/user-context-provider.tsx',
+    '<rootDir>/src/__tests__/unit/components/progress/challenge-button/challenge-button.test.tsx',
   ],
   //require 100% code coverage for the tests to pass
   coverageThreshold: {
