@@ -15,12 +15,6 @@ create type badge_obj as (
   player_avatar char(1)
 );
 
-create type invited_by_obj as (
-  challenger_invite_code varchar(30),
-  challenger_name varchar(255), 
-  challenger_avatar char(1)
-);
-
 create type contributed_to_obj as (
   challenger_name varchar(255),
   challenger_avatar char(1)
@@ -37,7 +31,6 @@ create type user_obj as (
   invite_code varchar,
   completed_actions completed_actions_obj,
   badges badge_obj[],
-  invited_by invited_by_obj,
   contributed_to contributed_to_obj[]
 );
 
@@ -75,12 +68,6 @@ begin
   from public.completed_actions
   into user.completed_actions
   where public.completed_actions.user_id = get_user_by_id.user_id
-  limit 1;
-
-  select (challenger_invite_code, challenger_name, challenger_avatar)::invited_by_obj
-  from invited_by
-  into user.invited_by
-  where invited_by.player_id = user_id
   limit 1;
 
   select array(

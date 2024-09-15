@@ -16,14 +16,14 @@ export const SupabaseInvitationsRepository = inject(
 
       const { data } = await supabase
         .from('users')
-        .select('name, avatar')
+        .select('user_name, avatar')
         .eq('invite_code', inviteCode)
         .limit(1)
         .maybeSingle();
 
       if (data) {
         return {
-          challengerName: data.name,
+          challengerName: data.user_name,
           challengerAvatar: data.avatar,
           challengerInviteCode: inviteCode,
         };

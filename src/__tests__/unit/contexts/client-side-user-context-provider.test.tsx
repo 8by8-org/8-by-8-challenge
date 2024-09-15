@@ -645,26 +645,30 @@ describe('ClientSideUserContextProvider', () => {
 
     const fetchSpy = jest
       .spyOn(globalThis, 'fetch')
-      .mockImplementationOnce(() => {
-        return Promise.resolve(
-          NextResponse.json(
-            {
-              user: {
-                ...signedInUser,
-                completedActions: {
-                  ...signedInUser.completedActions,
-                  electionReminders: true,
-                },
-                badges: [
-                  {
-                    action: Actions.ElectionReminders,
+      .mockImplementation(route => {
+        if (route === '/api/award-election-reminders-badge') {
+          return Promise.resolve(
+            NextResponse.json(
+              {
+                user: {
+                  ...signedInUser,
+                  completedActions: {
+                    ...signedInUser.completedActions,
+                    electionReminders: true,
                   },
-                ],
+                  badges: [
+                    {
+                      action: Actions.ElectionReminders,
+                    },
+                  ],
+                },
               },
-            },
-            { status: 200 },
-          ),
-        );
+              { status: 200 },
+            ),
+          );
+        }
+
+        return Promise.resolve(new Response(null, { status: 200 }));
       });
 
     let updatedUser: User | null = null;
@@ -686,6 +690,7 @@ describe('ClientSideUserContextProvider', () => {
       <AlertsContextProvider>
         <ClientSideUserContextProvider
           user={signedInUser}
+          invitedBy={null}
           emailForSignIn="user@example.com"
         >
           <GetElectionReminders />
@@ -731,6 +736,7 @@ describe('ClientSideUserContextProvider', () => {
       <AlertsContextProvider>
         <ClientSideUserContextProvider
           user={null}
+          invitedBy={null}
           emailForSignIn="user@example.com"
         >
           <GetElectionReminders />
@@ -783,6 +789,7 @@ describe('ClientSideUserContextProvider', () => {
     render(
       <AlertsContextProvider>
         <ClientSideUserContextProvider
+          invitedBy={null}
           user={signedInUser}
           emailForSignIn="user@example.com"
         >
@@ -792,7 +799,9 @@ describe('ClientSideUserContextProvider', () => {
     );
 
     await user.click(screen.getByText(/get reminders/i));
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(fetchSpy).not.toHaveBeenCalledWith(
+      '/api/award-election-reminders-badge',
+    );
     fetchSpy.mockRestore();
   });
 
@@ -854,6 +863,7 @@ describe('ClientSideUserContextProvider', () => {
       <AlertsContextProvider>
         <ClientSideUserContextProvider
           user={signedInUser}
+          invitedBy={null}
           emailForSignIn="user@example.com"
         >
           <GetElectionReminders />
