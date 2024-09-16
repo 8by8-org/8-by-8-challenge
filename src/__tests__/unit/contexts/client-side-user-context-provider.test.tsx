@@ -827,15 +827,19 @@ describe('ClientSideUserContextProvider', () => {
 
     const fetchSpy = jest
       .spyOn(globalThis, 'fetch')
-      .mockImplementationOnce(() => {
-        return Promise.resolve(
-          NextResponse.json(
-            {
-              message: 'Too many requests.',
-            },
-            { status: 429 },
-          ),
-        );
+      .mockImplementation(route => {
+        if (route === '/api/award-election-reminders-badge') {
+          return Promise.resolve(
+            NextResponse.json(
+              {
+                message: 'Too many requests.',
+              },
+              { status: 429 },
+            ),
+          );
+        }
+
+        return Promise.resolve(new Response(null, { status: 200 }));
       });
 
     function GetElectionReminders() {
