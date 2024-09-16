@@ -14,6 +14,11 @@ import type { IUserRecordParser } from '../user-record-parser/i-user-record-pars
  */
 export const SupabaseUserRepository = inject(
   class SupabaseUserRepository implements UserRepository {
+    private readonly REMOTE_PROCEDURES = {
+      GET_USER_BY_ID: 'get_user_by_id',
+      AWARD_ELECTION_REMINDERS_BADGE: 'award_election_reminders_badge',
+    };
+
     constructor(
       private createSupabaseClient: CreateSupabaseClient,
       private userRecordParser: IUserRecordParser,
@@ -22,24 +27,49 @@ export const SupabaseUserRepository = inject(
     async getUserById(userId: string): Promise<User | null> {
       const supabase = this.createSupabaseClient();
 
-      const { data: dbUser, error } = await supabase
-        .from('users')
-        .select(
-          `*,
-          completed_actions (election_reminders, register_to_vote, shared_challenge),
-          badges (action, player_name, player_avatar),
-          invited_by (challenger_invite_code, challenger_name, challenger_avatar),
-          contributed_to (challenger_name, challenger_avatar)`,
-        )
-        .eq('id', userId)
-        .limit(1)
-        .maybeSingle();
+      const {
+        data: dbUser,
+        error,
+        status,
+      } = await supabase.rpc(this.REMOTE_PROCEDURES.GET_USER_BY_ID, {
+        user_id: userId,
+      });
 
       if (error) {
-        throw new ServerError(error.message, 500);
+        throw new ServerError(error.message, status);
       }
 
       if (!dbUser) return null;
+
+      try {
+        const user = this.userRecordParser.parseUserRecord(dbUser);
+        return user;
+      } catch (e) {
+        throw new ServerError('Failed to parse user data.', 400);
+      }
+    }
+
+    async awardElectionRemindersBadge(userId: string): Promise<User> {
+      const supabase = this.createSupabaseClient();
+
+      const {
+        data: dbUser,
+        error,
+        status,
+      } = await supabase.rpc(
+        this.REMOTE_PROCEDURES.AWARD_ELECTION_REMINDERS_BADGE,
+        {
+          user_id: userId,
+        },
+      );
+
+      if (error) {
+        throw new ServerError(error.message, status);
+      }
+
+      if (!dbUser) {
+        throw new ServerError('User was null after update.', 500);
+      }
 
       try {
         const user = this.userRecordParser.parseUserRecord(dbUser);
