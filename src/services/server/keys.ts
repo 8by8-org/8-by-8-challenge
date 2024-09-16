@@ -7,6 +7,7 @@ import type { NextMiddleware } from 'next/server';
 import type { UserRepository } from './user-repository/user-repository';
 import type { IUserRecordParser } from './user-record-parser/i-user-record-parser';
 import type { Encryptor } from './encryptor/encryptor';
+import type { VoterRepository } from './voter-registration-repository/voter-registration';
 import type { CreateSupabaseClient } from './create-supabase-client/create-supabase-client';
 
 const { keys } = Keys.createKeys()
@@ -35,7 +36,9 @@ const { keys } = Keys.createKeys()
   .addKey('UserRepository')
   .forType<UserRepository>()
   .addKey('Encryptor')
-  .forType<Encryptor>();
+  .forType<Encryptor>()
+  .addKey('VoterRepository')
+  .forType<VoterRepository>();
 
 /**
  * Keys that can be used to retrieve service classes, functions, etc. from an

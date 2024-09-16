@@ -8,6 +8,7 @@ import type { User } from '@/model/types/user';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '../user-record-parser/i-user-record-parser';
 
+
 /**
  * An implementation of {@link UserRepository} that interacts with
  * a [Supabase](https://supabase.com/) database and parses rows returned from
@@ -23,26 +24,63 @@ export const SupabaseUserRepository = inject(
     constructor(
       private createSupabaseClient: CreateSupabaseClient,
       private userRecordParser: IUserRecordParser,
-    ) {}
+      private canAwardBadge = (user: User): Boolean => {
+        if (
+          user.badges.length >= 8 ||
+          user.completedChallenge ||
+          user.completedActions.registerToVote
+        ) {
+          return false;
+        }
+        return true;
+      },
+      private updateRegisterToVoteAction = async (
+        userId: string,
+      ): Promise<void> => {
+        const supabase = this.createSupabaseClient();
 
+        const {
+          status: status,
+          statusText: statusText,
+          error: challengerUpdateError,
+        } = await supabase
+          .from('completed_actions')
+          .update({
+            register_to_vote: true,
+          })
+          .eq('user_id', userId);
+
+        if (challengerUpdateError) {
+          throw new ServerError(statusText, status);
+        }
+      },
+      private awardVoterRegistrationActionBadge = async (
+        userId: string,
+      ): Promise<void> => {
+        const supabase = this.createSupabaseClient();
+
+        const challengerActionBadge = {
+          action_type: Actions.VoterRegistration,
+          challenger_id: userId,
+        };
+
+        const {
+          status: status,
+          statusText: statusText,
+          error: challengerActionBadgeInsertionError,
+        } = await supabase
+          .from('badges')
+          .insert(challengerActionBadge)
+          .eq('user_id', userId);
+
+        if (challengerActionBadgeInsertionError) {
+          throw new ServerError(statusText, status);
+        }
+      },
+    ) {}
     async getUserById(userId: string): Promise<User | null> {
       const supabase = this.createSupabaseClient();
 
-<<<<<<< HEAD
-      const { data: dbUser, error } = await supabase
-        
-        .from('users')
-        .select(
-          `*,
-          completed_actions (election_reminders, register_to_vote, shared_challenge),
-          badges (action, player_name, player_avatar),
-          invited_by (challenger_invite_code, challenger_name, challenger_avatar),
-          contributed_to (challenger_name, challenger_avatar)`,
-        )
-        .eq('id', userId)
-        .limit(1)
-        .maybeSingle();
-=======
       const {
         data: dbUser,
         error,
@@ -50,7 +88,6 @@ export const SupabaseUserRepository = inject(
       } = await supabase.rpc(this.REMOTE_PROCEDURES.GET_USER_BY_ID, {
         user_id: userId,
       });
->>>>>>> upstream/development
 
       if (error) {
         throw new ServerError(error.message, status);
@@ -65,7 +102,6 @@ export const SupabaseUserRepository = inject(
         throw new ServerError('Failed to parse user data.', 400);
       }
     }
-<<<<<<< HEAD
 // todos - 
     // return the user
     // double check row names aganist the schema
@@ -153,7 +189,21 @@ export const SupabaseUserRepository = inject(
     
   }
   
-=======
+
+    /**
+     * @awardUserBadge
+     * @param user - A user to access their information
+     */
+    async awardAndUpdateVoterRegistrationBadgeAndAction(
+      user: User,
+    ): Promise<void> {
+      if (!this.canAwardBadge(user)) {
+        return;
+      }
+
+      await this.awardVoterRegistrationActionBadge(user.uid);
+      await this.updateRegisterToVoteAction(user.uid);
+    }
 
     async awardElectionRemindersBadge(userId: string): Promise<User> {
       const supabase = this.createSupabaseClient();
@@ -184,7 +234,6 @@ export const SupabaseUserRepository = inject(
         throw new ServerError('Failed to parse user data.', 400);
       }
     }
->>>>>>> upstream/development
   },
   [
     SERVER_SERVICE_KEYS.createSupabaseServiceRoleClient,

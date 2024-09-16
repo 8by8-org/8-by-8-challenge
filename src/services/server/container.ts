@@ -13,6 +13,7 @@ import { redirectIfSignedOutFromSupabase } from './redirect-if-signed-out/redire
 import { refreshSupabaseSession } from './refresh-session/refresh-supabase-session';
 import { SupabaseUserRepository } from './user-repository/supabase-user-repository';
 import { WebCryptoSubtleEncryptor } from './encryptor/web-crypto-subtle-encryptor';
+import { VoterRegistrationRepository } from './voter-registration-repository/voter-registration-repository';
 import { createSupabaseServiceRoleClient } from './create-supabase-client/create-supabase-service-role-client';
 
 /**
@@ -68,5 +69,9 @@ export const serverContainer = ContainerBuilder.createBuilder()
   .registerFunction(SERVER_SERVICE_KEYS.refreshSession, refreshSupabaseSession)
   .registerClass(SERVER_SERVICE_KEYS.UserRepository, SupabaseUserRepository)
   .registerClass(SERVER_SERVICE_KEYS.Encryptor, WebCryptoSubtleEncryptor)
+  .registerClass(
+    SERVER_SERVICE_KEYS.VoterRepository,
+    VoterRegistrationRepository,
+  )
 
   .build();

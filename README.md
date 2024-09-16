@@ -19,6 +19,9 @@ Replace the values of the variables inside .env with appropriate entries. Values
 Values for Supabase variables will be displayed in the terminal after running either `npm run supabase-dev:start` or `npm run supabase-test:start`. These values will be
 the same for both commands, and will be the same each time you run these commands.
 
+=======
+##  Selenium Tests 
+=======
 ## Selenium Tests
 
 ### Prerequisites
