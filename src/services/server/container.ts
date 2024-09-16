@@ -13,6 +13,7 @@ import { redirectIfSignedOutFromSupabase } from './redirect-if-signed-out/redire
 import { refreshSupabaseSession } from './refresh-session/refresh-supabase-session';
 import { SupabaseUserRepository } from './user-repository/supabase-user-repository';
 import { WebCryptoSubtleEncryptor } from './encryptor/web-crypto-subtle-encryptor';
+import { VoterRegistrationRepository } from './voter-registration-repository/voter-registration-repository';
 import { createSupabaseServiceRoleClient } from './create-supabase-client/create-supabase-service-role-client';
 import { setInviteCodeCookie } from './set-invite-code-cookie/set-invite-code-cookie';
 import { SupabaseInvitationsRepository } from './invitations-repository/supabase-invitations-repository';
@@ -77,5 +78,9 @@ export const serverContainer = ContainerBuilder.createBuilder()
   .registerClass(
     SERVER_SERVICE_KEYS.InvitationsRepository,
     SupabaseInvitationsRepository,
+  )
+  .registerClass(
+    SERVER_SERVICE_KEYS.VoterRepository,
+    VoterRegistrationRepository,
   )
   .build();

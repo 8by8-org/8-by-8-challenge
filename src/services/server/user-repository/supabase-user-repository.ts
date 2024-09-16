@@ -7,6 +7,7 @@ import type { UserRepository } from './user-repository';
 import type { User } from '@/model/types/user';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '../user-record-parser/i-user-record-parser';
+import { Actions } from '@/model/enums/actions';
 
 /**
  * An implementation of {@link UserRepository} that interacts with
@@ -23,6 +24,59 @@ export const SupabaseUserRepository = inject(
     constructor(
       private createSupabaseClient: CreateSupabaseClient,
       private userRecordParser: IUserRecordParser,
+      private canAwardBadge = (user: User): Boolean => {
+        if (
+          user.badges.length >= 8 ||
+          user.completedChallenge ||
+          user.completedActions.registerToVote
+        ) {
+          return false;
+        }
+        return true;
+      },
+      private updateRegisterToVoteAction = async (
+        userId: string,
+      ): Promise<void> => {
+        const supabase = this.createSupabaseClient();
+
+        const {
+          status: status,
+          statusText: statusText,
+          error: challengerUpdateError,
+        } = await supabase
+          .from('completed_actions')
+          .update({
+            register_to_vote: true,
+          })
+          .eq('user_id', userId);
+
+        if (challengerUpdateError) {
+          throw new ServerError(statusText, status);
+        }
+      },
+      private awardVoterRegistrationActionBadge = async (
+        userId: string,
+      ): Promise<void> => {
+        const supabase = this.createSupabaseClient();
+
+        const challengerActionBadge = {
+          action_type: Actions.VoterRegistration,
+          challenger_id: userId,
+        };
+
+        const {
+          status: status,
+          statusText: statusText,
+          error: challengerActionBadgeInsertionError,
+        } = await supabase
+          .from('badges')
+          .insert(challengerActionBadge)
+          .eq('user_id', userId);
+
+        if (challengerActionBadgeInsertionError) {
+          throw new ServerError(statusText, status);
+        }
+      },
     ) {}
 
     async getUserById(userId: string): Promise<User | null> {
@@ -87,6 +141,21 @@ export const SupabaseUserRepository = inject(
       } catch (e) {
         throw new ServerError('Failed to parse user data.', 400);
       }
+    }
+
+    /**
+     * @awardUserBadge
+     * @param user - A user to access their information
+     */
+    async awardAndUpdateVoterRegistrationBadgeAndAction(
+      user: User,
+    ): Promise<void> {
+      if (!this.canAwardBadge(user)) {
+        return;
+      }
+
+      await this.awardVoterRegistrationActionBadge(user.uid);
+      await this.updateRegisterToVoteAction(user.uid);
     }
 
     async awardElectionRemindersBadge(userId: string): Promise<User> {

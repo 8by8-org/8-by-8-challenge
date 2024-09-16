@@ -20,11 +20,11 @@ import type { SupabaseClient } from '@supabase/supabase-js';
  * To bypass RLS in repository-type classes, use {@link createSupabaseServiceRoleClient}.
  */
 export const createSupabaseSSRClient = bind(
-  function createSupabaseServerClient() {
+   function createSupabaseServerClient() {
     const cookieStore = cookies();
     const { NEXT_PUBLIC_SUPABASE_URL: url } = PUBLIC_ENVIRONMENT_VARIABLES;
-
-    const { SUPABASE_SERVICE_ROLE_KEY: serviceRoleKey } =
+    
+    const { SUPABASE_SERVICE_ROLE_KEY: serviceRoleKey } = 
       PRIVATE_ENVIRONMENT_VARIABLES;
 
     return createServerClient(url, serviceRoleKey, {

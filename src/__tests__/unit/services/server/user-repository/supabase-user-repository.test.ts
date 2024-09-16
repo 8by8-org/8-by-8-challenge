@@ -1,5 +1,4 @@
 import { SupabaseUserRepository } from '@/services/server/user-repository/supabase-user-repository';
-import { createSupabaseServiceRoleClient } from '@/services/server/create-supabase-client/create-supabase-service-role-client';
 import { UserRecordParser } from '@/services/server/user-record-parser/user-record-parser';
 import { v4 as uuid } from 'uuid';
 import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
@@ -11,18 +10,24 @@ import { createId } from '@paralleldrive/cuid2';
 import type { CreateSupabaseClient } from '@/services/server/create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '@/services/server/user-record-parser/i-user-record-parser';
 import type { Badge } from '@/model/types/badge';
+import { serverContainer } from '@/services/server/container';
+import { saveActualImplementation } from '@/utils/test/save-actual-implementation';
+import { Builder } from 'builder-pattern';
+import type { UserRepository } from '@/services/server/user-repository/user-repository';
+import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
+import {
+  createSupabseClientFunction,
+  createUserRepository,
+  createUser,
+} from '@/utils/test/create-user';
 
 describe('SupabaseUserRepository', () => {
   let userRepository: InstanceType<typeof SupabaseUserRepository>;
   let createSupabaseClient: CreateSupabaseClient;
 
   beforeEach(() => {
-    createSupabaseClient = createSupabaseServiceRoleClient;
-
-    userRepository = new SupabaseUserRepository(
-      createSupabaseClient,
-      new UserRecordParser(),
-    );
+    createSupabaseClient = createSupabseClientFunction();
+    userRepository = createUserRepository(createSupabaseClient);
   });
 
   afterEach(() => {
@@ -267,6 +272,101 @@ describe('SupabaseUserRepository', () => {
     expect(userRepository.makeHybrid(uuid())).rejects.toThrow(
       new ServerError('Failed to update user.', 422),
     );
+  });
+
+  it('updates users register to vote task and awads user a badge', async () => {
+    const supabase = createSupabaseClient();
+    const authChallenger = await createUser(supabase);
+
+    const user = await userRepository.getUserById(authChallenger.id);
+    if (!user) {
+      throw new Error(`No user found with id: ${authChallenger.id}`);
+    }
+    expect(user.completedActions.registerToVote).toBe(false);
+    expect(user.badges.length === 0);
+    await userRepository.awardAndUpdateVoterRegistrationBadgeAndAction(user);
+
+    const newUser = await userRepository.getUserById(user.uid);
+    if (!newUser) {
+      throw new Error(`No newUser found with id: ${user.uid}`);
+    }
+
+    expect(newUser.completedActions.registerToVote).toBe(true);
+
+    const newUserActionBadge = [{ action: 'voterRegistration' }];
+    expect(newUser.badges.length === 1);
+    expect(newUser.badges === newUserActionBadge);
+  });
+
+  it('does not award the user a badge when they have more than 8 badges or already have the voterRegistration badge', async () => {
+    const supabase = createSupabaseClient();
+    const authChallenger = await createUser(supabase);
+
+    const user = await userRepository.getUserById(authChallenger.id);
+    if (!user) {
+      throw new Error(`No user found with id: ${authChallenger.id}`);
+    }
+
+    let badgesArray: Badge[] = [
+      { action: Actions.SharedChallenge },
+      { action: Actions.SharedChallenge },
+      { action: Actions.SharedChallenge },
+      { action: Actions.SharedChallenge },
+      { action: Actions.SharedChallenge },
+      { action: Actions.SharedChallenge },
+      { action: Actions.SharedChallenge },
+      { action: Actions.SharedChallenge },
+    ];
+    user.badges = badgesArray;
+
+    await userRepository.awardAndUpdateVoterRegistrationBadgeAndAction(user);
+    let newUser = await userRepository.getUserById(user.uid);
+    if (!newUser) {
+      throw new Error(`No newUser found with id: ${user.uid}`);
+    }
+    expect(newUser.badges.length === 0);
+
+    badgesArray = [{ action: Actions.VoterRegistration }];
+    await userRepository.awardAndUpdateVoterRegistrationBadgeAndAction(user);
+
+    newUser = await userRepository.getUserById(user.uid);
+    if (!newUser) {
+      throw new Error(`No newUser found with id: ${user.uid}`);
+    }
+    expect(newUser.badges.length === 0);
+  });
+
+  it('throws a challengerUpdateError for the updateRegisterToVoteAction private method when there is an invalid user id', async () => {
+    jest
+      .spyOn(userRepository as any, 'awardVoterRegistrationActionBadge')
+      .mockImplementationOnce(async () => Promise<void>);
+    const supabase = createSupabaseClient();
+
+    const authChallenger = await createUser(supabase);
+
+    const user = await userRepository.getUserById(authChallenger.id);
+    if (!user) {
+      throw new Error(`No user found with id: ${authChallenger.id}`);
+    }
+    expect(user.completedActions.registerToVote).toBe(false);
+    user.uid = '';
+    await expect(
+      userRepository.awardAndUpdateVoterRegistrationBadgeAndAction(user),
+    ).rejects.toThrow(new ServerError('Bad Request', 400));
+  });
+
+  it('throws a challengerUpdateError for the awardVoterRegistrationActionBadge private method when there is an invalid user id', async () => {
+    const supabase = createSupabaseClient();
+    const authChallenger = await createUser(supabase);
+
+    const user = await userRepository.getUserById(authChallenger.id);
+    if (!user) {
+      throw new Error(`No user found with id: ${authChallenger.id}`);
+    }
+    user.uid = '';
+    await expect(
+      userRepository.awardAndUpdateVoterRegistrationBadgeAndAction(user),
+    ).rejects.toThrow(new ServerError('Bad Request', 400));
   });
 
   it(`sets completedActions.electionReminders to true when 

@@ -1,4 +1,5 @@
 import 'server-only';
+import { constants } from 'zlib';
 import { z } from 'zod';
 
 /**
@@ -6,6 +7,7 @@ import { z } from 'zod';
  * server-side code.
  */
 export function readPrivateEnvironmentVariables() {
+  
   return {
     TURNSTILE_SECRET_KEY: z
       .string({
@@ -19,5 +21,31 @@ export function readPrivateEnvironmentVariables() {
           'Could not load environment variable SUPABASE_SERVICE_ROLE_KEY',
       })
       .parse(process.env.SUPABASE_SERVICE_ROLE_KEY),
+    CRYPTO_KEY: z
+      .string({
+        required_error: 'Could not load environment variable CRYPTO_KEY',
+      })
+      .transform(async (key: string): Promise<CryptoKey> => {
+        const rawKey = new Uint8Array(
+          atob(key)
+            .split('')
+            .map(char => char.charCodeAt(0)),
+        );
+        const cryptoKey = await crypto.subtle.importKey(
+          'raw',
+          rawKey,
+          { name: 'AES-GCM' },
+          true,
+          ['encrypt', 'decrypt'],
+        );
+        return cryptoKey;
+      })
+      .parseAsync(process.env.CRYPTO_KEY),
   };
 }
+
+
+
+
+
+

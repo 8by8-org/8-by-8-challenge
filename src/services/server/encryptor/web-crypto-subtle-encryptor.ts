@@ -15,7 +15,7 @@ export const WebCryptoSubtleEncryptor = inject(
      * @encryptData
      * @param data - string to encrypt
      * @param key - a cryptoKey for encryption and decryption
-     * @returns A string with the initialization vector concatenated with the encrypted data. The return value will have length of 12 (length of iv) + X (length of plaintext to encrypt) + 16 (authentication tag)
+     * @returns A string with the initialization vector concatenated with the encrypted data. The return value will have length of 16 (length of iv) + X (length of plaintext to encrypt) + 16 (authentication tag)
      */
     async encrypt(data: string, key: CryptoKey): Promise<string> {
       const encoder = new TextEncoder();
@@ -31,16 +31,11 @@ export const WebCryptoSubtleEncryptor = inject(
         encodedData,
       );
 
-      const ivAsString = Array.from(ivAsUint8)
-        .map(b => String.fromCharCode(b))
-        .join('');
-      const encryptedDataAsArray = Array.from(
-        new Uint8Array(encryptedDataAsUint8),
-      );
-      const encryptedDataAsString = encryptedDataAsArray
-        .map(byte => String.fromCharCode(byte))
-        .join('');
+      const ivAsString = btoa(String.fromCharCode(...ivAsUint8));
 
+      const encryptedDataAsString = btoa(
+        String.fromCharCode(...new Uint8Array(encryptedDataAsUint8)),
+      );
       return ivAsString + encryptedDataAsString;
     }
     /**
@@ -51,17 +46,23 @@ export const WebCryptoSubtleEncryptor = inject(
      * @returns unencrypted user data
      */
     async decrypt(dataToDecrypt: string, key: CryptoKey): Promise<string> {
-      if (dataToDecrypt.length < 13) {
+      if (dataToDecrypt.length < 16) {
         throw new Error('Trying to decrypt an empty string is not allowed.');
       }
 
-      const ivAsString = dataToDecrypt.slice(0, 12);
+      const ivAsString = dataToDecrypt.slice(0, 16);
+      const encryptedDataAsString = dataToDecrypt.slice(16);
+
       const ivAsUint8 = new Uint8Array(
-        Array.from(ivAsString).map(ch => ch.charCodeAt(0)),
+        atob(ivAsString)
+          .split('')
+          .map(char => char.charCodeAt(0)),
       );
-      const encryptedDataAsString = dataToDecrypt.slice(12);
+
       const encryptedDataAsUint8 = new Uint8Array(
-        Array.from(encryptedDataAsString).map(ch => ch.charCodeAt(0)),
+        atob(encryptedDataAsString)
+          .split('')
+          .map(char => char.charCodeAt(0)),
       );
 
       const decryptedData = await crypto.subtle.decrypt(
