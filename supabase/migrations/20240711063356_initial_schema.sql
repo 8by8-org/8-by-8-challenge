@@ -2,9 +2,9 @@
 create table public.users (
   id uuid not null references auth.users on delete cascade,
   email varchar(320) unique not null,
-  name varchar(255) not null,
+  user_name varchar(255) not null,
   avatar char(1) not null,
-  type varchar(255) not null,
+  user_type varchar(255) not null,
   -- Set the challenge end date to 8 days in the future and save as Unix seconds
   challenge_end_timestamp bigint not null default extract(epoch from now() + interval '8 days'),
   completed_challenge boolean not null default false,
@@ -39,7 +39,7 @@ using ((select auth.uid()) = user_id);
 -- Create badges table, enable row level security, and set a policy
 create table public.badges (
   id serial,
-  action varchar(255),
+  action_type varchar(255),
   player_name varchar(255),
   player_avatar char(1),
   challenger_id uuid not null references public.users on delete cascade,
@@ -72,6 +72,7 @@ using ((select auth.uid()) = player_id);
 create table public.contributed_to (
   id serial,
   player_id uuid not null references public.users on delete cascade,
+  challenger_invite_code varchar not null,
   challenger_name varchar(255) not null,
   challenger_avatar char(1) not null,
   primary key (id, player_id)
@@ -118,9 +119,9 @@ begin
   insert into public.users (
     id,
     email,
-    name, 
+    user_name, 
     avatar,
-    type,
+    user_type,
     invite_code
   ) values (
     new.id,

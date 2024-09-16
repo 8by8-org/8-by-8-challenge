@@ -7,7 +7,7 @@ import type { IUserRecordParser } from './i-user-record-parser';
 import type { User } from '@/model/types/user';
 
 interface DBActionBadge {
-  action: Actions;
+  action_type: Actions;
   player_name: null;
   player_avatar: null;
 }
@@ -26,21 +26,21 @@ export const UserRecordParser = inject(
 
     private dbBadgeSchema = z.union([
       z.object({
-        action: z.nativeEnum(Actions),
+        action_type: z.nativeEnum(Actions),
         player_name: z.null(),
         player_avatar: z.null(),
       }),
       z.object({
         player_name: z.string(),
         player_avatar: z.enum(['0', '1', '2', '3']),
-        action: z.null(),
+        action_type: z.null(),
       }),
     ]);
 
     private isDBActionBadge(
       badge: z.infer<typeof this.dbBadgeSchema>,
     ): badge is DBActionBadge {
-      return !!badge.action;
+      return !!badge.action_type;
     }
 
     private dbInvitedBySchema = z.object({
@@ -57,9 +57,9 @@ export const UserRecordParser = inject(
     private dbUserSchema = z.object({
       id: z.string(),
       email: z.string(),
-      name: z.string(),
+      user_name: z.string(),
       avatar: z.enum(['0', '1', '2', '3']),
-      type: z.nativeEnum(UserType),
+      user_type: z.nativeEnum(UserType),
       challenge_end_timestamp: z.number(),
       completed_challenge: z.boolean(),
       invite_code: z.string(),
@@ -75,9 +75,9 @@ export const UserRecordParser = inject(
       const user: User = {
         uid: validatedDBUser.id,
         email: validatedDBUser.email,
-        name: validatedDBUser.name,
+        name: validatedDBUser.user_name,
         avatar: validatedDBUser.avatar,
-        type: validatedDBUser.type,
+        type: validatedDBUser.user_type,
         completedActions: {
           electionReminders:
             validatedDBUser.completed_actions.election_reminders,
@@ -87,7 +87,7 @@ export const UserRecordParser = inject(
         badges: validatedDBUser.badges.map(badge => {
           if (this.isDBActionBadge(badge)) {
             return {
-              action: badge.action,
+              action: badge.action_type,
             };
           } else {
             return {

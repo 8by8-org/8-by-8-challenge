@@ -93,6 +93,24 @@ export function ClientSideUserContextProvider(
     setUser(data.user as User);
   }
 
+  async function gotElectionReminders() {
+    if (!user || user.completedActions.electionReminders) return;
+
+    const response = await fetch('/api/award-election-reminders-badge', {
+      method: 'PUT',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to award election reminders badge.');
+    }
+
+    const data = await response.json();
+
+    if (user) {
+      setUser(data.user as User);
+    }
+  }
+
   async function signOut() {
     const response = await fetch('/api/signout', {
       method: 'DELETE',
@@ -131,6 +149,7 @@ export function ClientSideUserContextProvider(
         sendOTPToEmail,
         resendOTP,
         signInWithOTP,
+        gotElectionReminders,
         signOut,
         restartChallenge,
         shareChallenge,

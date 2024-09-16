@@ -1,6 +1,7 @@
 import { render, screen, cleanup, waitFor } from '@testing-library/react';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { useEffect } from 'react';
 import { ClientSideUserContextProvider } from '@/contexts/user-context/client-side-user-context-provider';
 import { UserContext } from '@/contexts/user-context';
 import {
@@ -14,12 +15,12 @@ import { Builder } from 'builder-pattern';
 import { DateTime } from 'luxon';
 import type {
   SendOTPToEmailParams,
-  SignInWithOTPParams,
   SignUpWithEmailParams,
 } from '@/contexts/user-context/user-context';
+import { NextResponse } from 'next/server';
+import { Actions } from '@/model/enums/actions';
 import type { User } from '@/model/types/user';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import { NextResponse } from 'next/server';
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
@@ -576,6 +577,257 @@ describe('ClientSideUserContextProvider', () => {
       const alert = screen.queryByRole('alert');
       expect(alert).toBeInTheDocument();
       expect(alert?.textContent).toBe('Error signing out.');
+    });
+
+    fetchSpy.mockRestore();
+  });
+
+  test(`When gotElectionReminders is called, if the user is signed in and hasn't 
+  previously signed up for election reminders, it makes a PUT request to 
+  /api/award-election-reminders-badge and then updates the user.`, async () => {
+    const signedInUser: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'User',
+      avatar: '0',
+      type: UserType.Challenger,
+      completedActions: {
+        electionReminders: false,
+        registerToVote: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementationOnce(() => {
+        return Promise.resolve(
+          NextResponse.json(
+            {
+              user: {
+                ...signedInUser,
+                completedActions: {
+                  ...signedInUser.completedActions,
+                  electionReminders: true,
+                },
+                badges: [
+                  {
+                    action: Actions.ElectionReminders,
+                  },
+                ],
+              },
+            },
+            { status: 200 },
+          ),
+        );
+      });
+
+    let updatedUser: User | null = null;
+
+    function GetElectionReminders() {
+      const { user, gotElectionReminders } = useContextSafely(
+        UserContext,
+        'GetElectionReminders',
+      );
+
+      useEffect(() => {
+        updatedUser = user;
+      }, [user]);
+
+      return <button onClick={gotElectionReminders}>Get Reminders</button>;
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={signedInUser}
+          emailForSignIn="user@example.com"
+        >
+          <GetElectionReminders />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await waitFor(() => expect(updatedUser).toStrictEqual(signedInUser));
+    await user.click(screen.getByText(/get reminders/i));
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalled());
+    expect(updatedUser).toEqual({
+      ...signedInUser,
+      completedActions: {
+        ...signedInUser.completedActions,
+        electionReminders: true,
+      },
+      badges: [
+        {
+          action: Actions.ElectionReminders,
+        },
+      ],
+    });
+
+    fetchSpy.mockRestore();
+  });
+
+  it(`does not make a request to /api/award-election-reminders-badge if
+  gotElectionReminders is called and the user is signed out.`, async () => {
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementationOnce(jest.fn());
+
+    function GetElectionReminders() {
+      const { gotElectionReminders } = useContextSafely(
+        UserContext,
+        'GetElectionReminders',
+      );
+
+      return <button onClick={gotElectionReminders}>Get Reminders</button>;
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={null}
+          emailForSignIn="user@example.com"
+        >
+          <GetElectionReminders />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await user.click(screen.getByText(/get reminders/i));
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
+  });
+
+  it(`does not make a request to /api/award-election-reminders-badge if
+  gotElectionReminders is called and the has already completed the action.`, async () => {
+    const signedInUser: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'User',
+      avatar: '0',
+      type: UserType.Challenger,
+      completedActions: {
+        electionReminders: true,
+        registerToVote: false,
+        sharedChallenge: false,
+      },
+      badges: [
+        {
+          action: Actions.ElectionReminders,
+        },
+      ],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementationOnce(jest.fn());
+
+    function GetElectionReminders() {
+      const { gotElectionReminders } = useContextSafely(
+        UserContext,
+        'GetElectionReminders',
+      );
+
+      return <button onClick={gotElectionReminders}>Get Reminders</button>;
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={signedInUser}
+          emailForSignIn="user@example.com"
+        >
+          <GetElectionReminders />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await user.click(screen.getByText(/get reminders/i));
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
+  });
+
+  it(`throws an error when gotElectionReminders is called and the response from
+  the API is not ok.`, async () => {
+    const signedInUser: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'User',
+      avatar: '0',
+      type: UserType.Challenger,
+      completedActions: {
+        electionReminders: false,
+        registerToVote: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementationOnce(() => {
+        return Promise.resolve(
+          NextResponse.json(
+            {
+              message: 'Too many requests.',
+            },
+            { status: 429 },
+          ),
+        );
+      });
+
+    function GetElectionReminders() {
+      const { gotElectionReminders } = useContextSafely(
+        UserContext,
+        'GetElectionReminders',
+      );
+      const { showAlert } = useContextSafely(
+        AlertsContext,
+        'GetElectionReminders',
+      );
+
+      const onClick = async () => {
+        try {
+          await gotElectionReminders();
+        } catch (e) {
+          showAlert('There was a problem sending the request.', 'error');
+        }
+      };
+
+      return <button onClick={onClick}>Get Reminders</button>;
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={signedInUser}
+          emailForSignIn="user@example.com"
+        >
+          <GetElectionReminders />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await user.click(screen.getByText(/get reminders/i));
+    await waitFor(() => {
+      const alert = screen.queryByRole('alert');
+      expect(alert).toBeInTheDocument();
+      expect(alert?.textContent).toBe(
+        'There was a problem sending the request.',
+      );
     });
 
     fetchSpy.mockRestore();

@@ -8,9 +8,9 @@ describe('UserRecordParser', () => {
   const validUser = {
     id: '1',
     email: 'user@example.com',
-    name: 'user',
+    user_name: 'user',
     avatar: '0',
-    type: UserType.Hybrid,
+    user_type: UserType.Hybrid,
     challenge_end_timestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
     completed_challenge: false,
     invite_code: 'test-invite-code',
@@ -21,24 +21,24 @@ describe('UserRecordParser', () => {
     },
     badges: [
       {
-        action: Actions.SharedChallenge,
+        action_type: Actions.SharedChallenge,
         player_name: null,
         player_avatar: null,
       },
       {
-        action: Actions.VoterRegistration,
+        action_type: Actions.VoterRegistration,
         player_name: null,
         player_avatar: null,
       },
       {
-        action: Actions.ElectionReminders,
+        action_type: Actions.ElectionReminders,
         player_name: null,
         player_avatar: null,
       },
       {
         player_name: 'user 2',
         player_avatar: '1',
-        action: null,
+        action_type: null,
       },
     ],
     invited_by: {
@@ -160,7 +160,7 @@ describe('UserRecordParser', () => {
     const invalidBadges = [
       {},
       {
-        action: 'some invalid action',
+        action_type: 'some invalid action',
       },
       {
         player_name: 'player name without player avatar',
@@ -173,7 +173,7 @@ describe('UserRecordParser', () => {
         avatar: '4',
       },
       {
-        action: Actions.SharedChallenge,
+        action_type: Actions.SharedChallenge,
         player_name: 'too many properties',
         player_avatar: '0',
       },
