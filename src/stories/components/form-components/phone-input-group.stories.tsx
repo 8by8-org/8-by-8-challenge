@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { PhoneInputGroup } from '@/components/form-components/phone-input-group/phone-input-group';
+import { PhoneInputGroup } from '@/components/form-components/phone-input-group';
 import { Field } from 'fully-formed';
 import { PhoneValidator } from '@/app/register/utils/phone-validator';
 import { GlobalStylesProvider } from '@/stories/global-styles-provider';

@@ -1,7 +1,7 @@
 import { render, screen, cleanup, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { PhoneInputGroup } from '@/components/form-components/phone-input-group/phone-input-group';
+import { PhoneInputGroup } from '@/components/form-components/phone-input-group';
 import { Field, Group, Validity } from 'fully-formed';
 
 describe('PhoneInputGroup', () => {

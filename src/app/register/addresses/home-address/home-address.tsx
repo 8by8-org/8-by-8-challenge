@@ -6,7 +6,7 @@ import { VoterRegistrationContext } from '../../voter-registration-context';
 import { MoreInfo } from '@/components/utils/more-info';
 import { InputGroup } from '@/components/form-components/input-group';
 import { Select } from '@/components/form-components/select';
-import { PhoneInputGroup } from '@/components/form-components/phone-input-group/phone-input-group';
+import { PhoneInputGroup } from '@/components/form-components/phone-input-group';
 import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 import warningIconDark from '@/../public/static/images/components/shared/warning-icon-dark.svg';
 import styles from './styles.module.scss';
