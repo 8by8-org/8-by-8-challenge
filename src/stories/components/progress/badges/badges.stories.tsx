@@ -27,7 +27,7 @@ export const SingleNumberBadge: Story = {
 
 export const SingleActionBadge: Story = {
   render: () => {
-    const actionBadge: Badge = { action: Actions.VoterRegistration };
+    const actionBadge: Badge = { action: Actions.RegisterToVote };
     return (
       <GlobalStylesProvider>
         <ActionBadge badge={actionBadge} index={2} />
@@ -50,7 +50,7 @@ export const SinglePlayerBadge: Story = {
 export const AllBadgeTypes: Story = {
   render: () => {
     const badges: Badge[] = [
-      { action: Actions.VoterRegistration },
+      { action: Actions.RegisterToVote },
       { action: Actions.SharedChallenge },
       { action: Actions.ElectionReminders },
       { playerName: 'Player', playerAvatar: '1' },

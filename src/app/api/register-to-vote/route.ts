@@ -1,41 +1,28 @@
 import 'server-only';
 import { NextResponse, NextRequest } from 'next/server';
 import { ServerError } from '@/errors/server-error';
-import {
-  registerBodySchema,
-  supabaseRegisterBodySchema,
-} from './register-body-schema';
+import { requestBodySchema } from './request-body-schema';
 import { serverContainer } from '@/services/server/container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
+import { createRegistrationDataFromRequestBody } from './create-registration-data-from-request-body';
+import { ZodError } from 'zod';
 
-export async function POST(response: NextRequest) {
+export async function POST(request: NextRequest) {
   const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
-  const user = await auth.loadSessionUser();
+  let user = await auth.loadSessionUser();
 
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
   }
 
   const userRepo = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository);
-  const voterRegistrationRepository = serverContainer.get(
-    SERVER_SERVICE_KEYS.VoterRepository,
+  const voterRegistrationDataRepository = serverContainer.get(
+    SERVER_SERVICE_KEYS.VoterRegistrationDataRepository,
   );
 
   try {
-    const data = await response.json();
-    //creates dataForSupabase using underscores instead of camel case
-    const dataForSupabase = { ...data };
-    dataForSupabase.user_id = user.uid;
-    dataForSupabase.us_state = dataForSupabase.state;
-    delete dataForSupabase.state;
-    dataForSupabase.eighteen_plus = dataForSupabase.eighteenPlus;
-    delete dataForSupabase.eighteenPlus;
-    dataForSupabase.id_number = dataForSupabase.idNumber;
-    delete dataForSupabase.idNumber;
-
-    const registerBody = registerBodySchema.parse(data);
-    const supabaseRegisterBody =
-      supabaseRegisterBodySchema.parse(dataForSupabase);
+    const data = await request.json();
+    const requestBody = requestBodySchema.parse(data);
     const fetchResponse = await fetch(
       'https://usvotes-6vsnwycl4q-uw.a.run.app/registertovote',
       {
@@ -43,7 +30,7 @@ export async function POST(response: NextRequest) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(registerBody),
+        body: JSON.stringify(requestBody),
       },
     );
 
@@ -55,17 +42,25 @@ export async function POST(response: NextRequest) {
       );
     }
 
-    voterRegistrationRepository.insertVoterRegistrationInfo(
+    const registrationData = createRegistrationDataFromRequestBody(requestBody);
+
+    await voterRegistrationDataRepository.insertVoterRegistrationData(
       user.uid,
-      supabaseRegisterBody,
+      registrationData,
     );
-    userRepo.awardAndUpdateVoterRegistrationBadgeAndAction(user);
-    const updatedUser = await userRepo.getUserById(user.uid);
-    return NextResponse.json(updatedUser, { status: 200 });
+
+    user = await userRepo.awardRegisterToVoteBadge(user.uid);
+    return NextResponse.json(user, { status: 200 });
   } catch (e) {
     if (e instanceof ServerError) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });
+    } else if (e instanceof ZodError) {
+      return NextResponse.json({ error: 'bad data.' }, { status: 400 });
     }
-    return NextResponse.json({ error: 'bad data.' }, { status: 400 });
+
+    return NextResponse.json(
+      { error: 'An unknown error occurred.' },
+      { status: 500 },
+    );
   }
 }

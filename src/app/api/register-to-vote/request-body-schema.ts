@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const baseSchema = z.object({
+export const requestBodySchema = z.object({
   city: z
     .string({ required_error: 'city not valid' })
     .min(1, 'must be at least 1 char'),
@@ -104,9 +104,6 @@ const baseSchema = z.object({
     .string({ required_error: 'unit not valid' })
     .min(1, 'must be at least 1 char')
     .optional(),
-});
-
-export const registerBodySchema = baseSchema.extend({
   state: z
     .string({ required_error: 'us_state not valid' })
     .min(2, 'must be at least 2 char'),
@@ -114,21 +111,6 @@ export const registerBodySchema = baseSchema.extend({
     .string({ required_error: 'eighteen_plus not valid' })
     .min(1, 'must be at least 1 char'),
   idNumber: z
-    .string({ required_error: 'id_number not valid' })
-    .min(1, 'must be at least 1 char'),
-});
-
-export const supabaseRegisterBodySchema = baseSchema.extend({
-  user_id: z
-    .string({ required_error: 'user_id not valid' })
-    .min(1, 'must be at least 1 char'),
-  us_state: z
-    .string({ required_error: 'us_state not valid' })
-    .min(2, 'must be at least 2 char'),
-  eighteen_plus: z
-    .string({ required_error: 'eighteen_plus not valid' })
-    .min(1, 'must be at least 1 char'),
-  id_number: z
     .string({ required_error: 'id_number not valid' })
     .min(1, 'must be at least 1 char'),
 });

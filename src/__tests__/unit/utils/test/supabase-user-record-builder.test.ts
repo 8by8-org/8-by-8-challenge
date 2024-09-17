@@ -130,7 +130,7 @@ describe('SupabaseUserRecordBuilder', () => {
         action: Actions.ElectionReminders,
       },
       {
-        action: Actions.VoterRegistration,
+        action: Actions.RegisterToVote,
       },
       {
         action: Actions.SharedChallenge,

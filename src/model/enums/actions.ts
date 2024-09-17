@@ -1,5 +1,5 @@
 export enum Actions {
   ElectionReminders = 'electionReminders',
-  VoterRegistration = 'voterRegistration',
+  RegisterToVote = 'registerToVote',
   SharedChallenge = 'sharedChallenge',
 }

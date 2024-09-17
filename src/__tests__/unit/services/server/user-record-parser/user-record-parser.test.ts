@@ -26,7 +26,7 @@ describe('UserRecordParser', () => {
         player_avatar: null,
       },
       {
-        action_type: Actions.VoterRegistration,
+        action_type: Actions.RegisterToVote,
         player_name: null,
         player_avatar: null,
       },
@@ -69,7 +69,7 @@ describe('UserRecordParser', () => {
           action: Actions.SharedChallenge,
         },
         {
-          action: Actions.VoterRegistration,
+          action: Actions.RegisterToVote,
         },
         {
           action: Actions.ElectionReminders,

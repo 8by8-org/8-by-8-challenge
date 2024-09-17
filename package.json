@@ -16,7 +16,7 @@
     "format": "prettier --write \"**/*.+(js|ts|tsx|json)\"",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "create-cryptokey": "node scripts/create-cryptoKey.js"
+    "create-cryptokey": "node scripts/create-crypto-key.js"
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
@@ -53,6 +53,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "builder-pattern": "^2.2.0",
+    "copy-paste": "^1.5.3",
     "core-js": "^3.37.0",
     "eslint": "^8",
     "eslint-config-next": "^14.2.4",
