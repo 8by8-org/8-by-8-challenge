@@ -19,6 +19,7 @@ export const SupabaseUserRepository = inject(
     private readonly REMOTE_PROCEDURES = {
       GET_USER_BY_ID: 'get_user_by_id',
       AWARD_ELECTION_REMINDERS_BADGE: 'award_election_reminders_badge',
+      AWARD_SHARED_CHALLENGE_BADGE: 'award_shared_challenge_badge'
     };
 
     constructor(
@@ -235,6 +236,62 @@ export const SupabaseUserRepository = inject(
       }
     }
   },
+
+  // refactor the old function with something like this 
+ /**
+ * @awardUserBadge
+ * @param user - A user to access their information
+ */
+async awardAndUpdateSharedChallengeBadgeAndAction(
+  user: User,
+): Promise<void> {
+  if (!this.canAwardBadge(user)) {
+    return;
+  }
+
+  await this.awardSharedChallengeBadge(user.uid);
+}
+
+/**
+ * Award the shared challenge badge and update user information.
+ * @param userId - The unique identifier of the user.
+ * @returns Updated user data
+ */
+async awardSharedChallengeBadge(userId: string): Promise<User> {
+  const supabase = this.createSupabaseClient();
+
+  // Call the remote procedure to award the shared challenge badge
+  const {
+    data: dbUser,
+    error,
+    status,
+  } = await supabase.rpc(
+    this.REMOTE_PROCEDURES.AWARD_SHARED_CHALLENGE_BADGE,
+    {
+      user_id: userId,
+    },
+  );
+
+  // Handle errors and missing user data
+  if (error) {
+    throw new ServerError(error.message, status);
+  }
+
+  if (!dbUser) {
+    throw new ServerError('User was null after update.', 500);
+  }
+
+  // Parse and return the updated user record
+  try {
+    const user = this.userRecordParser.parseUserRecord(dbUser);
+    return user;
+  } catch (e) {
+    throw new ServerError('Failed to parse user data.', 400);
+  }
+}
+
+
+  
   [
     SERVER_SERVICE_KEYS.createSupabaseServiceRoleClient,
     SERVER_SERVICE_KEYS.UserRecordParser,
