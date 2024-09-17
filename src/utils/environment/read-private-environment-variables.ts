@@ -21,7 +21,8 @@ export function readPrivateEnvironmentVariables() {
       .parse(process.env.SUPABASE_SERVICE_ROLE_KEY),
     VOTER_REGISTRATION_REPO_ENCRYPTION_KEY: z
       .string({
-        required_error: 'Could not load environment variable CRYPTO_KEY',
+        required_error:
+          'Could not load environment variable VOTER_REGISTRATION_REPO_ENCRYPTION_KEY',
       })
       .transform(async (key: string): Promise<CryptoKey> => {
         const rawKey = new Uint8Array(
