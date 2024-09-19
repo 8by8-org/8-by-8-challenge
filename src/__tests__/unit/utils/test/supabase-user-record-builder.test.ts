@@ -1,4 +1,5 @@
 import { SupabaseUserRecordBuilder } from '@/utils/test/supabase-user-record-builder';
+import { SupabaseInvitationsRepository } from '@/services/server/invitations-repository/supabase-invitations-repository';
 import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
 import { createId } from '@paralleldrive/cuid2';
 import { DateTime } from 'luxon';
@@ -6,6 +7,7 @@ import { UserType } from '@/model/enums/user-type';
 import { Actions } from '@/model/enums/actions';
 import type { Avatar } from '@/model/types/avatar';
 import type { Badge } from '@/model/types/badge';
+import { createSupabaseServiceRoleClient } from '@/services/server/create-supabase-client/create-supabase-service-role-client';
 
 describe('SupabaseUserRecordBuilder', () => {
   afterEach(() => {
@@ -128,7 +130,7 @@ describe('SupabaseUserRecordBuilder', () => {
         action: Actions.ElectionReminders,
       },
       {
-        action: Actions.VoterRegistration,
+        action: Actions.RegisterToVote,
       },
       {
         action: Actions.SharedChallenge,
@@ -159,10 +161,18 @@ describe('SupabaseUserRecordBuilder', () => {
       })
       .build();
 
-    expect(player.invitedBy).toStrictEqual({
-      inviteCode: challengerInviteCode,
-      name: challengerName,
-      avatar: challengerAvatar,
+    const invitationsRepo = new SupabaseInvitationsRepository(
+      createSupabaseServiceRoleClient,
+    );
+
+    const invitedBy = await invitationsRepo.getInvitedByFromPlayerId(
+      player.uid,
+    );
+
+    expect(invitedBy).toStrictEqual({
+      challengerInviteCode: challengerInviteCode,
+      challengerName: challengerName,
+      challengerAvatar: challengerAvatar,
     });
   });
 

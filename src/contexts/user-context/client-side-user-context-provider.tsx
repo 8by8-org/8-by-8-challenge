@@ -1,15 +1,17 @@
 'use client';
-import { useState, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   SendOTPToEmailParams,
   SignUpWithEmailParams,
   SignInWithOTPParams,
   UserContext,
 } from './user-context';
-import { useRouter } from 'next/navigation';
-import type { User } from '@/model/types/user';
+import { clearInviteCode } from './clear-invite-code-cookie';
 import { clearAllPersistentFormElements, ValueOf } from 'fully-formed';
 import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
+import type { User } from '@/model/types/user';
+import type { InvitedBy } from '@/model/types/invited-by';
 
 /**
  * Props that can be passed from a server component into a
@@ -19,6 +21,7 @@ import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
 interface ClientSideUserContextProviderProps {
   user: User | null;
   emailForSignIn: string;
+  invitedBy: InvitedBy | null;
   children?: ReactNode;
 }
 
@@ -35,7 +38,14 @@ export function ClientSideUserContextProvider(
 ) {
   const [user, setUser] = useState<User | null>(props.user);
   const [emailForSignIn, setEmailForSignIn] = useState(props.emailForSignIn);
+  const [invitedBy, setInvitedBy] = useState<InvitedBy | null>(props.invitedBy);
   const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      clearInviteCode();
+    }
+  }, [user]);
 
   async function signUpWithEmail(params: SignUpWithEmailParams) {
     const response = await fetch('/api/signup-with-email', {
@@ -90,6 +100,7 @@ export function ClientSideUserContextProvider(
 
     const data = await response.json();
     setUser(data.user as User);
+    setInvitedBy(data.invitedBy as InvitedBy);
   }
 
   async function gotElectionReminders() {
@@ -120,6 +131,7 @@ export function ClientSideUserContextProvider(
     }
 
     setUser(null);
+    setInvitedBy(null);
     clearAllPersistentFormElements();
   }
 
@@ -144,6 +156,7 @@ export function ClientSideUserContextProvider(
       value={{
         user,
         emailForSignIn,
+        invitedBy,
         signUpWithEmail,
         sendOTPToEmail,
         resendOTP,

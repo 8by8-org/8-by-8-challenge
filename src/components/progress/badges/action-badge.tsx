@@ -22,7 +22,7 @@ export function ActionBadge({ badge, index }: ActionBadgeProps): JSX.Element {
   let imagePrefix: string;
 
   switch (badge.action) {
-    case Actions.VoterRegistration:
+    case Actions.RegisterToVote:
       label = 'You Registered';
       imagePrefix = 'register-to-vote';
       break;

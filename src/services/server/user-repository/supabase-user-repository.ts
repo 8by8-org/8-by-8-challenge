@@ -2,6 +2,7 @@ import 'server-only';
 import { inject } from 'undecorated-di';
 import { SERVER_SERVICE_KEYS } from '../keys';
 import { ServerError } from '@/errors/server-error';
+import { UserType } from '@/model/enums/user-type';
 import type { UserRepository } from './user-repository';
 import type { User } from '@/model/types/user';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
@@ -17,6 +18,7 @@ export const SupabaseUserRepository = inject(
     private readonly REMOTE_PROCEDURES = {
       GET_USER_BY_ID: 'get_user_by_id',
       AWARD_ELECTION_REMINDERS_BADGE: 'award_election_reminders_badge',
+      AWARD_REGISTER_TO_VOTE_BADGE: 'award_register_to_vote_badge',
     };
 
     constructor(
@@ -40,6 +42,75 @@ export const SupabaseUserRepository = inject(
       }
 
       if (!dbUser) return null;
+
+      try {
+        const user = this.userRecordParser.parseUserRecord(dbUser);
+        return user;
+      } catch (e) {
+        throw new ServerError('Failed to parse user data.', 400);
+      }
+    }
+
+    async makeHybrid(userId: string): Promise<User> {
+      const supabase = this.createSupabaseClient();
+
+      const {
+        data: dbUser,
+        error,
+        status,
+      } = await supabase
+        .from('users')
+        .update({
+          user_type: UserType.Hybrid,
+        })
+        .eq('id', userId)
+        .select(
+          `*,
+          completed_actions (election_reminders, register_to_vote, shared_challenge),
+          badges (action_type, player_name, player_avatar),
+          contributed_to (challenger_name, challenger_avatar)`,
+        )
+        .order('id')
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        throw new ServerError(error.message, status);
+      }
+
+      if (!dbUser) {
+        throw new ServerError('Update operation returned null user.', 500);
+      }
+
+      try {
+        const user = this.userRecordParser.parseUserRecord(dbUser);
+        return user;
+      } catch (e) {
+        throw new ServerError('Failed to parse user data.', 400);
+      }
+    }
+
+    async awardRegisterToVoteBadge(userId: string): Promise<User> {
+      const supabase = this.createSupabaseClient();
+
+      const {
+        data: dbUser,
+        error,
+        status,
+      } = await supabase.rpc(
+        this.REMOTE_PROCEDURES.AWARD_REGISTER_TO_VOTE_BADGE,
+        {
+          user_id: userId,
+        },
+      );
+
+      if (error) {
+        throw new ServerError(error.message, status);
+      }
+
+      if (!dbUser) {
+        throw new ServerError('User was null after update.', 500);
+      }
 
       try {
         const user = this.userRecordParser.parseUserRecord(dbUser);

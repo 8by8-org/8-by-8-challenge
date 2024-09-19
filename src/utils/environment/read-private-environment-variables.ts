@@ -25,5 +25,26 @@ export function readPrivateEnvironmentVariables() {
           'Could not load environment variable GOOGLE_MAPS_API_KEY',
       })
       .parse(process.env.GOOGLE_MAPS_API_KEY),
+    VOTER_REGISTRATION_REPO_ENCRYPTION_KEY: z
+      .string({
+        required_error:
+          'Could not load environment variable VOTER_REGISTRATION_REPO_ENCRYPTION_KEY',
+      })
+      .transform(async (key: string): Promise<CryptoKey> => {
+        const rawKey = new Uint8Array(
+          atob(key)
+            .split('')
+            .map(char => char.charCodeAt(0)),
+        );
+        const cryptoKey = await crypto.subtle.importKey(
+          'raw',
+          rawKey,
+          { name: 'AES-GCM' },
+          true,
+          ['encrypt', 'decrypt'],
+        );
+        return cryptoKey;
+      })
+      .parseAsync(process.env.VOTER_REGISTRATION_REPO_ENCRYPTION_KEY),
   };
 }

@@ -15,7 +15,7 @@ describe('Bagdes', () => {
         action: Actions.SharedChallenge,
       },
       {
-        action: Actions.VoterRegistration,
+        action: Actions.RegisterToVote,
       },
       {
         action: Actions.ElectionReminders,

@@ -35,10 +35,5 @@ export interface User {
    * Each time the challenger clicks a new challenger's share link, this will be
    * updated.
    */
-  invitedBy?: {
-    inviteCode: string;
-    name: string;
-    avatar: Avatar;
-  };
   inviteCode: string;
 }

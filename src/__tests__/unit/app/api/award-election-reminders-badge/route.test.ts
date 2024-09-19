@@ -102,6 +102,12 @@ describe('PUT', () => {
   });
 
   it('returns a response the status code of a caught ServerError.', async () => {
+    /* 
+      Prevent caught error from being logged as it could mislead developers into
+      thinking a test failed.
+    */
+    jest.spyOn(console, 'error').mockImplementationOnce(jest.fn());
+
     const user: User = {
       uid: '1',
       email: 'user@example.com',
@@ -147,6 +153,12 @@ describe('PUT', () => {
   });
 
   it('returns a response with a status of 500 if an unknown error is caught.', async () => {
+    /* 
+      Prevent caught error from being logged as it could mislead developers into
+      thinking a test failed.
+    */
+    jest.spyOn(console, 'error').mockImplementationOnce(jest.fn());
+
     const user: User = {
       uid: '1',
       email: 'user@example.com',

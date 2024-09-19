@@ -66,7 +66,7 @@ export const NoDaysLeftChallenge: Story = {
         registerToVote: true,
       },
       badges: [
-        { action: Actions.VoterRegistration },
+        { action: Actions.RegisterToVote },
         { action: Actions.SharedChallenge },
         { playerName: 'Player', playerAvatar: '0' },
       ],
@@ -99,7 +99,7 @@ export const CompletedChallenge: Story = {
         registerToVote: true,
       },
       badges: [
-        { action: Actions.VoterRegistration },
+        { action: Actions.RegisterToVote },
         { action: Actions.SharedChallenge },
         { action: Actions.ElectionReminders },
         { playerName: 'Player1', playerAvatar: '0' },
