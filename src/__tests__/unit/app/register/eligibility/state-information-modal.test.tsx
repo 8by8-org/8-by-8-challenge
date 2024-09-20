@@ -3,7 +3,8 @@ import userEvent, { type UserEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { useState } from 'react';
 import navigation from 'next/navigation';
-import { NorthDakotaInfoModal } from '@/app/register/eligibility/north-dakota-info-modal';
+import { StateInformationModal } from '@/app/register/eligibility/state-information-modal';
+import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 import { VoterRegistrationPathnames } from '@/app/register/constants/voter-registration-pathnames';
 import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 import { Builder } from 'builder-pattern';
@@ -13,15 +14,19 @@ jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
 
-describe('NorthDakotaInfoModal', () => {
+describe('StateInformationModal', () => {
   let user: UserEvent;
   let router: AppRouterInstance;
 
-  function TestComponent() {
+  function TestComponent({ stateAbbr }: { stateAbbr: string }) {
     const [showModal, setShowModal] = useState(true);
 
     return (
-      <NorthDakotaInfoModal showModal={showModal} setShowModal={setShowModal} />
+      <StateInformationModal
+        stateAbbr={stateAbbr}
+        showModal={showModal}
+        setShowModal={setShowModal}
+      />
     );
   }
 
@@ -35,7 +40,7 @@ describe('NorthDakotaInfoModal', () => {
   afterEach(cleanup);
 
   it('closes itself when the close button is clicked.', async () => {
-    render(<TestComponent />);
+    render(<TestComponent stateAbbr={US_STATE_ABBREVIATIONS.NORTH_DAKOTA} />);
     expect(screen.queryByRole('dialog')).toBeInTheDocument();
 
     await user.click(screen.getByLabelText(/close dialog/i));
@@ -47,7 +52,7 @@ describe('NorthDakotaInfoModal', () => {
   });
 
   it('closes itself when the "Nevermind" button is clicked.', async () => {
-    render(<TestComponent />);
+    render(<TestComponent stateAbbr={US_STATE_ABBREVIATIONS.NORTH_DAKOTA} />);
     expect(screen.queryByRole('dialog')).toBeInTheDocument();
 
     await user.click(screen.getByText(/nevermind/i));
@@ -59,7 +64,7 @@ describe('NorthDakotaInfoModal', () => {
   });
 
   it('advances the user to the next page when the "Keep going" button is clicked.', async () => {
-    render(<TestComponent />);
+    render(<TestComponent stateAbbr={US_STATE_ABBREVIATIONS.NORTH_DAKOTA} />);
     await user.click(screen.getByText(/keep going/i));
     expect(router.push).toHaveBeenCalledWith(VoterRegistrationPathnames.NAMES);
   });
