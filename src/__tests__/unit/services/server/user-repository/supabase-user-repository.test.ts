@@ -34,8 +34,6 @@ describe('SupabaseUserRepository', () => {
   });
 
   it('returns a user when getUserById is called with an existing user id.', async () => {
-    const supabase = createSupabaseClient();
-
     const challengerEmail = 'challenger@example.com';
     const challengerName = 'Challenger';
     const challengerAvatar = '0';

@@ -39,6 +39,34 @@ describe('StateInformationModal', () => {
 
   afterEach(cleanup);
 
+  it(`displays information about voting in North Dakota when it receives the 
+    value 'ND' in the stateAbbr prop.`, () => {
+    render(<TestComponent stateAbbr={US_STATE_ABBREVIATIONS.NORTH_DAKOTA} />);
+    expect(screen.queryAllByText(/North Dakota/).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/New Hampshire/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Wyoming/)).not.toBeInTheDocument();
+  });
+
+  it(`displays information about voting in New Hampshire when it receives the
+    value 'NH' in the stateAbbr prop.`, () => {
+    render(<TestComponent stateAbbr={US_STATE_ABBREVIATIONS.NEW_HAMPSHIRE} />);
+    expect(screen.queryAllByText(/New Hampshire/).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/North Dakota/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Wyoming/)).not.toBeInTheDocument();
+  });
+
+  it(`displays information about voting in Wyoming when it receives the
+    value 'WY' in the stateAbbr prop.`, () => {
+    render(<TestComponent stateAbbr={US_STATE_ABBREVIATIONS.WYOMING} />);
+    expect(screen.queryAllByText(/Wyoming/).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/North Dakota/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/New Hampshire/)).not.toBeInTheDocument();
+  });
+
+  it(`renders without error if it receives some other state.`, () => {
+    render(<TestComponent stateAbbr={US_STATE_ABBREVIATIONS.NEW_JERSEY} />);
+  });
+
   it('closes itself when the close button is clicked.', async () => {
     render(<TestComponent stateAbbr={US_STATE_ABBREVIATIONS.NORTH_DAKOTA} />);
     expect(screen.queryByRole('dialog')).toBeInTheDocument();
