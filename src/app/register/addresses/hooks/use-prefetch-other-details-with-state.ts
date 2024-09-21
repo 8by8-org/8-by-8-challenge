@@ -1,7 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { HomeAddressForm } from '../home-address/home-address-form';
-import { ValidityUtils } from 'fully-formed';
 import { VoterRegistrationPathnames } from '../../constants/voter-registration-pathnames';
 
 /**
@@ -20,19 +19,14 @@ export function usePrefetchOtherDetailsWithState(
   const router = useRouter();
 
   useEffect(() => {
-    if (ValidityUtils.isValidOrCaution(homeAddressForm.fields.state)) {
-      router.prefetch(
-        VoterRegistrationPathnames.OTHER_DETAILS +
-          `?state=${homeAddressForm.state.value.state}`,
-      );
-    }
+    router.prefetch(
+      VoterRegistrationPathnames.OTHER_DETAILS +
+        `?state=${homeAddressForm.state.value.state}`,
+    );
 
     const usStateSubscription = homeAddressForm.fields.state.subscribeToState(
-      ({ value, validity, didPropertyChange }) => {
-        if (
-          ValidityUtils.isValidOrCaution(validity) &&
-          didPropertyChange('value')
-        ) {
+      ({ value, didPropertyChange }) => {
+        if (didPropertyChange('value')) {
           router.prefetch(
             VoterRegistrationPathnames.OTHER_DETAILS + `?state=${value}`,
           );

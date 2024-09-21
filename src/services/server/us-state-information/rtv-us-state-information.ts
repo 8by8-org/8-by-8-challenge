@@ -23,22 +23,18 @@ export const RockTheVoteUSStateInformation = inject(
     async getPoliticalPartiesAndOtherDetails(
       state: string,
     ): Promise<PoliticalPartiesAndOtherDetails> {
-      try {
-        const response = await fetch(this.API_URL + state);
-        const body = await response.json();
+      const response = await fetch(this.API_URL + state);
+      const body = await response.json();
 
-        if (this.isResponseWithPoliticalPartiesAndOtherDetails(body)) {
-          return {
-            politicalParties: this.formatPoliticalParties(
-              body.party_list,
-              body.no_party_msg,
-            ),
-            raceOptions: body.race_list,
-            idNumberMessage: body.id_number_msg,
-          };
-        }
-      } catch (e) {
-        console.error(e);
+      if (this.isResponseWithPoliticalPartiesAndOtherDetails(body)) {
+        return {
+          politicalParties: this.formatPoliticalParties(
+            body.party_list,
+            body.no_party_msg,
+          ),
+          raceOptions: body.race_list,
+          idNumberMessage: body.id_number_msg,
+        };
       }
 
       return {
