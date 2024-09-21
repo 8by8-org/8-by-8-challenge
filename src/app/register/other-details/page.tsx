@@ -23,10 +23,10 @@ export default async function Page({ searchParams }: OtherDetailsProps) {
   const USStateInformation = serverContainer.get(
     SERVER_SERVICE_KEYS.USStateInformation,
   );
-  const politicalPartiesAndRaceOptions =
-    await USStateInformation.getPoliticalPartiesAndRaceOptions(
+  const politicalPartiesAndOtherDetails =
+    await USStateInformation.getPoliticalPartiesAndOtherDetails(
       searchParams.state ?? '',
     );
 
-  return <OtherDetails {...politicalPartiesAndRaceOptions} />;
+  return <OtherDetails {...politicalPartiesAndOtherDetails} />;
 }

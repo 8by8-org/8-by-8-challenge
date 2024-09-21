@@ -16,13 +16,14 @@ import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { getFirstNonValidInputId } from './get-first-non-valid-input-id';
 import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
 import type { FormEventHandler } from 'react';
-import type { PoliticalPartiesAndRaceOptions } from '@/model/types/political-parties-and-race-options';
+import type { PoliticalPartiesAndOtherDetails } from '@/model/types/political-parties-and-other-details';
 import styles from './styles.module.scss';
 
 export function OtherDetails({
   politicalParties,
   raceOptions,
-}: PoliticalPartiesAndRaceOptions) {
+  idNumberMessage,
+}: PoliticalPartiesAndOtherDetails) {
   const { voterRegistrationForm } = useContextSafely(
     VoterRegistrationContext,
     'OtherDetails',
@@ -118,8 +119,7 @@ export function OtherDetails({
         aria-describedby={idFieldDescriptionId}
       />
       <p className={styles.id_explainer} id={idFieldDescriptionId}>
-        Provide your driver&apos;s license, state identification card number, or
-        the last 4 digits of your social security number.
+        {idNumberMessage}
       </p>
       <Button type="submit" size="lg" wide className="mb_lg">
         Submit

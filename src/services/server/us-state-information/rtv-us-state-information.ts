@@ -1,7 +1,14 @@
 import { inject } from 'undecorated-di';
 import { moveToEnd } from '@/stories/components/utils/move-to-end';
 import type { USStateInformation } from './us-state-information';
-import type { PoliticalPartiesAndRaceOptions } from '@/model/types/political-parties-and-race-options';
+import type { PoliticalPartiesAndOtherDetails } from '@/model/types/political-parties-and-other-details';
+
+interface ResponseWithPoliticalPartiesAndOtherDetails {
+  party_list: string[];
+  no_party_msg: string;
+  race_list: string[];
+  id_number_msg: string;
+}
 
 export const RockTheVoteUSStateInformation = inject(
   class RockTheVoteUSStateInformation implements USStateInformation {
@@ -13,24 +20,21 @@ export const RockTheVoteUSStateInformation = inject(
       UNENROLLED: 'Unenrolled',
     };
 
-    async getPoliticalPartiesAndRaceOptions(
+    async getPoliticalPartiesAndOtherDetails(
       state: string,
-    ): Promise<PoliticalPartiesAndRaceOptions> {
+    ): Promise<PoliticalPartiesAndOtherDetails> {
       try {
         const response = await fetch(this.API_URL + state);
         const body = await response.json();
 
-        if (
-          'party_list' in body &&
-          'no_party_msg' in body &&
-          'race_list' in body
-        ) {
+        if (this.isResponseWithPoliticalPartiesAndOtherDetails(body)) {
           return {
             politicalParties: this.formatPoliticalParties(
               body.party_list,
               body.no_party_msg,
             ),
             raceOptions: body.race_list,
+            idNumberMessage: body.id_number_msg,
           };
         }
       } catch (e) {
@@ -40,7 +44,25 @@ export const RockTheVoteUSStateInformation = inject(
       return {
         politicalParties: [],
         raceOptions: [],
+        idNumberMessage: '',
       };
+    }
+
+    private isResponseWithPoliticalPartiesAndOtherDetails(
+      body: object,
+    ): body is ResponseWithPoliticalPartiesAndOtherDetails {
+      return (
+        'party_list' in body &&
+        Array.isArray(body.party_list) &&
+        body.party_list.every(item => typeof item === 'string') &&
+        'no_party_msg' in body &&
+        typeof body.no_party_msg === 'string' &&
+        'race_list' in body &&
+        Array.isArray(body.race_list) &&
+        body.race_list.every(item => typeof item === 'string') &&
+        'id_number_msg' in body &&
+        typeof body.id_number_msg === 'string'
+      );
     }
 
     private formatPoliticalParties(

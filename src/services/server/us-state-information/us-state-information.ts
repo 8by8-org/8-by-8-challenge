@@ -1,7 +1,6 @@
-import type { PoliticalPartiesAndRaceOptions } from '@/model/types/political-parties-and-race-options';
-
+import type { PoliticalPartiesAndOtherDetails } from '@/model/types/political-parties-and-other-details';
 export interface USStateInformation {
-  getPoliticalPartiesAndRaceOptions(
+  getPoliticalPartiesAndOtherDetails(
     state: string,
-  ): Promise<PoliticalPartiesAndRaceOptions>;
+  ): Promise<PoliticalPartiesAndOtherDetails>;
 }
