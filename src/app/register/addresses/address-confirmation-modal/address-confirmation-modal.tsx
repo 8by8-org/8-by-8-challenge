@@ -28,7 +28,7 @@ export function AddressConfirmationModal({
   const continueToNextPage = () => {
     router.push(
       VoterRegistrationPathnames.OTHER_DETAILS +
-        `?state=${addressesForm.state.value.homeAddress.state}&zip=${addressesForm.state.value.homeAddress.zip}`,
+        `?state=${addressesForm.state.value.homeAddress.state}`,
     );
   };
 

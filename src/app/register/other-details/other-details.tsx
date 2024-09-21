@@ -16,15 +16,13 @@ import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { getFirstNonValidInputId } from './get-first-non-valid-input-id';
 import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
 import type { FormEventHandler } from 'react';
+import type { PoliticalPartiesAndRaceOptions } from '@/model/types/political-parties-and-race-options';
 import styles from './styles.module.scss';
 
-export interface OtherDetailsProps {
-  ballotQualifiedPoliticalParties: string[];
-}
-
 export function OtherDetails({
-  ballotQualifiedPoliticalParties,
-}: OtherDetailsProps) {
+  politicalParties,
+  raceOptions,
+}: PoliticalPartiesAndRaceOptions) {
   const { voterRegistrationForm } = useContextSafely(
     VoterRegistrationContext,
     'OtherDetails',
@@ -62,17 +60,10 @@ export function OtherDetails({
       <Select
         field={form.fields.party}
         label="Political party*"
-        options={ballotQualifiedPoliticalParties
-          .map(party => ({
-            text: party,
-            value: party,
-          }))
-          .concat([
-            {
-              text: 'Other',
-              value: 'other',
-            },
-          ])}
+        options={politicalParties.map(party => ({
+          text: party,
+          value: party,
+        }))}
         className={styles.select}
         aria-required
       />
@@ -96,17 +87,7 @@ export function OtherDetails({
       <Select
         field={form.fields.race}
         label="Race*"
-        options={[
-          'Asian',
-          'Black or African American',
-          'Hispanic or Latino',
-          'Native American or Alaskan Native',
-          'Native Hawaiian or Other Pacific Islander',
-          'Other',
-          'Two or More Races',
-          'White',
-          'Decline to state',
-        ].map(value => {
+        options={raceOptions.map(value => {
           return {
             text: value,
             value,

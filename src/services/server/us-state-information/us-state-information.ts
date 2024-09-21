@@ -1,6 +1,7 @@
+import type { PoliticalPartiesAndRaceOptions } from '@/model/types/political-parties-and-race-options';
+
 export interface USStateInformation {
-  getBallotQualifiedPoliticalPartiesByLocation(
+  getPoliticalPartiesAndRaceOptions(
     state: string,
-    zip: string,
-  ): Promise<string[]>;
+  ): Promise<PoliticalPartiesAndRaceOptions>;
 }

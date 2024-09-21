@@ -13,7 +13,7 @@ import { redirectIfSignedOutFromSupabase } from './redirect-if-signed-out/redire
 import { refreshSupabaseSession } from './refresh-session/refresh-supabase-session';
 import { SupabaseUserRepository } from './user-repository/supabase-user-repository';
 import { WebCryptoSubtleEncryptor } from './encryptor/web-crypto-subtle-encryptor';
-import { MockUSStateInformation } from './us-state-information/mock-us-state-information';
+import { RockTheVoteUSStateInformation } from './us-state-information/rtv-us-state-information';
 import { validateAddressesWithGoogleMaps } from './validate-addresses/validate-addresses-with-google-maps';
 import { SupabaseVoterRegistrationDataRepository } from './voter-registration-data-repository/supabase-voter-registration-data-repository';
 import { createSupabaseServiceRoleClient } from './create-supabase-client/create-supabase-service-role-client';
@@ -73,7 +73,10 @@ export const serverContainer = ContainerBuilder.createBuilder()
   .registerFunction(SERVER_SERVICE_KEYS.refreshSession, refreshSupabaseSession)
   .registerClass(SERVER_SERVICE_KEYS.UserRepository, SupabaseUserRepository)
   .registerClass(SERVER_SERVICE_KEYS.Encryptor, WebCryptoSubtleEncryptor)
-  .registerClass(SERVER_SERVICE_KEYS.USStateInformation, MockUSStateInformation)
+  .registerClass(
+    SERVER_SERVICE_KEYS.USStateInformation,
+    RockTheVoteUSStateInformation,
+  )
   .registerFunction(
     SERVER_SERVICE_KEYS.validateAddresses,
     validateAddressesWithGoogleMaps,
