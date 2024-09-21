@@ -15,7 +15,7 @@ import type { VoterRegistrationDataRepository } from '@/services/server/voter-re
 describe('POST', () => {
   const getActualService = saveActualImplementation(serverContainer, 'get');
 
-  it(`accepts voter registration data, saves this data in the database, and 
+  it(`accepts voter registration data, saves this data in the database, and
   awards the user a badge.`, async () => {
     const user: User = {
       uid: '0',
@@ -61,6 +61,16 @@ describe('POST', () => {
         return getActualService(key);
       });
 
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementationOnce(() => {
+        return Promise.resolve(
+          new Response(JSON.stringify({ status: 'email sent' }), {
+            status: 200,
+          }),
+        );
+      });
+
     const registerBody = {
       user_id: '0',
       state: 'FL',
@@ -88,6 +98,7 @@ describe('POST', () => {
     const response = await POST(request);
     expect(response.status).toBe(200);
     containerSpy.mockRestore();
+    fetchSpy.mockRestore();
   });
 
   it('returns a response with a status of 401 when the user is signed out.', async () => {
@@ -131,8 +142,8 @@ describe('POST', () => {
     containerSpy.mockRestore();
   });
 
-  it(`returns a response with a status code matching that of a caught 
-  ServerError when one is thrown while attempting to insert voter registration 
+  it(`returns a response with a status code matching that of a caught
+  ServerError when one is thrown while attempting to insert voter registration
   data.`, async () => {
     const user: User = {
       uid: '0',
@@ -171,6 +182,16 @@ describe('POST', () => {
         return getActualService(key);
       });
 
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementationOnce(() => {
+        return Promise.resolve(
+          new Response(JSON.stringify({ status: 'email sent' }), {
+            status: 200,
+          }),
+        );
+      });
+
     const registerBody = {
       user_id: '0',
       state: 'FL',
@@ -201,6 +222,7 @@ describe('POST', () => {
     const responseBody = await response.json();
     expect(responseBody.error).toBe('User already exists.');
     containerSpy.mockRestore();
+    fetchSpy.mockRestore();
   });
 
   it(`returns a response with a status of 400 when the request body contains 
@@ -244,8 +266,8 @@ describe('POST', () => {
       dob: '09/20/2003',
       zip: '33027',
       email: 'test@me.come',
-      citizen: 'InvalidData',
-      eighteenPlus: 'InvalidData',
+      citizen: true, // citizen should be a string
+      eighteenPlus: 'yes',
       party: 'Democrat',
       idNumber: '123',
     };
