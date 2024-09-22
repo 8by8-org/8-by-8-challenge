@@ -1,0 +1,7 @@
+@use '../../styles/partials' as *;
+
+.title {
+  margin-left: $spacing-vertical-gutter;
+  margin-right: $spacing-vertical-gutter;
+  margin-top: $spacing-md;
+}

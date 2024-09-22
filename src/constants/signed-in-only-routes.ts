@@ -1,1 +1,1 @@
-export const SIGNED_IN_ONLY_ROUTES = ['/progress'];
+export const SIGNED_IN_ONLY_ROUTES = ['/progress', '/reminders'];

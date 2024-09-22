@@ -19,6 +19,7 @@ import { SupabaseVoterRegistrationDataRepository } from './voter-registration-da
 import { createSupabaseServiceRoleClient } from './create-supabase-client/create-supabase-service-role-client';
 import { setInviteCodeCookie } from './set-invite-code-cookie/set-invite-code-cookie';
 import { SupabaseInvitationsRepository } from './invitations-repository/supabase-invitations-repository';
+import { redirectIfSupabaseUserCompletedAction } from './redirect-if-completed-action/redirect-if-supabase-user-completed-action';
 
 /**
  * An inversion of control container that should be used to obtain instances of
@@ -89,5 +90,9 @@ export const serverContainer = ContainerBuilder.createBuilder()
   .registerClass(
     SERVER_SERVICE_KEYS.VoterRegistrationDataRepository,
     SupabaseVoterRegistrationDataRepository,
+  )
+  .registerFunction(
+    SERVER_SERVICE_KEYS.redirectIfCompletedAction,
+    redirectIfSupabaseUserCompletedAction,
   )
   .build();
