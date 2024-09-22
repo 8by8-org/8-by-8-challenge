@@ -1,4 +1,4 @@
-import { PUT } from '@/app/api/restart_challegnge/route';
+import { PUT } from '@/app/api/restart-challegnge/route';
 //import {PUT} from '@/app/api/restart_challenge/route';
 import { NextRequest } from 'next/server';
 import { serverContainer } from '@/services/server/container';

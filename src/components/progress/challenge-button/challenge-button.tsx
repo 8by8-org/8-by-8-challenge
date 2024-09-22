@@ -1,8 +1,10 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import type { User } from '@/model/types/user';
 import styles from './styles.module.scss';
+
 import { useAlertsContext} from '@/contexts/alerts-context';
 import { Alert, useAlert } from '@/components/utils/alert';
+import { useContextSafely } from '@/hooks/use-context-safely';
 interface ChallengeButtonProps {
   user: User | null;
   daysLeft: number;

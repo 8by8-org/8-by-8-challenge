@@ -19,10 +19,15 @@ export const SupabaseUserRepository = inject(
     ) {}
     //public method
     async restartChallenge(userId: string): Promise<number> {
-      const newTimestamp = DateTime.now().plus({ days: 8 }).toUnixInteger();
-      // Assuming there is a method to update the user's challengeEndTimestamp in the database
-      await this.updateUserChallengeEndTimestamp(userId, newTimestamp);
-      return newTimestamp;
+      const supabase = this.createSupabaseClient();
+      const updatedChallengeEndTimestamp = DateTime.now().plus({ days: 8 }).toUnixInteger();
+      const { error } = await supabase.from('users').update({ challenge_end_timestamp: updatedChallengeEndTimestamp }).eq('id', userId);
+      
+      if(error) {
+        throw new ServerError('Failed to update user.', 500);
+      }
+      
+      return updatedChallengeEndTimestamp;
       //follow the style of getUserById AND  supabase->throw an error
     }
 

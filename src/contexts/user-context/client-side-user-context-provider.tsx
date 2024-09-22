@@ -1,39 +1,35 @@
 'use client';
-import { useState, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+import { Modal } from '@/components/utils/modal';
 import {
   SendOTPToEmailParams,
   SignUpWithEmailParams,
   SignInWithOTPParams,
   UserContext,
 } from './user-context';
-import { useRouter } from 'next/navigation';
 import type { User } from '@/model/types/user';
 
-/**
- * Props that can be passed from a server component into a
- * {@link ClientSideUserContextProvider} in order to pre-render child components
- * with the user's information pre-populated.
- */
 interface ClientSideUserContextProviderProps {
   user: User | null;
   emailForSignIn: string;
   children?: ReactNode;
 }
 
-/**
- * Receives a {@link User} and an email address to use for signing in from a
- * server component and provides these as React state variables to child
- * components. Provides methods for signing in, signing out, and more.
- *
- * @param props - {@link ClientSideUserContextProviderProps}
- * @returns A {@link UserContext} provider.
- */
 export function ClientSideUserContextProvider(
   props: ClientSideUserContextProviderProps,
 ) {
   const [user, setUser] = useState<User | null>(props.user);
   const [emailForSignIn, setEmailForSignIn] = useState(props.emailForSignIn);
+  const [challengeExpired, setChallengeExpired] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // Logic to check if the challenge has expired
+    if (user && user.challengeEndTimestamp < Date.now()) {
+      setChallengeExpired(true);
+    }
+  }, [user]);
 
   async function signUpWithEmail(params: SignUpWithEmailParams) {
     const response = await fetch('/api/signup-with-email', {
@@ -46,7 +42,6 @@ export function ClientSideUserContextProvider(
     }
 
     setEmailForSignIn(params.email);
-
     router.push('/signin-with-otp');
   }
 
@@ -61,7 +56,6 @@ export function ClientSideUserContextProvider(
     }
 
     setEmailForSignIn(params.email);
-
     router.push('/signin-with-otp');
   }
 
@@ -102,9 +96,19 @@ export function ClientSideUserContextProvider(
     setUser(null);
   }
 
-  /* istanbul ignore next */
   async function restartChallenge() {
-    throw new Error('not implemented.');
+    const response = await fetch('/api/restart-challenge', {
+      method: 'PUT',
+      body: JSON.stringify({ userId: user?.uid }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to restart challenge.');
+    }
+
+    const data = await response.json();
+    setUser(data.user as User);
+    setChallengeExpired(false);
   }
 
   return (
@@ -121,6 +125,20 @@ export function ClientSideUserContextProvider(
       }}
     >
       {props.children}
+      {user && challengeExpired && (
+        <Modal
+          ariaLabel="Challenge Expired"
+          theme="dark"
+          isOpen={true}
+          closeModal={() => {} /* Disable close functionality */}
+        >
+          <div>
+            <h2>Challenge Expired</h2>
+            <p>Your challenge has expired. Please restart the challenge.</p>
+            <button onClick={restartChallenge}>Restart Challenge</button>
+          </div>
+        </Modal>
+      )}
     </UserContext.Provider>
   );
 }

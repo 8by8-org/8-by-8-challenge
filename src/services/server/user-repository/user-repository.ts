@@ -1,5 +1,4 @@
 import type { User } from '@/model/types/user';
-import { DateTime } from 'luxon';
 /**
  * Provides methods for retrieving user information from a database.
  */
