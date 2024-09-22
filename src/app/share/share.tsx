@@ -8,6 +8,7 @@ import { isSignedIn } from '@/components/guards/is-signed-in';
 import { useRouter } from 'next/navigation';
 import styles from './styles.module.scss';
 import SocialShare from '../socialshare/page';
+import MDNShare from '../mdnshare/page';
 
 
 interface ShareProps {
@@ -52,17 +53,18 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
         Invite friends to support your challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge. If you are curious, preview what they will see.
       </p>
           <div>
-              <SocialShare fullLink={fullLink}/>
+        <MDNShare fullLink={fullLink} />
       </div>
       <div className={styles.copyLink}>
         <p>Copy your unique link:</p>
 
         <button className={styles.copyButton} onClick={copyLink}>Copy</button>
-              <p className={styles.copylink}>{fullLink}</p> 
+              <p className={styles.copylink}></p> 
       </div>
     </PageContainer>
   );
 });
+
 
 // page will become the server componenet 
 // there is will be a new client component for share 
