@@ -7,8 +7,12 @@ import { useContextSafely } from '@/hooks/use-context-safely';
 import { isSignedIn } from '@/components/guards/is-signed-in';
 import { useRouter } from 'next/navigation';
 import styles from './styles.module.scss';
-import SocialShare from '../socialshare/page';
 import MDNShare from '../mdnshare/page';
+import BackArrowIcon from '../share/backIcon';
+import CopyLink from '../share/CopyLink';
+import DownloadIcon from '../share/downloadImagesIcon'; 
+import CalendarImage from '../share/calendarImage';
+
 
 
 interface ShareProps {
@@ -21,6 +25,7 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
     UserContext,
     'UserContext',
   );
+
 
   const [openModal, setOpenModal] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -48,18 +53,25 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
   return (
     <PageContainer>
       <h2 className={styles.header}>Invite Friends</h2>
-      <button onClick={() => router.push('/progress')}>Back</button>
+      <div onClick={() => router.push('/progress')} className={styles.backArrowIcon}>
+        <BackArrowIcon/>
+      </div>
+      <div className={styles.calendar}>
+        <CalendarImage/>
+      </div>
       <p className={styles.paragraph}>
-        Invite friends to support your challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge. If you are curious, preview what they will see.
+        Invite friends to support your challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge. If you are curious, preview  what they will see.
       </p>
-          <div>
+      <div className={styles.ActionBox}>
+      <div>
         <MDNShare fullLink={fullLink} />
       </div>
-      <div className={styles.copyLink}>
-        <p>Copy your unique link:</p>
-
-        <button className={styles.copyButton} onClick={copyLink}>Copy</button>
-              <p className={styles.copylink}></p> 
+      <div onClick={copyLink}>
+        <CopyLink/>
+      </div>
+      <div>
+        <DownloadIcon />
+      </div>
       </div>
     </PageContainer>
   );

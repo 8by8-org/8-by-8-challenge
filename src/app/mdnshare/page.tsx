@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import SocialShareIcon from '../share/socialShareIcon';
 
 interface ShareProps {
   fullLink: string;
@@ -33,7 +34,7 @@ const MDNShare: React.FC<ShareProps> = ({ fullLink }) => {
   return (
     <div>
       {isNavigatorShareAvailable ? (
-        <button onClick={handleShare}>Share this page</button>
+        <div onClick={handleShare}><SocialShareIcon/></div>
       ) : (
         <p>Web Share API is not supported in your browser.</p>
       )}

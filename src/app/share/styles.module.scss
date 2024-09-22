@@ -9,11 +9,11 @@
 
 .paragraph{
     justify-content: center;  
-    margin-top: 150px;
+    margin-top: 0px;
 }
 
 .copyLink{
-    margin-top: 350px;
+    cursor: pointer;
 }
 
 .copyButton{
@@ -22,10 +22,22 @@
     border-radius: 25px;
 }
 
-.copylink{
-    margin-top: 30px;
-}
 
 .socialbadges{
     margin-top: 30px;
+}
+
+.backArrowIcon{
+    cursor: pointer;
+}
+
+.ActionBox{
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.calendar{
+    display: flex;
+    justify-content: center;
 }
