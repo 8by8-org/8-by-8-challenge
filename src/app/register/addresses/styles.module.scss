@@ -1,0 +1,9 @@
+@use '../../../styles/partials' as *;
+
+.has_mailing_address_unchecked {
+  margin-bottom: 20px;
+}
+
+.has_mailing_address_checked {
+  margin-bottom: $spacing-md;
+}

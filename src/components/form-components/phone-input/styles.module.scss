@@ -1,0 +1,48 @@
+@use '../../../styles/partials' as *;
+
+.input {
+  @extend .b1;
+  display: block;
+  background-color: transparent;
+  color: transparent;
+  border-radius: 0px;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: 3px solid $color-black-text;
+  margin: 0;
+  padding: 8px 0 8px 0;
+  width: 100%;
+  transition: color 250ms linear;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: transparent;
+    transition: color 250ms linear;
+  }
+}
+
+.input:autofill,
+.input:-webkit-autofill {
+  color: $color-black-text;
+  transition: none;
+}
+
+.show_text {
+  color: $color-black-text;
+
+  &::placeholder {
+    color: $color-smoke;
+  }
+}
+
+.invalid {
+  border-color: $color-error;
+}
+
+.caution {
+  border-color: $color-review-light;
+}

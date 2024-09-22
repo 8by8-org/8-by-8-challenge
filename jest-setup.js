@@ -23,3 +23,10 @@ console.warn = (message, ...optionalParams) => {
 
   actualWarn(message, ...optionalParams);
 };
+
+/* Mock the ResizeObserver */
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));

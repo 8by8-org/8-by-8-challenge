@@ -12,6 +12,7 @@ export function LoadingWheel() {
           height={82}
           alt="loading"
           className={styles.spinner}
+          priority
         />
       </div>
     </>

@@ -13,7 +13,7 @@ type Story = StoryObj<typeof Button>;
 export const GradientLarge: Story = {
   render: () => (
     <GlobalStylesProvider>
-      <Button variant="btn_gradient" size="btn_lg">
+      <Button variant="gradient" size="lg">
         Gradient Button
       </Button>
     </GlobalStylesProvider>
@@ -23,7 +23,7 @@ export const GradientLarge: Story = {
 export const InvertedSmall: Story = {
   render: () => (
     <GlobalStylesProvider>
-      <Button variant="btn_inverted" size="btn_sm">
+      <Button variant="inverted" size="sm">
         Inverted Button
       </Button>
     </GlobalStylesProvider>
@@ -33,7 +33,7 @@ export const InvertedSmall: Story = {
 export const WideGradientLarge: Story = {
   render: () => (
     <GlobalStylesProvider>
-      <Button variant="btn_gradient" size="btn_lg" wide>
+      <Button variant="gradient" size="lg" wide>
         Wide Gradient Button
       </Button>
     </GlobalStylesProvider>
@@ -43,7 +43,7 @@ export const WideGradientLarge: Story = {
 export const GradientSmall: Story = {
   render: () => (
     <GlobalStylesProvider>
-      <Button variant="btn_gradient" size="btn_sm">
+      <Button variant="gradient" size="sm">
         Gradient Button
       </Button>
     </GlobalStylesProvider>
@@ -53,7 +53,7 @@ export const GradientSmall: Story = {
 export const InvertedLarge: Story = {
   render: () => (
     <GlobalStylesProvider>
-      <Button variant="btn_inverted" size="btn_lg">
+      <Button variant="inverted" size="lg">
         Inverted Button
       </Button>
     </GlobalStylesProvider>
@@ -63,7 +63,7 @@ export const InvertedLarge: Story = {
 export const WideInvertedSmall: Story = {
   render: () => (
     <GlobalStylesProvider>
-      <Button variant="btn_inverted" size="btn_sm" wide>
+      <Button variant="inverted" size="sm" wide>
         Wide Inverted Button
       </Button>
     </GlobalStylesProvider>

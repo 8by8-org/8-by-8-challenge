@@ -14,7 +14,6 @@ import { UserContext, type UserContextType } from '@/contexts/user-context';
 import { AlertsContextProvider } from '@/contexts/alerts-context';
 import { CLOUDFLARE_TURNSTILE_DUMMY_SITE_KEYS } from '@/constants/cloudflare-turnstile-dummy-site-keys';
 import { AVATARS } from '@/constants/avatars';
-import { UserType } from '@/model/enums/user-type';
 import { PromiseScheduler } from '@/utils/test/promise-scheduler';
 
 jest.mock('next/navigation', () => require('next-router-mock'));
@@ -100,7 +99,6 @@ describe('SignUpPage', () => {
         email: 'user@example.com',
         name: 'user',
         avatar: '1',
-        type: UserType.Challenger,
         captchaToken: expect.any(String),
       }),
     );
@@ -140,7 +138,6 @@ describe('SignUpPage', () => {
         email: 'user@example.com',
         name: 'user',
         avatar: '1',
-        type: UserType.Challenger,
         captchaToken: expect.any(String),
       }),
     );

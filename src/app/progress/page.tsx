@@ -1,6 +1,7 @@
 'use client';
 import { useRef, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { PageContainer } from '@/components/utils/page-container';
 import { UserContext } from '@/contexts/user-context';
 import { calculateDaysRemaining } from './calculate-days-remaining';
@@ -12,8 +13,9 @@ import { ConfettiAnimation } from '@/components/utils/confetti-animation';
 import blackCurve from '@/../public/static/images/pages/progress/black-curve.svg';
 import { Badges } from '@/components/progress/badges';
 import { Modal } from '@/components/utils/modal';
-import styles from './styles.module.scss';
 import { isSignedIn } from '@/components/guards/is-signed-in';
+import { VoterRegistrationPathnames } from '../register/constants/voter-registration-pathnames';
+import styles from './styles.module.scss';
 
 export default isSignedIn(function Progress() {
   const { user, restartChallenge } = useContextSafely(
@@ -121,7 +123,10 @@ export default isSignedIn(function Progress() {
               <p className={styles.register}>
                 Not registered to vote yet?
                 <br />
-                <a href="/voterreg">Register now</a> and earn a badge!
+                <Link href={VoterRegistrationPathnames.ELIGIBILITY}>
+                  Register now
+                </Link>{' '}
+                and earn a badge!
               </p>
             </div>
           )}
@@ -141,7 +146,10 @@ export default isSignedIn(function Progress() {
               <p className={styles.register}>
                 Not registered to vote yet?
                 <br />
-                <a href="/voterreg">Register now</a> and earn a badge!
+                <Link href={VoterRegistrationPathnames.ELIGIBILITY}>
+                  Register now
+                </Link>{' '}
+                and earn a badge!
               </p>
             </div>
           )}

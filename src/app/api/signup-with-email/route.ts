@@ -14,8 +14,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const data = await request.json();
-    const { email, name, avatar, type, captchaToken } =
-      requestBodySchema.parse(data);
+    const { email, name, avatar, captchaToken } = requestBodySchema.parse(data);
     const captchaPassed = await captchaValidator.isHuman(captchaToken);
 
     if (!captchaPassed)
@@ -24,7 +23,7 @@ export async function POST(request: NextRequest) {
         { status: 401 },
       );
 
-    await auth.signUpWithEmailAndSendOTP(email, name, avatar, type);
+    await auth.signUpWithEmailAndSendOTP(email, name, avatar);
     await cookies.setEmailForSignIn(email);
 
     return NextResponse.json(

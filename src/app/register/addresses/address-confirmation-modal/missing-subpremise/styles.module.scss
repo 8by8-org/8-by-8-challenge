@@ -1,0 +1,36 @@
+@use '../../../../../styles/partials' as *;
+
+.container {
+  max-width: 100%;
+}
+
+.title {
+  @extend .b1;
+  margin-bottom: 5px;
+}
+
+.caption {
+  @extend .b2;
+  margin-bottom: 5px;
+}
+
+.error_number_of_count {
+  @extend .b2;
+  margin-bottom: 30px;
+}
+
+.what_you_entered {
+  @extend.b3;
+  margin-bottom: 5px;
+}
+
+.address {
+  margin-bottom: 30px;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.missing_information {
+  @extend.b3;
+  margin-bottom: 10px;
+}

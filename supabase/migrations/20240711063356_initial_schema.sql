@@ -2,9 +2,9 @@
 create table public.users (
   id uuid not null references auth.users on delete cascade,
   email varchar(320) unique not null,
-  name varchar(255) not null,
+  user_name varchar(255) not null,
   avatar char(1) not null,
-  type varchar(255) not null,
+  user_type varchar(255) not null,
   -- Set the challenge end date to 8 days in the future and save as Unix seconds
   challenge_end_timestamp bigint not null default extract(epoch from now() + interval '8 days'),
   completed_challenge boolean not null default false,
@@ -39,7 +39,7 @@ using ((select auth.uid()) = user_id);
 -- Create badges table, enable row level security, and set a policy
 create table public.badges (
   id serial,
-  action varchar(255),
+  action_type varchar(255),
   player_name varchar(255),
   player_avatar char(1),
   challenger_id uuid not null references public.users on delete cascade,
@@ -72,6 +72,7 @@ using ((select auth.uid()) = player_id);
 create table public.contributed_to (
   id serial,
   player_id uuid not null references public.users on delete cascade,
+  challenger_invite_code varchar not null,
   challenger_name varchar(255) not null,
   challenger_avatar char(1) not null,
   primary key (id, player_id)
@@ -83,6 +84,52 @@ create policy "Users can view their own contributed to data."
 on public.contributed_to for select
 using ((select auth.uid()) = player_id);
 
+-- Create registration_information table, enable row level security, and set a policy
+create table public.registration_information (
+  id serial,
+  user_id uuid not null references public.users on delete cascade, 
+  us_state varchar(255) not null,
+  city varchar(255) not null, 
+  street varchar(255) not null,
+  name_first varchar(255) not null, 
+  name_last varchar(255) not null, 
+  dob varchar(255) not null, 
+  zip varchar(255) not null, 
+  email varchar(255) not null, 
+  citizen varchar(255) not null, 
+  eighteen_plus varchar(255) not null, 
+  party varchar(255) not null, 
+  id_number varchar(255) not null, 
+  unit varchar(255) null,
+  name_middle varchar(255) null,
+  suffix varchar(255) null,
+  race varchar(255) null,
+  change_of_name varchar(255) null,
+  prev_title varchar(255) null,
+  prev_name_first varchar(255) null,
+  prev_name_middle varchar(255) null,
+  prev_name_last varchar(255) null,
+  prev_suffix varchar(255) null,
+  change_of_address varchar(255) null,
+  prev_state varchar(255) null,
+  prev_city varchar(255) null,
+  prev_street varchar(255) null,
+  prev_zip varchar(255) null,
+  prev_unit varchar(255) null,
+  diff_mail_address varchar(255) null,
+  mail_state varchar(255) null,
+  mail_city varchar(255) null,
+  mail_street varchar(255) null,
+  mail_zip varchar(255) null,
+  primary key (id, user_id)
+);
+
+alter table public.registration_information enable row level security;
+
+create policy "Users can view their own registration information."
+on public.registration_information for select
+using ((select auth.uid()) = user_id);
+
 -- Create a function that creates new rows in public.users and public.completed_actions
 create function public.handle_new_user()
 returns trigger
@@ -93,9 +140,9 @@ begin
   insert into public.users (
     id,
     email,
-    name, 
+    user_name, 
     avatar,
-    type,
+    user_type,
     invite_code
   ) values (
     new.id,

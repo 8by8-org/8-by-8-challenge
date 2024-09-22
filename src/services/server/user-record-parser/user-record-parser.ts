@@ -7,7 +7,7 @@ import type { IUserRecordParser } from './i-user-record-parser';
 import type { User } from '@/model/types/user';
 
 interface DBActionBadge {
-  action: Actions.VoterRegistration | Actions.SharedChallenge;
+  action_type: Actions;
   player_name: null;
   player_avatar: null;
 }
@@ -26,28 +26,22 @@ export const UserRecordParser = inject(
 
     private dbBadgeSchema = z.union([
       z.object({
-        action: z.enum([Actions.VoterRegistration, Actions.SharedChallenge]),
+        action_type: z.nativeEnum(Actions),
         player_name: z.null(),
         player_avatar: z.null(),
       }),
       z.object({
         player_name: z.string(),
         player_avatar: z.enum(['0', '1', '2', '3']),
-        action: z.null(),
+        action_type: z.null(),
       }),
     ]);
 
     private isDBActionBadge(
       badge: z.infer<typeof this.dbBadgeSchema>,
     ): badge is DBActionBadge {
-      return !!badge.action;
+      return !!badge.action_type;
     }
-
-    private dbInvitedBySchema = z.object({
-      challenger_invite_code: z.string(),
-      challenger_name: z.string(),
-      challenger_avatar: z.enum(['0', '1', '2', '3']),
-    });
 
     private dbContributedToSchema = z.object({
       challenger_name: z.string(),
@@ -57,15 +51,14 @@ export const UserRecordParser = inject(
     private dbUserSchema = z.object({
       id: z.string(),
       email: z.string(),
-      name: z.string(),
+      user_name: z.string(),
       avatar: z.enum(['0', '1', '2', '3']),
-      type: z.nativeEnum(UserType),
+      user_type: z.nativeEnum(UserType),
       challenge_end_timestamp: z.number(),
       completed_challenge: z.boolean(),
       invite_code: z.string(),
       completed_actions: this.dbCompletedActionsSchema,
       badges: z.array(this.dbBadgeSchema),
-      invited_by: this.dbInvitedBySchema.nullable(),
       contributed_to: z.array(this.dbContributedToSchema),
     });
 
@@ -75,9 +68,9 @@ export const UserRecordParser = inject(
       const user: User = {
         uid: validatedDBUser.id,
         email: validatedDBUser.email,
-        name: validatedDBUser.name,
+        name: validatedDBUser.user_name,
         avatar: validatedDBUser.avatar,
-        type: validatedDBUser.type,
+        type: validatedDBUser.user_type,
         completedActions: {
           electionReminders:
             validatedDBUser.completed_actions.election_reminders,
@@ -87,7 +80,7 @@ export const UserRecordParser = inject(
         badges: validatedDBUser.badges.map(badge => {
           if (this.isDBActionBadge(badge)) {
             return {
-              action: badge.action,
+              action: badge.action_type,
             };
           } else {
             return {
@@ -96,14 +89,6 @@ export const UserRecordParser = inject(
             };
           }
         }),
-        invitedBy:
-          validatedDBUser.invited_by ?
-            {
-              inviteCode: validatedDBUser.invited_by.challenger_invite_code,
-              name: validatedDBUser.invited_by.challenger_name,
-              avatar: validatedDBUser.invited_by.challenger_avatar,
-            }
-          : undefined,
         contributedTo: validatedDBUser.contributed_to.map(contributedTo => ({
           name: contributedTo.challenger_name,
           avatar: contributedTo.challenger_avatar,

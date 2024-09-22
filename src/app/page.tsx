@@ -1,6 +1,10 @@
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { PageContainer } from '@/components/utils/page-container';
+import { Button } from '@/components/utils/button';
 import logo from '../../public/static/images/shared/8by8-logo.svg';
 import yellowCurve from '../../public/static/images/pages/home/yellow-curve.svg';
 import tealCurve from '../../public/static/images/pages/home/teal-curve.svg';
@@ -13,6 +17,12 @@ import speakerWithMicAndSign from '../../public/static/images/pages/home/speaker
 import styles from './styles.module.scss';
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch('/challengerwelcome');
+  }, [router]);
+
   return (
     <PageContainer>
       <section className={styles.section_1}>
@@ -22,7 +32,13 @@ export default function Home() {
             GET <u className="underline">8 AAPI FRIENDS</u> TO REGISTER TO VOTE
             IN <u className="underline">8 DAYS</u>
           </h1>
-          <button className={styles.challenge_btn}>Take the Challenge</button>
+          <Button
+            onClick={() => router.push('/challengerwelcome')}
+            className={styles.challenge_btn}
+            wide
+          >
+            Take the Challenge
+          </Button>
           <Link href="/why8by8" className={styles.link}>
             See why others are doing it
           </Link>
@@ -130,9 +146,9 @@ export default function Home() {
           <u className="underline">taking the #8by8challenge</u> and registering
           8 of their friends to vote in 8 days.
         </h2>
-        <button className="btn_gradient btn_wide btn_lg">
+        <Button onClick={() => router.push('/challengerwelcome')} wide>
           Take the Challenge
-        </button>
+        </Button>
         <div className={styles.content_container}>
           <p className="b2 color_white">
             The 8by8 mission aims to build civic participation and bring

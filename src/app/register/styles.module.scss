@@ -1,0 +1,14 @@
+@use '../../styles/partials' as *;
+
+.container {
+  padding-left: $spacing-vertical-gutter;
+  padding-right: $spacing-vertical-gutter;
+  padding-top: $spacing-lg;
+}
+
+.progress_bar_container {
+  margin-top: $spacing-sm;
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-bottom: $spacing-lg;
+}

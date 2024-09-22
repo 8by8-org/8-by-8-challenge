@@ -2,6 +2,7 @@ import 'server-only';
 import { inject } from 'undecorated-di';
 import { cookies } from 'next/headers';
 import { DateTime } from 'luxon';
+import { CookieNames } from '@/constants/cookie-names';
 import type { ICookies } from './i-cookies';
 
 /**
@@ -13,11 +14,9 @@ import type { ICookies } from './i-cookies';
  */
 export const Cookies = inject(
   class Cookies implements ICookies {
-    private emailForSignInCookieName = '8by8-email-for-signin';
-
     setEmailForSignIn(email: string): Promise<void> {
       return new Promise(resolve => {
-        cookies().set(this.emailForSignInCookieName, email, {
+        cookies().set(CookieNames.EmailForSignIn, email, {
           expires: this.getEmailForSignInCookieExpiry(),
           sameSite: 'strict',
         });
@@ -27,13 +26,21 @@ export const Cookies = inject(
 
     loadEmailForSignIn(): Promise<string> {
       return new Promise(resolve => {
-        const cookie = cookies().get(this.emailForSignInCookieName);
+        const cookie = cookies().get(CookieNames.EmailForSignIn);
         resolve(cookie?.value ?? '');
       });
     }
 
     clearEmailForSignIn(): void {
-      cookies().delete(this.emailForSignInCookieName);
+      cookies().delete(CookieNames.EmailForSignIn);
+    }
+
+    getInviteCode(): string | undefined {
+      return cookies().get(CookieNames.InviteCode)?.value;
+    }
+
+    clearInviteCode(): void {
+      cookies().delete(CookieNames.InviteCode);
     }
 
     private getEmailForSignInCookieExpiry() {

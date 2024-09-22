@@ -1,0 +1,36 @@
+@use '../../../../../styles/partials' as *;
+
+.container {
+  max-width: 100%;
+}
+
+.title {
+  @extend .b1;
+  margin-bottom: 5px;
+}
+
+.caption {
+  @extend .b2;
+  margin-bottom: 5px;
+}
+
+.emphasized {
+  @extend .b1;
+  text-decoration: underline;
+}
+
+.error_number_of_count {
+  @extend .b2;
+  margin-bottom: 30px;
+}
+
+.subtitle {
+  @extend .b3;
+  margin-bottom: 5px;
+}
+
+.address {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  margin-bottom: $spacing-lg;
+}

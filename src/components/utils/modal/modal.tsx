@@ -49,6 +49,7 @@ export function Modal({
             className={styles.close_btn}
             aria-label="close dialog"
             onClick={closeModal}
+            type="button"
           >
             <AiOutlineClose className={styles.close_btn_icon} />
           </button>

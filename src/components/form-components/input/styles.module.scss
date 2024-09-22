@@ -14,6 +14,7 @@
   padding: 8px 0 8px 0;
   width: 100%;
   transition: color 250ms linear;
+  position: relative;
 
   &:focus {
     outline: none;
@@ -37,6 +38,7 @@
 }
 
 .input[type='number'] {
+  appearance: textField;
   -moz-appearance: textfield;
 }
 
@@ -50,4 +52,8 @@
 
 .invalid {
   border-color: $color-error;
+}
+
+.caution {
+  border-color: $color-review-light;
 }

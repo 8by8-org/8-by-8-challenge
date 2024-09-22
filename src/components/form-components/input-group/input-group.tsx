@@ -1,8 +1,18 @@
+'use client';
+import { ValidityUtils } from 'fully-formed';
+import Image from 'next/image';
 import { Label } from '../label';
 import { Input } from '../input';
 import { Messages } from '../messages';
-import { usePipe, type FieldOfType, type IGroup } from 'fully-formed';
+import {
+  useMultiPipe,
+  usePipe,
+  type FieldOfType,
+  type IGroup,
+} from 'fully-formed';
 import type { CSSProperties, ReactNode } from 'react';
+import warningIconLight from '@/../public/static/images/components/shared/warning-icon-light.svg';
+import styles from './styles.module.scss';
 
 type InputGroupProps = {
   field: FieldOfType<string>;
@@ -16,6 +26,7 @@ type InputGroupProps = {
   disabled?: boolean;
   autoComplete?: string;
   maxLength?: number;
+  max?: string;
   ['aria-required']?: boolean;
 };
 
@@ -49,11 +60,24 @@ export function InputGroup({
   disabled,
   autoComplete,
   maxLength,
+  max,
   ['aria-required']: ariaRequired,
 }: InputGroupProps) {
   const messagesId = `${field.id}-messages`;
   const hideMessages = usePipe(field, state => {
     return !(state.hasBeenModified || state.hasBeenBlurred || state.submitted);
+  });
+
+  const showWarningIcon = useMultiPipe([field, ...groups], states => {
+    const validity = ValidityUtils.minValidity(states);
+    const fieldState = states[0];
+
+    return (
+      ValidityUtils.isCaution(validity) &&
+      (fieldState.hasBeenModified ||
+        fieldState.hasBeenBlurred ||
+        fieldState.submitted)
+    );
   });
 
   return (
@@ -72,12 +96,22 @@ export function InputGroup({
         aria-required={ariaRequired}
         aria-describedby={messagesId}
         maxLength={maxLength}
+        max={max}
       />
-      <Messages
-        messageBearers={[field, ...groups]}
-        id={messagesId}
-        hideMessages={hideMessages}
-      />
+      <div className={styles.messages_container}>
+        {showWarningIcon && (
+          <Image
+            src={warningIconLight}
+            alt="Warning Icon"
+            className={styles.warning_icon}
+          />
+        )}
+        <Messages
+          messageBearers={[field, ...groups]}
+          id={messagesId}
+          hideMessages={hideMessages}
+        />
+      </div>
     </div>
   );
 }

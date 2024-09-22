@@ -6,7 +6,6 @@ import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
 import { createId } from '@paralleldrive/cuid2';
 import { createBrowserClient } from '@supabase/ssr';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Builder } from 'builder-pattern';
 
 describe('clearTable', () => {
   afterEach(() => {
@@ -35,33 +34,35 @@ describe('clearTable', () => {
     }
 
     const beforeClearTable = await supabase.from('users').select();
-    expect(beforeClearTable.data.length).toBe(10);
+    expect(beforeClearTable.data).toHaveLength(10);
 
     await clearTable('users', supabase);
     const afterClearTable = await supabase.from('users').select();
-    expect(afterClearTable.data.length).toBe(0);
+    expect(afterClearTable.data).toHaveLength(0);
   });
 
   it('throws an error if supabase.from().select() returns an error.', async () => {
     const error = new Error('Failed to load records.');
 
-    const supabase = Builder<SupabaseClient>()
-      .from(() => ({
+    const supabase = {
+      from: () => ({
         select: () => ({
           data: [],
           error,
         }),
-      }))
-      .build();
+      }),
+    };
 
-    await expect(clearTable('users', supabase)).rejects.toThrow(error);
+    await expect(
+      clearTable('users', supabase as unknown as SupabaseClient),
+    ).rejects.toThrow(error);
   });
 
   it('throws an error if supabase.from().delete().eq() returns an error.', async () => {
     const error = new Error('Failed to delete records.');
 
-    const supabase = Builder<SupabaseClient>()
-      .from(() => ({
+    const supabase = {
+      from: () => ({
         select: () => ({
           data: [
             {
@@ -77,9 +78,11 @@ describe('clearTable', () => {
             error,
           }),
         }),
-      }))
-      .build();
+      }),
+    };
 
-    await expect(clearTable('states', supabase)).rejects.toThrow(error);
+    await expect(
+      clearTable('states', supabase as unknown as SupabaseClient),
+    ).rejects.toThrow(error);
   });
 });

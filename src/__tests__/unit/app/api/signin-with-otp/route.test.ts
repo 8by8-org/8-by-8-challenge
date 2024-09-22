@@ -41,7 +41,9 @@ describe('POST', () => {
       .mockImplementation(key => {
         if (key.name === SERVER_SERVICE_KEYS.Auth.name) {
           return Builder<Auth>()
-            .signInWithEmailAndOTP(() => Promise.resolve(user))
+            .signInWithEmailAndOTP(() =>
+              Promise.resolve({ user, invitedBy: null }),
+            )
             .build();
         } else if (key.name === SERVER_SERVICE_KEYS.Cookies.name) {
           return Builder<ICookies>()

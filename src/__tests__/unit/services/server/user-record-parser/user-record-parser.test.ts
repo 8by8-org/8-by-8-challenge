@@ -8,34 +8,39 @@ describe('UserRecordParser', () => {
   const validUser = {
     id: '1',
     email: 'user@example.com',
-    name: 'user',
+    user_name: 'user',
     avatar: '0',
-    type: UserType.Hybrid,
+    user_type: UserType.Hybrid,
     challenge_end_timestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
     completed_challenge: false,
     invite_code: 'test-invite-code',
     completed_actions: {
-      election_reminders: false,
-      register_to_vote: false,
-      shared_challenge: false,
+      election_reminders: true,
+      register_to_vote: true,
+      shared_challenge: true,
     },
     badges: [
       {
-        action: Actions.SharedChallenge,
+        action_type: Actions.SharedChallenge,
+        player_name: null,
+        player_avatar: null,
+      },
+      {
+        action_type: Actions.RegisterToVote,
+        player_name: null,
+        player_avatar: null,
+      },
+      {
+        action_type: Actions.ElectionReminders,
         player_name: null,
         player_avatar: null,
       },
       {
         player_name: 'user 2',
         player_avatar: '1',
-        action: null,
+        action_type: null,
       },
     ],
-    invited_by: {
-      challenger_invite_code: 'user-3-invite-code',
-      challenger_name: 'user 3',
-      challenger_avatar: '2',
-    },
     contributed_to: [
       {
         challenger_name: 'user 3',
@@ -55,24 +60,25 @@ describe('UserRecordParser', () => {
       completedChallenge: false,
       inviteCode: 'test-invite-code',
       completedActions: {
-        electionReminders: false,
-        registerToVote: false,
-        sharedChallenge: false,
+        electionReminders: true,
+        registerToVote: true,
+        sharedChallenge: true,
       },
       badges: [
         {
           action: Actions.SharedChallenge,
         },
         {
+          action: Actions.RegisterToVote,
+        },
+        {
+          action: Actions.ElectionReminders,
+        },
+        {
           playerName: 'user 2',
           playerAvatar: '1',
         },
       ],
-      invitedBy: {
-        inviteCode: 'user-3-invite-code',
-        name: 'user 3',
-        avatar: '2',
-      },
       contributedTo: [
         {
           name: 'user 3',
@@ -87,14 +93,7 @@ describe('UserRecordParser', () => {
     for (const key of Object.keys(validUser)) {
       const invalidUser = { ...validUser };
       delete invalidUser[key as keyof typeof invalidUser];
-
-      // invitedBy is an optional property, so it will not throw an error when
-      // omitted
-      if (key === 'invitedBy') {
-        expect(() => parser.parseUserRecord(invalidUser)).not.toThrow();
-      } else {
-        expect(() => parser.parseUserRecord(invalidUser)).toThrow();
-      }
+      expect(() => parser.parseUserRecord(invalidUser)).toThrow();
     }
   });
 
@@ -144,7 +143,7 @@ describe('UserRecordParser', () => {
     const invalidBadges = [
       {},
       {
-        action: 'some invalid action',
+        action_type: 'some invalid action',
       },
       {
         player_name: 'player name without player avatar',
@@ -157,7 +156,7 @@ describe('UserRecordParser', () => {
         avatar: '4',
       },
       {
-        action: Actions.SharedChallenge,
+        action_type: Actions.SharedChallenge,
         player_name: 'too many properties',
         player_avatar: '0',
       },
@@ -170,48 +169,6 @@ describe('UserRecordParser', () => {
 
       expect(() => parser.parseUserRecord(invalidUser)).toThrow();
     }
-  });
-
-  it('throws an error when invited_by is improperly formatted.', () => {
-    const invalidUser = { ...validUser } as Record<string, any>;
-
-    invalidUser.invited_by = {
-      ...validUser.invited_by,
-    };
-
-    // invited_by.challenger_invite_code must be a string
-    invalidUser.invited_by.challenger_invite_code = 123456;
-    expect(() => parser.parseUserRecord(invalidUser)).toThrow();
-
-    // invited_by.challenger_invite_code is required
-    delete invalidUser.invited_by.challenger_invite_code;
-    expect(() => parser.parseUserRecord(invalidUser)).toThrow();
-
-    // reset invalidUser.invited_by
-    invalidUser.invited_by = {
-      ...validUser.invited_by,
-    };
-
-    // invited_by.challenger_name must be a string
-    invalidUser.invited_by.challenger_name = 1;
-    expect(() => parser.parseUserRecord(invalidUser)).toThrow();
-
-    // invited_by.challenger_name is required
-    delete invalidUser.invited_by.challenger_name;
-    expect(() => parser.parseUserRecord(invalidUser)).toThrow();
-
-    // reset invalidUser.invited_by
-    invalidUser.invited_by = {
-      ...validUser.invited_by,
-    };
-
-    // invited_by.challenger_avatar must be of type Avatar
-    invalidUser.invited_by.challenger_avatar = '4';
-    expect(() => parser.parseUserRecord(invalidUser)).toThrow();
-
-    // invited_by.challenger_avatar is required
-    delete invalidUser.invited_by.challenger_avatar;
-    expect(() => parser.parseUserRecord(invalidUser)).toThrow();
   });
 
   it('throws an error when contributed_to contains improperly formatted items.', () => {

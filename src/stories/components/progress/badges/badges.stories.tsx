@@ -4,7 +4,7 @@ import { NumberBadge } from '@/components/progress/badges/number-badge';
 import { ActionBadge } from '@/components/progress/badges/action-badge';
 import { PlayerBadge } from '@/components/progress/badges/player-badge';
 import { Badges } from '@/components/progress/badges';
-import type { Badge } from '@/model/types/badge';
+import type { Badge } from '@/model/types/badges/badge';
 import { Actions } from '@/model/enums/actions';
 
 const meta: Meta<typeof Badges> = {
@@ -27,7 +27,7 @@ export const SingleNumberBadge: Story = {
 
 export const SingleActionBadge: Story = {
   render: () => {
-    const actionBadge: Badge = { action: Actions.VoterRegistration };
+    const actionBadge: Badge = { action: Actions.RegisterToVote };
     return (
       <GlobalStylesProvider>
         <ActionBadge badge={actionBadge} index={2} />
@@ -47,11 +47,12 @@ export const SinglePlayerBadge: Story = {
   },
 };
 
-export const AllBadges: Story = {
+export const AllBadgeTypes: Story = {
   render: () => {
     const badges: Badge[] = [
-      { action: Actions.VoterRegistration },
+      { action: Actions.RegisterToVote },
       { action: Actions.SharedChallenge },
+      { action: Actions.ElectionReminders },
       { playerName: 'Player', playerAvatar: '1' },
     ];
     return (

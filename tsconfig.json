@@ -28,7 +28,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/__tests__/unit/middleware/.test.ts"
+    "src/__tests__/unit/middleware/.test.ts",
+    "src/app/register/constants/generate-state-requirements.js",
+    "src/model/enums/address-error-type.ts"
   ],
   "exclude": ["node_modules"]
 }

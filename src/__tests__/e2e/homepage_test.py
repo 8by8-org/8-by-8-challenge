@@ -1,17 +1,21 @@
+"""Runs Selenium tests against the homepage."""
 import unittest
+import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
-
-class NextJSTests(unittest.TestCase):
-
+class HomePageTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Set up the browser instance before all tests"""
-        cls.driver = webdriver.Chrome()
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("--headless")
+        cls.driver = webdriver.Chrome(options=chrome_options)
         cls.driver.implicitly_wait(10)
-        cls.host = "http://localhost:3000"
+        cls.host = os.environ.get("PREVIEW_URL") or "http://localhost:3000"
+        preview_access_token = os.environ.get("ACCESS_TOKEN")
+        cls.query_string = "?x-vercel-protection-bypass=" + preview_access_token if preview_access_token else ""
 
     @classmethod
     def tearDownClass(cls):
@@ -20,9 +24,15 @@ class NextJSTests(unittest.TestCase):
 
     def setUp(self):
         """Navigate to the base URL before each test"""
-        self.driver.get(self.host)
+        self.driver.get(self.host + self.query_string)
 
-# Webpage Elements  
+    def assertEqualIgnoreCase(self, expected, actual):
+        expected_to_lower = expected.lower()
+        actual_to_lower = actual.lower()
+        if expected_to_lower != actual_to_lower:
+            self.fail(f"Expected {expected_to_lower} but got {actual_to_lower}")
+
+    # Webpage Elements  
     def test_homepage_title(self):
         """Test if the homepage title is correct"""
         self.assertEqual(self.driver.title, '8by8 Challenge')
@@ -39,67 +49,66 @@ class NextJSTests(unittest.TestCase):
         """Test if the h1 element is displayed"""
         h1_rendered = self.driver.find_element(By.TAG_NAME, 'h1')
         self.assertTrue(h1_rendered.is_displayed())
-        self.assertEqual(h1_rendered.text,
-                         'GET 8 AAPI FRIENDS TO REGISTER TO VOTE IN 8 DAYS')
+        self.assertEqualIgnoreCase('GET 8 AAPI FRIENDS TO REGISTER TO VOTE IN 8 DAYS', h1_rendered.text)
 
     def test_locate_button(self):
         """Test if the challenge button is displayed correctly"""
         button_element = self.driver.find_element(
             By.CSS_SELECTOR, ".styles_challenge_btn__T0eGB")
-        if button_element.text == 'TAKE THE CHALLENGE':
-            self.assertEqual(button_element.text, 'TAKE THE CHALLENGE')
-        else:
-            self.fail(
-                f"expected texted TAKE THE CHALLENGE but got {button_element.text}")
+        self.assertEqualIgnoreCase('TAKE THE CHALLENGE', button_element.text)
             
-# HamBurger Menu    
+    # Hamburger Menu    
     def test_hamburger_menu(self):
         """Test if the hambuger menu functions as intended"""
-        prevState = self.driver.find_element(By.CLASS_NAME, 'hidden').is_selected()
-        if not prevState:
-            alterState = self.driver.find_element(By.CLASS_NAME, 'styles_outer_container__ppLtJ')
+        prev_state = self.driver.find_element(By.CLASS_NAME, 'hidden').is_selected()
+        if not prev_state:
+            alter_state = self.driver.find_element(By.CLASS_NAME, 'styles_outer_container__ppLtJ')
             events = ActionChains(self.driver)
-            events.move_to_element(alterState).click().perform()
+            events.move_to_element(alter_state).click().perform()
         else:
             self.fail('Hamburger Menu Tests have failed!')
     
-        innerMenu = self.driver.find_element(By.CLASS_NAME, 'styles_inner_container__0JSHj').is_displayed()
-        if innerMenu:
-            return None
-        else:
+        inner_menu = self.driver.find_element(By.CLASS_NAME, 'styles_inner_container__0JSHj').is_displayed()
+        if not inner_menu:
             self.fail('Inner Menu is not displayed!')  
 
      
-    def test_content_list(self):
-        """Test if the hambuger menu shows some menu content"""
-        content_list = self.driver.find_elements(By.TAG_NAME, 'ul')
-        for i in range(len(content_list)):
-            if content_list[i].get_attribute("class") == 'styles_hamburger_menu_items__8yFBG':
-                content = self.driver.find_element(By.TAG_NAME, 'li').is_displayed()
-                if content:
-                    test_button = self.driver.find_element(By.TAG_NAME, 'button')
-                    click_action = ActionChains(self.driver)
-                    click_action.move_to_element(test_button).click().perform()
-            else:
-                self.fail('TAG_NAME not found!')
+    def test_hamburger_menu_items(self):
+        """Test if the hambuger menu contains expected items."""
+        hamburger_menu_ul = self.driver.find_element(By.CLASS_NAME, 'styles_hamburger_menu_items__8yFBG')
+
+        greeting = hamburger_menu_ul.find_element(By.TAG_NAME, 'h2')
+        self.assertEqualIgnoreCase('Hi there!', greeting.get_property('innerText'))
+
+        menu_items = hamburger_menu_ul.find_elements(By.TAG_NAME, 'li')
+        text_of_expected_menu_items = (
+          "",
+          "Take the challenge", 
+          "Take action", 
+          "Why 8by8",
+          "Rewards",
+          "FAQs",
+          "Privacy Policy",
+          "Settings",
+          "Sign up",
+        )
+
+        self.assertEqual(len(text_of_expected_menu_items), len(menu_items))
+
+        for i, expected_item_text in enumerate(text_of_expected_menu_items):
+            self.assertEqualIgnoreCase(expected_item_text, menu_items[i].get_property('innerText'))
                     
-            
-            
-# SECTION_01
+    # SECTION_01
     def test_section_1_render(self):
         """Test if Section 1 is rendered correctly"""
         test_section_1 = self.driver.find_element(By.TAG_NAME, 'section')
         section_class = test_section_1.get_attribute("class")
         self.assertEqual(section_class, 'styles_section_1__MMFLM')
 
-    def test_link_tag_navigation(self):
+    def test_link_tag(self):
         """Test the link tag content in Section 1"""
         link_tag = self.driver.find_element(By.PARTIAL_LINK_TEXT, 'See')
-        link_tag.get_attribute('href') == '/why8by8'
-        click_nav = ActionChains(self.driver)
-        click_nav.move_to_element(link_tag)
-        click_nav.click()
-        click_nav.perform()
+        self.assertIn('/why8by8', link_tag.get_attribute('href'))
 
     def test_image_exists(self):
         """Test if the image in Section 1 exists"""
@@ -109,8 +118,7 @@ class NextJSTests(unittest.TestCase):
         formatted_url = f"{self.host}/_next/static/media/yellow-curve.0236528a.svg"
         self.assertEqual(image_src, formatted_url)
 
-
-# SECTION_02
+    # SECTION_02
     def test_section_2_rendered(self):
         """Test if Section 2 is rendered"""
         sections = self.driver.find_elements(By.TAG_NAME, "section")
@@ -134,8 +142,7 @@ class NextJSTests(unittest.TestCase):
         formatted_url = f"{self.host}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Ffather-and-daughter-with-sign.1f060e65.png&w=750&q=75"
         self.assertEqual(secondary_src, formatted_url)
         
-
-# SECTION_03        
+    # SECTION_03        
     def test_section_3_render(self):
         """Test if Section 3 is rendered"""
         sections = self.driver.find_elements(By.TAG_NAME, "section")
@@ -160,8 +167,7 @@ class NextJSTests(unittest.TestCase):
         formatted_url = f"{self.host}/_next/static/media/teal-curve.8a426c54.svg"
         self.assertEqual(div_src, formatted_url)
 
-
-# SECTION_04
+    # SECTION_04
     def test_all_section_4_render(self):
         """Test if Section 4 is rendered correctly"""
         sections = self.driver.find_elements(By.TAG_NAME, "section")
@@ -176,8 +182,7 @@ class NextJSTests(unittest.TestCase):
             self.fail(
                 f"Expected class 'styles_section_4__h94nS', but got '{section_class}'")
     
-
-# SECTION_05    
+    # SECTION_05    
     def test_section_5_render(self):
         """Test if Section 5 is rendered """
         section = self.driver.find_elements(By.TAG_NAME, "section")
@@ -206,8 +211,7 @@ class NextJSTests(unittest.TestCase):
         formatted_url = f"{self.host}/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fspeaker-with-mic-and-sign.e7d8ad09.png&w=640&q=75"
         self.assertEqual(image_src, formatted_url)
 
-
-# SECTION_06
+    # SECTION_06
     def test_section_6_render(self):
         """Test if Section 6 is rendered """
         section = self.driver.find_elements(By.TAG_NAME, "section")
@@ -240,18 +244,16 @@ class NextJSTests(unittest.TestCase):
 
     def test_section_6_divs(self):
         """Test if all the divs are displaying correct content"""
-        div_content = self.driver.find_elements(By.TAG_NAME, 'div')
-        for i in range(len(div_content)):
-            div_class = div_content[i].get_attribute("class")
+        div_elements = self.driver.find_elements(By.TAG_NAME, 'div')
+        for div in div_elements:
+            div_class = div.get_attribute("class")
             if div_class == "styles_stat_percentage_container_1__E4Hep":
-                div_text = div_content[i].text
+                div_text = div.text
                 self.assertEqual(div_text, "60%")
             elif div_class == "styles_stat_percentage_container_2__yCM_4":
-                self.assertEqual(div_content[i].text, "7%")
+                self.assertEqual(div.text, "7%")
             elif div_class == "styles_stat_percentage_container_3__sUpCi":
-                self.assertEqual(div_content[i].text, "3%")
-            else:
-                pass
+                self.assertEqual(div.text, "3%")
 
     def test_div_content(self):
         """Test if the images in the div is getting displayed"""
@@ -261,8 +263,7 @@ class NextJSTests(unittest.TestCase):
         formatted_url = f"{self.host}/_next/static/media/black-curve.49e02ce0.svg"
         self.assertEqual(image_src, formatted_url)
 
-
-# SECTION_07
+    # SECTION_07
     def test_section_7_render(self):
         """Test if section_7 is rendered"""
         section = self.driver.find_elements(By.TAG_NAME, "section")
@@ -291,7 +292,7 @@ class NextJSTests(unittest.TestCase):
         """Test if the button functions as expected"""
         button_element = self.driver.find_element(
             By.CSS_SELECTOR, ".btn_gradient.btn_wide.btn_lg")
-        if button_element.text == 'TAKE THE CHALLENGE':
+        if button_element.text.upper() == 'TAKE THE CHALLENGE':
             button_element.click()
         else:
             self.fail(
@@ -312,18 +313,5 @@ class NextJSTests(unittest.TestCase):
             self.fail(
                 "Expected paragraph with class 'b2 color_white' was not found.")
 
-    def test_anchor_tag(self):
-        """Test if the anchor tag is opening a new browser with a click event"""
-        a_content = self.driver.find_element(By.TAG_NAME, 'a')
-        a_content.get_attribute('href') == '/https://www.8by8.us/'
-        actions = ActionChains(self.driver)
-        actions.move_to_element(a_content)
-        actions.click()
-        actions.perform()
-
-
 if __name__ == "__main__":
     unittest.main()
-
-
-

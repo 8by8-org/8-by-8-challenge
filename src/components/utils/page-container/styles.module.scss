@@ -4,8 +4,8 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  $footerheight : 220px;
-  min-height: calc(100vh - partials.$navigation-height - $footerheight); // Adjust 
+  $footerheight: 220px;
+  min-height: calc(100vh - partials.$navigation-height - $footerheight);
   margin-top: partials.$navigation-height;
   min-width: partials.$page-width-min;
   z-index: 0;

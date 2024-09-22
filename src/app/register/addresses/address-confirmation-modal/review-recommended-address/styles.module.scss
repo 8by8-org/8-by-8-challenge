@@ -1,0 +1,81 @@
+@use '../../../../../styles/partials' as *;
+
+.container {
+  max-width: 100%;
+}
+
+.title {
+  @extend .b1;
+  margin-bottom: 5px;
+}
+
+.caption {
+  @extend .b2;
+  margin-bottom: 5px;
+}
+
+.error_number_of_count {
+  @extend .b2;
+}
+
+.radio_group {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 30px;
+  max-width: 100%;
+}
+
+$radio-diameter: 16px;
+$radio-margin: 15px;
+
+.radio {
+  position: relative;
+  margin-left: 0;
+  margin-right: $radio-margin;
+  min-width: $radio-diameter;
+  max-width: $radio-diameter;
+  min-height: $radio-diameter;
+  max-height: $radio-diameter;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+@supports (appearance: none) or (-webkit-appearance: none) or
+  (-moz-appearance: none) {
+  .radio::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: $radio-diameter;
+    max-width: $radio-diameter;
+    min-height: $radio-diameter;
+    max-height: $radio-diameter;
+    border: 2px solid $color-black-text;
+    border-radius: 50%;
+  }
+
+  .radio:checked::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    min-width: $radio-diameter - 4px;
+    max-width: $radio-diameter - 4px;
+    min-height: $radio-diameter - 4px;
+    max-height: $radio-diameter - 4px;
+    background-color: $color-black-text;
+    border-radius: 50%;
+  }
+}
+
+.label {
+  text-align: left;
+  max-width: 100%;
+}
+
+.address {
+  max-width: calc(100% - $radio-diameter - $radio-margin);
+  overflow-wrap: break-word;
+}

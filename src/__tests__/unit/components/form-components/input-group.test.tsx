@@ -27,7 +27,7 @@ describe('InputGroup', () => {
     expect(input.id).toBe(field.id);
   });
 
-  it(`renders an input element whose aria-describedby attribute is set to the id 
+  it(`renders an input element whose aria-describedby attribute includes the id 
   of the Messages component it renders.`, () => {
     const invalidEmailMessage = 'Please enter a valid email address.';
 
@@ -52,7 +52,7 @@ describe('InputGroup', () => {
 
     const input = screen.getByRole('textbox') as HTMLInputElement;
     const messagesId = `${email.id}-messages`;
-    expect(input.getAttribute('aria-describedby')).toBe(messagesId);
+    expect(input.getAttribute('aria-describedby')).toContain(messagesId);
 
     const messages = document.getElementById(messagesId);
     expect(messages).toBeTruthy();
