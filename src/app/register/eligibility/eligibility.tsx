@@ -14,7 +14,7 @@ import { InputGroup } from '@/components/form-components/input-group';
 import { Messages } from '@/components/form-components/messages';
 import { Button } from '@/components/utils/button';
 import { PreregistrationInfoModal } from './preregistration-info-modal';
-import { NorthDakotaInfoModal } from './north-dakota-info-modal';
+import { StateInformationModal } from './state-information-modal';
 import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 import { calculateAge } from './utils/calculate-age';
 import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
@@ -27,10 +27,12 @@ export function Eligibility() {
     'Eligibility',
   );
   const eligibilityForm = voterRegistrationForm.fields.eligibility;
+  const stateAbbr = usePipe(eligibilityForm.fields.zip, ({ value }) => {
+    return zipState(value) ?? '';
+  });
   const [showPreregistrationInfoModal, setShowPreregistrationInfoModal] =
     useState(false);
-
-  const [showNorthDakotaInfoModal, setShowNorthDakotaInfoModal] =
+  const [showStateInformationModal, setShowStateInformationModal] =
     useState(false);
 
   const router = useRouter();
@@ -47,10 +49,11 @@ export function Eligibility() {
     }
 
     if (
-      zipState(eligibilityForm.fields.zip.state.value) ===
-      US_STATE_ABBREVIATIONS.NORTH_DAKOTA
+      stateAbbr === US_STATE_ABBREVIATIONS.NORTH_DAKOTA ||
+      stateAbbr === US_STATE_ABBREVIATIONS.NEW_HAMPSHIRE ||
+      stateAbbr === US_STATE_ABBREVIATIONS.WYOMING
     ) {
-      setShowNorthDakotaInfoModal(true);
+      setShowStateInformationModal(true);
     } else if (calculateAge(eligibilityForm.fields.dob.state.value) < 18) {
       setShowPreregistrationInfoModal(true);
     } else {
@@ -149,10 +152,11 @@ export function Eligibility() {
       <Button type="submit" size="lg" wide className="mb_lg">
         Get Started
       </Button>
-      {showNorthDakotaInfoModal && (
-        <NorthDakotaInfoModal
-          showModal={showNorthDakotaInfoModal}
-          setShowModal={setShowNorthDakotaInfoModal}
+      {showStateInformationModal && (
+        <StateInformationModal
+          stateAbbr={stateAbbr}
+          showModal={showStateInformationModal}
+          setShowModal={setShowPreregistrationInfoModal}
         />
       )}
       {showPreregistrationInfoModal && (

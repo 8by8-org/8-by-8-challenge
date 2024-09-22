@@ -5,7 +5,6 @@ import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 interface OtherDetailsProps {
   searchParams: {
     state?: string;
-    zip?: string;
   };
 }
 
@@ -24,15 +23,10 @@ export default async function Page({ searchParams }: OtherDetailsProps) {
   const USStateInformation = serverContainer.get(
     SERVER_SERVICE_KEYS.USStateInformation,
   );
-  const ballotQualifiedPoliticalParties =
-    await USStateInformation.getBallotQualifiedPoliticalPartiesByLocation(
+  const politicalPartiesAndOtherDetails =
+    await USStateInformation.getPoliticalPartiesAndOtherDetails(
       searchParams.state ?? '',
-      searchParams.zip ?? '',
     );
 
-  return (
-    <OtherDetails
-      ballotQualifiedPoliticalParties={ballotQualifiedPoliticalParties}
-    />
-  );
+  return <OtherDetails {...politicalPartiesAndOtherDetails} />;
 }

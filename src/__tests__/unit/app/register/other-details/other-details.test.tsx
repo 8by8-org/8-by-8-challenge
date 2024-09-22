@@ -2,10 +2,7 @@ import { render, screen, cleanup, act } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { clearAllPersistentFormElements } from 'fully-formed';
-import {
-  OtherDetails,
-  type OtherDetailsProps,
-} from '@/app/register/other-details/other-details';
+import { OtherDetails } from '@/app/register/other-details/other-details';
 import { AlertsContextProvider } from '@/contexts/alerts-context';
 import { UserContext, type UserContextType } from '@/contexts/user-context';
 import { VoterRegistrationContext } from '@/app/register/voter-registration-context';
@@ -19,27 +16,18 @@ import { PromiseScheduler } from '@/utils/test/promise-scheduler';
 import type { User } from '@/model/types/user';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import type { FunctionComponent } from 'react';
+import type { PoliticalPartiesAndOtherDetails } from '@/model/types/political-parties-and-other-details';
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
-
-jest.mock(
-  '../../../../../../src/app/register/addresses/utils/validate-addresses',
-  () => ({
-    __esModule: true,
-    ...jest.requireActual(
-      '../../../../../../src/app/register/addresses/utils/validate-addresses',
-    ),
-  }),
-);
 
 describe('OtherDetails', () => {
   let router: AppRouterInstance;
   let userContextValue: UserContextType;
   let voterRegistrationForm: InstanceType<typeof VoterRegistrationForm>;
   let otherDetailsForm: InstanceType<typeof OtherDetailsForm>;
-  let OtherDetailsWithContext: FunctionComponent<OtherDetailsProps>;
+  let OtherDetailsWithContext: FunctionComponent<PoliticalPartiesAndOtherDetails>;
   let user: UserEvent;
 
   const politicalParties = [
@@ -47,7 +35,22 @@ describe('OtherDetails', () => {
     'Republican',
     'Green',
     'No Affiliation',
+    'Other',
   ];
+
+  const raceOptions = [
+    'Asian',
+    'Black or African American',
+    'Hispanic or Latino',
+    'Native American or Alaskan Native',
+    'Native Hawaiian or Other Pacific Islander',
+    'Other',
+    'Two or More Races',
+    'White',
+    'Decline to state',
+  ];
+
+  const idNumberMessage = "Please enter your driver's license number.";
 
   beforeEach(() => {
     mockDialogMethods();
@@ -70,9 +73,9 @@ describe('OtherDetails', () => {
 
     otherDetailsForm = voterRegistrationForm.fields.otherDetails;
 
-    OtherDetailsWithContext = function OtherDetailsWithContext({
-      ballotQualifiedPoliticalParties,
-    }: OtherDetailsProps) {
+    OtherDetailsWithContext = function OtherDetailsWithContext(
+      props: PoliticalPartiesAndOtherDetails,
+    ) {
       return (
         <AlertsContextProvider>
           <UserContext.Provider value={userContextValue}>
@@ -81,11 +84,7 @@ describe('OtherDetails', () => {
                 voterRegistrationForm,
               }}
             >
-              <OtherDetails
-                ballotQualifiedPoliticalParties={
-                  ballotQualifiedPoliticalParties
-                }
-              />
+              <OtherDetails {...props} />
             </VoterRegistrationContext.Provider>
           </UserContext.Provider>
         </AlertsContextProvider>
@@ -96,7 +95,9 @@ describe('OtherDetails', () => {
 
     render(
       <OtherDetailsWithContext
-        ballotQualifiedPoliticalParties={politicalParties}
+        politicalParties={politicalParties}
+        raceOptions={raceOptions}
+        idNumberMessage={idNumberMessage}
       />,
     );
   });
@@ -119,7 +120,7 @@ describe('OtherDetails', () => {
 
     expect(screen.queryByLabelText(labelTextPattern)).not.toBeInTheDocument();
 
-    act(() => otherDetailsForm.fields.party.setValue('other'));
+    act(() => otherDetailsForm.fields.party.setValue('Other'));
 
     const other = await screen.findByLabelText(labelTextPattern);
     expect(other).toBeInTheDocument();
@@ -134,7 +135,7 @@ describe('OtherDetails', () => {
     expect(document.activeElement).toBe(
       document.getElementById(otherDetailsForm.fields.party.id),
     );
-    act(() => otherDetailsForm.fields.party.setValue('other'));
+    act(() => otherDetailsForm.fields.party.setValue('Other'));
     await user.click(submitButton);
 
     expect(document.activeElement).toBe(

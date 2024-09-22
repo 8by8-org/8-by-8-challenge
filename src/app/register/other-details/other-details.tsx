@@ -16,15 +16,14 @@ import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { getFirstNonValidInputId } from './get-first-non-valid-input-id';
 import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
 import type { FormEventHandler } from 'react';
+import type { PoliticalPartiesAndOtherDetails } from '@/model/types/political-parties-and-other-details';
 import styles from './styles.module.scss';
 
-export interface OtherDetailsProps {
-  ballotQualifiedPoliticalParties: string[];
-}
-
 export function OtherDetails({
-  ballotQualifiedPoliticalParties,
-}: OtherDetailsProps) {
+  politicalParties,
+  raceOptions,
+  idNumberMessage,
+}: PoliticalPartiesAndOtherDetails) {
   const { voterRegistrationForm } = useContextSafely(
     VoterRegistrationContext,
     'OtherDetails',
@@ -62,17 +61,10 @@ export function OtherDetails({
       <Select
         field={form.fields.party}
         label="Political party*"
-        options={ballotQualifiedPoliticalParties
-          .map(party => ({
-            text: party,
-            value: party,
-          }))
-          .concat([
-            {
-              text: 'Other',
-              value: 'other',
-            },
-          ])}
+        options={politicalParties.map(party => ({
+          text: party,
+          value: party,
+        }))}
         className={styles.select}
         aria-required
       />
@@ -96,17 +88,7 @@ export function OtherDetails({
       <Select
         field={form.fields.race}
         label="Race*"
-        options={[
-          'Asian',
-          'Black or African American',
-          'Hispanic or Latino',
-          'Native American or Alaskan Native',
-          'Native Hawaiian or Other Pacific Islander',
-          'Other',
-          'Two or More Races',
-          'White',
-          'Decline to state',
-        ].map(value => {
+        options={raceOptions.map(value => {
           return {
             text: value,
             value,
@@ -137,8 +119,7 @@ export function OtherDetails({
         aria-describedby={idFieldDescriptionId}
       />
       <p className={styles.id_explainer} id={idFieldDescriptionId}>
-        Provide your driver&apos;s license, state identification card number, or
-        the last 4 digits of your social security number.
+        {idNumberMessage}
       </p>
       <Button type="submit" size="lg" wide className="mb_lg">
         Submit

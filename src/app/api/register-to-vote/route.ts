@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
     const requestBody = requestBodySchema.parse(data);
+
     const fetchResponse = await fetch(
       'https://usvotes-6vsnwycl4q-uw.a.run.app/registertovote',
       {

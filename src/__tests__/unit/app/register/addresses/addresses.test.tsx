@@ -1,4 +1,4 @@
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, act } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { clearAllPersistentFormElements } from 'fully-formed';
 import { Addresses } from '@/app/register/addresses/addresses';
@@ -84,12 +84,11 @@ describe('Addresses', () => {
     clearAllPersistentFormElements();
   });
 
-  it(`prefetches the next page when the state or zip fields of the home address 
-  form are updated while both valid.`, async () => {
-    const zip = document.getElementById(homeAddressForm.fields.zip.id)!;
-    await user.type(zip, '94043');
-    expect(router.prefetch).toHaveBeenCalledWith(
-      VoterRegistrationPathnames.OTHER_DETAILS + '?state=CA&zip=94043',
+  it(`prefetches the next page when the state field of the home address form is 
+  updated and is valid.`, async () => {
+    act(() => homeAddressForm.fields.state.setValue('CA'));
+    expect(router.prefetch).toHaveBeenLastCalledWith(
+      VoterRegistrationPathnames.OTHER_DETAILS + '?state=CA',
     );
   });
 
@@ -358,7 +357,7 @@ describe('Addresses', () => {
     await user.click(continueAnyway);
 
     expect(router.push).toHaveBeenCalledWith(
-      VoterRegistrationPathnames.OTHER_DETAILS + '?state=CO&zip=80301',
+      VoterRegistrationPathnames.OTHER_DETAILS + '?state=CO',
     );
     validateAddressesSpy.mockRestore();
   });
@@ -421,7 +420,7 @@ describe('Addresses', () => {
     const submitBtn = screen.getByText('Next');
     await user.click(submitBtn);
     expect(router.push).toHaveBeenCalledWith(
-      VoterRegistrationPathnames.OTHER_DETAILS + '?state=CA&zip=94043',
+      VoterRegistrationPathnames.OTHER_DETAILS + '?state=CA',
     );
     validateAddressesSpy.mockRestore();
   });

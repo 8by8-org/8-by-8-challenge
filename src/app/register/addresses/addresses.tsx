@@ -4,7 +4,7 @@ import { useExclude, ValidityUtils } from 'fully-formed';
 import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { useScrollToTop } from '@/hooks/use-scroll-to-top';
-import { usePrefetchOtherDetailsWithStateAndZip } from './hooks/use-prefetch-other-details-with-state-and-zip';
+import { usePrefetchOtherDetailsWithState } from './hooks/use-prefetch-other-details-with-state';
 import { VoterRegistrationContext } from '../voter-registration-context';
 import { VoterRegistrationPathnames } from '../constants/voter-registration-pathnames';
 import { HomeAddress } from './home-address';
@@ -34,7 +34,7 @@ export function Addresses() {
   const [errors, setErrors] = useState<AddressErrors[]>([]);
 
   useScrollToTop();
-  usePrefetchOtherDetailsWithStateAndZip(addressesForm.fields.homeAddress);
+  usePrefetchOtherDetailsWithState(addressesForm.fields.homeAddress);
 
   const onSubmit: FormEventHandler = async e => {
     e.preventDefault();
@@ -58,8 +58,7 @@ export function Addresses() {
     } else {
       router.push(
         VoterRegistrationPathnames.OTHER_DETAILS +
-          `?state=${addressesForm.state.value.homeAddress.state}` +
-          `&zip=${addressesForm.state.value.homeAddress.zip}`,
+          `?state=${addressesForm.state.value.homeAddress.state}`,
       );
     }
   };

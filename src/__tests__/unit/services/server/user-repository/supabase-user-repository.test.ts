@@ -10,7 +10,7 @@ import { createId } from '@paralleldrive/cuid2';
 import { createSupabaseServiceRoleClient } from '@/services/server/create-supabase-client/create-supabase-service-role-client';
 import type { CreateSupabaseClient } from '@/services/server/create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '@/services/server/user-record-parser/i-user-record-parser';
-import type { Badge } from '@/model/types/badge';
+import type { Badge } from '@/model/types/badges/badge';
 
 describe('SupabaseUserRepository', () => {
   let userRepository: InstanceType<typeof SupabaseUserRepository>;
@@ -34,8 +34,6 @@ describe('SupabaseUserRepository', () => {
   });
 
   it('returns a user when getUserById is called with an existing user id.', async () => {
-    const supabase = createSupabaseClient();
-
     const challengerEmail = 'challenger@example.com';
     const challengerName = 'Challenger';
     const challengerAvatar = '0';
@@ -677,7 +675,6 @@ describe('SupabaseUserRepository', () => {
     ).rejects.toThrow(new ServerError('Failed to parse user data.', 400));
   });
 
-  // register to vote /////////////////////////////////////////////////////////
   it(`sets completedActions.registerToVote to true when 
   awardRegisterToVoteBadge is called.`, async () => {
     let user = await new SupabaseUserRecordBuilder('user@example.com').build();
