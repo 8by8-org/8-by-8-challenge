@@ -58,7 +58,6 @@ export function ClientSideUserContextProvider(
     }
 
     setEmailForSignIn(params.email);
-
     router.push('/signin-with-otp');
   }
 
@@ -73,7 +72,6 @@ export function ClientSideUserContextProvider(
     }
 
     setEmailForSignIn(params.email);
-
     router.push('/signin-with-otp');
   }
 
