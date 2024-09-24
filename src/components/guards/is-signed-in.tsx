@@ -1,5 +1,5 @@
 'use client';
-import { FC } from 'react';
+import { useLayoutEffect, type FC } from 'react';
 import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
@@ -23,9 +23,11 @@ export function isSignedIn<P extends object>(Page: FC<P>) {
     const router = useRouter();
     const shouldRedirect = !user;
 
-    if (shouldRedirect) {
-      router.push('/signin');
-    }
+    useLayoutEffect(() => {
+      if (shouldRedirect) {
+        router.push('/signin');
+      }
+    }, [shouldRedirect, router]);
 
     return shouldRedirect ? null : <Page {...props} />;
   };
