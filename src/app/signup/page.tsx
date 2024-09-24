@@ -2,10 +2,10 @@
 import { useState, type FormEventHandler } from 'react';
 import Link from 'next/link';
 import { useForm } from 'fully-formed';
+import { isSignedOut } from '@/components/guards/is-signed-out';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
 import { AlertsContext } from '@/contexts/alerts-context';
-import { UserType } from '@/model/enums/user-type';
 import { SignUpForm } from './signup-form';
 import { PageContainer } from '@/components/utils/page-container';
 import { InputGroup } from '@/components/form-components/input-group';
@@ -19,7 +19,7 @@ import { FormInvalidError } from '@/utils/client/form-invalid-error';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
 import styles from './styles.module.scss';
 
-function SignUp() {
+export default isSignedOut(function SignUp() {
   const signUpForm = useForm(new SignUpForm());
   const { signUpWithEmail } = useContextSafely(UserContext, 'SignUp');
   const { showAlert } = useContextSafely(AlertsContext, 'SignUp');
@@ -130,6 +130,4 @@ function SignUp() {
       </div>
     </PageContainer>
   );
-}
-
-export default SignUp;
+});

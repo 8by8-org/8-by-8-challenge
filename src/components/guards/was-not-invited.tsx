@@ -13,8 +13,8 @@ import { UserContext } from '@/contexts/user-context';
  * A function component that can be used as a drop-in replacement for the
  * component it received as an argument.
  */
-export function noInvitation<P extends object>(Page: FC<P>) {
-  return function NoInvitationGuard(props: P) {
+export function wasNotInvited<P extends object>(Page: FC<P>) {
+  return function WasNotInvitedGuard(props: P) {
     const { invitedBy } = useContextSafely(UserContext, 'NoInvitationGuard');
     const router = useRouter();
     const shouldRedirect = !!invitedBy;

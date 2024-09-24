@@ -1,4 +1,4 @@
-import { noInvitation } from '@/components/guards/no-invitation';
+import { wasNotInvited } from '@/components/guards/was-not-invited';
 import { render, screen, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import navigation from 'next/navigation';
@@ -11,7 +11,7 @@ jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
 
-describe('noInvitation', () => {
+describe('wasNotInvited', () => {
   let router: AppRouterInstance;
 
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe('noInvitation', () => {
   it('returns a component that can be rendered.', () => {
     const userContextValue = Builder<UserContextType>().invitedBy(null).build();
 
-    const TestComponent = noInvitation(function () {
+    const TestComponent = wasNotInvited(function () {
       return <div data-testid="test"></div>;
     });
 
@@ -43,7 +43,7 @@ describe('noInvitation', () => {
       message: string;
     }
 
-    const TestComponent = noInvitation(function ({
+    const TestComponent = wasNotInvited(function ({
       message,
     }: TestComponentProps) {
       return <div>{message}</div>;
@@ -65,7 +65,7 @@ describe('noInvitation', () => {
       .invitedBy(invitedBy)
       .build();
 
-    const TestComponent = noInvitation(function () {
+    const TestComponent = wasNotInvited(function () {
       return null;
     });
 
@@ -81,7 +81,7 @@ describe('noInvitation', () => {
   it('allows access to a page if invitedBy is null.', () => {
     const userContextValue = Builder<UserContextType>().invitedBy(null).build();
 
-    const TestComponent = noInvitation(function () {
+    const TestComponent = wasNotInvited(function () {
       return null;
     });
 
