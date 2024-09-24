@@ -16,7 +16,11 @@ export function isSignedIn(next: ChainedMiddleware): ChainedMiddleware {
     event: NextFetchEvent,
     response?: NextResponse,
   ) => {
-    if (SIGNED_IN_ONLY_ROUTES.includes(request.nextUrl.pathname)) {
+    if (
+      SIGNED_IN_ONLY_ROUTES.some(route =>
+        request.nextUrl.pathname.startsWith(route),
+      )
+    ) {
       let supabaseResponse = NextResponse.next({
         request,
       });

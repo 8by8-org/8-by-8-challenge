@@ -13,7 +13,9 @@ import { SignInWithOTPForm } from './signin-with-otp-form';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { isSignedOut } from '@/components/guards/is-signed-out';
 import { useCountdown } from '@/hooks/use-countdown';
+import { Button } from '@/components/utils/button';
 import styles from './styles.module.scss';
+import Link from 'next/link';
 
 export default isSignedOut(
   sentOTP(function SignInWithOTP() {
@@ -103,13 +105,21 @@ export default isSignedOut(
             }
           </div>
           <div className={styles.submit_btn_container}>
-            <button
+            <Button
               type="submit"
-              className="btn_gradient btn_lg btn_wide"
+              size="lg"
+              wide
+              className="mb_sm"
               disabled={isLoading}
             >
               Sign in
-            </button>
+            </Button>
+            <p>
+              <Link href="/signin" className="link">
+                Sign in
+              </Link>{' '}
+              with a different email address.
+            </p>
           </div>
         </form>
       </PageContainer>

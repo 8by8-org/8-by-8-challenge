@@ -1,6 +1,7 @@
 import 'server-only';
 import * as middlewares from './middlewares';
 import type { NextRequest, NextFetchEvent } from 'next/server';
+
 /**
  * Middleware called on all requests matched by the regular expression defined
  * in `config.matcher`.

@@ -27,8 +27,8 @@ const nextConfig = {
         destination: '/register/eligibility',
         permanent: true,
       },
-    ]
-  }
+    ];
+  },
 };
 
 export default nextConfig;
