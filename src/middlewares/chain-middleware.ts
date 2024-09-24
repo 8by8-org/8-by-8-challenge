@@ -10,6 +10,16 @@ interface MiddlewareFactory {
   (middleware: ChainedMiddleware): ChainedMiddleware;
 }
 
+/**
+ * Accepts an array of {@link ChainedMiddleware} and returns a middleware
+ * function that calls each of the chained middleware until a response is
+ * returned. If none of the middleware return a response, or if the array
+ * is empty, a default response is returned.
+ *
+ * @param middlewareFactories
+ * @param index
+ * @returns
+ */
 export function chainMiddleware(
   middlewareFactories: MiddlewareFactory[],
   index = 0,
