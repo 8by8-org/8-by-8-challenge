@@ -11,8 +11,6 @@ import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 import { UserType } from '@/model/enums/user-type';
 import type { ChainedMiddleware } from './chained-middleware';
 
-export const CHALLENGER_ONLY_ROUTES = ['/progress'];
-
 export function isChallengerOrHybrid(
   next: ChainedMiddleware,
 ): ChainedMiddleware {
@@ -21,7 +19,7 @@ export function isChallengerOrHybrid(
     event: NextFetchEvent,
     response?: NextResponse,
   ) => {
-    if (CHALLENGER_ONLY_ROUTES.includes(request.nextUrl.pathname)) {
+    if (request.nextUrl.pathname === '/progress') {
       let supabaseResponse = NextResponse.next({
         request,
       });

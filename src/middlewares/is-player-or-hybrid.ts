@@ -11,15 +11,13 @@ import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 import { UserType } from '@/model/enums/user-type';
 import type { ChainedMiddleware } from './chained-middleware';
 
-export const PLAYER_ONLY_ROUTES = ['/actions'];
-
 export function isPlayerOrHybrid(next: ChainedMiddleware): ChainedMiddleware {
   return async (
     request: NextRequest,
     event: NextFetchEvent,
     response?: NextResponse,
   ) => {
-    if (PLAYER_ONLY_ROUTES.includes(request.nextUrl.pathname)) {
+    if (request.nextUrl.pathname === '/actions') {
       let supabaseResponse = NextResponse.next({
         request,
       });
