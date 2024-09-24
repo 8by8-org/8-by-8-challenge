@@ -76,7 +76,7 @@ describe('SignInWithOTPPage', () => {
     const otp = screen.getByLabelText('One time passcode*');
     await user.type(otp, '123456');
 
-    const signInBtn = screen.getByText('Sign in');
+    const signInBtn = screen.getAllByText('Sign in')[0];
     await user.click(signInBtn);
 
     await waitFor(() => {
@@ -147,7 +147,7 @@ describe('SignInWithOTPPage', () => {
     );
 
     const otp = screen.getByLabelText('One time passcode*');
-    const signInBtn = screen.getByText('Sign in');
+    const signInBtn = screen.getAllByText('Sign in')[0];
     await user.click(signInBtn);
 
     await waitFor(() => {
@@ -171,7 +171,7 @@ describe('SignInWithOTPPage', () => {
     const otp = screen.getByLabelText('One time passcode*');
     await user.type(otp, '123456');
 
-    const signInBtn = screen.getByText('Sign in');
+    const signInBtn = screen.getAllByText('Sign in')[0];
     await user.click(signInBtn);
 
     await waitFor(() => {
