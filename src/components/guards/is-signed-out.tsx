@@ -20,11 +20,12 @@ export function isSignedOut<P extends object>(Page: FC<P>) {
   return function UnAuthGuard(props: P) {
     const { user } = useContextSafely(UserContext, 'UnAuthGuard');
     const router = useRouter();
+    const shouldRedirect = !!user;
 
-    if (user) {
+    if (shouldRedirect) {
       router.push(user.type === UserType.Player ? '/actions' : '/progress');
     }
 
-    return <Page {...props} />;
+    return shouldRedirect ? null : <Page {...props} />;
   };
 }

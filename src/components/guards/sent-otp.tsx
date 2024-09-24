@@ -19,11 +19,12 @@ export function sentOTP<P extends object>(Component: FC<P>) {
   return function SentOTPGuard(props: P) {
     const { emailForSignIn } = useContextSafely(UserContext, 'SentOTPGuard');
     const router = useRouter();
+    const shouldRedirect = !emailForSignIn;
 
-    if (!emailForSignIn) {
+    if (shouldRedirect) {
       router.push('/signin');
     }
 
-    return <Component {...props} />;
+    return shouldRedirect ? null : <Component {...props} />;
   };
 }

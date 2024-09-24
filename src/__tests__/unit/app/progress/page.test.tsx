@@ -98,13 +98,4 @@ describe('ProgressTest', () => {
 
     expect(screen.getByText(/You completed all/i)).toBeInTheDocument();
   });
-
-  it('renders without error if user is null.', () => {
-    const error = getErrorThrownByComponent(
-      <UserContext.Provider value={{ user: null } as UserContextType}>
-        <Progress />
-      </UserContext.Provider>,
-    );
-    expect(error).toBe(null);
-  });
 });

@@ -17,11 +17,12 @@ export function noInvitation<P extends object>(Page: FC<P>) {
   return function NoInvitationGuard(props: P) {
     const { invitedBy } = useContextSafely(UserContext, 'NoInvitationGuard');
     const router = useRouter();
+    const shouldRedirect = !!invitedBy;
 
-    if (invitedBy) {
+    if (shouldRedirect) {
       router.push('/playerwelcome');
     }
 
-    return <Page {...props} />;
+    return shouldRedirect ? null : <Page {...props} />;
   };
 }

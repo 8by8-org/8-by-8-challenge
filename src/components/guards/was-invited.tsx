@@ -19,11 +19,12 @@ export function wasInvited<P extends object>(Page: FC<P>) {
   return function WasInvitedGuard(props: P) {
     const { invitedBy } = useContextSafely(UserContext, 'WasInvitedGuard');
     const router = useRouter();
+    const shouldRedirect = !invitedBy;
 
-    if (!invitedBy) {
+    if (shouldRedirect) {
       router.push('/challengerwelcome');
     }
 
-    return <Page {...props} />;
+    return shouldRedirect ? null : <Page {...props} />;
   };
 }

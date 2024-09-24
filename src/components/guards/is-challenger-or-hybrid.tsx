@@ -12,6 +12,10 @@ import { UserType } from '@/model/enums/user-type';
  * by authenticated users who are of type challenger or hybrid.
  *
  * @param Page - A function component that should be protected by this guard.
+ * Must be a client component
+ * (see https://nextjs.org/docs/app/building-your-application/rendering/client-components
+ * for more information).
+ *
  * @returns
  * A function component that can be used as a drop-in replacement for the
  * component it received as an argument.
@@ -23,6 +27,7 @@ export function isChallengerOrHybrid<P extends object>(Page: FC<P>) {
       'ChallengerOrHybridOnlyGuard',
     );
     const router = useRouter();
+    const shouldRedirect = !user || user.type == UserType.Player;
 
     if (!user) {
       router.push('/signin');
@@ -30,6 +35,6 @@ export function isChallengerOrHybrid<P extends object>(Page: FC<P>) {
       router.push('/actions');
     }
 
-    return <Page {...props} />;
+    return shouldRedirect ? null : <Page {...props} />;
   };
 }

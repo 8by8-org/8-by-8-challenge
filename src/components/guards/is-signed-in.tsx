@@ -21,11 +21,12 @@ export function isSignedIn<P extends object>(Page: FC<P>) {
   return function AuthGuard(props: P) {
     const { user } = useContextSafely(UserContext, 'AuthGuard');
     const router = useRouter();
+    const shouldRedirect = !user;
 
-    if (!user) {
+    if (shouldRedirect) {
       router.push('/signin');
     }
 
-    return <Page {...props} />;
+    return shouldRedirect ? null : <Page {...props} />;
   };
 }

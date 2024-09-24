@@ -29,12 +29,12 @@ export default isSignedIn(function Progress() {
   return (
     <PageContainer>
       <article className={styles.progress_page}>
-        {user?.completedChallenge ?
+        {user!.completedChallenge ?
           <ConfettiAnimation time={8000} />
         : null}
         <section className={styles.section_1}>
           <h1>
-            {user?.completedChallenge ?
+            {user!.completedChallenge ?
               <>
                 You&apos;ve Won! <br /> The <br />
                 Challenge
@@ -47,11 +47,11 @@ export default isSignedIn(function Progress() {
           <div className={styles.days_blob_container}>
             <Image
               className={styles.blob}
-              src={user?.completedChallenge ? claimReward : daysRemainingBlob}
+              src={user!.completedChallenge ? claimReward : daysRemainingBlob}
               alt="days remaining blob"
               priority={true}
             />
-            {!user?.completedChallenge && (
+            {!user!.completedChallenge && (
               <div className={styles.days_label}>
                 <p className={styles.number_shadow}>{daysLeft}</p>
                 <h3 className={styles.days_left}>
@@ -60,26 +60,6 @@ export default isSignedIn(function Progress() {
               </div>
             )}
           </div>
-
-          {/* TODO - couponData
-
-            {alreadyRedeemed && couponData && (
-              <div className="couponContainer">
-                {
-                  <div>
-                    <div className="img-bg">
-                      <img src={couponData.logo} alt="Partner Logo" />
-                    </div>
-                    <p>
-                      {couponData.rewardDescription}{' '}
-                      {couponData.redemptionDescription}
-                    </p>
-                    <p>Availability and terms subject to change.</p>
-                  </div>
-                }
-              </div>
-            )}
-            */}
         </section>
         <Image
           className={styles.curve}
@@ -91,26 +71,15 @@ export default isSignedIn(function Progress() {
         <section className={styles.section_2}>
           <h3>
             You completed{' '}
-            {user?.badges.filter(badge => badge !== null).length === 8 ?
+            {user!.badges.filter(badge => badge !== null).length === 8 ?
               ' all '
             : ' '}
             <span className={styles.underline}>
-              {user?.badges.filter(badge => badge !== null).length}
+              {user!.badges.filter(badge => badge !== null).length}
             </span>{' '}
             badges
           </h3>
-          {/* TODO - Partners Exist
-          {user?.completedChallenge && !user.redeemedAward && partnersExist && (
-            <button
-              className={styles.gradient}
-              onClick={() => {
-                document.location.href = '/choosereward?ref=challenger';
-              }}
-            >
-              <span>Choose A Reward</span>
-            </button>
-          )}
-          */}
+
           <ChallengeButton
             user={user}
             daysLeft={daysLeft}
@@ -118,7 +87,7 @@ export default isSignedIn(function Progress() {
             restartChallenge={restartChallenge}
             setOpenModal={setOpenModal}
           />
-          {!user?.completedActions.registerToVote && (
+          {!user!.completedActions.registerToVote && (
             <div>
               <p className={styles.register}>
                 Not registered to vote yet?
@@ -131,7 +100,7 @@ export default isSignedIn(function Progress() {
             </div>
           )}
         </section>
-        <Badges badges={user?.badges ?? []} />
+        <Badges badges={user!.badges} />
 
         <section className={styles.section_4}>
           <ChallengeButton
@@ -141,7 +110,7 @@ export default isSignedIn(function Progress() {
             restartChallenge={restartChallenge}
             setOpenModal={setOpenModal}
           />
-          {!user?.completedActions.registerToVote && (
+          {!user!.completedActions.registerToVote && (
             <div>
               <p className={styles.register}>
                 Not registered to vote yet?
