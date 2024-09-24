@@ -6,12 +6,28 @@
     display: flex;
     justify-content: center;
 }
+.paragraph {
+    width: 100%; /* Adjusts to parent container */
+    max-width: 317px; /* Maximum width */
+    height: auto; /* Remove fixed height */
+    
+    font-family: 'Lato', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height:  22px; /* Better spacing between lines */
+    text-align: center;
+    letter-spacing: 0.02em;
+    
+    color: #000000;
+    
+    align-self: center;
 
-.paragraph{
-    justify-content: center;  
-    margin-top: 0px;
-}
-
+    
+    margin: 0 auto; /* Center horizontally */
+    padding: 10px 0; /* Add padding for spacing */
+  }
+  
 .copyLink{
     cursor: pointer;
 }
