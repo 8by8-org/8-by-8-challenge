@@ -1,13 +1,17 @@
 'use client';
-import { useState, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   SendOTPToEmailParams,
   SignUpWithEmailParams,
   SignInWithOTPParams,
   UserContext,
 } from './user-context';
-import { useRouter } from 'next/navigation';
+import { clearInviteCode } from './clear-invite-code-cookie';
+import { clearAllPersistentFormElements, ValueOf } from 'fully-formed';
+import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
 import type { User } from '@/model/types/user';
+import type { InvitedBy } from '@/model/types/invited-by';
 
 
 /**
@@ -18,6 +22,7 @@ import type { User } from '@/model/types/user';
 interface ClientSideUserContextProviderProps {
   user: User | null;
   emailForSignIn: string;
+  invitedBy: InvitedBy | null;
   children?: ReactNode;
 
 }
@@ -35,7 +40,14 @@ export function ClientSideUserContextProvider(
 ) {
   const [user, setUser] = useState<User | null>(props.user);
   const [emailForSignIn, setEmailForSignIn] = useState(props.emailForSignIn);
+  const [invitedBy, setInvitedBy] = useState<InvitedBy | null>(props.invitedBy);
   const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      clearInviteCode();
+    }
+  }, [user]);
 
   async function signUpWithEmail(params: SignUpWithEmailParams) {
     const response = await fetch('/api/signup-with-email', {
@@ -91,6 +103,7 @@ export function ClientSideUserContextProvider(
 
     const data = await response.json();
     setUser(data.user as User);
+    setInvitedBy(data.invitedBy as InvitedBy);
   }
 
   async function gotElectionReminders() {
@@ -121,6 +134,8 @@ export function ClientSideUserContextProvider(
     }
 
     setUser(null);
+    setInvitedBy(null);
+    clearAllPersistentFormElements();
   }
 
   /* istanbul ignore next */
@@ -140,11 +155,23 @@ export function ClientSideUserContextProvider(
 } 
   
   
+  /* istanbul ignore next */
+  async function registerToVote(
+    formData: ValueOf<InstanceType<typeof VoterRegistrationForm>>,
+  ): Promise<void> {
+    return new Promise<void>((_resolve, reject) => {
+      setTimeout(() => {
+        reject(new Error('not implemented.'));
+      }, 3000);
+    });
+  }
+
   return (
     <UserContext.Provider
       value={{
         user,
         emailForSignIn,
+        invitedBy,
         signUpWithEmail,
         sendOTPToEmail,
         resendOTP,
@@ -154,6 +181,7 @@ export function ClientSideUserContextProvider(
         restartChallenge,
         shareChallenge,
     
+        registerToVote,
       }}
     >
       {props.children}

@@ -7,12 +7,12 @@
   position: absolute;
   top: calc(100% - $border-width);
   left: 0;
+  z-index: 1;
 }
 
 .menu {
   min-width: 100%;
   width: fit-content;
-  max-height: 40vh;
   overflow-y: scroll;
   list-style-type: none;
   margin: 0;
@@ -32,6 +32,7 @@
   @extend .b1;
   cursor: default;
   padding: $option-padding;
+  min-height: $line-height-sm + 2 * $option-padding;
 }
 
 .option:focus {

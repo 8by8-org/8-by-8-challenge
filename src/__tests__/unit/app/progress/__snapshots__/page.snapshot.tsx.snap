@@ -94,11 +94,12 @@ exports[`Progress renders progress page unchanged 1`] = `
               Not registered to vote yet?
               <br />
               <a
-                href="/voterreg"
+                href="/register/eligibility"
               >
                 Register now
               </a>
-               and earn a badge!
+               
+              and earn a badge!
             </p>
           </div>
         </section>
@@ -355,11 +356,12 @@ exports[`Progress renders progress page unchanged 1`] = `
               Not registered to vote yet?
               <br />
               <a
-                href="/voterreg"
+                href="/register/eligibility"
               >
                 Register now
               </a>
-               and earn a badge!
+               
+              and earn a badge!
             </p>
           </div>
         </section>
@@ -375,6 +377,7 @@ exports[`Progress renders progress page unchanged 1`] = `
               <button
                 aria-label="close dialog"
                 class="close_btn"
+                type="button"
               >
                 <svg
                   class="close_btn_icon"

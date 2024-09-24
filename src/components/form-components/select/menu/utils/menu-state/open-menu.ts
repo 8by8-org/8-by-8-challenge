@@ -45,7 +45,26 @@ export function openMenu({
       isKeyboardNavigating.current = true;
     }
 
+    /* 
+      Set the menu height to 0 so it doesn't increase the size of the page 
+      when opened.
+    */
+    menuRef.current.setAttribute('style', 'max-height: 0;');
+
+    /*
+      Show the menu.
+    */
     containerRef.current.classList.remove('hidden');
+
+    /*
+      Set the height of the menu such that it is not larger than the space 
+      between the bottom of the select component and the bottom of the 
+      document.
+    */
+    menuRef.current.setAttribute(
+      'style',
+      `max-height: min(50vh, ${getDistanceToBottomOfScreen(containerRef)}px);`,
+    );
 
     focusOnOption({
       optionIndex: indexOfOptionToReceiveFocus,
@@ -67,4 +86,10 @@ export function openMenu({
 
     comboboxRef.current?.setAttribute('aria-expanded', 'true');
   }
+}
+
+function getDistanceToBottomOfScreen(ref: RefObject<HTMLElement>) {
+  const element = ref.current!;
+  const elementTop = element.getBoundingClientRect().top + scrollY;
+  return document.documentElement.scrollHeight - elementTop;
 }

@@ -2,9 +2,18 @@ import { Combobox } from '@/components/form-components/select/combobox';
 import { render, screen, cleanup, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { Field, StringValidators, Validator, Group } from 'fully-formed';
+import {
+  Field,
+  StringValidators,
+  Validator,
+  Group,
+  Validity,
+  IValidator,
+  GroupValue,
+} from 'fully-formed';
 import zipState from 'zip-state';
-import { US_STATES_AND_TERRITORIES } from '@/constants/us-states-and-territories';
+import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
+import { validate } from 'uuid';
 
 describe('Combobox', () => {
   afterEach(cleanup);
@@ -113,9 +122,9 @@ describe('Combobox', () => {
     expect(screen.queryByText(selectedOption.text)).toBeInTheDocument();
   });
 
-  it(`applies the "invalid" to the element containing the combobox and sets the 
-  aria-invalid attribute of the combobox to "true" when the field is invalid and 
-  has been blurred.`, async () => {
+  it(`applies the "invalid" class to the element containing the combobox and 
+  sets the aria-invalid attribute of the combobox to "true" when the field is 
+  invalid and has been blurred.`, async () => {
     const field = new Field({
       name: 'requiredField',
       defaultValue: '',
@@ -282,7 +291,7 @@ describe('Combobox', () => {
         label="State"
         field={state}
         groups={[zipCodeAndState]}
-        options={US_STATES_AND_TERRITORIES.map(abbr => {
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
           return {
             text: abbr,
             value: abbr,
@@ -344,7 +353,7 @@ describe('Combobox', () => {
         label="State"
         field={state}
         groups={[zipCodeAndState]}
-        options={US_STATES_AND_TERRITORIES.map(abbr => {
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
           return {
             text: abbr,
             value: abbr,
@@ -406,7 +415,7 @@ describe('Combobox', () => {
         label="State"
         field={state}
         groups={[zipCodeAndState]}
-        options={US_STATES_AND_TERRITORIES.map(abbr => {
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
           return {
             text: abbr,
             value: abbr,
@@ -516,7 +525,7 @@ describe('Combobox', () => {
         label="State"
         field={state}
         groups={[zipCodeAndState]}
-        options={US_STATES_AND_TERRITORIES.map(abbr => {
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
           return {
             text: abbr,
             value: abbr,
@@ -548,6 +557,513 @@ describe('Combobox', () => {
       expect(comboboxContainer.classList).not.toContain('invalid'),
     );
     expect(combobox.getAttribute('aria-invalid')).toBe('false');
+  });
+
+  it(`applies the "caution" class to the element containing the combobox and 
+  renders a warning message when the field's validity is "caution" and it has 
+  been blurred.`, async () => {
+    const field = new Field({
+      name: 'testField',
+      defaultValue: '',
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(
+      <Combobox
+        label="Select an option"
+        field={field}
+        groups={[]}
+        options={[]}
+        menuId="menu"
+        menuRef={{
+          current: {
+            openMenu: jest.fn(),
+            closeMenu: jest.fn(),
+            toggleMenu: jest.fn(),
+          },
+        }}
+        hasMoreInfo={false}
+      />,
+    );
+
+    const comboboxContainer = document.getElementsByClassName('combobox')[0];
+    expect(comboboxContainer.classList).not.toContain('caution');
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).not.toBeInTheDocument();
+
+    act(() => field.blur());
+    await waitFor(() =>
+      expect(comboboxContainer.classList).toContain('caution'),
+    );
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it(`applies the "caution" class to the element containing the combobox and 
+  renders a warning message when the field's validity is "caution" and it has 
+  been modified.`, async () => {
+    const options = [
+      {
+        text: 'Cautioned option',
+        value: 'caution',
+      },
+      {
+        text: 'Valid option',
+        value: 'valid',
+      },
+    ];
+
+    const field = new Field({
+      name: 'testField',
+      defaultValue: '',
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(
+      <Combobox
+        label="Select an option"
+        field={field}
+        groups={[]}
+        options={options}
+        menuId="menu"
+        menuRef={{
+          current: {
+            openMenu: jest.fn(),
+            closeMenu: jest.fn(),
+            toggleMenu: jest.fn(),
+          },
+        }}
+        hasMoreInfo={false}
+      />,
+    );
+
+    const comboboxContainer = document.getElementsByClassName('combobox')[0];
+    expect(comboboxContainer.classList).not.toContain('caution');
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).not.toBeInTheDocument();
+
+    act(() => field.setValue(options[0].value));
+    await waitFor(() =>
+      expect(comboboxContainer.classList).toContain('caution'),
+    );
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it(`applies the "caution" class to the element containing the combobox and 
+  renders a warning message when the field's validity is "caution" and it has 
+  been submitted.`, async () => {
+    const field = new Field({
+      name: 'requiredField',
+      defaultValue: '',
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(
+      <Combobox
+        label="Select an option"
+        field={field}
+        groups={[]}
+        options={[]}
+        menuId="menu"
+        menuRef={{
+          current: {
+            openMenu: jest.fn(),
+            closeMenu: jest.fn(),
+            toggleMenu: jest.fn(),
+          },
+        }}
+        hasMoreInfo={false}
+      />,
+    );
+
+    const comboboxContainer = document.getElementsByClassName('combobox')[0];
+    expect(comboboxContainer.classList).not.toContain('caution');
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).not.toBeInTheDocument();
+
+    act(() => field.setSubmitted());
+    await waitFor(() =>
+      expect(comboboxContainer.classList).toContain('caution'),
+    );
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it(`applies the "caution" class to the element containing the combobox and 
+  renders a warning message if any of the groups it received have been validated 
+  and have a validity of "caution" and the field has been blurred.`, async () => {
+    const zip = new Field({
+      name: 'zip',
+      defaultValue: '19022',
+    });
+
+    const state = new Field({
+      name: 'state',
+      defaultValue: 'CA',
+    });
+
+    const zipCodeAndState = new Group({
+      name: 'zipCodeAndState',
+      members: [zip, state],
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(
+      <Combobox
+        label="State"
+        field={state}
+        groups={[zipCodeAndState]}
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
+          return {
+            text: abbr,
+            value: abbr,
+          };
+        })}
+        menuId="menu"
+        menuRef={{
+          current: {
+            openMenu: jest.fn(),
+            closeMenu: jest.fn(),
+            toggleMenu: jest.fn(),
+          },
+        }}
+        hasMoreInfo={false}
+      />,
+    );
+
+    const comboboxContainer = document.getElementsByClassName('combobox')[0];
+    expect(comboboxContainer.classList).not.toContain('caution');
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).not.toBeInTheDocument();
+
+    act(() => state.blur());
+    await waitFor(() =>
+      expect(comboboxContainer.classList).toContain('caution'),
+    );
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it(`applies the "caution" class to the element containing the combobox and 
+  renders a warning message if any of the groups it received have been validated 
+  and have a validity of "caution" and the field has been modified.`, async () => {
+    const zip = new Field({
+      name: 'zip',
+      defaultValue: '19022',
+    });
+
+    const state = new Field({
+      name: 'state',
+      defaultValue: 'CA',
+    });
+
+    const zipCodeAndState = new Group({
+      name: 'zipCodeAndState',
+      members: [zip, state],
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(
+      <Combobox
+        label="State"
+        field={state}
+        groups={[zipCodeAndState]}
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
+          return {
+            text: abbr,
+            value: abbr,
+          };
+        })}
+        menuId="menu"
+        menuRef={{
+          current: {
+            openMenu: jest.fn(),
+            closeMenu: jest.fn(),
+            toggleMenu: jest.fn(),
+          },
+        }}
+        hasMoreInfo={false}
+      />,
+    );
+
+    const comboboxContainer = document.getElementsByClassName('combobox')[0];
+    expect(comboboxContainer.classList).not.toContain('caution');
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).not.toBeInTheDocument();
+
+    act(() => state.setValue('WI'));
+    await waitFor(() =>
+      expect(comboboxContainer.classList).toContain('caution'),
+    );
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it(`applies the "caution" class to the element containing the combobox and 
+  renders a warning message if any of the groups it received have been validated 
+  and have a validity of "caution" and the field has been submitted.`, async () => {
+    const zip = new Field({
+      name: 'zip',
+      defaultValue: '19022', // PA zip code
+    });
+
+    const state = new Field({
+      name: 'state',
+      defaultValue: 'CA',
+    });
+
+    const zipCodeAndState = new Group({
+      name: 'zipCodeAndState',
+      members: [zip, state],
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(
+      <Combobox
+        label="State"
+        field={state}
+        groups={[zipCodeAndState]}
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
+          return {
+            text: abbr,
+            value: abbr,
+          };
+        })}
+        menuId="menu"
+        menuRef={{
+          current: {
+            openMenu: jest.fn(),
+            closeMenu: jest.fn(),
+            toggleMenu: jest.fn(),
+          },
+        }}
+        hasMoreInfo={false}
+      />,
+    );
+
+    const comboboxContainer = document.getElementsByClassName('combobox')[0];
+    expect(comboboxContainer.classList).not.toContain('caution');
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).not.toBeInTheDocument();
+
+    act(() => state.setSubmitted());
+    await waitFor(() =>
+      expect(comboboxContainer.classList).toContain('caution'),
+    );
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it(`removes the "caution" class from the combobox and unmounts the warning 
+  message when the field becomes valid.`, async () => {
+    const field = new Field({
+      name: 'testField',
+      defaultValue: '',
+      validators: [
+        {
+          validate: value => ({
+            validity: value ? Validity.Valid : Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    const options = [
+      {
+        text: 'Option 1',
+        value: 'option 1',
+      },
+    ];
+
+    render(
+      <Combobox
+        label="Select an option"
+        field={field}
+        groups={[]}
+        options={options}
+        menuId="menu"
+        menuRef={{
+          current: {
+            openMenu: jest.fn(),
+            closeMenu: jest.fn(),
+            toggleMenu: jest.fn(),
+          },
+        }}
+        hasMoreInfo={false}
+      />,
+    );
+
+    const comboboxContainer = document.getElementsByClassName('combobox')[0];
+
+    act(() => field.blur());
+    await waitFor(() =>
+      expect(comboboxContainer.classList).toContain('caution'),
+    );
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).toBeInTheDocument();
+
+    act(() => field.setValue(options[0].value));
+    await waitFor(() =>
+      expect(comboboxContainer.classList).not.toContain('caution'),
+    );
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).not.toBeInTheDocument();
+  });
+
+  it(`removes the "caution" class from the element containing the combobox when
+  all groups become valid.`, async () => {
+    const zip = new Field({
+      name: 'zip',
+      defaultValue: '19022', // PA zip code
+    });
+
+    const state = new Field({
+      name: 'state',
+      defaultValue: 'CA',
+    });
+
+    class ZipStateValidator
+      implements IValidator<GroupValue<[typeof zip, typeof state]>>
+    {
+      validate = (value: GroupValue<[typeof zip, typeof state]>) => {
+        const expectedState = zipState(value.zip);
+
+        return {
+          validity:
+            expectedState !== value.state ? Validity.Caution : Validity.Valid,
+        };
+      };
+    }
+
+    const zipCodeAndState = new Group({
+      name: 'zipCodeAndState',
+      members: [zip, state],
+      validators: [new ZipStateValidator()],
+    });
+
+    render(
+      <Combobox
+        label="State"
+        field={state}
+        groups={[zipCodeAndState]}
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
+          return {
+            text: abbr,
+            value: abbr,
+          };
+        })}
+        menuId="menu"
+        menuRef={{
+          current: {
+            openMenu: jest.fn(),
+            closeMenu: jest.fn(),
+            toggleMenu: jest.fn(),
+          },
+        }}
+        hasMoreInfo={false}
+      />,
+    );
+
+    const comboboxContainer = document.getElementsByClassName('combobox')[0];
+
+    act(() => state.blur());
+    await waitFor(() =>
+      expect(comboboxContainer.classList).toContain('caution'),
+    );
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).toBeInTheDocument();
+
+    act(() => state.setValue('PA'));
+    await waitFor(() =>
+      expect(comboboxContainer.classList).not.toContain('caution'),
+    );
+    expect(
+      screen.queryByText(
+        'The value of this field could not be confirmed. Please verify that it is correct.',
+      ),
+    ).not.toBeInTheDocument();
   });
 
   it(`opens the menu to the first option when the user presses the ArrowDown 

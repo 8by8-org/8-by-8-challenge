@@ -1,3 +1,5 @@
+'use client';
+import { useId, type CSSProperties } from 'react';
 import {
   useUserInput,
   useFocusEvents,
@@ -8,16 +10,15 @@ import {
   type Field,
   type Group,
 } from 'fully-formed';
-import type { CSSProperties } from 'react';
 import styles from './styles.module.scss';
 
 interface InputProps {
   /**
-   * A Fully Formed {@link Field} that will control the state of the input.
+   * A {@link Field} that will control the state of the input.
    */
   field: FieldOfType<string>;
   /**
-   * An array of Fully Formed {@link Group}s. If these groups' validators have
+   * An array of {@link Group}s. If these groups' validators have
    * executed and returned an invalid result, the input will appear invalid.
    */
   groups?: IGroup[];
@@ -33,6 +34,7 @@ interface InputProps {
   disabled?: boolean;
   autoComplete?: string;
   maxLength?: number;
+  max?: string;
   className?: string;
   style?: CSSProperties;
   ['aria-required']?: boolean;
@@ -61,6 +63,7 @@ export function Input({
   disabled,
   autoComplete,
   maxLength,
+  max,
   className: classNameProp,
   style,
   ['aria-required']: ariaRequired,
@@ -84,12 +87,15 @@ export function Input({
     });
 
     if (
-      ValidityUtils.isInvalid(validity) &&
-      (fieldState.hasBeenModified ||
-        fieldState.hasBeenBlurred ||
-        fieldState.submitted)
+      fieldState.hasBeenModified ||
+      fieldState.hasBeenBlurred ||
+      fieldState.submitted
     ) {
-      classNames.push(styles.invalid);
+      if (ValidityUtils.isCaution(validity)) {
+        classNames.push(styles.caution);
+      } else if (ValidityUtils.isInvalid(validity)) {
+        classNames.push(styles.invalid);
+      }
     }
 
     if (classNameProp) {
@@ -111,22 +117,51 @@ export function Input({
     );
   });
 
+  const warningMessage = useMultiPipe([field, ...groups], states => {
+    const validity = ValidityUtils.minValidity(states);
+    const fieldState = states[0];
+
+    return (
+        ValidityUtils.isCaution(validity) &&
+          (fieldState.hasBeenModified ||
+            fieldState.hasBeenBlurred ||
+            fieldState.submitted)
+      ) ?
+        'The value of this field could not be confirmed. Please verify that it is correct.'
+      : undefined;
+  });
+
+  const warningMessageId = useId();
+
   return (
-    <input
-      name={field.name}
-      id={field.id}
-      type={type}
-      placeholder={placeholder}
-      disabled={disabled}
-      autoComplete={autoComplete}
-      maxLength={maxLength}
-      aria-required={ariaRequired}
-      aria-describedby={ariaDescribedBy}
-      aria-invalid={ariaInvalid}
-      {...useUserInput(field)}
-      {...useFocusEvents(field)}
-      className={className}
-      style={style}
-    />
+    <>
+      <input
+        name={field.name}
+        id={field.id}
+        type={type}
+        placeholder={placeholder}
+        disabled={disabled}
+        autoComplete={autoComplete}
+        maxLength={maxLength}
+        max={max}
+        aria-required={ariaRequired}
+        aria-describedby={
+          ariaDescribedBy ?
+            `${ariaDescribedBy} ${warningMessageId}`
+          : warningMessageId
+        }
+        aria-invalid={ariaInvalid}
+        {...useUserInput(field)}
+        {...useFocusEvents(field)}
+        className={className}
+        style={style}
+      />
+      <span
+        style={{ position: 'fixed', visibility: 'hidden' }}
+        id={warningMessageId}
+      >
+        {warningMessage}
+      </span>
+    </>
   );
 }

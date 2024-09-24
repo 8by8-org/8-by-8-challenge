@@ -1,0 +1,22 @@
+@use '../../variables/spacings' as *;
+
+$spacings: (
+  'sm': $sm,
+  'md': $md,
+  'lg': $lg,
+);
+$margin-properties: (
+  'm': 'margin',
+  'mt': 'margin-top',
+  'mb': 'margin-bottom',
+  'ml': 'margin-left',
+  'mr': 'margin-right',
+);
+
+@each $prop-abbreviation, $property in $margin-properties {
+  @each $size-abbreviation, $pixels in $spacings {
+    .#{$prop-abbreviation}_#{$size-abbreviation} {
+      #{$property}: $pixels;
+    }
+  }
+}

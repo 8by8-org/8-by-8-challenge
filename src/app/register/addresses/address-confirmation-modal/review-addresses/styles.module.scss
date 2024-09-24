@@ -1,0 +1,26 @@
+@use '../../../../../styles/partials' as *;
+
+.container {
+  max-width: 100%;
+}
+
+.title {
+  margin: 0;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.address_title {
+  @extend .b3;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 5px;
+}
+
+.address {
+  margin: 0;
+  padding: 0;
+  margin-bottom: 16px;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}

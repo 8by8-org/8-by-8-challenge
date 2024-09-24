@@ -193,6 +193,7 @@ exports[`Header renders the header unchanged 1`] = `
         <button
           aria-label="close dialog"
           class="close_btn"
+          type="button"
         >
           <svg
             class="close_btn_icon"

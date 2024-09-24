@@ -1,4 +1,4 @@
-import type { Badge } from '@/model/types/badge';
+import type { Badge } from '@/model/types/badges/badge';
 import { NumberBadge } from './number-badge';
 import styles from './styles.module.scss';
 import { isActionBadge } from './is-action-badge';

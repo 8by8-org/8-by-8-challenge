@@ -43,12 +43,6 @@ export const UserRecordParser = inject(
       return !!badge.action_type;
     }
 
-    private dbInvitedBySchema = z.object({
-      challenger_invite_code: z.string(),
-      challenger_name: z.string(),
-      challenger_avatar: z.enum(['0', '1', '2', '3']),
-    });
-
     private dbContributedToSchema = z.object({
       challenger_name: z.string(),
       challenger_avatar: z.enum(['0', '1', '2', '3']),
@@ -65,7 +59,6 @@ export const UserRecordParser = inject(
       invite_code: z.string(),
       completed_actions: this.dbCompletedActionsSchema,
       badges: z.array(this.dbBadgeSchema),
-      invited_by: this.dbInvitedBySchema.nullable(),
       contributed_to: z.array(this.dbContributedToSchema),
     });
 
@@ -96,14 +89,6 @@ export const UserRecordParser = inject(
             };
           }
         }),
-        invitedBy:
-          validatedDBUser.invited_by ?
-            {
-              inviteCode: validatedDBUser.invited_by.challenger_invite_code,
-              name: validatedDBUser.invited_by.challenger_name,
-              avatar: validatedDBUser.invited_by.challenger_avatar,
-            }
-          : undefined,
         contributedTo: validatedDBUser.contributed_to.map(contributedTo => ({
           name: contributedTo.challenger_name,
           avatar: contributedTo.challenger_avatar,

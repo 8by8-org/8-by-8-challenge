@@ -1,0 +1,14 @@
+@use '../../../../../styles/partials' as *;
+
+.emphasized_text {
+  @extend .b1;
+  text-decoration: underline;
+}
+
+.normal_text {
+  @extend .b2;
+}
+
+.state_zip {
+  white-space: nowrap;
+}

@@ -1,3 +1,4 @@
+'use client';
 import {
   useMessages,
   type MessageBearer,

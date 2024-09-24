@@ -2,8 +2,8 @@ import { createSupabaseServiceRoleClient } from '@/services/server/create-supaba
 import { SupabaseClient } from '@supabase/supabase-js';
 
 describe('test createSupabaseServiceRoleClient', () => {
-  it('calls the createSupabaseServiceRoleClient and expects a supabase client to return', () => {
+  it('creates a SupabaseClient.', () => {
     const test = createSupabaseServiceRoleClient();
-    expect(test).toBeInstanceOf(SupabaseClient<any, 'public', any>);
+    expect(test).toBeInstanceOf(SupabaseClient);
   });
 });

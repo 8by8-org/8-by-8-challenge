@@ -1,0 +1,51 @@
+@use '../../../styles/partials' as *;
+
+.container {
+  display: flex;
+}
+
+.checkbox {
+  min-width: 16px;
+  max-width: 16px;
+  min-height: 16px;
+  max-height: 16px;
+  margin-right: 12px;
+}
+
+.checkbox:focus {
+  outline: 1px solid $color-black-8by8;
+  outline-offset: 6px;
+}
+
+.label {
+  @extend .b1;
+}
+
+@supports (appearance: none) or (-webkit-appearance: none) or
+  (-moz-appearance: none) {
+  .checkbox {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: $color-white;
+    border: 2px solid $color-black-8by8;
+    position: relative;
+  }
+
+  .checkbox::after {
+    content: '';
+    background-image: url('../../../../public/static/images/components/checkbox/checkmark.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+  }
+
+  .checkbox:checked::after {
+    visibility: visible;
+  }
+}

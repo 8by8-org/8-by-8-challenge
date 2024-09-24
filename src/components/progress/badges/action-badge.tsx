@@ -1,4 +1,4 @@
-import type { ActionBadge } from '@/model/types/action-badge';
+import type { ActionBadge } from '@/model/types/badges/action-badge';
 import { Actions } from '@/model/enums/actions';
 import styles from './styles.module.scss';
 import Image from 'next/image';
@@ -22,7 +22,7 @@ export function ActionBadge({ badge, index }: ActionBadgeProps): JSX.Element {
   let imagePrefix: string;
 
   switch (badge.action) {
-    case Actions.VoterRegistration:
+    case Actions.RegisterToVote:
       label = 'You Registered';
       imagePrefix = 'register-to-vote';
       break;

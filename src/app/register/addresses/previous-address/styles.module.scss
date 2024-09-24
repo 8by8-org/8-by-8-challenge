@@ -1,0 +1,43 @@
+@use '../../../../styles/partials' as *;
+
+.fieldset {
+  margin-bottom: $spacing-md;
+}
+
+.legend {
+  @extend .h2;
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.input_row_margin {
+  margin-bottom: 10px;
+}
+
+.input_row {
+  @extend .input_row_margin;
+  display: flex;
+  justify-content: space-between;
+}
+
+.zip {
+  flex: 1;
+  margin-right: 39px;
+}
+
+.state {
+  width: 70px !important;
+  margin-top: 17px;
+}
+
+.warning_message {
+  @extend .b6;
+  color: $color-review-dark;
+  margin-bottom: 16px;
+}
+
+.warning_icon {
+  height: 14px;
+  width: 16.55px;
+}

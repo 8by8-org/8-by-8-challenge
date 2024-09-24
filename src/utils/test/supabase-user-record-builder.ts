@@ -10,7 +10,7 @@ import { PRIVATE_ENVIRONMENT_VARIABLES } from '@/constants/private-environment-v
 import { UserRecordParser } from '@/services/server/user-record-parser/user-record-parser';
 import type { User } from '@/model/types/user';
 import type { Avatar } from '@/model/types/avatar';
-import type { Badge } from '@/model/types/badge';
+import type { Badge } from '@/model/types/badges/badge';
 
 interface UserRecord {
   email: string;

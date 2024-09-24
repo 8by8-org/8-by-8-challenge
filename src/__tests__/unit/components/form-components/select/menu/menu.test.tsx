@@ -5,6 +5,7 @@ import {
   cleanup,
   fireEvent,
   waitFor,
+  act,
 } from '@testing-library/react';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -105,7 +106,7 @@ describe('Menu', () => {
     );
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('g');
     await user.keyboard('{Enter}');
 
@@ -140,7 +141,7 @@ describe('Menu', () => {
     );
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('g');
     await user.keyboard('{Tab}');
 
@@ -230,7 +231,7 @@ describe('Menu', () => {
 
     const combobox = screen.getByRole('combobox');
     const menuOptions = screen.getAllByRole('option');
-    combobox.focus();
+    act(() => combobox.focus());
 
     for (let i = 0; i <= options.length + 10; i++) {
       await user.keyboard('{ArrowDown}');
@@ -279,7 +280,7 @@ describe('Menu', () => {
 
     const combobox = screen.getByRole('combobox');
     const menuOptions = screen.getAllByRole('option');
-    combobox.focus();
+    act(() => combobox.focus());
 
     for (let i = options.length - 1; i >= -10; i--) {
       await user.keyboard('{ArrowUp}');
@@ -328,7 +329,7 @@ describe('Menu', () => {
 
     const combobox = screen.getByRole('combobox');
     const menuOptions = screen.getAllByRole('option');
-    combobox.focus();
+    act(() => combobox.focus());
 
     for (let i = 0; i < options.length; i++) {
       await user.keyboard(options[i].value[0]);
@@ -364,7 +365,7 @@ describe('Menu', () => {
 
     const combobox = screen.getByRole('combobox');
     const menuOptions = screen.getAllByRole('option');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard(options[0].value[0]);
     expect(menuOptions[0]).toHaveFocus();
 
@@ -659,7 +660,7 @@ describe('Menu', () => {
     );
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('{Enter}');
     await waitFor(() =>
       expect(screen.queryByAltText('Scroll up')).toBeInTheDocument(),
@@ -1042,7 +1043,7 @@ describe('Menu', () => {
     );
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('{Enter}');
     await waitFor(() =>
       expect(screen.queryByAltText('Scroll down')).toBeInTheDocument(),

@@ -1,18 +1,19 @@
 'use client';
 import {
   forwardRef,
+  useId,
   type ForwardedRef,
   type KeyboardEventHandler,
   type RefObject,
 } from 'react';
 import {
+  Field,
   usePipe,
   useMultiPipe,
   useValue,
   ValidityUtils,
   type FieldOfType,
   type IGroup,
-  type Field,
 } from 'fully-formed';
 import Image from 'next/image';
 import { isPrintableCharacterKey } from '../utils/is-printable-character-key';
@@ -107,12 +108,15 @@ export const Combobox = forwardRef(function Combobox(
       });
 
       if (
-        ValidityUtils.isInvalid(validity) &&
-        (fieldState.hasBeenBlurred ||
-          fieldState.hasBeenModified ||
-          fieldState.submitted)
+        fieldState.hasBeenModified ||
+        fieldState.hasBeenBlurred ||
+        fieldState.submitted
       ) {
-        classNames.push(styles.invalid);
+        if (ValidityUtils.isCaution(validity)) {
+          classNames.push(styles.caution);
+        } else if (ValidityUtils.isInvalid(validity)) {
+          classNames.push(styles.invalid);
+        }
       }
 
       return classNames.join(' ');
@@ -130,6 +134,25 @@ export const Combobox = forwardRef(function Combobox(
         fieldState.submitted)
     );
   });
+
+  const warningMessage = useMultiPipe(
+    [props.field, ...props.groups],
+    states => {
+      const validity = ValidityUtils.minValidity(states);
+      const fieldState = states[0];
+
+      return (
+          ValidityUtils.isCaution(validity) &&
+            (fieldState.hasBeenModified ||
+              fieldState.hasBeenBlurred ||
+              fieldState.submitted)
+        ) ?
+          'The value of this field could not be confirmed. Please verify that it is correct.'
+        : undefined;
+    },
+  );
+
+  const warningMessageId = useId();
 
   const handleKeyboardInput: KeyboardEventHandler = event => {
     const { key } = event;
@@ -223,7 +246,11 @@ export const Combobox = forwardRef(function Combobox(
         aria-controls={props.menuId}
         aria-expanded={false}
         aria-label={props.label}
-        aria-describedby={props['aria-describedby']}
+        aria-describedby={
+          props['aria-describedby'] ?
+            `${props['aria-describedby']} ${warningMessageId}`
+          : warningMessageId
+        }
         aria-invalid={ariaInvalid}
         aria-required={props['aria-required']}
         type="text"
@@ -233,6 +260,12 @@ export const Combobox = forwardRef(function Combobox(
         autoComplete="off"
         readOnly
       />
+      <span
+        style={{ position: 'fixed', visibility: 'hidden' }}
+        id={warningMessageId}
+      >
+        {warningMessage}
+      </span>
     </div>
   );
 });

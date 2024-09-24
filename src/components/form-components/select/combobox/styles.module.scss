@@ -21,6 +21,7 @@
   top: 0;
   left: 0;
   cursor: default;
+  max-width: 0;
 }
 
 .combobox {
@@ -34,6 +35,10 @@
 
 .invalid {
   border-color: $color-error;
+}
+
+.caution {
+  border-color: $color-review-light;
 }
 
 .selection {

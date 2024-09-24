@@ -6,23 +6,24 @@ import { UserType } from '@/model/enums/user-type';
 import { Actions } from '@/model/enums/actions';
 import { ServerError } from '@/errors/server-error';
 import { SupabaseUserRecordBuilder } from '@/utils/test/supabase-user-record-builder';
+import { createId } from '@paralleldrive/cuid2';
+import { createSupabaseServiceRoleClient } from '@/services/server/create-supabase-client/create-supabase-service-role-client';
 import type { CreateSupabaseClient } from '@/services/server/create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '@/services/server/user-record-parser/i-user-record-parser';
-import type { Badge } from '@/model/types/badge';
+import type { Badge } from '@/model/types/badges/badge';
 
-import {
-  createSupabseClientFunction,
-  createUserRepository,
-  createUser,
-} from '@/utils/test/create-user';
 
 describe('SupabaseUserRepository', () => {
   let userRepository: InstanceType<typeof SupabaseUserRepository>;
   let createSupabaseClient: CreateSupabaseClient;
 
   beforeEach(() => {
-    createSupabaseClient = createSupabseClientFunction();
-    userRepository = createUserRepository(createSupabaseClient);
+    createSupabaseClient = createSupabaseServiceRoleClient;
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
   });
 
   afterEach(() => {
@@ -34,8 +35,6 @@ describe('SupabaseUserRepository', () => {
   });
 
   it('returns a user when getUserById is called with an existing user id.', async () => {
-    const supabase = createSupabaseClient();
-
     const challengerEmail = 'challenger@example.com';
     const challengerName = 'Challenger';
     const challengerAvatar = '0';
@@ -76,7 +75,7 @@ describe('SupabaseUserRepository', () => {
       })
       .badges([
         {
-          action: Actions.VoterRegistration,
+          action: Actions.RegisterToVote,
         },
       ])
       .contributedTo([
@@ -114,7 +113,6 @@ describe('SupabaseUserRepository', () => {
       completedChallenge: false,
       contributedTo: [],
       inviteCode: challengerInviteCode,
-      invitedBy: undefined,
     });
 
     // Evaluate whether the player is returned as expected.
@@ -133,7 +131,7 @@ describe('SupabaseUserRepository', () => {
       },
       badges: [
         {
-          action: Actions.VoterRegistration,
+          action: Actions.RegisterToVote,
         },
       ],
       challengeEndTimestamp: expect.any(Number),
@@ -145,11 +143,6 @@ describe('SupabaseUserRepository', () => {
         },
       ],
       inviteCode: expect.any(String),
-      invitedBy: {
-        inviteCode: challengerInviteCode,
-        name: challengerName,
-        avatar: challengerAvatar,
-      },
     });
   });
 
@@ -207,99 +200,148 @@ describe('SupabaseUserRepository', () => {
     );
   });
 
-  it('updates users register to vote task and awads user a badge', async () => {
+  it(`updates the user to a hybrid type user and returns the updated user when 
+  makeHybrid() is called.`, async () => {
     const supabase = createSupabaseClient();
-    const authChallenger = await createUser(supabase);
 
-    const user = await userRepository.getUserById(authChallenger.id);
-    if (!user) {
-      throw new Error(`No user found with id: ${authChallenger.id}`);
+    const userMetadata = {
+      name: 'Challenger',
+      avatar: '0',
+      type: UserType.Challenger,
+      invite_code: createId(),
+    };
+
+    const { data: userData, error: userInsertionError } =
+      await supabase.auth.admin.createUser({
+        email: 'user@example.com',
+        email_confirm: true,
+        user_metadata: userMetadata,
+      });
+
+    if (userInsertionError) {
+      throw new Error(userInsertionError.message);
     }
-    expect(user.completedActions.registerToVote).toBe(false);
-    expect(user.badges.length === 0);
-    await userRepository.awardAndUpdateVoterRegistrationBadgeAndAction(user);
 
-    const newUser = await userRepository.getUserById(user.uid);
-    if (!newUser) {
-      throw new Error(`No newUser found with id: ${user.uid}`);
-    }
+    const user = await userRepository.getUserById(userData.user.id);
+    expect(user?.type).toBe(UserType.Challenger);
 
-    expect(newUser.completedActions.registerToVote).toBe(true);
-
-    const newUserActionBadge = [{ action: 'voterRegistration' }];
-    expect(newUser.badges.length === 1);
-    expect(newUser.badges === newUserActionBadge);
+    const updatedUser = await userRepository.makeHybrid(userData.user.id);
+    expect(updatedUser).toStrictEqual({
+      ...user,
+      type: UserType.Hybrid,
+    });
   });
 
-  it('does not award the user a badge when they have more than 8 badges or already have the voterRegistration badge', async () => {
-    const supabase = createSupabaseClient();
-    const authChallenger = await createUser(supabase);
+  it(`throws a ServerError when the update operation initiated by 
+  makeHybrid fails.`, () => {
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        from: () => ({
+          update: () => ({
+            eq: () => ({
+              select: () => ({
+                order: () => ({
+                  limit: () => ({
+                    maybeSingle: () => {
+                      return Promise.resolve({
+                        data: null,
+                        error: new Error('Failed to update user.'),
+                        status: 422,
+                      });
+                    },
+                  }),
+                }),
+              }),
+            }),
+          }),
+        }),
+      };
+    });
 
-    const user = await userRepository.getUserById(authChallenger.id);
-    if (!user) {
-      throw new Error(`No user found with id: ${authChallenger.id}`);
-    }
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
 
-    let badgesArray: Badge[] = [
-      { action: Actions.SharedChallenge },
-      { action: Actions.SharedChallenge },
-      { action: Actions.SharedChallenge },
-      { action: Actions.SharedChallenge },
-      { action: Actions.SharedChallenge },
-      { action: Actions.SharedChallenge },
-      { action: Actions.SharedChallenge },
-      { action: Actions.SharedChallenge },
-    ];
-    user.badges = badgesArray;
-
-    await userRepository.awardAndUpdateVoterRegistrationBadgeAndAction(user);
-    let newUser = await userRepository.getUserById(user.uid);
-    if (!newUser) {
-      throw new Error(`No newUser found with id: ${user.uid}`);
-    }
-    expect(newUser.badges.length === 0);
-
-    badgesArray = [{ action: Actions.VoterRegistration }];
-    await userRepository.awardAndUpdateVoterRegistrationBadgeAndAction(user);
-
-    newUser = await userRepository.getUserById(user.uid);
-    if (!newUser) {
-      throw new Error(`No newUser found with id: ${user.uid}`);
-    }
-    expect(newUser.badges.length === 0);
+    expect(userRepository.makeHybrid(uuid())).rejects.toThrow(
+      new ServerError('Failed to update user.', 422),
+    );
   });
 
-  it('throws a challengerUpdateError for the updateRegisterToVoteAction private method when there is an invalid user id', async () => {
-    jest
-      .spyOn(userRepository as any, 'awardVoterRegistrationActionBadge')
-      .mockImplementationOnce(async () => Promise<void>);
-    const supabase = createSupabaseClient();
+  it(`throws a ServerError if the user returned after the update operation
+  initiated by makeHybrid is null.`, () => {
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        from: () => ({
+          update: () => ({
+            eq: () => ({
+              select: () => ({
+                order: () => ({
+                  limit: () => ({
+                    maybeSingle: () => {
+                      return Promise.resolve({
+                        data: null,
+                        error: null,
+                      });
+                    },
+                  }),
+                }),
+              }),
+            }),
+          }),
+        }),
+      };
+    });
 
-    const authChallenger = await createUser(supabase);
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
 
-    const user = await userRepository.getUserById(authChallenger.id);
-    if (!user) {
-      throw new Error(`No user found with id: ${authChallenger.id}`);
-    }
-    expect(user.completedActions.registerToVote).toBe(false);
-    user.uid = '';
-    await expect(
-      userRepository.awardAndUpdateVoterRegistrationBadgeAndAction(user),
-    ).rejects.toThrow(new ServerError('Bad Request', 400));
+    expect(userRepository.makeHybrid(uuid())).rejects.toThrow(
+      new ServerError('Update operation returned null user.', 500),
+    );
   });
 
-  it('throws a challengerUpdateError for the awardVoterRegistrationActionBadge private method when there is an invalid user id', async () => {
-    const supabase = createSupabaseClient();
-    const authChallenger = await createUser(supabase);
+  it(`throws a ServerError if the user record returned after the update
+  operation initiated by makeHybrid cannot be parsed.`, async () => {
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        from: () => ({
+          update: () => ({
+            eq: () => ({
+              select: () => ({
+                order: () => ({
+                  limit: () => ({
+                    maybeSingle: () => {
+                      return Promise.resolve({
+                        data: {},
+                        error: null,
+                      });
+                    },
+                  }),
+                }),
+              }),
+            }),
+          }),
+        }),
+      };
+    });
 
-    const user = await userRepository.getUserById(authChallenger.id);
-    if (!user) {
-      throw new Error(`No user found with id: ${authChallenger.id}`);
-    }
-    user.uid = '';
-    await expect(
-      userRepository.awardAndUpdateVoterRegistrationBadgeAndAction(user),
-    ).rejects.toThrow(new ServerError('Bad Request', 400));
+    const userRecordParser: IUserRecordParser = {
+      parseUserRecord: () => {
+        throw new Error('Error parsing user.');
+      },
+    };
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      userRecordParser,
+    );
+
+    await expect(userRepository.makeHybrid(uuid())).rejects.toThrow(
+      new ServerError('Failed to parse user data.', 400),
+    );
   });
 
   it(`sets completedActions.electionReminders to true when 
@@ -457,7 +499,7 @@ describe('SupabaseUserRepository', () => {
       .completedActions({ registerToVote: true })
       .badges([
         {
-          action: Actions.VoterRegistration,
+          action: Actions.RegisterToVote,
         },
       ])
       .contributedTo([
@@ -632,5 +674,337 @@ describe('SupabaseUserRepository', () => {
     await expect(
       userRepository.awardElectionRemindersBadge(''),
     ).rejects.toThrow(new ServerError('Failed to parse user data.', 400));
+  });
+
+  it(`sets completedActions.registerToVote to true when 
+  awardRegisterToVoteBadge is called.`, async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com').build();
+    expect(user.completedActions.registerToVote).toBe(false);
+
+    user = await userRepository.awardRegisterToVoteBadge(user.uid);
+    expect(user.completedActions.registerToVote).toBe(true);
+  });
+
+  it(`awards the user a badge when awardRegisterToVoteBadge is called and the
+  user has not completed this action and has fewer than 8 badges.`, async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com').build();
+    expect(user.badges).toStrictEqual([]);
+
+    user = await userRepository.awardRegisterToVoteBadge(user.uid);
+    expect(user.badges).toStrictEqual([
+      {
+        action: Actions.RegisterToVote,
+      },
+    ]);
+  });
+
+  it(`sets completedChallenge to true if the user has 8 badges after
+  awardRegisterToVoteBadge is called.`, async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com')
+      .badges(
+        new Array<Badge>(7).fill({
+          playerName: 'Player',
+          playerAvatar: '0',
+        }),
+      )
+      .build();
+    expect(user.completedChallenge).toBe(false);
+
+    user = await userRepository.awardRegisterToVoteBadge(user.uid);
+    expect(user.completedChallenge).toBe(true);
+  });
+
+  it(`does not award the user a badge when awardRegisterToVoteBadge is 
+  called and the user has already completed this action.`, async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com')
+      .completedActions({
+        registerToVote: true,
+      })
+      .badges([
+        {
+          action: Actions.RegisterToVote,
+        },
+      ])
+      .build();
+    expect(user.badges).toHaveLength(1);
+
+    user = await userRepository.awardRegisterToVoteBadge(user.uid);
+    expect(user.badges).toHaveLength(1);
+  });
+
+  it(`does not award a badge when awardRegisterToVoteBadge is called and the 
+  user already has 8 badges.`, async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com')
+      .badges(
+        new Array<Badge>(8).fill({
+          playerName: 'Player',
+          playerAvatar: '0',
+        }),
+      )
+      .build();
+    expect(user.completedActions.registerToVote).toBe(false);
+    expect(user.badges).toHaveLength(8);
+
+    user = await userRepository.awardRegisterToVoteBadge(user.uid);
+    expect(user.completedActions.registerToVote).toBe(true);
+    expect(user.badges).toHaveLength(8);
+  });
+
+  it(`awards a challenger a badge if the user is a player who has been invited
+  by the challenger, the challenger has fewer than 8 badges, and
+  awardRegisterToVoteBadge is called.`, async () => {
+    const challenger = await new SupabaseUserRecordBuilder(
+      'challenger@example.com',
+    ).build();
+
+    const player = await new SupabaseUserRecordBuilder('player@example.com')
+      .type(UserType.Player)
+      .invitedBy({
+        inviteCode: challenger.inviteCode,
+        name: challenger.name,
+        avatar: challenger.avatar,
+      })
+      .name('Player')
+      .avatar('3')
+      .build();
+
+    await userRepository.awardRegisterToVoteBadge(player.uid);
+
+    const updatedChallenger = await userRepository.getUserById(challenger.uid);
+    expect(updatedChallenger).not.toBeNull();
+    expect(updatedChallenger?.badges).toStrictEqual([
+      {
+        playerName: player.name,
+        playerAvatar: player.avatar,
+      },
+    ]);
+  });
+
+  it(`updates the player's contributedTo when awardRegisterToVoteBadge is
+  called and the player has not yet contributed to the inviting challenger.`, async () => {
+    const challenger = await new SupabaseUserRecordBuilder(
+      'challenger@example.com',
+    ).build();
+
+    let player = await new SupabaseUserRecordBuilder('player@example.com')
+      .type(UserType.Player)
+      .invitedBy({
+        inviteCode: challenger.inviteCode,
+        name: challenger.name,
+        avatar: challenger.avatar,
+      })
+      .build();
+
+    player = await userRepository.awardRegisterToVoteBadge(player.uid);
+    expect(player.contributedTo).toStrictEqual([
+      {
+        name: challenger.name,
+        avatar: challenger.avatar,
+      },
+    ]);
+  });
+
+  it(`does not update the player's contributedTo when
+  awardRegisterToVoteBadge is called, but the player has already contributed
+  to the inviting challenger's challenge.`, async () => {
+    const playerName = 'Player';
+    const playerAvatar = '3';
+
+    const challenger = await new SupabaseUserRecordBuilder(
+      'challenger@example.com',
+    )
+      .badges([
+        {
+          playerName,
+          playerAvatar,
+        },
+      ])
+      .build();
+
+    let player = await new SupabaseUserRecordBuilder('player@example.com')
+      .type(UserType.Player)
+      .invitedBy({
+        inviteCode: challenger.inviteCode,
+        name: challenger.name,
+        avatar: challenger.avatar,
+      })
+      .completedActions({ electionReminders: true })
+      .badges([
+        {
+          action: Actions.ElectionReminders,
+        },
+      ])
+      .contributedTo([
+        {
+          inviteCode: challenger.inviteCode,
+          name: challenger.name,
+          avatar: challenger.avatar,
+        },
+      ])
+      .build();
+
+    expect(player.contributedTo).toStrictEqual([
+      {
+        name: challenger.name,
+        avatar: challenger.avatar,
+      },
+    ]);
+
+    player = await userRepository.awardRegisterToVoteBadge(player.uid);
+
+    expect(player.contributedTo).toStrictEqual([
+      {
+        name: challenger.name,
+        avatar: challenger.avatar,
+      },
+    ]);
+  });
+
+  it(`does not award a challenger a badge when awardRegisterToVoteBadge is
+  called for a player who has already completed that action.`, async () => {
+    const playerName = 'Player';
+    const playerAvatar = '2';
+
+    const challenger = await new SupabaseUserRecordBuilder(
+      'challenger@example.com',
+    )
+      .badges([
+        {
+          playerName,
+          playerAvatar,
+        },
+      ])
+      .build();
+
+    const { uid: playerId } = await new SupabaseUserRecordBuilder(
+      'player@example.com',
+    )
+      .type(UserType.Player)
+      .invitedBy({
+        inviteCode: challenger.inviteCode,
+        name: challenger.name,
+        avatar: challenger.avatar,
+      })
+      .completedActions({ registerToVote: true })
+      .badges([
+        {
+          action: Actions.RegisterToVote,
+        },
+      ])
+      .build();
+
+    expect(challenger.badges).toHaveLength(1);
+
+    await userRepository.awardRegisterToVoteBadge(playerId);
+
+    const updatedChallenger = await userRepository.getUserById(challenger.uid);
+    expect(updatedChallenger).not.toBeNull();
+    expect(updatedChallenger?.badges).toHaveLength(1);
+  });
+
+  it(`does not award a challenger a badge if the challenger has 8 or more badges
+  when awardRegisterToVoteBadge is called for a player.`, async () => {
+    const challenger = await new SupabaseUserRecordBuilder(
+      'challenger@example.com',
+    )
+      .badges(
+        new Array(8).fill({
+          playerName: 'Player',
+          playerAvatar: '0',
+        }),
+      )
+      .completedChallenge(true)
+      .build();
+
+    const { uid: playerId } = await new SupabaseUserRecordBuilder(
+      'player@example.com',
+    )
+      .type(UserType.Player)
+      .invitedBy({
+        inviteCode: challenger.inviteCode,
+        name: challenger.name,
+        avatar: challenger.avatar,
+      })
+      .build();
+
+    expect(challenger.badges).toHaveLength(8);
+
+    await userRepository.awardRegisterToVoteBadge(playerId);
+
+    const updatedChallenger = await userRepository.getUserById(challenger.uid);
+    expect(updatedChallenger).not.toBeNull();
+    expect(updatedChallenger?.badges).toHaveLength(8);
+  });
+
+  it(`throws a ServerError if supabase.rpc() returns an error when 
+  awardRegisterToVoteBadge is called.`, async () => {
+    const errorMessage = 'test error message';
+
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        rpc: () => {
+          return {
+            data: null,
+            error: new Error(errorMessage),
+            status: 429,
+          };
+        },
+      };
+    });
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+
+    await expect(userRepository.awardRegisterToVoteBadge('')).rejects.toThrow(
+      new ServerError(errorMessage, 429),
+    );
+  });
+
+  it(`throws an error if the user returned by supabase.rpc() is null when 
+  awardRegisterToVoteBadge is called.`, async () => {
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        rpc: () => {
+          return {
+            data: null,
+            error: null,
+          };
+        },
+      };
+    });
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+
+    await expect(userRepository.awardRegisterToVoteBadge('')).rejects.toThrow(
+      new ServerError('User was null after update.', 500),
+    );
+  });
+
+  it(`throws an error if the user returned by supabase.rpc() is cannot be parsed
+  awardRegisterToVoteBadge is called.`, async () => {
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        rpc: () => {
+          return {
+            data: {},
+            error: null,
+          };
+        },
+      };
+    });
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+
+    await expect(userRepository.awardRegisterToVoteBadge('')).rejects.toThrow(
+      new ServerError('Failed to parse user data.', 400),
+    );
   });
 });

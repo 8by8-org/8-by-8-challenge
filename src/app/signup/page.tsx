@@ -33,7 +33,7 @@ function SignUp() {
 
     try {
       const formValue = await waitForPendingValidators(signUpForm);
-      await signUpWithEmail({ ...formValue, type: UserType.Challenger });
+      await signUpWithEmail(formValue);
     } catch (e: any) {
       setIsLoading(false);
 

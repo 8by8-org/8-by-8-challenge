@@ -12,11 +12,15 @@ import type { PropsWithChildren } from 'react';
 export async function UserContextProvider({ children }: PropsWithChildren) {
   const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
   const cookies = serverContainer.get(SERVER_SERVICE_KEYS.Cookies);
-  const user = await auth.loadSessionUser();
   const emailForSignIn = await cookies.loadEmailForSignIn();
+  const session = await auth.loadSession();
 
   return (
-    <ClientSideUserContextProvider user={user} emailForSignIn={emailForSignIn}>
+    <ClientSideUserContextProvider
+      user={session.user}
+      invitedBy={session.invitedBy}
+      emailForSignIn={emailForSignIn}
+    >
       {children}
     </ClientSideUserContextProvider>
   );

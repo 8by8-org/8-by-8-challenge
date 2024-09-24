@@ -48,19 +48,13 @@ describe('POST', () => {
           email,
           name: 'User',
           avatar: '0',
-          type: UserType.Challenger,
           captchaToken: 'test-token',
         }),
       },
     );
 
     const response = await POST(request);
-    expect(signUpWithEmailAndSendOTP).toHaveBeenCalledWith(
-      email,
-      'User',
-      '0',
-      UserType.Challenger,
-    );
+    expect(signUpWithEmailAndSendOTP).toHaveBeenCalledWith(email, 'User', '0');
     expect(setEmailForSignIn).toHaveBeenCalledWith(email);
     expect(response.status).toBe(201);
 

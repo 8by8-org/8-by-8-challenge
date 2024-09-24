@@ -7,8 +7,12 @@ import type { NextMiddleware } from 'next/server';
 import type { UserRepository } from './user-repository/user-repository';
 import type { IUserRecordParser } from './user-record-parser/i-user-record-parser';
 import type { Encryptor } from './encryptor/encryptor';
-import type { VoterRepository } from './voter-registration-repository/voter-registration';
+import type { VoterRegistrationDataRepository } from './voter-registration-data-repository/voter-registration-data-repository';
 import type { CreateSupabaseClient } from './create-supabase-client/create-supabase-client';
+import type { USStateInformation } from './us-state-information/us-state-information';
+import type { ValidateAddresses } from './validate-addresses/validate-addresses';
+import type { InvitationsRepository } from './invitations-repository/invitations-repository';
+import type { RedirectIfCompletedAction } from './redirect-if-completed-action/redirect-if-completed-action';
 
 const { keys } = Keys.createKeys()
   .addKey('Auth')
@@ -37,8 +41,18 @@ const { keys } = Keys.createKeys()
   .forType<UserRepository>()
   .addKey('Encryptor')
   .forType<Encryptor>()
-  .addKey('VoterRepository')
-  .forType<VoterRepository>();
+  .addKey('USStateInformation')
+  .forType<USStateInformation>()
+  .addKey('validateAddresses')
+  .forType<ValidateAddresses>()
+  .addKey('setInviteCodeCookie')
+  .forType<NextMiddleware>()
+  .addKey('InvitationsRepository')
+  .forType<InvitationsRepository>()
+  .addKey('VoterRegistrationDataRepository')
+  .forType<VoterRegistrationDataRepository>()
+  .addKey('redirectIfCompletedAction')
+  .forType<RedirectIfCompletedAction>();
 
 /**
  * Keys that can be used to retrieve service classes, functions, etc. from an

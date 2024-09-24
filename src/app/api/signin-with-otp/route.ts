@@ -12,10 +12,10 @@ export async function POST(request: NextRequest) {
   try {
     const requestBody = await request.json();
     const { email, otp } = requestBodySchema.parse(requestBody);
-    const user = await auth.signInWithEmailAndOTP(email, otp);
+    const session = await auth.signInWithEmailAndOTP(email, otp);
     cookies.clearEmailForSignIn();
 
-    return NextResponse.json({ user }, { status: 200 });
+    return NextResponse.json(session, { status: 200 });
   } catch (e) {
     if (e instanceof ServerError) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });

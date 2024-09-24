@@ -7,6 +7,9 @@ import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
 import { Builder } from 'builder-pattern';
 import { NextFetchEvent, NextRequest } from 'next/server';
 import { MockNextCookies } from '@/utils/test/mock-next-cookies';
+import { createId } from '@paralleldrive/cuid2';
+import { SearchParams } from '@/constants/search-params';
+import { CookieNames } from '@/constants/cookie-names';
 
 const mockCookies = new MockNextCookies();
 
@@ -16,6 +19,8 @@ jest.mock('next/headers', () => ({
 }));
 
 describe('middleware', () => {
+  const host = 'https://challenge.8by8.us';
+
   afterEach(() => {
     mockCookies.cookies().clear();
     return resetAuthAndDatabase();
@@ -28,7 +33,7 @@ describe('middleware', () => {
   it(`redirects the user if the route it receives is signed-in only and the user
   is signed out.`, async () => {
     for (const route of SIGNED_IN_ONLY_ROUTES) {
-      const request = new NextRequest('https://challenge.8by8.us' + route, {
+      const request = new NextRequest(host + route, {
         method: 'GET',
       });
 
@@ -44,12 +49,9 @@ describe('middleware', () => {
   it(`does not redirect the user if the route it receives is signed-in only and
   the user is signed in.`, async () => {
     for (const route of SIGNED_IN_ONLY_ROUTES) {
-      const request = await getSignedInRequest(
-        'https://challenge.8by8.us' + route,
-        {
-          method: 'GET',
-        },
-      );
+      const request = await getSignedInRequest(host + route, {
+        method: 'GET',
+      });
       const response = await middleware(
         request,
         Builder<NextFetchEvent>().build(),
@@ -63,12 +65,9 @@ describe('middleware', () => {
   it(`redirects the user if the route it receives is signed-out only and the
   user is signed in.`, async () => {
     for (const route of SIGNED_OUT_ONLY_ROUTES) {
-      const request = await getSignedInRequest(
-        'https://challenge.8by8.us' + route,
-        {
-          method: 'GET',
-        },
-      );
+      const request = await getSignedInRequest(host + route, {
+        method: 'GET',
+      });
 
       const response = await middleware(
         request,
@@ -86,7 +85,7 @@ describe('middleware', () => {
     for (const route of SIGNED_OUT_ONLY_ROUTES) {
       if (route === '/signin-with-otp') continue;
 
-      const request = new NextRequest('https://challenge.8by8.us' + route, {
+      const request = new NextRequest(host + route, {
         method: 'GET',
       });
 
@@ -101,12 +100,9 @@ describe('middleware', () => {
 
   it(`redirects the user if they are signed out but haven't been sent a one-time
   passcode and the route can only be accessed if an OTP has been sent.`, async () => {
-    const request = new NextRequest(
-      'https://challenge.8by8.us/signin-with-otp',
-      {
-        method: 'GET',
-      },
-    );
+    const request = new NextRequest(`${host}/signin-with-otp`, {
+      method: 'GET',
+    });
 
     const response = await middleware(
       request,
@@ -120,7 +116,7 @@ describe('middleware', () => {
     const otherRoutes = ['/', '/why-8by8'];
 
     for (const route of otherRoutes) {
-      const request = new NextRequest('https://challenge.8by8.us' + route, {
+      const request = new NextRequest(host + route, {
         method: 'GET',
       });
 
@@ -131,6 +127,27 @@ describe('middleware', () => {
 
       expect(willBeRedirected(response)).toBe(false);
     }
+  });
+
+  it(`sets a cookie and redirects the user to the same route without the 
+  inviteCode search parameter when the inviteCode search parameter is detected.`, async () => {
+    const route = '/share';
+    const inviteCode = createId();
+    const fullPath = `${host}${route}?${SearchParams.InviteCode}=${inviteCode}`;
+
+    const request = new NextRequest(fullPath, {
+      method: 'GET',
+    });
+
+    const response = await middleware(
+      request,
+      Builder<NextFetchEvent>().build(),
+    );
+
+    expect(willBeRedirected(response)).toBe(true);
+    expect(response?.headers.get('set-cookie')).toEqual(
+      expect.stringContaining(`${CookieNames.InviteCode}=${inviteCode}`),
+    );
   });
 
   test('config.matcher does NOT match static resources.', () => {

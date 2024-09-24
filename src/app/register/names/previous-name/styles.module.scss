@@ -1,0 +1,25 @@
+@use '../../../../styles/partials' as *;
+
+.fieldset {
+  margin-bottom: $spacing-md;
+}
+
+.legend {
+  @extend .h2;
+  margin-bottom: $spacing-sm;
+  display: flex;
+  align-items: center;
+}
+
+.more_info {
+  margin-left: 9px;
+}
+
+.select {
+  width: 153px;
+  margin-bottom: 10px;
+}
+
+.input {
+  margin-bottom: 10px;
+}

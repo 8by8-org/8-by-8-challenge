@@ -1,6 +1,6 @@
 import { UserType } from '../enums/user-type';
 import type { Avatar } from './avatar';
-import type { Badge } from './badge';
+import type { Badge } from './badges/badge';
 
 export interface User {
   uid: string;
@@ -35,10 +35,5 @@ export interface User {
    * Each time the challenger clicks a new challenger's share link, this will be
    * updated.
    */
-  invitedBy?: {
-    inviteCode: string;
-    name: string;
-    avatar: Avatar;
-  };
   inviteCode: string;
 }

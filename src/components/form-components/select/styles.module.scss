@@ -1,3 +1,4 @@
+@use '../../../styles/partials' as *;
 @use './variables' as *;
 
 .select {
@@ -11,6 +12,16 @@
   position: relative;
   display: flex;
   width: 100%;
+}
+
+.messages_container {
+  height: $font-size-xxs + 5px;
+}
+
+.warning_icon {
+  width: 16.55px;
+  height: 14px;
+  margin-top: 4px;
 }
 
 .open_more_info {

@@ -13,8 +13,13 @@ import { redirectIfSignedOutFromSupabase } from './redirect-if-signed-out/redire
 import { refreshSupabaseSession } from './refresh-session/refresh-supabase-session';
 import { SupabaseUserRepository } from './user-repository/supabase-user-repository';
 import { WebCryptoSubtleEncryptor } from './encryptor/web-crypto-subtle-encryptor';
-import { VoterRegistrationRepository } from './voter-registration-repository/voter-registration-repository';
+import { RockTheVoteUSStateInformation } from './us-state-information/rtv-us-state-information';
+import { validateAddressesWithGoogleMaps } from './validate-addresses/validate-addresses-with-google-maps';
+import { SupabaseVoterRegistrationDataRepository } from './voter-registration-data-repository/supabase-voter-registration-data-repository';
 import { createSupabaseServiceRoleClient } from './create-supabase-client/create-supabase-service-role-client';
+import { setInviteCodeCookie } from './set-invite-code-cookie/set-invite-code-cookie';
+import { SupabaseInvitationsRepository } from './invitations-repository/supabase-invitations-repository';
+import { redirectIfSupabaseUserCompletedAction } from './redirect-if-completed-action/redirect-if-supabase-user-completed-action';
 
 /**
  * An inversion of control container that should be used to obtain instances of
@@ -70,8 +75,27 @@ export const serverContainer = ContainerBuilder.createBuilder()
   .registerClass(SERVER_SERVICE_KEYS.UserRepository, SupabaseUserRepository)
   .registerClass(SERVER_SERVICE_KEYS.Encryptor, WebCryptoSubtleEncryptor)
   .registerClass(
-    SERVER_SERVICE_KEYS.VoterRepository,
-    VoterRegistrationRepository,
+    SERVER_SERVICE_KEYS.USStateInformation,
+    RockTheVoteUSStateInformation,
   )
-
+  .registerFunction(
+    SERVER_SERVICE_KEYS.validateAddresses,
+    validateAddressesWithGoogleMaps,
+  )
+  .registerFunction(
+    SERVER_SERVICE_KEYS.setInviteCodeCookie,
+    setInviteCodeCookie,
+  )
+  .registerClass(
+    SERVER_SERVICE_KEYS.InvitationsRepository,
+    SupabaseInvitationsRepository,
+  )
+  .registerClass(
+    SERVER_SERVICE_KEYS.VoterRegistrationDataRepository,
+    SupabaseVoterRegistrationDataRepository,
+  )
+  .registerFunction(
+    SERVER_SERVICE_KEYS.redirectIfCompletedAction,
+    redirectIfSupabaseUserCompletedAction,
+  )
   .build();

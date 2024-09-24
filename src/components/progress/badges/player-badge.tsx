@@ -1,4 +1,4 @@
-import type { PlayerBadge } from '@/model/types/player-badge';
+import type { PlayerBadge } from '@/model/types/badges/player-badge';
 import { AVATARS } from '@/constants/avatars';
 import styles from './styles.module.scss';
 import Image from 'next/image';

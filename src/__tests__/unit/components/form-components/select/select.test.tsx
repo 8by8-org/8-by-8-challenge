@@ -9,12 +9,12 @@ import {
 } from '@testing-library/react';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { Field, StringValidators, Group } from 'fully-formed';
+import { Field, StringValidators, Group, Validity } from 'fully-formed';
 import { mockScrollMethods } from '@/utils/test/mock-scroll-methods';
 import * as scrollUtils from '../../../../../components/form-components/select/menu/utils/scroll';
 import * as useMenuModule from '../../../../../components/form-components/select/menu/hooks/use-menu';
 import zipState from 'zip-state';
-import { US_STATES_AND_TERRITORIES } from '@/constants/us-states-and-territories';
+import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 
 /*
   The individual modules within utils must be mocked so that when they are 
@@ -237,7 +237,7 @@ describe('Select', () => {
     expect(menuContainer.classList).toContain('hidden');
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('{Enter}');
 
     await waitFor(() =>
@@ -279,7 +279,7 @@ describe('Select', () => {
     expect(menuContainer.classList).toContain('hidden');
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('{Enter}');
 
     await waitFor(() =>
@@ -317,7 +317,7 @@ describe('Select', () => {
     expect(menuContainer.classList).toContain('hidden');
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('{ArrowDown}');
 
     await waitFor(() =>
@@ -357,7 +357,7 @@ describe('Select', () => {
     expect(menuContainer.classList).toContain('hidden');
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('{ArrowUp}');
 
     await waitFor(() =>
@@ -400,7 +400,7 @@ describe('Select', () => {
     // options[1] should be selected when G is typed (regardless of case)
     // First, try uppercase G
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('G');
     await waitFor(() =>
       expect(menuContainer.classList).not.toContain('hidden'),
@@ -448,7 +448,7 @@ describe('Select', () => {
     const menuContainer = document.getElementsByClassName('menu_container')[0];
     expect(menuContainer.classList).toContain('hidden');
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('z');
     await waitFor(() =>
       expect(menuContainer.classList).not.toContain('hidden'),
@@ -488,7 +488,7 @@ describe('Select', () => {
     const menuContainer = document.getElementsByClassName('menu_container')[0];
     expect(menuContainer.classList).toContain('hidden');
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('z');
     await waitFor(() =>
       expect(menuContainer.classList).not.toContain('hidden'),
@@ -512,40 +512,6 @@ describe('Select', () => {
 
     const outerContainer = document.getElementsByClassName('select')[0];
     expect(outerContainer.classList).toContain(className);
-  });
-
-  it(`displays any messages associated with the field if the field has been 
-  blurred.`, async () => {
-    const invalidMessage = 'Please select an option.';
-
-    const requiredField = new Field({
-      name: 'requiredField',
-      defaultValue: '',
-      validators: [
-        StringValidators.required({
-          invalidMessage,
-        }),
-      ],
-    });
-
-    render(
-      <Select label="Select an option" field={requiredField} options={[]} />,
-    );
-
-    expect(screen.getByText(invalidMessage).classList).toContain(
-      'hidden_message',
-    );
-
-    const combobox = screen.getByRole('combobox');
-    await user.click(combobox);
-    expect(screen.getByText(invalidMessage).classList).toContain(
-      'hidden_message',
-    );
-
-    await user.click(document.body);
-    expect(screen.getByText(invalidMessage).classList).not.toContain(
-      'hidden_message',
-    );
   });
 
   it(`renders any messages associated with the field if the field has been
@@ -666,7 +632,7 @@ describe('Select', () => {
             displayMessages: true,
           },
         ]}
-        options={US_STATES_AND_TERRITORIES.map(abbr => {
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
           return {
             text: abbr,
             value: abbr,
@@ -726,7 +692,7 @@ describe('Select', () => {
             displayMessages: false,
           },
         ]}
-        options={US_STATES_AND_TERRITORIES.map(abbr => {
+        options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
           return {
             text: abbr,
             value: abbr,
@@ -994,7 +960,7 @@ describe('Select', () => {
     );
 
     const combobox = screen.getByRole('combobox');
-    combobox.focus();
+    act(() => combobox.focus());
     await user.keyboard('{Enter}');
 
     expect(isKeyboardNavigating.current).toBe(true);
@@ -1003,5 +969,81 @@ describe('Select', () => {
     expect(isKeyboardNavigating.current).toBe(false);
 
     useMenuSpy.mockRestore();
+  });
+
+  it(`displays a warning icon when the field's validity is Validity.Caution and 
+  the field has been blurred.`, () => {
+    const field = new Field({
+      name: 'testField',
+      defaultValue: '',
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(<Select label="Select an option" field={field} options={[]} />);
+
+    expect(screen.queryByAltText(/warning icon/i)).not.toBeInTheDocument();
+
+    act(() => field.blur());
+    expect(screen.queryByAltText(/warning icon/i)).toBeInTheDocument();
+  });
+
+  it(`displays a warning icon when the field's validity is Validity.Caution and 
+  the field has been modified.`, async () => {
+    const field = new Field({
+      name: 'testField',
+      defaultValue: '',
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(
+      <Select
+        label="Select an option"
+        field={field}
+        options={[{ value: 'a', text: 'Option A' }]}
+      />,
+    );
+
+    expect(screen.queryByAltText(/warning icon/i)).not.toBeInTheDocument();
+
+    const combobox = screen.getByRole('combobox');
+    await user.click(combobox);
+
+    const options = screen.getAllByRole('option');
+    await user.click(options[0]);
+    expect(screen.queryByAltText(/warning icon/i)).toBeInTheDocument();
+  });
+
+  it(`displays a warning icon when the field's validity is Validity.Caution and 
+  the field has been submitted.`, () => {
+    const field = new Field({
+      name: 'testField',
+      defaultValue: '',
+      validators: [
+        {
+          validate: () => ({
+            validity: Validity.Caution,
+          }),
+        },
+      ],
+    });
+
+    render(<Select label="Select an option" field={field} options={[]} />);
+
+    expect(screen.queryByAltText(/warning icon/i)).not.toBeInTheDocument();
+
+    act(() => field.setSubmitted());
+    expect(screen.queryByAltText(/warning icon/i)).toBeInTheDocument();
   });
 });

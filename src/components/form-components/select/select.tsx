@@ -6,16 +6,24 @@ import {
   type ReactNode,
   type CSSProperties,
 } from 'react';
-import { usePipe, type Field } from 'fully-formed';
+import {
+  usePipe,
+  useMultiPipe,
+  ValidityUtils,
+  type Field,
+  type FieldOfType,
+  useCancelFocusOnUnmount,
+} from 'fully-formed';
+import Image from 'next/image';
 import { Combobox } from './combobox';
 import { Menu, type MenuRef } from './menu';
 import { Messages } from '../messages';
 import { WidthSetter } from './width-setter';
-import type { FieldOfType } from 'fully-formed';
+import { MoreInfo } from '@/components/utils/more-info';
 import type { Option } from './types/option';
 import type { GroupConfigObject } from '../types/group-config-object';
+import warningIconLight from '@/../public/static/images/components/shared/warning-icon-light.svg';
 import styles from './styles.module.scss';
-import { MoreInfo } from '@/components/utils/more-info';
 
 interface SelectProps {
   /**
@@ -99,10 +107,26 @@ export function Select({
     field,
     ...groups.filter(group => group.displayMessages).map(({ group }) => group),
   ];
+
   const hideMessages = usePipe(
     field,
     ({ hasBeenBlurred, hasBeenModified, submitted }) => {
       return !(hasBeenBlurred || hasBeenModified || submitted);
+    },
+  );
+
+  const showWarningIcon = useMultiPipe(
+    [field, ...groups.map(g => g.group)],
+    states => {
+      const validity = ValidityUtils.minValidity(states);
+      const fieldState = states[0];
+
+      return (
+        ValidityUtils.isCaution(validity) &&
+        (fieldState.hasBeenModified ||
+          fieldState.hasBeenBlurred ||
+          fieldState.submitted)
+      );
     },
   );
 
@@ -122,7 +146,10 @@ export function Select({
       }
 
       menuRef.current?.closeMenu();
-      field.blur();
+
+      if (field.state.isInFocus) {
+        field.blur();
+      }
     }
 
     document.addEventListener('click', handleClickOutsideSelect);
@@ -131,12 +158,15 @@ export function Select({
       document.removeEventListener('click', handleClickOutsideSelect);
   }, [field]);
 
+  useCancelFocusOnUnmount(field);
+
   return (
     <div
       className={classNames.join(' ')}
       ref={selectRef}
       style={style}
       title={label}
+      onFocus={() => field.focus()}
     >
       <div className={styles.combobox_container}>
         <Combobox
@@ -167,11 +197,20 @@ export function Select({
           ref={menuRef}
         />
       </div>
-      <Messages
-        messageBearers={messageBearers}
-        id={messagesId}
-        hideMessages={hideMessages}
-      />
+      <div className={styles.messages_container}>
+        {showWarningIcon && (
+          <Image
+            src={warningIconLight}
+            alt="Warning Icon"
+            className={styles.warning_icon}
+          />
+        )}
+        <Messages
+          messageBearers={messageBearers}
+          id={messagesId}
+          hideMessages={hideMessages}
+        />
+      </div>
       <WidthSetter label={label} options={options} hasMoreInfo={!!moreInfo} />
     </div>
   );

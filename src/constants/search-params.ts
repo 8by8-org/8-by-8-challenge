@@ -1,4 +1,3 @@
 export enum SearchParams {
-    InviteCode = "inviteCode",
-  }
-  
+  InviteCode = 'inviteCode',
+}

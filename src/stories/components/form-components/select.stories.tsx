@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { Select } from '@/components/form-components/select';
 import { Field, StringValidators, Validator } from 'fully-formed';
 import { GlobalStylesProvider } from '@/stories/global-styles-provider';
-import { US_STATES_AND_TERRITORIES } from '@/constants/us-states-and-territories';
+import { US_STATE_ABBREVIATIONS } from '@/constants/us-state-abbreviations';
 
 const meta: Meta<typeof Select> = {
   component: Select,
@@ -12,6 +12,16 @@ const meta: Meta<typeof Select> = {
       expanded: false,
     },
   },
+  decorators: [
+    Story => {
+      document.body.setAttribute(
+        'style',
+        'min-height: 100vh; max-height: 100vh; overflow: hidden; position: absolute; top: 0; left: 0;',
+      );
+
+      return <Story />;
+    },
+  ],
 };
 
 export default meta;
@@ -62,7 +72,7 @@ export const ManyOptions: Story = {
         <Select
           label="State"
           field={state}
-          options={US_STATES_AND_TERRITORIES.map(abbr => {
+          options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
             return {
               text: abbr,
               value: abbr,
@@ -270,6 +280,31 @@ export const Wide: Story = {
             },
           ]}
           style={{ width: '300px' }}
+        />
+      </GlobalStylesProvider>
+    );
+  },
+};
+
+export const AtBottomOfPage: Story = {
+  render: () => {
+    const state = new Field({
+      name: 'state',
+      defaultValue: '',
+    });
+
+    return (
+      <GlobalStylesProvider>
+        <Select
+          label="State"
+          field={state}
+          options={Object.values(US_STATE_ABBREVIATIONS).map(abbr => {
+            return {
+              text: abbr,
+              value: abbr,
+            };
+          })}
+          style={{ marginTop: '70vh' }}
         />
       </GlobalStylesProvider>
     );
