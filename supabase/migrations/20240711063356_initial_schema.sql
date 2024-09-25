@@ -76,6 +76,7 @@ create table public.contributed_to (
   challenger_invite_code varchar not null,
   challenger_name varchar(255) not null,
   challenger_avatar char(1) not null,
+  contributed_to_at timestamp not null default current_timestamp,
   primary key (id, player_id)
 );
 
