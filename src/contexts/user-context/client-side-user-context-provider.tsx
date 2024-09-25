@@ -48,6 +48,52 @@ export function ClientSideUserContextProvider(
   const router = useRouter();
 
   useEffect(() => {
+    const refreshUser = async () => {
+      const response = await fetch('/api/refresh-user', {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        if (data.user.uid === user?.uid) {
+          setUser(data.user as User);
+        }
+      }
+    };
+
+    const subscribeToBadges = (userId: string) => {
+      const supabase = createBrowserClient(
+        PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_URL,
+        PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      );
+
+      supabaseSubscriptionRef.current = supabase
+        .channel('badges')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'badges',
+            filter: `challenger_id=eq.${userId}`,
+          },
+          async payload => {
+            const newBadge = payload.new;
+
+            /* 
+              Only refresh the user if the badge was awarded due to the actions of 
+              another user. If the user earned the badge themselves, the
+              user object will already have been updated.
+            */
+            if ('player_name' in newBadge && 'player_avatar' in newBadge) {
+              await refreshUser();
+            }
+          },
+        )
+        .subscribe();
+    };
+
     if (user) {
       clearInviteCode();
       subscribeToBadges(user.uid);
@@ -160,55 +206,6 @@ export function ClientSideUserContextProvider(
         reject(new Error('not implemented.'));
       }, 3000);
     });
-  }
-
-  function subscribeToBadges(userId: string) {
-    const supabase = createBrowserClient(
-      PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_URL,
-      PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    );
-
-    supabaseSubscriptionRef.current = supabase
-      .channel('badges')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'badges',
-          filter: `challenger_id=eq.${userId}`,
-        },
-        async payload => {
-          const newBadge = payload.new;
-
-          /* 
-            Only refresh the user if the badge was awarded due to the actions of 
-            another user. If the user earned the badge themselves, the
-            user object will already have been updated.
-          */
-          if ('player_name' in newBadge && 'player_avatar' in newBadge) {
-            await refreshUser();
-          }
-        },
-      )
-      .subscribe();
-  }
-
-  async function refreshUser() {
-    const response = await fetch('/api/refresh-user', {
-      method: 'POST',
-    });
-
-    if (!response.ok) {
-      console.error('Failed to refresh user.');
-      return;
-    }
-
-    const data = await response.json();
-
-    if (data.user.uid === user?.uid) {
-      setUser(data.user as User);
-    }
   }
 
   return (
