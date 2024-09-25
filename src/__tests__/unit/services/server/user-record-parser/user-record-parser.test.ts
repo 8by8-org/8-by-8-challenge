@@ -1,6 +1,7 @@
 import { Actions } from '@/model/enums/actions';
 import { UserType } from '@/model/enums/user-type';
 import { UserRecordParser } from '@/services/server/user-record-parser/user-record-parser';
+import { createId } from '@paralleldrive/cuid2';
 import { DateTime } from 'luxon';
 
 describe('UserRecordParser', () => {
@@ -43,6 +44,7 @@ describe('UserRecordParser', () => {
     ],
     contributed_to: [
       {
+        challenger_invite_code: createId(),
         challenger_name: 'user 3',
         challenger_avatar: '2',
       },
@@ -81,8 +83,10 @@ describe('UserRecordParser', () => {
       ],
       contributedTo: [
         {
-          name: 'user 3',
-          avatar: '2',
+          challengerInviteCode:
+            validUser.contributed_to[0].challenger_invite_code,
+          challengerName: 'user 3',
+          challengerAvatar: '2',
         },
       ],
     });
@@ -175,17 +179,30 @@ describe('UserRecordParser', () => {
     const invalidContributedToEntries = [
       {},
       {
-        challenger_name: 'challenger name without avatar',
+        challenger_name: '',
+        challenger_avatar: '',
       },
       {
+        challenger_invite_code: '',
         challenger_avatar: '0',
       },
       {
+        challenger_invite_code: '',
+        challenger_name: '',
+      },
+      {
+        challenger_invite_code: 1,
+        challenger_name: '',
+        challenger_avatar: '0',
+      },
+      {
+        challenger_invite_code: '',
         challenger_name: 1,
         challenger_avatar: '0',
       },
       {
-        challenger_name: 'challenger name with invalid avatar',
+        challenger_invite_code: '',
+        challenger_name: '',
         challenger_avatar: '4',
       },
     ];

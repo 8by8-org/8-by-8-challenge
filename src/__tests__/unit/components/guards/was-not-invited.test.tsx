@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import navigation from 'next/navigation';
 import { Builder } from 'builder-pattern';
 import { UserContext, type UserContextType } from '@/contexts/user-context';
-import type { InvitedBy } from '@/model/types/invited-by';
+import type { ChallengerData } from '@/model/types/challenger-data';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 jest.mock('next/navigation', () => ({
@@ -60,7 +60,7 @@ describe('wasNotInvited', () => {
   });
 
   it('redirects the user to /playerwelcome if the invitedBy is not null.', () => {
-    const invitedBy = Builder<InvitedBy>().build();
+    const invitedBy = Builder<ChallengerData>().build();
     const userContextValue = Builder<UserContextType>()
       .invitedBy(invitedBy)
       .build();

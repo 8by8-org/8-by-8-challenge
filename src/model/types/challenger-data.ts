@@ -1,6 +1,6 @@
 import type { Avatar } from './avatar';
 
-export interface InvitedBy {
+export interface ChallengerData {
   challengerInviteCode: string;
   challengerName: string;
   challengerAvatar: Avatar;

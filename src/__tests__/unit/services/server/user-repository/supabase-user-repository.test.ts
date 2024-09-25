@@ -68,9 +68,9 @@ describe('SupabaseUserRepository', () => {
       .avatar('1')
       .completedActions({ registerToVote: true })
       .invitedBy({
-        name: challengerName,
-        avatar: challengerAvatar,
-        inviteCode: challengerInviteCode,
+        challengerName,
+        challengerAvatar,
+        challengerInviteCode,
       })
       .badges([
         {
@@ -79,9 +79,9 @@ describe('SupabaseUserRepository', () => {
       ])
       .contributedTo([
         {
-          name: challengerName,
-          inviteCode: challengerInviteCode,
-          avatar: challengerAvatar,
+          challengerName,
+          challengerInviteCode,
+          challengerAvatar,
         },
       ])
       .build();
@@ -137,8 +137,9 @@ describe('SupabaseUserRepository', () => {
       completedChallenge: false,
       contributedTo: [
         {
-          name: challengerName,
-          avatar: challengerAvatar,
+          challengerInviteCode,
+          challengerName,
+          challengerAvatar,
         },
       ],
       inviteCode: expect.any(String),
@@ -241,9 +242,9 @@ describe('SupabaseUserRepository', () => {
     const player = await new SupabaseUserRecordBuilder('player@example.com')
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challenger.inviteCode,
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       })
       .name('Player')
       .avatar('3')
@@ -270,17 +271,18 @@ describe('SupabaseUserRepository', () => {
     let player = await new SupabaseUserRecordBuilder('player@example.com')
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challenger.inviteCode,
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       })
       .build();
 
     player = await userRepository.makeHybrid(player.uid);
     expect(player.contributedTo).toStrictEqual([
       {
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       },
     ]);
   });
@@ -445,9 +447,9 @@ describe('SupabaseUserRepository', () => {
     const player = await new SupabaseUserRecordBuilder('player@example.com')
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challenger.inviteCode,
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       })
       .name('Player')
       .avatar('3')
@@ -474,17 +476,18 @@ describe('SupabaseUserRepository', () => {
     let player = await new SupabaseUserRecordBuilder('player@example.com')
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challenger.inviteCode,
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       })
       .build();
 
     player = await userRepository.awardElectionRemindersBadge(player.uid);
     expect(player.contributedTo).toStrictEqual([
       {
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       },
     ]);
   });
@@ -509,9 +512,9 @@ describe('SupabaseUserRepository', () => {
     let player = await new SupabaseUserRecordBuilder('player@example.com')
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challenger.inviteCode,
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       })
       .completedActions({ registerToVote: true })
       .badges([
@@ -521,17 +524,18 @@ describe('SupabaseUserRepository', () => {
       ])
       .contributedTo([
         {
-          inviteCode: challenger.inviteCode,
-          name: challenger.name,
-          avatar: challenger.avatar,
+          challengerInviteCode: challenger.inviteCode,
+          challengerName: challenger.name,
+          challengerAvatar: challenger.avatar,
         },
       ])
       .build();
 
     expect(player.contributedTo).toStrictEqual([
       {
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       },
     ]);
 
@@ -539,8 +543,9 @@ describe('SupabaseUserRepository', () => {
 
     expect(player.contributedTo).toStrictEqual([
       {
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       },
     ]);
   });
@@ -566,9 +571,9 @@ describe('SupabaseUserRepository', () => {
     )
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challenger.inviteCode,
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       })
       .completedActions({ electionReminders: true })
       .badges([
@@ -606,9 +611,9 @@ describe('SupabaseUserRepository', () => {
     )
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challenger.inviteCode,
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       })
       .build();
 
@@ -777,9 +782,9 @@ describe('SupabaseUserRepository', () => {
     const player = await new SupabaseUserRecordBuilder('player@example.com')
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challenger.inviteCode,
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       })
       .name('Player')
       .avatar('3')
@@ -806,17 +811,18 @@ describe('SupabaseUserRepository', () => {
     let player = await new SupabaseUserRecordBuilder('player@example.com')
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challenger.inviteCode,
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       })
       .build();
 
     player = await userRepository.awardRegisterToVoteBadge(player.uid);
     expect(player.contributedTo).toStrictEqual([
       {
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       },
     ]);
   });
@@ -841,9 +847,9 @@ describe('SupabaseUserRepository', () => {
     let player = await new SupabaseUserRecordBuilder('player@example.com')
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challenger.inviteCode,
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       })
       .completedActions({ electionReminders: true })
       .badges([
@@ -853,17 +859,18 @@ describe('SupabaseUserRepository', () => {
       ])
       .contributedTo([
         {
-          inviteCode: challenger.inviteCode,
-          name: challenger.name,
-          avatar: challenger.avatar,
+          challengerInviteCode: challenger.inviteCode,
+          challengerName: challenger.name,
+          challengerAvatar: challenger.avatar,
         },
       ])
       .build();
 
     expect(player.contributedTo).toStrictEqual([
       {
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       },
     ]);
 
@@ -871,8 +878,9 @@ describe('SupabaseUserRepository', () => {
 
     expect(player.contributedTo).toStrictEqual([
       {
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       },
     ]);
   });
@@ -898,9 +906,9 @@ describe('SupabaseUserRepository', () => {
     )
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challenger.inviteCode,
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       })
       .completedActions({ registerToVote: true })
       .badges([
@@ -938,9 +946,9 @@ describe('SupabaseUserRepository', () => {
     )
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challenger.inviteCode,
-        name: challenger.name,
-        avatar: challenger.avatar,
+        challengerInviteCode: challenger.inviteCode,
+        challengerName: challenger.name,
+        challengerAvatar: challenger.avatar,
       })
       .build();
 
