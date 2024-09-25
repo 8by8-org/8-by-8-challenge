@@ -76,6 +76,7 @@ begin
     from badges
     where badges.challenger_id = user_id
     order by badges.awarded_at asc
+    limit 8
   ) into user.badges;
 
   select array(

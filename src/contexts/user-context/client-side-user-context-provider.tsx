@@ -1,6 +1,8 @@
 'use client';
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { createBrowserClient } from '@supabase/ssr';
+import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 import {
   SendOTPToEmailParams,
   SignUpWithEmailParams,
@@ -12,6 +14,7 @@ import { clearAllPersistentFormElements, ValueOf } from 'fully-formed';
 import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
 import type { User } from '@/model/types/user';
 import type { ChallengerData } from '@/model/types/challenger-data';
+import { RealtimeChannel } from '@supabase/supabase-js';
 
 /**
  * Props that can be passed from a server component into a
@@ -41,12 +44,20 @@ export function ClientSideUserContextProvider(
   const [invitedBy, setInvitedBy] = useState<ChallengerData | null>(
     props.invitedBy,
   );
+  const supabaseSubscriptionRef = useRef<RealtimeChannel | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     if (user) {
       clearInviteCode();
+      subscribeToBadges(user.uid);
+    } else {
+      supabaseSubscriptionRef.current?.unsubscribe();
     }
+
+    return () => {
+      supabaseSubscriptionRef.current?.unsubscribe();
+    };
   }, [user]);
 
   async function signUpWithEmail(params: SignUpWithEmailParams) {
@@ -116,7 +127,7 @@ export function ClientSideUserContextProvider(
 
     const data = await response.json();
 
-    if (user) {
+    if (data.user.uid == user?.uid) {
       setUser(data.user as User);
     }
   }
@@ -149,6 +160,55 @@ export function ClientSideUserContextProvider(
         reject(new Error('not implemented.'));
       }, 3000);
     });
+  }
+
+  function subscribeToBadges(userId: string) {
+    const supabase = createBrowserClient(
+      PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_URL,
+      PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    );
+
+    supabaseSubscriptionRef.current = supabase
+      .channel('badges')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'badges',
+          filter: `challenger_id=eq.${userId}`,
+        },
+        async payload => {
+          const newBadge = payload.new;
+
+          /* 
+            Only refresh the user if the badge was awarded due to the actions of 
+            another user. If the user earned the badge themselves, the
+            user object will already have been updated.
+          */
+          if ('player_name' in newBadge && 'player_avatar' in newBadge) {
+            await refreshUser();
+          }
+        },
+      )
+      .subscribe();
+  }
+
+  async function refreshUser() {
+    const response = await fetch('/api/refresh-user', {
+      method: 'POST',
+    });
+
+    if (!response.ok) {
+      console.error('Failed to refresh user.');
+      return;
+    }
+
+    const data = await response.json();
+
+    if (data.user.uid === user?.uid) {
+      setUser(data.user as User);
+    }
   }
 
   return (

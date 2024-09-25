@@ -8,7 +8,6 @@ import type { User } from '@/model/types/user';
 import { DateTime } from 'luxon';
 import { Actions } from '@/model/enums/actions';
 import userEvent from '@testing-library/user-event';
-import { getErrorThrownByComponent } from '@/utils/test/get-error-thrown-by-component';
 
 jest.mock('next/navigation', () => require('next-router-mock'));
 
