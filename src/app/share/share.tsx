@@ -11,6 +11,8 @@ import BackArrowIcon from '../share/backIcon';
 import CopyLink from '../share/CopyLink';
 import DownloadIcon from '../share/downloadImagesIcon'; 
 import CalendarImage from '../share/calendarImage';
+import { Modal } from '../../components/utils/modal/modal';
+
 
 interface ShareProps {
   shareLink: string;
@@ -20,6 +22,8 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
   const { user, shareChallenge } = useContextSafely(UserContext, 'UserContext');
   const [copied, setCopied] = useState(false);
   const [apiProgress, setApiProgress] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const router = useRouter();
   const fullLink = shareLink + (user?.inviteCode ?? '');
 
@@ -44,6 +48,12 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
     }
   };
 
+  const openModal = () => {
+    setIsModalOpen(true);
+  }
+
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <PageContainer>
       <h2 className={styles.header}>Invite Friends</h2>
@@ -62,8 +72,16 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
         <div onClick={copyLink}>
           <CopyLink />
         </div>
-        <div>
+        <div onClick={openModal}>
           <DownloadIcon />
+        </div>
+        <div>
+        <Modal
+        ariaLabel=""
+        theme="light"
+        isOpen={isModalOpen}
+        closeModal={closeModal}
+      />
         </div>
       </div>
     </PageContainer>
@@ -72,3 +90,13 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
 
 // page will become the server componenet 
 // there is will be a new client component for share 
+
+
+// download images 
+// create image component 
+// download will take the uer to the image compaoenent 
+// this is where the user can selct the image and downlaod the image 
+
+//tests 
+//unit tests 
+// mocking 
