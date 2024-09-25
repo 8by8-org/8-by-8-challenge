@@ -66,12 +66,11 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
       <p className={styles.paragraph}>
         Invite friends to support your challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge. If you are curious, preview what they will see.
       </p>
-      <div className={styles.ActionBox}>
-        <MDNShare fullLink={fullLink} onShareSuccess={handleSharedLink} />
-        
+      <div className={styles.ActionBox}> 
         <div onClick={copyLink}>
           <CopyLink />
         </div>
+        <MDNShare fullLink={fullLink} onShareSuccess={handleSharedLink} />
         <div onClick={openModal}>
           <DownloadIcon />
         </div>

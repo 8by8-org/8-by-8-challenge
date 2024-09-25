@@ -3,22 +3,22 @@ import SocialShareIcon from '../share/socialShareIcon';
 
 interface ShareProps {
   fullLink: string;
-  onShareSuccess: () => void; // Callback to trigger shareChallenge on success
+  onShareSuccess: () => void; 
 }
 
 const MDNShare: React.FC<ShareProps> = ({ fullLink, onShareSuccess }) => {
   const [isNavigatorShareAvailable, setIsNavigatorShareAvailable] = useState(false);
   const [shareResult, setShareResult] = useState("");
 
+
   useEffect(() => {
-    // Check if the Web Share API is available
     if (typeof window !== "undefined" && navigator.share) {
       const Link = { url: fullLink };
       if (navigator.canShare && navigator.canShare(Link)) {
         setIsNavigatorShareAvailable(true); 
       }
     }
-  }, [fullLink]);  // Include fullLink in dependencies to update when it changes
+  }, [fullLink]);  
 
   const handleShare = async () => {
     const shareData = {
@@ -29,7 +29,7 @@ const MDNShare: React.FC<ShareProps> = ({ fullLink, onShareSuccess }) => {
       await navigator.share(shareData);
       setShareResult("Link shared successfully");
 
-      // Call the parent callback function after a successful share
+
       if (onShareSuccess) {
         onShareSuccess();
       }
@@ -37,6 +37,10 @@ const MDNShare: React.FC<ShareProps> = ({ fullLink, onShareSuccess }) => {
       setShareResult(`Error: ${err}`);
     }
   };
+
+  if (!isNavigatorShareAvailable) {
+    return null
+  }
 
   return (
     <div>
@@ -55,5 +59,3 @@ const MDNShare: React.FC<ShareProps> = ({ fullLink, onShareSuccess }) => {
 export default MDNShare;
 
 
-// check if navigator.sahre is defined and canShare 
-// if navigatorr.shae is true and canshare is true 
