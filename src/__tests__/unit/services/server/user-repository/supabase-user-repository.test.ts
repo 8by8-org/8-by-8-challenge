@@ -8,6 +8,8 @@ import { ServerError } from '@/errors/server-error';
 import { SupabaseUserRecordBuilder } from '@/utils/test/supabase-user-record-builder';
 import { createId } from '@paralleldrive/cuid2';
 import { createSupabaseServiceRoleClient } from '@/services/server/create-supabase-client/create-supabase-service-role-client';
+import { serverContainer } from '@/services/server/container';
+import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 import type { CreateSupabaseClient } from '@/services/server/create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '@/services/server/user-record-parser/i-user-record-parser';
 import type { Badge } from '@/model/types/badges/badge';
@@ -146,8 +148,8 @@ describe('SupabaseUserRepository', () => {
     });
   });
 
-  it(`throws a ServerError if supabase.rpc() returns an error when getUserById is 
-  called.`, async () => {
+  it(`throws a ServerError if supabase.rpc() returns an error when getUserById
+  is called.`, async () => {
     const errorMessage = 'test error message';
 
     createSupabaseClient = jest.fn().mockImplementation(() => {
@@ -172,7 +174,7 @@ describe('SupabaseUserRepository', () => {
     );
   });
 
-  it(`throws a ServerError if UserRecordParser.parseUserRecord throws an error 
+  it(`throws a ServerError if UserRecordParser.parseUserRecord throws an error
   when getUserById is called.`, async () => {
     createSupabaseClient = jest.fn().mockImplementation(() => {
       return {
@@ -200,7 +202,7 @@ describe('SupabaseUserRepository', () => {
     );
   });
 
-  it(`updates the user to a hybrid type user and returns the updated user when 
+  it(`updates the user to a hybrid type user and returns the updated user when
   makeHybrid() is called.`, async () => {
     const supabase = createSupabaseClient();
 
@@ -262,8 +264,9 @@ describe('SupabaseUserRepository', () => {
     ]);
   });
 
-  it(`updates the player's contributedTo when awardElectionRemindersBadge is
-    called and the player has not yet contributed to the inviting challenger.`, async () => {
+  it(`inserts a new record into the player's contributedTo when
+  makeHybrid is called and the player has not yet contributed
+  to the inviting challenger.`, async () => {
     const challenger = await new SupabaseUserRecordBuilder(
       'challenger@example.com',
     ).build();
@@ -287,7 +290,7 @@ describe('SupabaseUserRepository', () => {
     ]);
   });
 
-  it(`throws a ServerError when the update operation initiated by 
+  it(`throws a ServerError when the update operation initiated by
   makeHybrid fails.`, () => {
     createSupabaseClient = jest.fn().mockImplementation(() => {
       return {
@@ -363,7 +366,7 @@ describe('SupabaseUserRepository', () => {
     );
   });
 
-  it(`sets completedActions.electionReminders to true when 
+  it(`sets completedActions.electionReminders to true when
   awardElectionRemindersBadge is called.`, async () => {
     let user = await new SupabaseUserRecordBuilder('user@example.com').build();
     expect(user.completedActions.electionReminders).toBe(false);
@@ -401,7 +404,7 @@ describe('SupabaseUserRepository', () => {
     expect(user.completedChallenge).toBe(true);
   });
 
-  it(`does not award the user a badge when awardElectionRemindersBadge is 
+  it(`does not award the user a badge when awardElectionRemindersBadge is
   called and the user has already completed this action.`, async () => {
     let user = await new SupabaseUserRecordBuilder('user@example.com')
       .completedActions({
@@ -467,8 +470,9 @@ describe('SupabaseUserRepository', () => {
     ]);
   });
 
-  it(`updates the player's contributedTo when awardElectionRemindersBadge is
-  called and the player has not yet contributed to the inviting challenger.`, async () => {
+  it(`inserts a new record into the player's contributedTo when
+  awardElectionRemindersBadge is called and the player has not yet contributed
+  to the inviting challenger.`, async () => {
     const challenger = await new SupabaseUserRecordBuilder(
       'challenger@example.com',
     ).build();
@@ -492,7 +496,7 @@ describe('SupabaseUserRepository', () => {
     ]);
   });
 
-  it(`does not update the player's contributedTo when
+  it(`does not insert a new record into the player's contributedTo when
   awardElectionRemindersBadge is called, but the player has already contributed
   to the inviting challenger's challenge.`, async () => {
     const playerName = 'Player';
@@ -626,7 +630,7 @@ describe('SupabaseUserRepository', () => {
     expect(updatedChallenger?.badges).toHaveLength(8);
   });
 
-  it(`throws a ServerError if supabase.rpc() returns an error when 
+  it(`throws a ServerError if supabase.rpc() returns an error when
   awardElectionRemindersBadge is called.`, async () => {
     const errorMessage = 'test error message';
 
@@ -652,7 +656,7 @@ describe('SupabaseUserRepository', () => {
     ).rejects.toThrow(new ServerError(errorMessage, 429));
   });
 
-  it(`throws an error if the user returned by supabase.rpc() is null when 
+  it(`throws an error if the user returned by supabase.rpc() is null when
   awardElectionRemindersBadge is called.`, async () => {
     createSupabaseClient = jest.fn().mockImplementation(() => {
       return {
@@ -698,7 +702,7 @@ describe('SupabaseUserRepository', () => {
     ).rejects.toThrow(new ServerError('Failed to parse user data.', 400));
   });
 
-  it(`sets completedActions.registerToVote to true when 
+  it(`sets completedActions.registerToVote to true when
   awardRegisterToVoteBadge is called.`, async () => {
     let user = await new SupabaseUserRecordBuilder('user@example.com').build();
     expect(user.completedActions.registerToVote).toBe(false);
@@ -736,7 +740,7 @@ describe('SupabaseUserRepository', () => {
     expect(user.completedChallenge).toBe(true);
   });
 
-  it(`does not award the user a badge when awardRegisterToVoteBadge is 
+  it(`does not award the user a badge when awardRegisterToVoteBadge is
   called and the user has already completed this action.`, async () => {
     let user = await new SupabaseUserRecordBuilder('user@example.com')
       .completedActions({
@@ -754,7 +758,7 @@ describe('SupabaseUserRepository', () => {
     expect(user.badges).toHaveLength(1);
   });
 
-  it(`does not award a badge when awardRegisterToVoteBadge is called and the 
+  it(`does not award a badge when awardRegisterToVoteBadge is called and the
   user already has 8 badges.`, async () => {
     let user = await new SupabaseUserRecordBuilder('user@example.com')
       .badges(
@@ -802,8 +806,9 @@ describe('SupabaseUserRepository', () => {
     ]);
   });
 
-  it(`updates the player's contributedTo when awardRegisterToVoteBadge is
-  called and the player has not yet contributed to the inviting challenger.`, async () => {
+  it(`inserts a new record into the player's contributedTo when
+  awardRegisterToVoteBadge is called and the player has not yet contributed to
+  the inviting challenger.`, async () => {
     const challenger = await new SupabaseUserRecordBuilder(
       'challenger@example.com',
     ).build();
@@ -827,7 +832,7 @@ describe('SupabaseUserRepository', () => {
     ]);
   });
 
-  it(`does not update the player's contributedTo when
+  it(`does not insert a new record into the player's contributedTo when
   awardRegisterToVoteBadge is called, but the player has already contributed
   to the inviting challenger's challenge.`, async () => {
     const playerName = 'Player';
@@ -961,7 +966,7 @@ describe('SupabaseUserRepository', () => {
     expect(updatedChallenger?.badges).toHaveLength(8);
   });
 
-  it(`throws a ServerError if supabase.rpc() returns an error when 
+  it(`throws a ServerError if supabase.rpc() returns an error when
   awardRegisterToVoteBadge is called.`, async () => {
     const errorMessage = 'test error message';
 
@@ -987,7 +992,7 @@ describe('SupabaseUserRepository', () => {
     );
   });
 
-  it(`throws an error if the user returned by supabase.rpc() is null when 
+  it(`throws an error if the user returned by supabase.rpc() is null when
   awardRegisterToVoteBadge is called.`, async () => {
     createSupabaseClient = jest.fn().mockImplementation(() => {
       return {
@@ -1031,5 +1036,89 @@ describe('SupabaseUserRepository', () => {
     await expect(userRepository.awardRegisterToVoteBadge('')).rejects.toThrow(
       new ServerError('Failed to parse user data.', 400),
     );
+  });
+
+  it(`sorts contributedTo by the time at which the player last contributed to 
+  that challenger, with the most recently contributed to challenger sorted 
+  to the end of the array.`, async () => {
+    const challengerA = await new SupabaseUserRecordBuilder(
+      'challenger.a@example.com',
+    )
+      .name('Challenger A')
+      .build();
+    const challengerB = await new SupabaseUserRecordBuilder(
+      'challenger.b@example.com',
+    )
+      .name('Challenger B')
+      .build();
+
+    const player = await new SupabaseUserRecordBuilder('player@example.com')
+      .type(UserType.Player)
+      .invitedBy({
+        challengerInviteCode: challengerA.inviteCode,
+        challengerName: challengerA.name,
+        challengerAvatar: challengerA.avatar,
+      })
+      .name('Player')
+      .build();
+
+    await userRepository.awardElectionRemindersBadge(player.uid);
+
+    let { contributedTo } = (await userRepository.getUserById(player.uid))!;
+    expect(contributedTo).toEqual([
+      {
+        challengerInviteCode: challengerA.inviteCode,
+        challengerName: challengerA.name,
+        challengerAvatar: challengerA.avatar,
+      },
+    ]);
+
+    const invitationsRepo = serverContainer.get(
+      SERVER_SERVICE_KEYS.InvitationsRepository,
+    );
+
+    await invitationsRepo.insertOrUpdateInvitedBy(player.uid, {
+      challengerInviteCode: challengerB.inviteCode,
+      challengerName: challengerB.name,
+      challengerAvatar: challengerB.avatar,
+    });
+
+    await userRepository.awardRegisterToVoteBadge(player.uid);
+    contributedTo = (await userRepository.getUserById(player.uid))!
+      .contributedTo;
+    expect(contributedTo).toEqual([
+      {
+        challengerInviteCode: challengerA.inviteCode,
+        challengerName: challengerA.name,
+        challengerAvatar: challengerA.avatar,
+      },
+      {
+        challengerInviteCode: challengerB.inviteCode,
+        challengerName: challengerB.name,
+        challengerAvatar: challengerB.avatar,
+      },
+    ]);
+
+    await invitationsRepo.insertOrUpdateInvitedBy(player.uid, {
+      challengerInviteCode: challengerA.inviteCode,
+      challengerName: challengerA.name,
+      challengerAvatar: challengerA.avatar,
+    });
+
+    await userRepository.makeHybrid(player.uid);
+    contributedTo = (await userRepository.getUserById(player.uid))!
+      .contributedTo;
+    expect(contributedTo).toEqual([
+      {
+        challengerInviteCode: challengerB.inviteCode,
+        challengerName: challengerB.name,
+        challengerAvatar: challengerB.avatar,
+      },
+      {
+        challengerInviteCode: challengerA.inviteCode,
+        challengerName: challengerA.name,
+        challengerAvatar: challengerA.avatar,
+      },
+    ]);
   });
 });
