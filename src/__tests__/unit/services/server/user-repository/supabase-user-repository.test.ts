@@ -231,29 +231,71 @@ describe('SupabaseUserRepository', () => {
     });
   });
 
+  it(`awards a challenger a badge if the user is a player who has been invited
+  by the challenger, the challenger has fewer than 8 badges, and
+  makeHybrid is called.`, async () => {
+    const challenger = await new SupabaseUserRecordBuilder(
+      'challenger@example.com',
+    ).build();
+
+    const player = await new SupabaseUserRecordBuilder('player@example.com')
+      .type(UserType.Player)
+      .invitedBy({
+        inviteCode: challenger.inviteCode,
+        name: challenger.name,
+        avatar: challenger.avatar,
+      })
+      .name('Player')
+      .avatar('3')
+      .build();
+
+    await userRepository.makeHybrid(player.uid);
+
+    const updatedChallenger = await userRepository.getUserById(challenger.uid);
+    expect(updatedChallenger).not.toBeNull();
+    expect(updatedChallenger?.badges).toStrictEqual([
+      {
+        playerName: player.name,
+        playerAvatar: player.avatar,
+      },
+    ]);
+  });
+
+  it(`updates the player's contributedTo when awardElectionRemindersBadge is
+    called and the player has not yet contributed to the inviting challenger.`, async () => {
+    const challenger = await new SupabaseUserRecordBuilder(
+      'challenger@example.com',
+    ).build();
+
+    let player = await new SupabaseUserRecordBuilder('player@example.com')
+      .type(UserType.Player)
+      .invitedBy({
+        inviteCode: challenger.inviteCode,
+        name: challenger.name,
+        avatar: challenger.avatar,
+      })
+      .build();
+
+    player = await userRepository.makeHybrid(player.uid);
+    expect(player.contributedTo).toStrictEqual([
+      {
+        name: challenger.name,
+        avatar: challenger.avatar,
+      },
+    ]);
+  });
+
   it(`throws a ServerError when the update operation initiated by 
   makeHybrid fails.`, () => {
     createSupabaseClient = jest.fn().mockImplementation(() => {
       return {
-        from: () => ({
-          update: () => ({
-            eq: () => ({
-              select: () => ({
-                order: () => ({
-                  limit: () => ({
-                    maybeSingle: () => {
-                      return Promise.resolve({
-                        data: null,
-                        error: new Error('Failed to update user.'),
-                        status: 422,
-                      });
-                    },
-                  }),
-                }),
-              }),
-            }),
-          }),
-        }),
+        rpc: () => {
+          return Promise.resolve({
+            data: null,
+            error: new Error('Failed to update user.'),
+            status: 422,
+          });
+        },
       };
     });
 
@@ -271,24 +313,12 @@ describe('SupabaseUserRepository', () => {
   initiated by makeHybrid is null.`, () => {
     createSupabaseClient = jest.fn().mockImplementation(() => {
       return {
-        from: () => ({
-          update: () => ({
-            eq: () => ({
-              select: () => ({
-                order: () => ({
-                  limit: () => ({
-                    maybeSingle: () => {
-                      return Promise.resolve({
-                        data: null,
-                        error: null,
-                      });
-                    },
-                  }),
-                }),
-              }),
-            }),
-          }),
-        }),
+        rpc: () => {
+          return Promise.resolve({
+            data: null,
+            error: null,
+          });
+        },
       };
     });
 
@@ -306,24 +336,12 @@ describe('SupabaseUserRepository', () => {
   operation initiated by makeHybrid cannot be parsed.`, async () => {
     createSupabaseClient = jest.fn().mockImplementation(() => {
       return {
-        from: () => ({
-          update: () => ({
-            eq: () => ({
-              select: () => ({
-                order: () => ({
-                  limit: () => ({
-                    maybeSingle: () => {
-                      return Promise.resolve({
-                        data: {},
-                        error: null,
-                      });
-                    },
-                  }),
-                }),
-              }),
-            }),
-          }),
-        }),
+        rpc: () => {
+          return Promise.resolve({
+            data: {},
+            error: null,
+          });
+        },
       };
     });
 
