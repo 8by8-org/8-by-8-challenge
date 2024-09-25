@@ -74,6 +74,7 @@ begin
     select (action_type, player_name, player_avatar)::badge_obj
     from badges
     where badges.challenger_id = user_id
+    order by badges.awarded_at asc
   ) into user.badges;
 
   select array(
