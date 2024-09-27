@@ -5,9 +5,10 @@ import { PageContainer } from '@/components/utils/page-container';
 import { ConfettiAnimation } from '@/components/utils/confetti-animation';
 import { Hero } from './hero/hero';
 import { AvailableActions } from './available-actions';
+import { Links } from './links';
 import { hasCompletedAllActions } from './utils/has-completed-all-actions';
-import styles from './styles.module.scss';
 import { lastContributedToCurrentInviter } from './utils/last-contributed-to-current-inviter';
+import styles from './styles.module.scss';
 
 export default function ActionsPage() {
   const { user, invitedBy } = useContextSafely(UserContext, 'ActionsPage');
@@ -33,6 +34,7 @@ export default function ActionsPage() {
         )}
         <AvailableActions />
       </section>
+      <Links />
     </PageContainer>
   );
 }

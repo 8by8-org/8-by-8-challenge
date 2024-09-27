@@ -105,6 +105,7 @@ export function AvailableActions() {
             <>
               <h3 className={styles.modal_title}>Success!</h3>
               <p>You&apos;ve become an 8by8 Challenger!</p>
+              <br />
               <p>
                 See your{' '}
                 <Link href="/progress" className="link--teal">
