@@ -36,6 +36,7 @@ interface UserContextType {
     formData: ValueOf<InstanceType<typeof VoterRegistrationForm>>,
   ): Promise<void>;
   gotElectionReminders(): Promise<void>;
+  takeTheChallenge(): Promise<void>;
 }
 
 const UserContext = createNamedContext<UserContextType>('UserContext');

@@ -12,9 +12,10 @@ import {
 import { clearInviteCode } from './clear-invite-code-cookie';
 import { clearAllPersistentFormElements, ValueOf } from 'fully-formed';
 import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
+import { UserType } from '@/model/enums/user-type';
 import type { User } from '@/model/types/user';
 import type { ChallengerData } from '@/model/types/challenger-data';
-import { RealtimeChannel } from '@supabase/supabase-js';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 /**
  * Props that can be passed from a server component into a
@@ -173,7 +174,7 @@ export function ClientSideUserContextProvider(
 
     const data = await response.json();
 
-    if (data.user.uid == user?.uid) {
+    if (data.user.uid === user?.uid) {
       setUser(data.user as User);
     }
   }
@@ -208,6 +209,30 @@ export function ClientSideUserContextProvider(
     });
   }
 
+  async function takeTheChallenge() {
+    if (
+      !user ||
+      user.type === UserType.Challenger ||
+      user.type === UserType.Hybrid
+    ) {
+      return;
+    }
+
+    const response = await fetch('/api/take-the-challenge', {
+      method: 'PUT',
+    });
+
+    if (!response.ok) {
+      throw new Error('There was a problem taking the challenge.');
+    }
+
+    const data = await response.json();
+
+    if (data.user.uid === user?.uid) {
+      setUser(data.user as User);
+    }
+  }
+
   return (
     <UserContext.Provider
       value={{
@@ -222,6 +247,7 @@ export function ClientSideUserContextProvider(
         signOut,
         restartChallenge,
         registerToVote,
+        takeTheChallenge,
       }}
     >
       {props.children}

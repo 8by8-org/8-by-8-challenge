@@ -2,19 +2,75 @@ import { Meta, StoryObj } from '@storybook/react';
 import ActionsPage from '@/app/actions/page';
 import { GlobalStylesProvider } from '../global-styles-provider';
 import { UserContext, type UserContextType } from '@/contexts/user-context';
+import { AlertsContextProvider } from '@/contexts/alerts-context';
 import { Builder } from 'builder-pattern';
 import { UserType } from '@/model/enums/user-type';
 import { createId } from '@paralleldrive/cuid2';
 import type { User } from '@/model/types/user';
 import type { ChallengerData } from '@/model/types/challenger-data';
+import { ReactNode, useState } from 'react';
 
 const meta: Meta<typeof ActionsPage> = {
   component: ActionsPage,
+  parameters: {
+    nextjs: {
+      appDirectory: true,
+    },
+  },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof ActionsPage>;
+
+interface MockUserContextProviderProps {
+  children?: ReactNode;
+  user: User | null;
+  invitedBy: ChallengerData;
+}
+
+function MockUserContextProvider(props: MockUserContextProviderProps) {
+  const [user, setUser] = useState(props.user);
+
+  const takeTheChallenge = async () => {
+    if (!user || user.type !== UserType.Player) return;
+
+    return new Promise<void>(resolve => {
+      setTimeout(() => {
+        if (user) {
+          const updatedContributedTo = [
+            ...user.contributedTo.filter(
+              challenderData =>
+                challenderData.challengerInviteCode !==
+                props.invitedBy.challengerInviteCode,
+            ),
+            props.invitedBy,
+          ];
+
+          setUser({
+            ...user,
+            type: UserType.Hybrid,
+            contributedTo: updatedContributedTo,
+          });
+        }
+
+        resolve();
+      }, 3000);
+    });
+  };
+
+  return (
+    <UserContext.Provider
+      value={Builder<UserContextType>()
+        .user(user)
+        .invitedBy(props.invitedBy)
+        .takeTheChallenge(takeTheChallenge)
+        .build()}
+    >
+      {props.children}
+    </UserContext.Provider>
+  );
+}
 
 export const NoActionsComplete: Story = {
   render: () => {
@@ -36,14 +92,11 @@ export const NoActionsComplete: Story = {
 
     return (
       <GlobalStylesProvider>
-        <UserContext.Provider
-          value={Builder<UserContextType>()
-            .user(user)
-            .invitedBy(invitedBy)
-            .build()}
-        >
-          <ActionsPage />
-        </UserContext.Provider>
+        <AlertsContextProvider>
+          <MockUserContextProvider user={user} invitedBy={invitedBy}>
+            <ActionsPage />
+          </MockUserContextProvider>
+        </AlertsContextProvider>
       </GlobalStylesProvider>
     );
   },
@@ -69,14 +122,11 @@ export const LastContributedToCurrentInviter: Story = {
 
     return (
       <GlobalStylesProvider>
-        <UserContext.Provider
-          value={Builder<UserContextType>()
-            .user(user)
-            .invitedBy(challenger)
-            .build()}
-        >
-          <ActionsPage />
-        </UserContext.Provider>
+        <AlertsContextProvider>
+          <MockUserContextProvider user={user} invitedBy={challenger}>
+            <ActionsPage />
+          </MockUserContextProvider>
+        </AlertsContextProvider>
       </GlobalStylesProvider>
     );
   },
@@ -114,14 +164,11 @@ export const HasCompletedAllActions: Story = {
 
     return (
       <GlobalStylesProvider>
-        <UserContext.Provider
-          value={Builder<UserContextType>()
-            .user(user)
-            .invitedBy(challenger3)
-            .build()}
-        >
-          <ActionsPage />
-        </UserContext.Provider>
+        <AlertsContextProvider>
+          <MockUserContextProvider user={user} invitedBy={challenger3}>
+            <ActionsPage />
+          </MockUserContextProvider>
+        </AlertsContextProvider>
       </GlobalStylesProvider>
     );
   },

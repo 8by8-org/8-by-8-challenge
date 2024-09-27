@@ -1,7 +1,7 @@
 import React, { type ButtonHTMLAttributes } from 'react';
 import styles from './button.module.scss';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'gradient' | 'inverted';
   size?: 'lg' | 'sm';
   wide?: boolean;

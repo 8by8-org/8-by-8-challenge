@@ -10,3 +10,14 @@
   background-position: 0 0;
   background-repeat: no-repeat;
 }
+
+.actions_section {
+  padding-top: $spacing-lg;
+  padding-left: $spacing-vertical-gutter;
+  padding-right: $spacing-vertical-gutter;
+}
+
+.badge_awarded_message {
+  text-align: center;
+  margin-bottom: $spacing-md;
+}
