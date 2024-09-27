@@ -2,7 +2,7 @@
 import { createNamedContext } from '@/hooks/create-named-context';
 import { Alert, useAlert } from '@/components/utils/alert';
 import type { PropsWithChildren } from 'react';
-
+import { useContext } from 'react';
 /**
  * The value provided to consumers of the {@link AlertsContext}.
  */
@@ -43,7 +43,13 @@ interface AlertsContextType {
  */
 export const AlertsContext =
   createNamedContext<AlertsContextType>('AlertsContext');
-
+export function useAlertsContext() {
+    const context = useContext(AlertsContext);
+    if (!context) {
+      throw new Error('useAlertsContext must be used within an AlertsContextProvider');
+    }
+    return context;
+  }
 /**
  * Context provider for the {@link AlertsContext}. Provides a `showAlert`
  * function that can be used to display an alert at the top of the page when an

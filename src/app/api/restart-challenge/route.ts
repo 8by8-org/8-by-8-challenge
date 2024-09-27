@@ -1,6 +1,5 @@
 import 'server-only';
 import { NextResponse, type NextRequest } from 'next/server';
-import { restartChallengeSchema } from './restart-challenge-schema';
 import { serverContainer } from '@/services/server/container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 import { ServerError } from '@/errors/server-error';
@@ -10,19 +9,15 @@ export async function PUT(request: NextRequest) {
   const userRepository = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository);
 
   try {
-    const data = await request.json();
-    const { userId } = restartChallengeSchema.parse(data);
-
     const user = await auth.loadSessionUser();
-    // impossible that frontend and cookie issue.
-    if (!user || user.uid !== userId) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 },
       );
     }
-    //sign in so no issue in the user id . please improve it!!!!!!
-    const newTimestamp = await userRepository.restartChallenge(userId);
+
+    const newTimestamp = await userRepository.restartChallenge(user.uid);
 
     return NextResponse.json(
       { challengeEndTimestamp: newTimestamp },
@@ -33,6 +28,6 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });
     }
 
-    return NextResponse.json({ error: 'Bad data.' }, { status: 400 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

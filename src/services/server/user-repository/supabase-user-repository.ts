@@ -35,7 +35,6 @@ export const SupabaseUserRepository = inject(
       }
       
       return updatedChallengeEndTimestamp;
-      //follow the style of getUserById AND  supabase->throw an error
     }
     async getUserById(userId: string): Promise<User | null> {
       const supabase = this.createSupabaseClient();
