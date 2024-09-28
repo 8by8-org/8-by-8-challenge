@@ -1014,7 +1014,296 @@ describe('ClientSideUserContextProvider', () => {
       );
     }
 
-    supabaseSpy.mockRestore();
+    supabaseSpy.mockClear();
+    fetchSpy.mockRestore();
+  });
+
+  it(`makes a request to the /api/take-the-challenge route when 
+  takeTheChallenge() is called, and if the response is ok, updates the user.`, async () => {
+    const player: User = {
+      uid: '1',
+      email: 'player@example.com',
+      name: 'Player',
+      avatar: '0',
+      type: UserType.Player,
+      completedActions: {
+        electionReminders: false,
+        registerToVote: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(route => {
+        if (route === '/api/take-the-challenge') {
+          return Promise.resolve(
+            NextResponse.json(
+              {
+                user: {
+                  ...player,
+                  badges: [...player.badges],
+                  contributedTo: [...player.contributedTo],
+                  type: UserType.Hybrid,
+                },
+              },
+              { status: 200 },
+            ),
+          );
+        }
+
+        return Promise.resolve(new Response(null, { status: 200 }));
+      });
+
+    mockDialogMethods();
+
+    function TakeTheChallenge() {
+      const { user, takeTheChallenge } = useContextSafely(
+        UserContext,
+        'TakeTheChallenge',
+      );
+
+      return user?.type === UserType.Player ?
+          <button onClick={takeTheChallenge}>Take the challenge</button>
+        : <p>You took the challenge!</p>;
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={player}
+          invitedBy={null}
+          emailForSignIn=""
+        >
+          <TakeTheChallenge />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await user.click(screen.getByText('Take the challenge'));
+    await screen.findByText('You took the challenge!');
+    fetchSpy.mockRestore();
+  });
+
+  it(`does not make a request to the /api/take-the-challenge route when 
+  takeTheChallenge() is called and the user is signed out.`, async () => {
+    const fetchSpy = jest.spyOn(globalThis, 'fetch');
+
+    mockDialogMethods();
+
+    function TakeTheChallenge() {
+      const { takeTheChallenge } = useContextSafely(
+        UserContext,
+        'TakeTheChallenge',
+      );
+
+      return <button onClick={takeTheChallenge}>Take the challenge</button>;
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={null}
+          invitedBy={null}
+          emailForSignIn=""
+        >
+          <TakeTheChallenge />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await user.click(screen.getByText('Take the challenge'));
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
+  });
+
+  it(`does not make a request to the /api/take-the-challenge route when 
+  takeTheChallenge() is called and the user is a challenger.`, async () => {
+    const fetchSpy = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+      return Promise.resolve(NextResponse.json(null, { status: 200 }));
+    });
+
+    mockDialogMethods();
+
+    function TakeTheChallenge() {
+      const { takeTheChallenge } = useContextSafely(
+        UserContext,
+        'TakeTheChallenge',
+      );
+
+      return <button onClick={takeTheChallenge}>Take the challenge</button>;
+    }
+
+    const challenger: User = {
+      uid: '1',
+      email: 'challenger@example.com',
+      name: 'Challenger',
+      avatar: '0',
+      type: UserType.Challenger,
+      completedActions: {
+        electionReminders: false,
+        registerToVote: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={challenger}
+          invitedBy={null}
+          emailForSignIn=""
+        >
+          <TakeTheChallenge />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await user.click(screen.getByText('Take the challenge'));
+    expect(fetchSpy).not.toHaveBeenCalledWith('/api/take-the-challenge');
+    fetchSpy.mockRestore();
+  });
+
+  it(`does not make a request to the /api/take-the-challenge route when 
+  takeTheChallenge() is called and the user is a hybrid-type user.`, async () => {
+    const fetchSpy = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+      return Promise.resolve(NextResponse.json(null, { status: 200 }));
+    });
+
+    mockDialogMethods();
+
+    function TakeTheChallenge() {
+      const { takeTheChallenge } = useContextSafely(
+        UserContext,
+        'TakeTheChallenge',
+      );
+
+      return <button onClick={takeTheChallenge}>Take the challenge</button>;
+    }
+
+    const challenger: User = {
+      uid: '1',
+      email: 'challenger@example.com',
+      name: 'Challenger',
+      avatar: '0',
+      type: UserType.Challenger,
+      completedActions: {
+        electionReminders: false,
+        registerToVote: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={challenger}
+          invitedBy={null}
+          emailForSignIn=""
+        >
+          <TakeTheChallenge />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await user.click(screen.getByText('Take the challenge'));
+    expect(fetchSpy).not.toHaveBeenCalledWith('/api/take-the-challenge');
+    fetchSpy.mockRestore();
+  });
+
+  it('throws an error if the response from /api/take-the-challenge is not ok.', async () => {
+    const player: User = {
+      uid: '1',
+      email: 'player@example.com',
+      name: 'Player',
+      avatar: '0',
+      type: UserType.Player,
+      completedActions: {
+        electionReminders: false,
+        registerToVote: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(route => {
+        if (route === '/api/take-the-challenge') {
+          return Promise.resolve(
+            NextResponse.json(
+              {
+                error: 'An unexpected error occurred.',
+              },
+              { status: 500 },
+            ),
+          );
+        }
+
+        return Promise.resolve(new Response(null, { status: 200 }));
+      });
+
+    mockDialogMethods();
+
+    function TakeTheChallenge() {
+      const { takeTheChallenge } = useContextSafely(
+        UserContext,
+        'TakeTheChallenge',
+      );
+      const { showAlert } = useContextSafely(AlertsContext, 'TakeTheChallenge');
+
+      return (
+        <button
+          onClick={async () => {
+            try {
+              await takeTheChallenge();
+            } catch (e) {
+              showAlert('There was a problem taking the challenge.', 'error');
+            }
+          }}
+        >
+          Take the challenge
+        </button>
+      );
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={player}
+          invitedBy={null}
+          emailForSignIn=""
+        >
+          <TakeTheChallenge />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    const alert = await screen.getByRole('alert');
+    expect(alert.classList).toContain('hidden');
+
+    await user.click(screen.getByText('Take the challenge'));
+    expect(alert.classList).not.toContain('hidden');
+    expect(alert.textContent).toBe('There was a problem taking the challenge.');
     fetchSpy.mockRestore();
   });
 });

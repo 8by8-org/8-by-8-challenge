@@ -19,7 +19,7 @@ export async function PUT() {
       return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
     }
 
-    if (user.type === UserType.Challenger || UserType.Hybrid) {
+    if (user.type === UserType.Challenger || user.type === UserType.Hybrid) {
       return NextResponse.json(
         { error: 'User has already started the challenge.' },
         { status: 422 },

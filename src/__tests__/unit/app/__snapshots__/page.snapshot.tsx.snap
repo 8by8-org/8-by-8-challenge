@@ -6,7 +6,7 @@ exports[`Home renders homepage unchanged 1`] = `
     class="outer_container"
   >
     <div
-      class="inner_container"
+      class="inner_container_light"
     >
       <section
         class="section_1"
