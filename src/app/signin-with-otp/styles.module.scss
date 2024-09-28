@@ -50,7 +50,8 @@
 
 .submit_btn_container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: $spacing-lg;
   padding-left: $spacing-vertical-gutter;
   padding-right: $spacing-vertical-gutter;

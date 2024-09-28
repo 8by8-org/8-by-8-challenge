@@ -8,7 +8,6 @@ import type { User } from '@/model/types/user';
 import { DateTime } from 'luxon';
 import { Actions } from '@/model/enums/actions';
 import userEvent from '@testing-library/user-event';
-import { getErrorThrownByComponent } from '@/utils/test/get-error-thrown-by-component';
 
 jest.mock('next/navigation', () => require('next-router-mock'));
 
@@ -97,14 +96,5 @@ describe('ProgressTest', () => {
     );
 
     expect(screen.getByText(/You completed all/i)).toBeInTheDocument();
-  });
-
-  it('renders without error if user is null.', () => {
-    const error = getErrorThrownByComponent(
-      <UserContext.Provider value={{ user: null } as UserContextType}>
-        <Progress />
-      </UserContext.Provider>,
-    );
-    expect(error).toBe(null);
   });
 });

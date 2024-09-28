@@ -3,6 +3,7 @@ import { useState, type FormEventHandler } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useForm, ValidityUtils } from 'fully-formed';
+import { isSignedOut } from '@/components/guards/is-signed-out';
 import { SignInForm } from './signin-form';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
@@ -17,7 +18,7 @@ import { FormInvalidError } from '@/utils/client/form-invalid-error';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
 import styles from './styles.module.scss';
 
-function SignIn() {
+export default isSignedOut(function SignIn() {
   const signInForm = useForm(new SignInForm());
   const { sendOTPToEmail } = useContextSafely(UserContext, 'SignIn');
   const { showAlert } = useContextSafely(AlertsContext, 'SignIn');
@@ -95,6 +96,4 @@ function SignIn() {
       </div>
     </PageContainer>
   );
-}
-
-export default SignIn;
+});

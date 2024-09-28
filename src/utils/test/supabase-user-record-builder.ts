@@ -10,6 +10,7 @@ import { PRIVATE_ENVIRONMENT_VARIABLES } from '@/constants/private-environment-v
 import { UserRecordParser } from '@/services/server/user-record-parser/user-record-parser';
 import type { User } from '@/model/types/user';
 import type { Avatar } from '@/model/types/avatar';
+import type { ChallengerData } from '@/model/types/challenger-data';
 import type { Badge } from '@/model/types/badges/badge';
 
 interface UserRecord {
@@ -43,22 +44,10 @@ interface PlayerBadgeRecord {
   player_avatar: Avatar;
 }
 
-interface InvitedBy {
-  inviteCode: string;
-  name: string;
-  avatar: Avatar;
-}
-
 interface InvitedByRecord {
   challenger_invite_code: string;
   challenger_name: string;
   challenger_avatar: Avatar;
-}
-
-interface ContributedTo {
-  name: string;
-  inviteCode: string;
-  avatar: Avatar;
 }
 
 interface ContributedToRecord {
@@ -147,23 +136,23 @@ export class SupabaseUserRecordBuilder {
     return this;
   }
 
-  invitedBy(invitedBy: InvitedBy) {
+  invitedBy(invitedBy: ChallengerData) {
     this.invitedByRecord = {
-      challenger_invite_code: invitedBy.inviteCode,
-      challenger_name: invitedBy.name,
-      challenger_avatar: invitedBy.avatar,
+      challenger_invite_code: invitedBy.challengerInviteCode,
+      challenger_name: invitedBy.challengerName,
+      challenger_avatar: invitedBy.challengerAvatar,
     };
 
     return this;
   }
 
-  contributedTo(contributedTo: Array<ContributedTo>) {
+  contributedTo(contributedTo: Array<ChallengerData>) {
     this.contributedToRecords = contributedTo.map(
-      ({ name, inviteCode, avatar }) => {
+      ({ challengerName, challengerInviteCode, challengerAvatar }) => {
         return {
-          challenger_name: name,
-          challenger_invite_code: inviteCode,
-          challenger_avatar: avatar,
+          challenger_name: challengerName,
+          challenger_invite_code: challengerInviteCode,
+          challenger_avatar: challengerAvatar,
         };
       },
     );

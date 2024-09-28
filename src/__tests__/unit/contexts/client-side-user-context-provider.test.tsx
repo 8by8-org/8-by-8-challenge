@@ -19,14 +19,27 @@ import type {
 } from '@/contexts/user-context/user-context';
 import { NextResponse } from 'next/server';
 import { Actions } from '@/model/enums/actions';
+import supabaseModule from '@supabase/ssr';
+import { Subject } from 'rxjs';
+import ProgressPage from '@/app/progress/page';
 import type { User } from '@/model/types/user';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import type { Avatar } from '@/model/types/avatar';
+import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
 
-/* reminder -- a second request will only be made if the user is signed in */
+jest.mock('@supabase/ssr', () => ({
+  createBrowserClient: jest.fn().mockImplementation(() => ({
+    channel: () => ({
+      on: () => ({
+        subscribe: jest.fn(),
+      }),
+    }),
+  })),
+}));
 
 describe('ClientSideUserContextProvider', () => {
   let router: AppRouterInstance;
@@ -884,6 +897,124 @@ describe('ClientSideUserContextProvider', () => {
       );
     });
 
+    fetchSpy.mockRestore();
+  });
+
+  it(`subscribes to the badges channel and refreshes the user object when they 
+  are awarded a badge because of the actions of another user.`, async () => {
+    interface BadgeInsertionEvent {
+      new: {
+        player_name?: string;
+        player_avatar?: Avatar;
+        action?: Actions;
+      };
+    }
+
+    const badgeInsertionEvents = new Subject<BadgeInsertionEvent>();
+
+    const supabaseSpy = jest
+      .spyOn(supabaseModule, 'createBrowserClient')
+      .mockImplementation(() => {
+        return {
+          channel: () => ({
+            on: (
+              _subscribeTo: 'string',
+              _opts: object,
+              subscribe: (payload: BadgeInsertionEvent) => void | Promise<void>,
+            ) => {
+              return {
+                subscribe: () => {
+                  return badgeInsertionEvents.subscribe(subscribe);
+                },
+              };
+            },
+          }),
+        };
+      });
+
+    const challenger: User = {
+      uid: '1',
+      email: 'challenger@example.com',
+      name: 'Challenger',
+      avatar: '0',
+      type: UserType.Challenger,
+      completedActions: {
+        electionReminders: false,
+        registerToVote: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(route => {
+        if (route === '/api/refresh-user') {
+          return Promise.resolve(
+            NextResponse.json(
+              {
+                user: challenger,
+              },
+              { status: 200 },
+            ),
+          );
+        }
+
+        return Promise.resolve(new Response(null, { status: 200 }));
+      });
+
+    mockDialogMethods();
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={{
+            ...challenger,
+            completedActions: {
+              ...challenger.completedActions,
+            },
+            badges: [...challenger.badges],
+            contributedTo: [...challenger.contributedTo],
+          }}
+          invitedBy={null}
+          emailForSignIn=""
+        >
+          <ProgressPage />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    const playerName = 'Player';
+    const playerAvatar = '0';
+    expect(screen.queryByText(playerName)).not.toBeInTheDocument();
+
+    for (let i = 0; i < 8; i++) {
+      challenger.badges.push({
+        playerName,
+        playerAvatar,
+      });
+
+      if (challenger.badges.length === 8) {
+        challenger.completedChallenge = true;
+      }
+
+      badgeInsertionEvents.next({
+        new: {
+          player_name: playerName,
+          player_avatar: playerAvatar,
+        },
+      });
+
+      await waitFor(() =>
+        expect(screen.queryAllByText(playerName)).toHaveLength(i + 1),
+      );
+    }
+
+    supabaseSpy.mockRestore();
     fetchSpy.mockRestore();
   });
 });

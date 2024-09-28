@@ -1,6 +1,7 @@
 import { UserType } from '../enums/user-type';
 import type { Avatar } from './avatar';
 import type { Badge } from './badges/badge';
+import type { ChallengerData } from './challenger-data';
 
 export interface User {
   uid: string;
@@ -27,7 +28,7 @@ export interface User {
    * The names and avatars of these challengers are displayed on
    * the /actions page once the player has completed all possible actions.
    */
-  contributedTo: Array<{ name: string; avatar: Avatar }>;
+  contributedTo: Array<ChallengerData>;
   /**
    * The most recent challenger to invite the player.
    *

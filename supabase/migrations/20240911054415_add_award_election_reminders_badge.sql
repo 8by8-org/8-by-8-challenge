@@ -71,6 +71,10 @@ begin
       update_contributed_to.challenger_name, 
       update_contributed_to.challenger_avatar
     );
+  else 
+    update contributed_to set contributed_to_at = current_timestamp
+    where contributed_to.player_id = update_contributed_to.player_id
+    and contributed_to.challenger_invite_code = update_contributed_to.challenger_invite_code;
   end if;
 end;
 $$;

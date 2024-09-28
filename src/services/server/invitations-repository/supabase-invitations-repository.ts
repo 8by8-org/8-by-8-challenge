@@ -3,7 +3,7 @@ import { SERVER_SERVICE_KEYS } from '../keys';
 import { ServerError } from '@/errors/server-error';
 import type { InvitationsRepository } from './invitations-repository';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
-import type { InvitedBy } from '@/model/types/invited-by';
+import type { ChallengerData } from '@/model/types/challenger-data';
 
 export const SupabaseInvitationsRepository = inject(
   class SupabaseInvitationsRepository implements InvitationsRepository {
@@ -11,7 +11,7 @@ export const SupabaseInvitationsRepository = inject(
 
     async getInvitedByFromChallengerInviteCode(
       inviteCode: string,
-    ): Promise<InvitedBy | null> {
+    ): Promise<ChallengerData | null> {
       const supabase = this.createSupabaseClient();
 
       const { data } = await supabase
@@ -34,7 +34,7 @@ export const SupabaseInvitationsRepository = inject(
 
     async getInvitedByFromPlayerId(
       playerId: string,
-    ): Promise<InvitedBy | null> {
+    ): Promise<ChallengerData | null> {
       const supabase = this.createSupabaseClient();
 
       const { data } = await supabase
@@ -57,7 +57,7 @@ export const SupabaseInvitationsRepository = inject(
 
     async insertOrUpdateInvitedBy(
       playerId: string,
-      invitedBy: InvitedBy,
+      invitedBy: ChallengerData,
     ): Promise<void> {
       const supabase = this.createSupabaseClient();
 

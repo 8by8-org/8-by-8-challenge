@@ -6,7 +6,7 @@ import { DateTime } from 'luxon';
 import { UserType } from '@/model/enums/user-type';
 import { Actions } from '@/model/enums/actions';
 import type { Avatar } from '@/model/types/avatar';
-import type { Badge } from '@/model/types/badge';
+import type { Badge } from '@/model/types/badges/badge';
 import { createSupabaseServiceRoleClient } from '@/services/server/create-supabase-client/create-supabase-service-role-client';
 
 describe('SupabaseUserRecordBuilder', () => {
@@ -155,9 +155,9 @@ describe('SupabaseUserRecordBuilder', () => {
     const player = await new SupabaseUserRecordBuilder('player@example.com')
       .type(UserType.Player)
       .invitedBy({
-        inviteCode: challengerInviteCode,
-        name: challengerName,
-        avatar: challengerAvatar,
+        challengerInviteCode,
+        challengerName,
+        challengerAvatar,
       })
       .build();
 
@@ -170,9 +170,9 @@ describe('SupabaseUserRecordBuilder', () => {
     );
 
     expect(invitedBy).toStrictEqual({
-      challengerInviteCode: challengerInviteCode,
-      challengerName: challengerName,
-      challengerAvatar: challengerAvatar,
+      challengerInviteCode,
+      challengerName,
+      challengerAvatar,
     });
   });
 
@@ -185,17 +185,18 @@ describe('SupabaseUserRecordBuilder', () => {
       .type(UserType.Player)
       .contributedTo([
         {
-          inviteCode: challengerInviteCode,
-          name: challengerName,
-          avatar: challengerAvatar,
+          challengerInviteCode,
+          challengerName,
+          challengerAvatar,
         },
       ])
       .build();
 
     expect(player.contributedTo).toStrictEqual([
       {
-        name: challengerName,
-        avatar: challengerAvatar,
+        challengerInviteCode,
+        challengerName,
+        challengerAvatar,
       },
     ]);
   });

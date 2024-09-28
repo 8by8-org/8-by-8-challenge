@@ -4,7 +4,7 @@ import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
 import type { User } from '../../model/types/user';
 import type { Avatar } from '@/model/types/avatar';
 import type { ValueOf } from 'fully-formed';
-import type { InvitedBy } from '@/model/types/invited-by';
+import type { ChallengerData } from '@/model/types/challenger-data';
 
 interface SignUpWithEmailParams {
   email: string;
@@ -25,7 +25,7 @@ interface SignInWithOTPParams {
 interface UserContextType {
   user: User | null;
   emailForSignIn: string;
-  invitedBy: InvitedBy | null;
+  invitedBy: ChallengerData | null;
   signUpWithEmail(params: SignUpWithEmailParams): Promise<void>;
   sendOTPToEmail(params: SendOTPToEmailParams): Promise<void>;
   resendOTP(): Promise<void>;

@@ -58,10 +58,10 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
 
   return (
     <PageContainer>
-      <h2 className={styles.header}>Invite Friends</h2>
-      <div onClick={() => router.push('/progress')} className={styles.backArrowIcon}>
+       <div onClick={() => router.push('/progress')} className={styles.backArrowIcon}>
       <Image src={backArrowIcon} alt="back-icon" />
       </div>
+      <h2 className={styles.header}>Invite Friends</h2>
       <div className={styles.calendar}>
         <Image src={calendarImage} alt="calendar-image" />
       </div>
@@ -69,9 +69,9 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
         Invite friends to support your challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge. If you are curious, preview what they will see.
       </p>
       <div className={styles.ActionBox}> 
-        <div onClick={copyLink}>
+        <button onClick={copyLink}>
         <Image src={CopyLink} alt="copy-link" />
-        </div>
+        </button>
         <ShareAPI fullLink={fullLink} onShareSuccess={handleSharedLink} />
         <div onClick={openModal}>
           <Image src={imagesIcon} alt="images-icon" />

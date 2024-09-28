@@ -21,6 +21,7 @@ export const SupabaseUserRepository = inject(
       AWARD_ELECTION_REMINDERS_BADGE: 'award_election_reminders_badge',
       AWARD_SHARED_CHALLENGE_BADGE: 'award_shared_challenge_badge',
       AWARD_REGISTER_TO_VOTE_BADGE: 'award_register_to_vote_badge',
+      MAKE_HYBRID: 'make_hybrid',
     };
 
     constructor(
@@ -148,21 +149,9 @@ export const SupabaseUserRepository = inject(
         data: dbUser,
         error,
         status,
-      } = await supabase
-        .from('users')
-        .update({
-          user_type: UserType.Hybrid,
-        })
-        .eq('id', userId)
-        .select(
-          `*,
-          completed_actions (election_reminders, register_to_vote, shared_challenge),
-          badges (action_type, player_name, player_avatar),
-          contributed_to (challenger_name, challenger_avatar)`,
-        )
-        .order('id')
-        .limit(1)
-        .maybeSingle();
+      } = await supabase.rpc(this.REMOTE_PROCEDURES.MAKE_HYBRID, {
+        user_id: userId,
+      });
 
       if (error) {
         throw new ServerError(error.message, status);

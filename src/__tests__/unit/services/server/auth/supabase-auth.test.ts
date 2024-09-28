@@ -18,7 +18,7 @@ import type { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/S
 import type { User } from '@/model/types/user';
 import type { InvitationsRepository } from '@/services/server/invitations-repository/invitations-repository';
 import type { ICookies } from '@/services/server/cookies/i-cookies';
-import type { InvitedBy } from '@/model/types/invited-by';
+import type { ChallengerData } from '@/model/types/challenger-data';
 
 describe('SupabaseAuth', () => {
   let supabaseAuth: InstanceType<typeof SupabaseAuth>;
@@ -120,7 +120,7 @@ describe('SupabaseAuth', () => {
   an invite code is detected in cookies and signUpWithEmailAndSendOTP is 
   called.`, async () => {
     const inviteCode = createId();
-    const invitedBy: InvitedBy = {
+    const invitedBy: ChallengerData = {
       challengerName: 'Challenger',
       challengerInviteCode: inviteCode,
       challengerAvatar: '0',
@@ -585,7 +585,7 @@ describe('SupabaseAuth', () => {
       .spyOn(cookies, 'getInviteCode')
       .mockReturnValueOnce(otherUserInviteCode);
 
-    const invitedBy: InvitedBy = {
+    const invitedBy: ChallengerData = {
       challengerName: 'Challenger',
       challengerInviteCode: otherUserInviteCode,
       challengerAvatar: '1',
@@ -684,7 +684,7 @@ describe('SupabaseAuth', () => {
 
     jest.spyOn(userRepository, 'getUserById').mockResolvedValueOnce(user);
 
-    const expectedInvitedBy: InvitedBy = {
+    const expectedInvitedBy: ChallengerData = {
       challengerName: 'Challenger',
       challengerInviteCode: createId(),
       challengerAvatar: '1',
@@ -711,7 +711,7 @@ describe('SupabaseAuth', () => {
       .spyOn(cookies, 'getInviteCode')
       .mockReturnValueOnce(otherUserInviteCode);
 
-    const expectedInvitedBy: InvitedBy = {
+    const expectedInvitedBy: ChallengerData = {
       challengerName: 'Challenger',
       challengerInviteCode: otherUserInviteCode,
       challengerAvatar: '1',

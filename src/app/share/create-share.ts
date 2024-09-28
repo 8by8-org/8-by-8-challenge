@@ -7,12 +7,12 @@ export function createShareLink() {
   const pathname = "share";
   const environment = process.env.NODE_ENV;
 
-  // Development environment link
+
   if (environment === 'development') { 
     return `${protocol}://${host}/${pathname}?${SearchParams.InviteCode}=`;
   }
 
-  // Production environment link
+
   return `https://challenge.8by8.us/${pathname}?${SearchParams.InviteCode}=`;
 }
 
@@ -22,7 +22,7 @@ function getProtocol() {
     return referer.split("://")[0];
   }
   
-  // Fallback to "https" if referer is not available
+
   return "https";
 }
 
@@ -32,6 +32,6 @@ function getHost() {
     return referer.split("://")[1].split("/")[0];
   }
 
-  // Fallback to the production host
+
   return "challenge.8by8.us";
 }

@@ -16,6 +16,7 @@ create type badge_obj as (
 );
 
 create type contributed_to_obj as (
+  challenger_invite_code varchar(30),
   challenger_name varchar(255),
   challenger_avatar char(1)
 );
@@ -74,12 +75,15 @@ begin
     select (action_type, player_name, player_avatar)::badge_obj
     from badges
     where badges.challenger_id = user_id
+    order by badges.awarded_at asc
+    limit 8
   ) into user.badges;
 
   select array(
-    select (challenger_name, challenger_avatar)::contributed_to_obj
+    select (challenger_invite_code, challenger_name, challenger_avatar)::contributed_to_obj
     from contributed_to
     where contributed_to.player_id = user_id
+    order by contributed_to.contributed_to_at asc
   ) into user.contributed_to;
 
   return user;
