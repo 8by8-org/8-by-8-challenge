@@ -7,25 +7,16 @@
     justify-content: center;
 }
 .paragraph {
-    width: 100%; /* Adjusts to parent container */
-    max-width: 317px; /* Maximum width */
-    height: auto; /* Remove fixed height */
-    
-    font-family: 'Lato', sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 18px;
-    line-height:  22px; /* Better spacing between lines */
-    text-align: center;
-    letter-spacing: 0.02em;
-    
-    color: #000000;
-    
-    align-self: center;
+   
+font-family: Lato;
+font-size: 18px;
+font-weight: 400;
+line-height: 21.6px;
+letter-spacing: 0.02em;
+text-align: center;
+margin-left:30px;
+margin-right:30px;
 
-    
-    margin: 0 auto; /* Center horizontally */
-    padding: 10px 0; /* Add padding for spacing */
   }
   
 .copyLink{
@@ -49,8 +40,11 @@
 
 .ActionBox{
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     cursor: pointer;
+    margin-top: 32px;
+    margin-left: 30px;
+    margin-right: 30px;
 }
 
 .calendar{

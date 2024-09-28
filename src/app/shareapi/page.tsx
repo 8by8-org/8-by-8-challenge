@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import SocialShareIcon from '../share/socialShareIcon';
+import socialShareIcon from '../../../public/static/images/pages/share/share-icon.svg';
+import Image from 'next/image'; 
 
 interface ShareProps {
   fullLink: string;
   onShareSuccess: () => void; 
 }
 
-const MDNShare: React.FC<ShareProps> = ({ fullLink, onShareSuccess }) => {
+const ShareAPI: React.FC<ShareProps> = ({ fullLink, onShareSuccess }) => {
   const [isNavigatorShareAvailable, setIsNavigatorShareAvailable] = useState(false);
   const [shareResult, setShareResult] = useState("");
 
@@ -46,7 +47,7 @@ const MDNShare: React.FC<ShareProps> = ({ fullLink, onShareSuccess }) => {
     <div>
       {isNavigatorShareAvailable ? (
         <div onClick={handleShare}>
-          <SocialShareIcon />
+          <Image src={socialShareIcon} alt="social-share-icon" />
         </div>
       ) : (
         <p>Web Share API is not supported in your browser.</p>
@@ -56,6 +57,6 @@ const MDNShare: React.FC<ShareProps> = ({ fullLink, onShareSuccess }) => {
   );
 };
 
-export default MDNShare;
+export default ShareAPI;
 
 

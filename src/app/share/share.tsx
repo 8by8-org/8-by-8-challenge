@@ -6,14 +6,16 @@ import { useContextSafely } from '@/hooks/use-context-safely';
 import { isSignedIn } from '@/components/guards/is-signed-in';
 import { useRouter } from 'next/navigation';
 import styles from './styles.module.scss';
-import MDNShare from '../mdnshare/page';
-import BackArrowIcon from '../share/backIcon';
-import CopyLink from '../share/CopyLink';
-import DownloadIcon from '../share/downloadImagesIcon'; 
-import CalendarImage from '../share/calendarImage';
+import ShareAPI from '../shareapi/page';
+import backArrowIcon from '../../../public/static/images/pages/share/back-icon.svg';
+import CopyLink from '../../../public/static/images/pages/share/copy-link.svg';
+import imagesIcon from '../../../public/static/images/pages/share/images-icon.svg'; 
+import calendarImage from '../../../public/static/images/pages/share/calendar-image.png';
 import { Modal } from '../../components/utils/modal/modal';
-
-
+import Image from 'next/image';
+import socialMediaPostImage0 from '../../../public/static/images/pages/share/social-media-post-image-0.png'; 
+import socialMediaPostImage1 from '../../../public/static/images/pages/share/social-media-post-image-1.png'; 
+import socialMediaPostImage2 from '../../../public/static/images/pages/share/social-media-post-image-2.png'; 
 interface ShareProps {
   shareLink: string;
 }
@@ -58,29 +60,30 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
     <PageContainer>
       <h2 className={styles.header}>Invite Friends</h2>
       <div onClick={() => router.push('/progress')} className={styles.backArrowIcon}>
-        <BackArrowIcon />
+      <Image src={backArrowIcon} alt="back-icon" />
       </div>
       <div className={styles.calendar}>
-        <CalendarImage />
+        <Image src={calendarImage} alt="calendar-image" />
       </div>
       <p className={styles.paragraph}>
         Invite friends to support your challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge. If you are curious, preview what they will see.
       </p>
       <div className={styles.ActionBox}> 
         <div onClick={copyLink}>
-          <CopyLink />
+        <Image src={CopyLink} alt="copy-link" />
         </div>
-        <MDNShare fullLink={fullLink} onShareSuccess={handleSharedLink} />
+        <ShareAPI fullLink={fullLink} onShareSuccess={handleSharedLink} />
         <div onClick={openModal}>
-          <DownloadIcon />
+          <Image src={imagesIcon} alt="images-icon" />
         </div>
         <div>
         <Modal
         ariaLabel=""
         theme="light"
         isOpen={isModalOpen}
-        closeModal={closeModal}
-      />
+            closeModal={closeModal}
+            
+          ><Image src={socialMediaPostImage0} alt="images-icon" priority/><Image src={socialMediaPostImage1} alt="images-icon" priority/><Image src={socialMediaPostImage2} alt="images-icon" priority/></Modal  >
         </div>
       </div>
     </PageContainer>
@@ -99,3 +102,9 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
 //tests 
 //unit tests 
 // mocking 
+
+
+// 30 px gutters on the side3 
+//1st and second icon  margin right 40 px 
+// flex them anf justify content center 
+// 
