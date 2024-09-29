@@ -1,25 +1,37 @@
-<!doctype html>
-<html>
-  <head>
-    <style>
-      #logo {
-        margin: auto;
-      }
-
-      #main {
-        color: blue;
-        margin: auto;
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="main">
-      <p>Hi, John Doe!</p>
-      <p>Your one-time passcode is:</p>
-      <span id="passcode">{{ .Token }}</span>
-      <p>The passcode will expire in one hour.</p>
-    </div>
-  </body>
-  <footer></footer>
-</html>
+<div style="text-align: center">
+  <img
+    src="https://uepizgnaylkixycpjrpj.supabase.co/storage/v1/object/public/public-images/8BY8CHALLENGE_SIMPLE_LOGO_CHALLENGE.png"
+  />
+  <h2
+    style="
+      text-align: center;
+      font-size: 36px;
+      margin-top: 46.33px;
+      margin-bottom: 16px;
+      color: black;
+    "
+  >
+    Hi, John Doe!
+  </h2>
+  <p
+    style="
+      text-align: center;
+      font-size: 16px;
+      margin-top: 56px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 12px;
+      color: black;
+    "
+  >
+    Your one-time passcode is:
+  </p>
+  <span style="text-align: center; font-size: 25px; color: black"
+    >{{ .Token }}</span
+  >
+  <p
+    style="text-align: center; font-size: 16px; color: black; margin-top: 15px"
+  >
+    The passcode will expire in one hour.
+  </p>
+</div>
