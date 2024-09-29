@@ -1,7 +1,7 @@
 import type { User } from './user';
-import type { InvitedBy } from './invited-by';
+import type { ChallengerData } from './challenger-data';
 
 export interface Session {
   user: User | null;
-  invitedBy: InvitedBy | null;
+  invitedBy: ChallengerData | null;
 }

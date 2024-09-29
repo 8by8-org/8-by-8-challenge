@@ -1,10 +1,10 @@
+import Home from '@/app/page';
 import { render, screen, cleanup } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 import navigation from 'next/navigation';
 import { Builder } from 'builder-pattern';
-import { useRouter } from 'next/navigation';
-import Home from '@/app/page';
+import { UserContext, type UserContextType } from '@/contexts/user-context';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 jest.mock('next/navigation', () => ({
@@ -28,7 +28,13 @@ describe('Home Page', () => {
   afterEach(cleanup);
 
   it('navigates to /challengerwelcome when the challenge button is clicked.', async () => {
-    render(<Home />);
+    render(
+      <UserContext.Provider
+        value={Builder<UserContextType>().user(null).build()}
+      >
+        <Home />
+      </UserContext.Provider>,
+    );
     const challengeButtons = screen.getAllByRole('button', {
       name: /Take the Challenge/i,
     });

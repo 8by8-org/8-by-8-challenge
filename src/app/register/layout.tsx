@@ -2,6 +2,7 @@
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
 import { useForm } from 'fully-formed';
+import { isSignedIn } from '@/components/guards/is-signed-in';
 import { useRedirectToFirstIncompletePage } from './utils/use-redirect-to-first-incomplete-page';
 import { VoterRegistrationForm } from './voter-registration-form';
 import { VoterRegistrationContext } from './voter-registration-context';
@@ -10,7 +11,7 @@ import { ProgressBar } from './progress-bar';
 import type { PropsWithChildren } from 'react';
 import styles from './styles.module.scss';
 
-export default function VoterRegistrationLayout({
+export default isSignedIn(function VoterRegistrationLayout({
   children,
 }: PropsWithChildren) {
   const { user } = useContextSafely(UserContext, 'VoterRegistrationLayout');
@@ -33,4 +34,4 @@ export default function VoterRegistrationLayout({
       </PageContainer>
     </VoterRegistrationContext.Provider>
   );
-}
+});

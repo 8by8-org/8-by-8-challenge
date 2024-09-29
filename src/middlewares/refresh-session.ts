@@ -1,18 +1,20 @@
 import 'server-only';
-import { bind } from 'undecorated-di';
-import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import {
+  NextResponse,
+  type NextRequest,
+  type NextFetchEvent,
+} from 'next/server';
 import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
+import type { ChainedMiddleware } from './chained-middleware';
 
-/**
- * Reads authentication information from cookies and redirects the user to
- * /signin if they are signed out.
- */
-export const redirectIfSignedOutFromSupabase = bind(
-  async (request: NextRequest) => {
-    let supabaseResponse = NextResponse.next({
-      request,
-    });
+export function refreshSession(next: ChainedMiddleware): ChainedMiddleware {
+  return async (
+    request: NextRequest,
+    event: NextFetchEvent,
+    response?: NextResponse,
+  ) => {
+    if (!response) response = NextResponse.next({ request });
 
     const {
       NEXT_PUBLIC_SUPABASE_URL: url,
@@ -29,25 +31,20 @@ export const redirectIfSignedOutFromSupabase = bind(
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
-          supabaseResponse = NextResponse.next({
+
+          response = NextResponse.next({
             request,
           });
+
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
+            response!.cookies.set(name, value, options),
           );
         },
       },
     });
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.redirect(new URL('/signin', request.nextUrl.origin));
-    }
-
-    return supabaseResponse;
-  },
-  [],
-);
+    // By calling auth.getUser(), we refresh the user's session.
+    await supabase.auth.getUser();
+    return next(request, event, response);
+  };
+}

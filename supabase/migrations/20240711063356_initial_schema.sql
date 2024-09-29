@@ -43,6 +43,7 @@ create table public.badges (
   player_name varchar(255),
   player_avatar char(1),
   challenger_id uuid not null references public.users on delete cascade,
+  awarded_at timestamp not null default current_timestamp,
   primary key (id, challenger_id)
 );
 
@@ -75,6 +76,7 @@ create table public.contributed_to (
   challenger_invite_code varchar not null,
   challenger_name varchar(255) not null,
   challenger_avatar char(1) not null,
+  contributed_to_at timestamp not null default current_timestamp,
   primary key (id, player_id)
 );
 

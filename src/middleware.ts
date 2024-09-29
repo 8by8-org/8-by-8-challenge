@@ -1,7 +1,6 @@
 import 'server-only';
-import { serverContainer } from '@/services/server/container';
-import { SERVER_SERVICE_KEYS } from './services/server/keys';
-import type { NextFetchEvent, NextRequest } from 'next/server';
+import * as middlewares from './middlewares';
+import type { NextRequest, NextFetchEvent } from 'next/server';
 
 /**
  * Middleware called on all requests matched by the regular expression defined
@@ -11,9 +10,20 @@ import type { NextFetchEvent, NextRequest } from 'next/server';
  * {@link https://nextjs.org/docs/app/building-your-application/routing/middleware}.
  */
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
-  return await serverContainer
-    .get(SERVER_SERVICE_KEYS.Middleware)
-    .processRequest(request, event);
+  return await middlewares.chainMiddleware([
+    middlewares.setInviteCodeCookie,
+    middlewares.isSignedOut,
+    middlewares.wasInvited,
+    middlewares.wasNotInvited,
+    middlewares.sentOTP,
+    middlewares.isSignedIn,
+    middlewares.isChallengerOrHybrid,
+    middlewares.isPlayerOrHybrid,
+    middlewares.hasNotRegistered,
+    middlewares.hasRegistered,
+    middlewares.hasNotSignedUpForReminders,
+    middlewares.refreshSession,
+  ])(request, event);
 }
 
 export const config = {
