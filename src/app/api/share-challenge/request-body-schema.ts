@@ -5,5 +5,3 @@ export const requestBodySchema = z.object({
   email: z.string().regex(new EmailRegExp()),
   otp: z.string(),
 });
-
-

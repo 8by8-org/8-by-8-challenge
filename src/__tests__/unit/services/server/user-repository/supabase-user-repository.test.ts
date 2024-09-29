@@ -14,7 +14,6 @@ import type { CreateSupabaseClient } from '@/services/server/create-supabase-cli
 import type { IUserRecordParser } from '@/services/server/user-record-parser/i-user-record-parser';
 import type { Badge } from '@/model/types/badges/badge';
 
-
 describe('SupabaseUserRepository', () => {
   let userRepository: InstanceType<typeof SupabaseUserRepository>;
   let createSupabaseClient: CreateSupabaseClient;

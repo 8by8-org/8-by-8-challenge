@@ -15,7 +15,6 @@ import type { IUserRecordParser } from '../user-record-parser/i-user-record-pars
  */
 export const SupabaseUserRepository = inject(
   class SupabaseUserRepository implements UserRepository {
-    
     private readonly REMOTE_PROCEDURES = {
       GET_USER_BY_ID: 'get_user_by_id',
       AWARD_ELECTION_REMINDERS_BADGE: 'award_election_reminders_badge',
@@ -26,7 +25,7 @@ export const SupabaseUserRepository = inject(
 
     constructor(
       private createSupabaseClient: CreateSupabaseClient,
-      
+
       private userRecordParser: IUserRecordParser,
     ) {}
 
@@ -54,7 +53,7 @@ export const SupabaseUserRepository = inject(
         throw new ServerError('Failed to parse user data.', 400);
       }
     }
-// todos - 
+    // todos -
     // return the user
     // double check row names aganist the schema
     // handling all errors
@@ -62,85 +61,84 @@ export const SupabaseUserRepository = inject(
     // check if  the user has already completed the action
     // check how many badges the user has
     // if the user has 8 badges then don't then don't award a badge
-    // write tests for the api endpoints 
-    
-//     async awardSharedBadge(userId: string): Promise<User> {
-//       const supabase = this.createSupabaseClient();
-//       const { error: completedActionsError } = await supabase
-//         .from('completed_actions')
-//         .update({ 'shared_challenge': true })
-//         .eq('user_id', userId)
-      
-// // throw error 
-//       if (completedActionsError) {
-//         throw new ServerError(`Error updating completed actions: ${completedActionsError.message}`);
-//       }
+    // write tests for the api endpoints
 
-// // add badges 
-//       const { error: badgeError } = await supabase
-//       .from('badges')
-//         .insert({ challenger_id: userId, action: Actions.SharedChallenge })
-//         .select()
+    //     async awardSharedBadge(userId: string): Promise<User> {
+    //       const supabase = this.createSupabaseClient();
+    //       const { error: completedActionsError } = await supabase
+    //         .from('completed_actions')
+    //         .update({ 'shared_challenge': true })
+    //         .eq('user_id', userId)
 
-// // badgeError
-//       if (badgeError) {
-//         throw new ServerError(`Error adding badge: ${badgeError.message}`);
-//       }
+    // // throw error
+    //       if (completedActionsError) {
+    //         throw new ServerError(`Error updating completed actions: ${completedActionsError.message}`);
+    //       }
 
-// // count badges 
-//       const { count, error } = await supabase
-//       .from('badges')
-//       .select('challenger_id', { count: 'exact' })
-//       .eq('challenger_id', userId);
-  
-//     if (error) {
-//       throw new ServerError(`Error counting badges: ${error.message}`);
-//     }
-//       const maxBadges = 8
-//       let user = await this.getUserById(userId);
-//       console.log(user)
-//       if (!user) {
-//         throw new ServerError(`User not found: ${userId}`)
-//       }
-      
-//  // Check if the count exceeds the maxBadges threshold
-//       if (count && count >= maxBadges) {
-//       return user;
-//     }
-      
-// // still add badges if count !== maxBadges
-//       if (count && count < maxBadges) {
-//         const { error: badgeInsertError } = await supabase
-//         .from('badges')
-//           .insert({ challenger_id: userId, action: Actions.SharedChallenge })
-//           .select()
-//         if (badgeInsertError) {
-//           throw new ServerError(`Error adding badge: ${badgeInsertError.message}`);
-//         }
-        
-//       }
-// // If awarding the badge causes the user to gain 8 badges, set user.completed_challenge to true.
-//       if (count && count + 1 === maxBadges) {
-//         // update `user.completed_challenge` to true
-//         const { error: userUpdateError } = await supabase
-//           .from('users')
-//           .update({ 'completed_challenge': true })
-//           .eq('id', userId);
-  
-//         if (userUpdateError) {
-//           throw new ServerError(`Error updating user completed challenge: ${userUpdateError.message}`);
-//         }
-//       }
-// // return user 
-//   user = await this.getUserById(userId);
-//   if (!user) {
-//     throw new ServerError(`User not found: ${userId}`);
-//   }
+    // // add badges
+    //       const { error: badgeError } = await supabase
+    //       .from('badges')
+    //         .insert({ challenger_id: userId, action: Actions.SharedChallenge })
+    //         .select()
 
-//   return user;
-    
-//   }
-  
+    // // badgeError
+    //       if (badgeError) {
+    //         throw new ServerError(`Error adding badge: ${badgeError.message}`);
+    //       }
+
+    // // count badges
+    //       const { count, error } = await supabase
+    //       .from('badges')
+    //       .select('challenger_id', { count: 'exact' })
+    //       .eq('challenger_id', userId);
+
+    //     if (error) {
+    //       throw new ServerError(`Error counting badges: ${error.message}`);
+    //     }
+    //       const maxBadges = 8
+    //       let user = await this.getUserById(userId);
+    //       console.log(user)
+    //       if (!user) {
+    //         throw new ServerError(`User not found: ${userId}`)
+    //       }
+
+    //  // Check if the count exceeds the maxBadges threshold
+    //       if (count && count >= maxBadges) {
+    //       return user;
+    //     }
+
+    // // still add badges if count !== maxBadges
+    //       if (count && count < maxBadges) {
+    //         const { error: badgeInsertError } = await supabase
+    //         .from('badges')
+    //           .insert({ challenger_id: userId, action: Actions.SharedChallenge })
+    //           .select()
+    //         if (badgeInsertError) {
+    //           throw new ServerError(`Error adding badge: ${badgeInsertError.message}`);
+    //         }
+
+    //       }
+    // // If awarding the badge causes the user to gain 8 badges, set user.completed_challenge to true.
+    //       if (count && count + 1 === maxBadges) {
+    //         // update `user.completed_challenge` to true
+    //         const { error: userUpdateError } = await supabase
+    //           .from('users')
+    //           .update({ 'completed_challenge': true })
+    //           .eq('id', userId);
+
+    //         if (userUpdateError) {
+    //           throw new ServerError(`Error updating user completed challenge: ${userUpdateError.message}`);
+    //         }
+    //       }
+    // // return user
+    //   user = await this.getUserById(userId);
+    //   if (!user) {
+    //     throw new ServerError(`User not found: ${userId}`);
+    //   }
+
+    //   return user;
+
+    //   }
 
     async makeHybrid(userId: string): Promise<User> {
       const supabase = this.createSupabaseClient();
@@ -259,73 +257,68 @@ export const SupabaseUserRepository = inject(
     }
   },
 
+  // refactor the old function with something like this
 
-  
-  // refactor the old function with something like this 
+  //  /**
+  //  * @awardUserBadge
+  //  * @param user - A user to access their information
+  //  */
 
-//  /**
-//  * @awardUserBadge
-//  * @param user - A user to access their information
-//  */
+  // async awardAndUpdateSharedChallengeBadgeAndAction(
+  //   user: User,
+  // ): Promise<void> {
+  //   if (!this.canAwardBadge(user)) {
+  //     return;
+  //   }
 
-// async awardAndUpdateSharedChallengeBadgeAndAction(
-//   user: User,
-// ): Promise<void> {
-//   if (!this.canAwardBadge(user)) {
-//     return;
-//   }
+  //   await this.awardSharedChallengeBadge(user.uid);
+  // }
 
-//   await this.awardSharedChallengeBadge(user.uid);
-// }
+  // /**
+  //  * Award the shared challenge badge and update user information.
+  //  * @param userId - The unique identifier of the user.
+  //  * @returns Updated user data
+  //  */
+  // async awardSharedChallengeBadge(userId: string): Promise<User> {
+  //   const supabase = this.createSupabaseClient();
 
-// /**
-//  * Award the shared challenge badge and update user information.
-//  * @param userId - The unique identifier of the user.
-//  * @returns Updated user data
-//  */
-// async awardSharedChallengeBadge(userId: string): Promise<User> {
-//   const supabase = this.createSupabaseClient();
+  //   // Call the remote procedure to award the shared challenge badge
+  //   const {
+  //     data: dbUser,
+  //     error,
+  //     status,
+  //   } = await supabase.rpc(
+  //     this.REMOTE_PROCEDURES.AWARD_SHARED_CHALLENGE_BADGE,
+  //     {
+  //       user_id: userId,
+  //     },
+  //   );
 
-//   // Call the remote procedure to award the shared challenge badge
-//   const {
-//     data: dbUser,
-//     error,
-//     status,
-//   } = await supabase.rpc(
-//     this.REMOTE_PROCEDURES.AWARD_SHARED_CHALLENGE_BADGE,
-//     {
-//       user_id: userId,
-//     },
-//   );
+  //   // Handle errors and missing user data
+  //   if (error) {
+  //     throw new ServerError(error.message, status);
+  //   }
 
-//   // Handle errors and missing user data
-//   if (error) {
-//     throw new ServerError(error.message, status);
-//   }
+  //   if (!dbUser) {
+  //     throw new ServerError('User was null after update.', 500);
+  //   }
 
-//   if (!dbUser) {
-//     throw new ServerError('User was null after update.', 500);
-//   }
+  //   // Parse and return the updated user record
+  //   try {
+  //     const user = this.userRecordParser.parseUserRecord(dbUser);
+  //     return user;
+  //   } catch (e) {
+  //     throw new ServerError('Failed to parse user data.', 400);
+  //   }
+  // },
 
-//   // Parse and return the updated user record
-//   try {
-//     const user = this.userRecordParser.parseUserRecord(dbUser);
-//     return user;
-//   } catch (e) {
-//     throw new ServerError('Failed to parse user data.', 400);
-//   }
-// },
-
-
-  
   [
     SERVER_SERVICE_KEYS.createSupabaseServiceRoleClient,
     SERVER_SERVICE_KEYS.UserRecordParser,
   ],
 );
 
-
-// create a share aapi 
-// navigator.share is truthy 
-// and call the canShare the function 
-// if both of those are true then we need to share the api 
+// create a share aapi
+// navigator.share is truthy
+// and call the canShare the function
+// if both of those are true then we need to share the api

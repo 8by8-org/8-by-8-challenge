@@ -26,8 +26,6 @@ export default isSignedIn(function Progress() {
   const [openModal, setOpenModal] = useState(false);
   const toggleInvite = useRef(null);
 
-  
- 
   return (
     <PageContainer>
       <article className={styles.progress_page}>

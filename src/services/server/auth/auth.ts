@@ -18,4 +18,3 @@ export interface Auth {
   loadSessionUser(): Promise<User | null>;
   signOut(): Promise<void>;
 }
-

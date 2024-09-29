@@ -3,14 +3,12 @@ import type { User } from '@/model/types/user';
 import styles from './styles.module.scss';
 import { useRouter } from 'next/navigation';
 
-
 interface ChallengeButtonProps {
   user: User | null;
   daysLeft: number;
   toggleInvite: React.RefObject<() => null>;
   restartChallenge: () => void;
   setOpenModal: Dispatch<SetStateAction<boolean>>;
-
 }
 
 /**
@@ -45,15 +43,13 @@ export function ChallengeButton({
   const [button, setButton] = useState<JSX.Element | null>(
     <button
       className={styles.gradient}
-      onClick={() => toggleInvite.current?.()
-      }
+      onClick={() => toggleInvite.current?.()}
     >
       <span>Invite friends</span>
     </button>,
   );
 
-  const router = useRouter(); 
-
+  const router = useRouter();
 
   useEffect(() => {
     let challengeFinished = user?.completedChallenge;
@@ -61,24 +57,20 @@ export function ChallengeButton({
       setButton(
         <button
           className={styles.inverted}
-          onClick={() => toggleInvite.current?.()
-          }
+          onClick={() => toggleInvite.current?.()}
         >
           <span>Share</span>
         </button>,
       );
     } else if (!challengeFinished && daysLeft > 0) {
-            setButton(
-              <button
-                className={styles.gradient}
-                onClick={() => router.push('/share')
-                }
-        
-              >
-            <span>Invite friends</span>   
-              </button>,
-            );
-  
+      setButton(
+        <button
+          className={styles.gradient}
+          onClick={() => router.push('/share')}
+        >
+          <span>Invite friends</span>
+        </button>,
+      );
     } else if (!challengeFinished && daysLeft == 0) {
       setButton(
         <button
@@ -87,7 +79,7 @@ export function ChallengeButton({
             restartChallenge();
           }}
         >
-        <span>Restart Challenge</span> 
+          <span>Restart Challenge</span>
         </button>,
       );
       setOpenModal(true);

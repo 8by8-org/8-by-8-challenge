@@ -17,7 +17,6 @@ export default isSignedIn(function Progress() {
   return (
     <PageContainer>
       <h1>This is the preview page</h1>
-      
     </PageContainer>
   );
 });

@@ -1,63 +1,121 @@
-import '@testing-library/jest-dom'
-import { render, screen, cleanup } from '@testing-library/react'
+import '@testing-library/jest-dom';
+import { render, screen, cleanup, waitFor } from '@testing-library/react';
 import SharePage from '@/app/share/share';
-import { UserContext, type UserContextType  } from '@/contexts/user-context';
-import { Builder } from 'builder-pattern'; 
+import { UserContext, type UserContextType } from '@/contexts/user-context';
+import { Builder } from 'builder-pattern';
 import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 import type { User } from '@/model/types/user';
-import "@testing-library/jest-dom" 
+import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import { SearchParams  } from '@/constants/search-params';
+import { SearchParams } from '@/constants/search-params';
 import { createId } from '@paralleldrive/cuid2';
-
+import { AlertsContextProvider } from '@/contexts/alerts-context';
 
 jest.mock('next/navigation', () => require('next-router-mock'));
 
-
 describe('SharePage', () => {
-  mockDialogMethods()
+  mockDialogMethods();
   afterEach(cleanup);
   it('renders a heading', () => {
-    const user = Builder<User>().inviteCode("").build();
-    const userContextValue = Builder<UserContextType>().user(user).shareChallenge(jest.fn()).build();
+    const user = Builder<User>().inviteCode('').build();
+    const userContextValue = Builder<UserContextType>()
+      .user(user)
+      .shareChallenge(jest.fn())
+      .build();
     render(
-      <UserContext.Provider value={userContextValue}>    <SharePage shareLink="test" /> </UserContext.Provider>
-    )
-    expect(screen.getAllByText(/invite friends/i).length).toBeGreaterThan(0)
-  })
+      <AlertsContextProvider>
+         <UserContext.Provider value={userContextValue}>
+        {' '}
+        <SharePage shareLink="test" />{' '}
+      </UserContext.Provider>,
+      </AlertsContextProvider>
+  
+    );
+    expect(screen.getAllByText(/invite friends/i).length).toBeGreaterThan(0);
+  });
 
   it('should copy the link if the user clicks on the copylink button', async () => {
     const sharelink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
-    const inviteCode = createId()
+    const inviteCode = createId();
     const user = userEvent.setup();
-    const userContextValue = Builder<UserContextType>().user(Builder<User>().inviteCode(inviteCode).build()).shareChallenge(jest.fn()).build();
+    const userContextValue = Builder<UserContextType>()
+      .user(Builder<User>().inviteCode(inviteCode).build())
+      .shareChallenge(jest.fn())
+      .build();
     render(
-      <UserContext.Provider value={userContextValue}>    <SharePage shareLink={sharelink} /> </UserContext.Provider>
-    )
-    const copyLinkbutton = screen.getByAltText("copy-link")
-    await user.click(copyLinkbutton); 
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+        {' '}
+        <SharePage shareLink={sharelink} />{' '}
+      </UserContext.Provider>,
+      </AlertsContextProvider>
+   
+    );
+    const copyLinkbutton = screen.getByAltText('copy-link');
+    await user.click(copyLinkbutton);
     const copiedLink = await navigator.clipboard.readText();
-    console.log(copiedLink)
-    expect(copiedLink).toBe(sharelink +  inviteCode)
-  })
+    console.log(copiedLink);
+    expect(copiedLink).toBe(sharelink + inviteCode);
+  });
 
-  // when the user clicks on the share button the user is able to share the link with other players 
-  it('should share the link if the user clicks on the copyLink button', async () => {
+  it('displays an error when the shareChallenge function is not called', async () => {
     const sharelink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
-    const inviteCode = createId()
+    const inviteCode = createId();
     const user = userEvent.setup();
-    const userContextValue = Builder<UserContextType>().user(Builder<User>().inviteCode(inviteCode).build()).shareChallenge(jest.fn()).build();
-    render(
-      <UserContext.Provider value={userContextValue}>    <SharePage shareLink={sharelink} /> </UserContext.Provider>
-    )
-    const shareLinkbutton = screen.getByAltText("social-share-icon")
-    await user.click(shareLinkbutton); 
-    console.log(shareLinkbutton)
-    expect(shareLinkbutton).toBe(sharelink + inviteCode)
+    const userContextValue = Builder<UserContextType>()
+      .user(Builder<User>().inviteCode(inviteCode).build())
+      .shareChallenge(() => { 
+        throw new Error()
+      })
+      .build();
     
-  })
-})
+    render(
+      <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          {' '}
+          <SharePage shareLink={sharelink} />{' '}
+        </UserContext.Provider>
+      </AlertsContextProvider>,
+    );
+    const copyLinkbutton = screen.getByAltText('copy-link');
+    await user.click(copyLinkbutton);
+    waitFor(() => {
+      expect(screen.getByRole('alert').textContent).toBe('Failed to copy link or share challenge');
+    })
+  });
+ 
+  // should check if the handleShare button is rendered
+  it('should render the share button if the Share API is available in the browser', () => { 
+    // console.log('navigator: ' + typeof navigator); 
+    Object.defineProperty(navigator, 'share', {
+      value: jest.fn(),
+      writable: true,
+    });
 
+    jest.spyOn(navigator, 'share').mockImplementation(jest.fn())
+    console.log('navigator: ' + typeof navigator.canShare);
+    
+    // const sharelink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
+    // const inviteCode = createId();
+    
+    // const userContextValue = Builder<UserContextType>()
+    //   .user(Builder<User>().inviteCode(inviteCode).build())
+    //   .shareChallenge(jest.fn())
+    //   .build();
+  
+    // render(
+    //   <AlertsContextProvider>
+    //     <UserContext.Provider value={userContextValue}>
+    //       <SharePage shareLink={sharelink} />
+    //     </UserContext.Provider>
+    //   </AlertsContextProvider>
+    // );
+  
+    // // Check if the share button is rendered automatically
+    // const shareButton = screen.getByTestId('share-button');
+  
+    // expect(shareButton).toBeInTheDocument();
 
-
-
+  });
+  
+});

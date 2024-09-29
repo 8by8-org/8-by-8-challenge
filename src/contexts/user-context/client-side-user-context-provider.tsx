@@ -16,7 +16,6 @@ import type { User } from '@/model/types/user';
 import type { ChallengerData } from '@/model/types/challenger-data';
 import { RealtimeChannel } from '@supabase/supabase-js';
 
-
 /**
  * Props that can be passed from a server component into a
  * {@link ClientSideUserContextProvider} in order to pre-render child components
@@ -27,7 +26,6 @@ interface ClientSideUserContextProviderProps {
   emailForSignIn: string;
   invitedBy: ChallengerData | null;
   children?: ReactNode;
-
 }
 
 /**
@@ -120,7 +118,6 @@ export function ClientSideUserContextProvider(
 
     setEmailForSignIn(params.email);
     router.push('/signin-with-otp');
-    
   }
 
   async function sendOTPToEmail(params: SendOTPToEmailParams) {
@@ -200,18 +197,16 @@ export function ClientSideUserContextProvider(
     throw new Error('not implemented.');
   }
 
-
-// share Challenge Function to call the share-challenge API 
-  async function shareChallenge() { 
-      const response = await fetch( '/api/share-challenge', {
-        method: 'PUT',
-      }); 
+  // share Challenge Function to call the share-challenge API
+  async function shareChallenge() {
+    const response = await fetch('/api/share-challenge', {
+      method: 'PUT',
+    });
     if (!response.ok) {
-  throw new Error('Put request is not successfull.')
-   }
-} 
-  
-  
+      throw new Error('Put request is not successfull.');
+    }
+  }
+
   /* istanbul ignore next */
   async function registerToVote(
     formData: ValueOf<InstanceType<typeof VoterRegistrationForm>>,
@@ -237,7 +232,7 @@ export function ClientSideUserContextProvider(
         signOut,
         restartChallenge,
         shareChallenge,
-    
+
         registerToVote,
       }}
     >
