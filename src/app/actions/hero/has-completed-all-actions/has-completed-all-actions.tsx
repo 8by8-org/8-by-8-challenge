@@ -3,7 +3,6 @@ import React from 'react';
 import Image from 'next/image';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
-import { lastContributedToCurrentInviter } from '../../utils/last-contributed-to-current-inviter';
 import { AVATARS } from '@/constants/avatars';
 import styles from './styles.module.scss';
 
