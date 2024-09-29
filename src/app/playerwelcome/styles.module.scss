@@ -1,7 +1,27 @@
-#welcomeColumn {
+@use '../../styles/partials';
+
+.maincontent {
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 10%;
   display: flex;
+  flex-direction: column;
 }
 
-#explanation {
-  padding: 25%, 25%;
+.centeredtext {
+  text-align: center;
+}
+
+.signin_link {
+  margin: 3%;
+  text-align: center;
+}
+
+.person_with_sign {
+}
+
+.Button {
+  margin: 5% 5% 1% 5%;
+  width: 75%;
+  height: 10%;
 }
