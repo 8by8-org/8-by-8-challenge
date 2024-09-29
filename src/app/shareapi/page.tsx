@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import socialShareIcon from '../../../public/static/images/pages/share/share-icon.svg';
 import Image from 'next/image'; 
+import styles from './styles.module.scss'; 
 
 interface ShareProps {
   fullLink: string;
@@ -46,9 +47,9 @@ const ShareAPI: React.FC<ShareProps> = ({ fullLink, onShareSuccess }) => {
   return (
     <div>
       {isNavigatorShareAvailable ? (
-        <div onClick={handleShare}>
+        <button className={styles.button} onClick={handleShare}>
           <Image src={socialShareIcon} alt="social-share-icon" />
-        </div>
+        </button>
       ) : (
         <p>Web Share API is not supported in your browser.</p>
       )}

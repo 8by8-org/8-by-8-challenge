@@ -40,6 +40,22 @@ describe('SharePage', () => {
     console.log(copiedLink)
     expect(copiedLink).toBe(sharelink +  inviteCode)
   })
+
+  // when the user clicks on the share button the user is able to share the link with other players 
+  it('should share the link if the user clicks on the copyLink button', async () => {
+    const sharelink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
+    const inviteCode = createId()
+    const user = userEvent.setup();
+    const userContextValue = Builder<UserContextType>().user(Builder<User>().inviteCode(inviteCode).build()).shareChallenge(jest.fn()).build();
+    render(
+      <UserContext.Provider value={userContextValue}>    <SharePage shareLink={sharelink} /> </UserContext.Provider>
+    )
+    const shareLinkbutton = screen.getByAltText("social-share-icon")
+    await user.click(shareLinkbutton); 
+    console.log(shareLinkbutton)
+    expect(shareLinkbutton).toBe(sharelink + inviteCode)
+    
+  })
 })
 
 

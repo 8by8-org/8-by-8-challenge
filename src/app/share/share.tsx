@@ -14,7 +14,7 @@ import calendarImage from '../../../public/static/images/pages/share/calendar-im
 import { Modal } from '../../components/utils/modal/modal';
 import Image from 'next/image';
 import socialMediaPostImage0 from '../../../public/static/images/pages/share/social-media-post-image-0.png'; 
-import socialMediaPostImage1 from '../../../public/static/images/pages/share/social-media-post-image-1.png'; 
+// import socialMediaPostImage1 from '../../../public/static/images/pages/share/social-media-post-image-1.png'; 
 import socialMediaPostImage2 from '../../../public/static/images/pages/share/social-media-post-image-2.png'; 
 interface ShareProps {
   shareLink: string;
@@ -69,13 +69,13 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
         Invite friends to support your challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge. If you are curious, preview what they will see.
       </p>
       <div className={styles.ActionBox}> 
-        <button onClick={copyLink}>
+        <button className={styles.button} onClick={copyLink}>
         <Image src={CopyLink} alt="copy-link" />
         </button>
         <ShareAPI fullLink={fullLink} onShareSuccess={handleSharedLink} />
-        <div onClick={openModal}>
+        <button className={styles.button} onClick={openModal}>
           <Image src={imagesIcon} alt="images-icon" />
-        </div>
+        </button>
         <div>
         <Modal
         ariaLabel=""
@@ -83,14 +83,14 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
         isOpen={isModalOpen}
             closeModal={closeModal}
             
-          ><Image src={socialMediaPostImage0} alt="images-icon" priority/><Image src={socialMediaPostImage1} alt="images-icon" priority/><Image src={socialMediaPostImage2} alt="images-icon" priority/></Modal  >
+          ><Image src={socialMediaPostImage0} alt="images-icon" priority/><Image src={""} alt="images-icon" priority/><Image src={socialMediaPostImage2} alt="images-icon" priority/></Modal  >
         </div>
       </div>
     </PageContainer>
   );
 });
 
-// page will become the server componenet 
+// page will become the server component 
 // there is will be a new client component for share 
 
 
