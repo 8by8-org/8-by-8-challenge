@@ -13,6 +13,9 @@ import { DateTime } from 'luxon';
 
 const meta: Meta<typeof Header> = {
   component: Header,
+  parameters: {
+    layout: 'fullscreen',
+  },
 };
 
 export default meta;
