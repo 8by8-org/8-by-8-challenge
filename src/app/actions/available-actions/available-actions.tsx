@@ -1,15 +1,13 @@
 'use client';
 import { useState } from 'react';
-import Link from 'next/link';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
 import { AlertsContext } from '@/contexts/alerts-context';
 import { LinkButton } from '@/components/utils/link-button';
 import { Button } from '@/components/utils/button';
 import { hasCompletedAllActions } from '../utils/has-completed-all-actions';
-import { Modal } from '@/components/utils/modal';
+import { TakeTheChallengeModal } from '@/components/take-the-challenge-modal';
 import { UserType } from '@/model/enums/user-type';
-import styles from './styles.module.scss';
 
 export function AvailableActions() {
   const { user, takeTheChallenge } = useContextSafely(
@@ -89,39 +87,12 @@ export function AvailableActions() {
             Take the Challenge
           </Button>
         )}
-        <Modal
-          ariaLabel={
-            modalToShow === 'success' ? 'Challenge started' : (
-              'Starting your challenge'
-            )
-          }
-          theme="dark"
+        <TakeTheChallengeModal
           isOpen={modalToShow !== 'none'}
+          succeeded={modalToShow === 'success'}
           closeModal={
             modalToShow === 'success' ? () => setModalToShow('none') : () => {}
           }
-        >
-          {modalToShow === 'success' ?
-            <>
-              <h3 className={styles.modal_title}>Success!</h3>
-              <p>You&apos;ve become an 8by8 Challenger!</p>
-              <br />
-              <p>
-                See your{' '}
-                <Link href="/progress" className="link--teal">
-                  progress
-                </Link>
-              </p>
-              <Button
-                size="sm"
-                type="button"
-                className="mt_md"
-                onClick={() => setModalToShow('none')}
-              >
-                Ok, got it!
-              </Button>
-            </>
-          : <p>Starting your challenge...</p>}
-        </Modal>
+        />
       </>;
 }
