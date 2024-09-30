@@ -4,17 +4,32 @@
 @use '../../variables/letter-spacings';
 @use '../../variables/line-heights';
 
-.h1, .h2, .h3, .b1, .b2, .b3, .b4, .b5, .b6 {
+.h1,
+.h2,
+.h3,
+.b1,
+.b2,
+.b3,
+.b4,
+.b5,
+.b6 {
   margin: 0;
 }
 
-.h1, .h2, .h3 {
+.h1,
+.h2,
+.h3 {
   font-family: font-families.$bebas-neue;
   font-weight: font-weights.$regular;
   letter-spacing: letter-spacings.$large;
 }
 
-.b1, .b2, .b3, .b4, .b5, .b6 {
+.b1,
+.b2,
+.b3,
+.b4,
+.b5,
+.b6 {
   font-family: font-families.$lato;
   letter-spacing: letter-spacings.$regular;
 }
