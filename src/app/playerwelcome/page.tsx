@@ -52,7 +52,7 @@ export default function PlayerWelcome() {
 
       <div className={styles.explanation}>
         <h1 className={styles.title}>
-          <span className="underline">Here's how it works</span>
+          <span className="underline">Here&apos;s how it works</span>
         </h1>
         <div>
           <h3>1. Choose an action to take</h3>

@@ -28,7 +28,7 @@ export const CompletedReminders = isSignedIn(function CompletedReminders({
         'error',
       );
     }
-  }, [hasError]);
+  }, [hasError, showAlert]);
 
   const onClick = () => {
     if (user?.type === UserType.Challenger) {

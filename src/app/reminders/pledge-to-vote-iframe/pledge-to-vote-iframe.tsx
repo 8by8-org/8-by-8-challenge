@@ -72,7 +72,7 @@ export function PledgeToVoteIFrame() {
     observer.observe(iFrameRef.current!.contentWindow!.document.body);
 
     return () => observer.disconnect();
-  }, [initialLoadCompleted]);
+  }, [initialLoadCompleted, gotElectionReminders]);
 
   return (
     <>
