@@ -1,1 +1,1 @@
-export { HasCompletedAllActios } from './has-completed-all-actions';
+export { HasCompletedAllActions } from './has-completed-all-actions';
