@@ -81,8 +81,8 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
           <Image src={CopyLink} alt="copy-link" />
         </button>
         <ShareButton  fullLink={fullLink} onShareSuccess={handleSharedLink} />
-        <button className={styles.button} onClick={openModal}>
-          <Image src={imagesIcon} alt="images-icon" />
+        <button className={styles.imagesbutton} onClick={openModal}>
+          <Image src={imagesIcon} alt="images" />
         </button>
         <div>
           <Modal

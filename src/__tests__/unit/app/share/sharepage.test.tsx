@@ -95,6 +95,7 @@ describe('SharePage', () => {
     jest.spyOn(navigator, 'share').mockImplementation(jest.fn())
     console.log('navigator: ' + typeof navigator.canShare);
     
+    
     // const sharelink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
     // const inviteCode = createId();
     
