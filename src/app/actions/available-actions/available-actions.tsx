@@ -6,7 +6,7 @@ import { AlertsContext } from '@/contexts/alerts-context';
 import { LinkButton } from '@/components/utils/link-button';
 import { Button } from '@/components/utils/button';
 import { hasCompletedAllActions } from '../utils/has-completed-all-actions';
-import { TakeTheChallengeModal } from '@/components/take-the-challenge-modal';
+import { TakeTheChallengeModal } from '@/app/actions/take-the-challenge-modal';
 import { UserType } from '@/model/enums/user-type';
 
 export function AvailableActions() {

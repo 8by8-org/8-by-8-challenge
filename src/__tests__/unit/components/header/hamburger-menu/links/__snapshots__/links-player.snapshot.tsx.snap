@@ -2,13 +2,22 @@
 
 exports[`Links--Player renders player links unchanged 1`] = `
 <div>
+  <div
+    class="alert_container"
+  >
+    <div
+      class="hidden"
+      role="alert"
+    />
+  </div>
   <li>
-    <a
-      class="take_the_challenge_btn"
-      href="/challengerwelcome"
+    <button
+      class="gradient sm take_the_challenge_btn"
     >
-      Take The Challenge
-    </a>
+      <span>
+        Take The Challenge
+      </span>
+    </button>
   </li>
   <li>
     <a

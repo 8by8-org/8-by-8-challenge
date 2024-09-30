@@ -107,6 +107,17 @@ export const PlayerIsSignedIn: Story = {
               {
                 user,
                 signOut: () => setUser(null),
+                takeTheChallenge: () => {
+                  return new Promise(resolve => {
+                    setTimeout(() => {
+                      setUser({
+                        ...user!,
+                        type: UserType.Hybrid,
+                      });
+                      resolve();
+                    }, 3000);
+                  });
+                },
               } as UserContextType
             }
           >

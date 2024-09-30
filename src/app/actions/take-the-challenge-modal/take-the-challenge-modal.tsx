@@ -1,6 +1,6 @@
-import { Modal } from '../utils/modal';
+import { Modal } from '../../../components/utils/modal';
 import Link from 'next/link';
-import { Button } from '../utils/button';
+import { Button } from '../../../components/utils/button';
 import styles from './styles.module.scss';
 
 interface TakeTheChallengeModalProps {

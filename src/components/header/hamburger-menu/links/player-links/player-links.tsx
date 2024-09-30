@@ -6,40 +6,39 @@ import { AlertsContext } from '@/contexts/alerts-context';
 import { HamburgerLink } from '../hamburger-link';
 import { SignoutBtn } from '../signout-btn';
 import { Button } from '@/components/utils/button';
-import { TakeTheChallengeModal } from '@/components/take-the-challenge-modal';
+import { LoadingWheel } from '@/components/utils/loading-wheel';
 import styles from './styles.module.scss';
 
 export function PlayerLinks() {
-  const [modalToShow, setModalToShow] = useState<
-    'none' | 'loading' | 'success'
-  >('none');
   const { takeTheChallenge } = useContextSafely(UserContext, 'PlayerLinks');
   const { showAlert } = useContextSafely(AlertsContext, 'PlayerLinks');
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <>
-      <Button
-        size="sm"
-        className={styles.take_the_challenge_btn}
-        onClick={async () => {
-          if (modalToShow !== 'none') return;
+      <li>
+        <Button
+          size="sm"
+          className={styles.take_the_challenge_btn}
+          onClick={async () => {
+            if (isLoading) return;
 
-          setModalToShow('loading');
+            setIsLoading(true);
 
-          try {
-            await takeTheChallenge();
-            setModalToShow('success');
-          } catch (e) {
-            setModalToShow('none');
-            showAlert(
-              'Oops! Something went wrong. Please try again later.',
-              'error',
-            );
-          }
-        }}
-      >
-        Take The Challenge
-      </Button>
+            try {
+              await takeTheChallenge();
+            } catch (e) {
+              setIsLoading(false);
+              showAlert(
+                'Oops! Something went wrong. Please try again later.',
+                'error',
+              );
+            }
+          }}
+        >
+          Take The Challenge
+        </Button>
+      </li>
       <HamburgerLink href="/actions" className={styles.link_lg_top}>
         Take Action
       </HamburgerLink>
@@ -58,14 +57,8 @@ export function PlayerLinks() {
       <HamburgerLink href="/settings" className={styles.link_sm}>
         Settings
       </HamburgerLink>
-      <SignoutBtn />
-      <TakeTheChallengeModal
-        isOpen={modalToShow !== 'none'}
-        succeeded={modalToShow === 'success'}
-        closeModal={
-          modalToShow === 'success' ? () => setModalToShow('none') : () => {}
-        }
-      />
+      <SignoutBtn disabled={isLoading} />
+      {isLoading && <LoadingWheel />}
     </>
   );
 }
