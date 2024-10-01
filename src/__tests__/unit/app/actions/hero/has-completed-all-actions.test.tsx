@@ -1,4 +1,4 @@
-import { HasCompletedAllActions } from '@/app/actions/hero/has-completed-all-actions/has-completed-all-actions';
+import { HasCompletedAllActions } from '@/app/actions/hero/has-completed-all-actions';
 import { render, screen, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { UserContext, type UserContextType } from '@/contexts/user-context';
