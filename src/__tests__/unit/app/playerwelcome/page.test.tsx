@@ -27,7 +27,7 @@ describe('PlayerWelcome', () => {
 
   afterEach(cleanup);
 
-  it("renders text including the challenger's name when invitedBy is not null.", () => {
+  it("renders text including the challenger's name.", () => {
     const challengerName = 'John Smith';
 
     render(
@@ -44,6 +44,7 @@ describe('PlayerWelcome', () => {
         <Page />
       </UserContext.Provider>,
     );
+
     expect(
       screen.queryByText(
         `Help ${challengerName} win their 8by8 Challenge by registering to vote or taking other actions to #stopasianhate!`,
@@ -51,25 +52,17 @@ describe('PlayerWelcome', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders fallback text when invitedBy is null.', () => {
-    render(
-      <UserContext.Provider
-        value={Builder<UserContextType>().user(null).invitedBy(null).build()}
-      >
-        <Page />
-      </UserContext.Provider>,
-    );
-    expect(
-      screen.queryByText(
-        'Help support the AAPI community by registering to vote or taking other actions to #stopasianhate!',
-      ),
-    ).toBeInTheDocument();
-  });
-
   it('calls router.push(/signup) when the user presses the Get Started buttons.', async () => {
     render(
       <UserContext.Provider
-        value={Builder<UserContextType>().user(null).invitedBy(null).build()}
+        value={Builder<UserContextType>()
+          .user(null)
+          .invitedBy({
+            challengerName: 'John Smith',
+            challengerAvatar: '2',
+            challengerInviteCode: '',
+          })
+          .build()}
       >
         <Page />
       </UserContext.Provider>,
