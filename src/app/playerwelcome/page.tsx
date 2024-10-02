@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { UserContext } from '@/contexts/user-context';
 import { useContextSafely } from '@/hooks/use-context-safely';
-import styles from './styles.module.scss';
 import { Button } from '@/components/utils/button';
+import styles from './styles.module.scss';
 
 export default function PlayerWelcome() {
   const { invitedBy } = useContextSafely(UserContext, 'UserContext');
@@ -72,7 +72,7 @@ export default function PlayerWelcome() {
 
           <h3>2. Your friend will earn a badge</h3>
           <p className={styles.b2_extend}>
-            Any of the 3 actions will helf your friend earn a badge, and get
+            Any of the 3 actions will help your friend earn a badge, and get
             closer to winning the challenge.
           </p>
           <div className={styles.images}>
@@ -87,8 +87,7 @@ export default function PlayerWelcome() {
           <h3>3. Come back and take more actions</h3>
           <p className={styles.b2_extend}>
             Whether it is to help the same friend or a different one, the more
-            action you take, the better! Note that you can only earn one badge
-            per friend.
+            action you take, the better!
           </p>
           <div className={styles.image_last}>
             <Image
