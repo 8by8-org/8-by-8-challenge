@@ -153,12 +153,12 @@ exports[`ChallengerWelcome renders challenger-welcome page unchanged 1`] = `
         <h3
           class="step_header"
         >
-          4. Win the challenge, get a reward!
+          4. Win the challenge!
         </h3>
         <p
           class="step_text"
         >
-          When all 8 of your friends took action in your challenge within 8 days, and you win! Then select and enjoy a reward from one of our amazing partners.
+          When 8 of your friends have taken action towards your challenge in 8 days, you win!
         </p>
         <img
           alt="earn 8 badges in 8 days"

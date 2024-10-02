@@ -5,6 +5,8 @@ $base-margin: 15px;
 .content {
   padding-left: $spacing-vertical-gutter;
   padding-right: $spacing-vertical-gutter;
+  padding-top: $spacing-lg;
+  padding-bottom: $spacing-lg;
 
   header {
     margin-bottom: 2 * $base-margin;

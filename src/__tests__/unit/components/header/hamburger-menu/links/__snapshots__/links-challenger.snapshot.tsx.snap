@@ -20,34 +20,18 @@ exports[`Links--Challenger renders challenger links unchanged 1`] = `
   </li>
   <li>
     <a
-      class="link_lg"
-      href="/rewards"
-    >
-      Rewards
-    </a>
-  </li>
-  <li>
-    <a
-      class="link_lg"
-      href="/faq"
-    >
-      FAQS
-    </a>
-  </li>
-  <li>
-    <a
       class="link_sm_top"
-      href="/privacy-policy"
+      href="/tos"
     >
-      Privacy Policy
+      Terms of Service
     </a>
   </li>
   <li>
     <a
       class="link_sm"
-      href="/settings"
+      href="/privacy"
     >
-      Settings
+      Privacy Policy
     </a>
   </li>
   <li>

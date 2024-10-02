@@ -45,17 +45,11 @@ export function PlayerLinks() {
       <HamburgerLink href="/why8by8" className={styles.link_lg}>
         Why 8by8
       </HamburgerLink>
-      <HamburgerLink href="/rewards" className={styles.link_lg}>
-        Rewards
+      <HamburgerLink href="/tos" className={styles.link_sm_top}>
+        Terms of Service
       </HamburgerLink>
-      <HamburgerLink href="/faq" className={styles.link_lg}>
-        FAQS
-      </HamburgerLink>
-      <HamburgerLink href="/privacy-policy" className={styles.link_sm_top}>
+      <HamburgerLink href="/privacy" className={styles.link_sm}>
         Privacy Policy
-      </HamburgerLink>
-      <HamburgerLink href="/settings" className={styles.link_sm}>
-        Settings
       </HamburgerLink>
       <SignoutBtn disabled={isLoading} />
       {isLoading && <LoadingWheel />}

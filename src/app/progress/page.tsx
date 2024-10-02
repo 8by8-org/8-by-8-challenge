@@ -146,17 +146,6 @@ export default isSignedIn(function Progress() {
             </div>
           </>
         </Modal>
-
-        {/* TODO - Invite
-              <Invite
-                    toggleInvite={toggleInvite}
-                    isShare={false}
-                    challengeWon={challengeFinished}
-                />
-            </article>
-            ) : (
-                <LoadingWheel overlay={false} />
-            );*/}
       </article>
     </PageContainer>
   );
