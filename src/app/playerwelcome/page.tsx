@@ -1,6 +1,4 @@
 'use client';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isSignedOut } from '@/components/guards/is-signed-out';
@@ -8,17 +6,12 @@ import { wasInvited } from '@/components/guards/was-invited';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
 import { PageContainer } from '@/components/utils/page-container';
-import { Button } from '@/components/utils/button';
+import { LinkButton } from '@/components/utils/link-button';
 import styles from './styles.module.scss';
 
 export default isSignedOut(
   wasInvited(function PlayerWelcome() {
     const { invitedBy } = useContextSafely(UserContext, 'UserContext');
-
-    const router = useRouter();
-    useEffect(() => {
-      router.prefetch('/signup');
-    }, [router]);
 
     return (
       <PageContainer>
@@ -32,15 +25,9 @@ export default isSignedOut(
             Help {invitedBy!.challengerName} win their 8by8 Challenge by
             registering to vote or taking other actions to #stopasianhate!
           </p>
-          <Button
-            size="lg"
-            wide
-            onClick={() => {
-              router.push('/signup');
-            }}
-          >
+          <LinkButton size="lg" wide href="/signup">
             Get started
-          </Button>
+          </LinkButton>
           <p className={styles.signin_link}>
             Already have an account?{' '}
             <Link href="/signin" className="link--teal">
@@ -101,15 +88,9 @@ export default isSignedOut(
             </div>
 
             <div>
-              <Button
-                size="lg"
-                wide
-                onClick={() => {
-                  router.push('/signup');
-                }}
-              >
+              <LinkButton size="lg" wide href="/signup">
                 Get started
-              </Button>
+              </LinkButton>
             </div>
             <p className={styles.signin_link}>
               Already have an account?{' '}
