@@ -60,7 +60,7 @@ export default isSignedOut(
 
             <h3>2. Your friend will earn a badge</h3>
             <p className={styles.b2_extend}>
-              Any of the 3 actions will helf your friend earn a badge, and get
+              Any of the 3 actions will help your friend earn a badge, and get
               closer to winning the challenge.
             </p>
             <div className={styles.images}>
