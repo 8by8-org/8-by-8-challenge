@@ -23,34 +23,20 @@ margin-right:30px;
     cursor: pointer;
 }
 
-.copyButton{
-    margin-top: 30px;
-    margin-left:200px;
-    border-radius: 25px;
-}
-
-
-.socialbadges{
-    margin-top: 30px;
-}
 
 .backArrowIcon{
     cursor: pointer;
 }
 
-.ActionBox{
+.actionbox{
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     cursor: pointer;
     margin-top: 32px;
     margin-left: 30px;
     margin-right: 30px;
 }
 
-.calendar{
-    display: flex;
-    justify-content: center;
-}
 
 .button{
     background: transparent;
@@ -61,8 +47,25 @@ margin-right:30px;
     border: none;
 }
 
-.imagesbutton{
-    margin-bottom: 32px; 
-    background: transparent;
-    border: none;
+
+.copyButton{
+    @extend .button;
+    margin-right:40px;
 }
+
+
+
+.calendar{
+    display: flex;
+    justify-content: center;
+}
+
+
+
+// .imagesbutton{
+//     margin-bottom: 32px; 
+//     background: transparent;
+//     border: none;
+// }
+
+

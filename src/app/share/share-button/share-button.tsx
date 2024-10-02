@@ -1,60 +1,63 @@
+'use client'
 import { useState, useEffect } from 'react';
 import socialShareIcon from '../../../../public/static/images/pages/share/share-icon.svg';
 import Image from 'next/image';
 import styles from './styles.module.scss';
+import { UserContext } from '@/contexts/user-context';
+import { useContextSafely } from '@/hooks/use-context-safely';
+import { AlertsContext } from '@/contexts/alerts-context';
 
 interface ShareProps {
   fullLink: string;
-  onShareSuccess: () => void;
 }
 
 export const ShareButton: React.FC<ShareProps> = ({
   fullLink,
-  onShareSuccess,
 }) => {
   const [isNavigatorShareAvailable, setIsNavigatorShareAvailable] =
     useState(false);
-  const [shareResult, setShareResult] = useState('');
-
+  const { user, shareChallenge } = useContextSafely(UserContext, 'UserContext');
+  const { showAlert } = useContextSafely(AlertsContext, 'Share');
+  
   useEffect(() => {
     // eslint-disable-next-line
-    if (typeof window !== 'undefined' && navigator.share) {
-      const Link = { url: fullLink };
-      if (navigator.canShare && navigator.canShare(Link)) {
+    if (typeof window !== 'undefined' && navigator.share) {  
+      if (navigator.canShare && navigator.canShare({ url: fullLink })) {
         setIsNavigatorShareAvailable(true);
       }
     }
   }, [fullLink]);
 
   const handleShare = async () => {
-    const shareData = {
-      url: fullLink,
-    };
-
     try {
-      await navigator.share(shareData);
-      setShareResult('Link shared successfully');
+ 
+      await shareChallenge();
+    } catch (error) {
+      showAlert('Failed to share challenge', 'error');
+    }
+  
+    try {
+      await navigator.share({ url: fullLink });
 
-      if (onShareSuccess) {
-        onShareSuccess();
-      }
+
     } catch (err) {
-      setShareResult(`Error: ${err}`);
+      (`Error: ${err}`);
     }
   };
 
-  if (!isNavigatorShareAvailable) {
-    return null;
+
+  if (!navigator.canShare) {
+    return null; 
   }
 
   return (
-    <div>
-      {isNavigatorShareAvailable ?
-        <button data-test-id="share-button" className={styles.button} onClick={handleShare}>
+  
+      isNavigatorShareAvailable &&
+        <button data-testid="share-button" className={styles.button} onClick={handleShare}>
           <Image src={socialShareIcon} alt="social-share-icon" />
         </button>
-      : <p>Web Share API is not supported in your browser.</p>}
-      <p className="result">{shareResult}</p>
-    </div>
+      
   );
 };
+
+

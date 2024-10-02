@@ -24,10 +24,9 @@ interface ShareProps {
 
 export default isSignedIn(function Progress({ shareLink }: ShareProps) {
   const { user, shareChallenge } = useContextSafely(UserContext, 'UserContext');
-  const [copied, setCopied] = useState(false);
-  const [apiProgress, setApiProgress] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { showAlert } = useContextSafely(AlertsContext, 'Share');
+  
 
   const router = useRouter();
   const fullLink = shareLink + (user?.inviteCode ?? '');
@@ -35,8 +34,7 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
   const copyLink = async () => {
     try {
       navigator.clipboard.writeText(fullLink);
-      setCopied(true);
-      setApiProgress(true);
+    
 
       await shareChallenge();
     } catch (error) {
@@ -44,14 +42,6 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
     }
   };
 
-  const handleSharedLink = async () => {
-    try {
-      setApiProgress(true);
-      await shareChallenge();
-    } catch (error) {
-      showAlert('Failed to share challenge', 'error');
-    }
-  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -76,11 +66,11 @@ export default isSignedIn(function Progress({ shareLink }: ShareProps) {
         to vote, get election reminders, or take the 8by8 challenge. If you are
         curious, preview what they will see.
       </p>
-      <div className={styles.ActionBox}>
-        <button className={styles.button} onClick={copyLink}>
+      <div className={styles.actionbox}>
+        <button className={styles.copybutton} onClick={copyLink}>
           <Image src={CopyLink} alt="copy-link" />
         </button>
-        <ShareButton  fullLink={fullLink} onShareSuccess={handleSharedLink} />
+        <ShareButton  fullLink={fullLink}/>
         <button className={styles.imagesbutton} onClick={openModal}>
           <Image src={imagesIcon} alt="images" />
         </button>
