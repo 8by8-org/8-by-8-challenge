@@ -58,17 +58,3 @@ export const LongName: Story = {
     );
   },
 };
-
-export const NoInvite: Story = {
-  render: () => {
-    return (
-      <GlobalStylesProvider>
-        <UserContext.Provider
-          value={Builder<UserContextType>().user(null).invitedBy(null).build()}
-        >
-          <PlayerWelcome />
-        </UserContext.Provider>
-      </GlobalStylesProvider>
-    );
-  },
-};
