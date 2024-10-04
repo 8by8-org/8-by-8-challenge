@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
+import { RTV_PARTNER_ID } from '@/constants/rtv-partner-id';
 import styles from './styles.module.scss';
 
 const iFrameSourceDoc = `
@@ -13,7 +14,7 @@ const iFrameSourceDoc = `
   ></script>
   <script type="text/javascript">
     RtvIframe.initPledge({
-      partner: 39079,
+      partner: ${RTV_PARTNER_ID},
     });
 
     const iframe = document.getElementById("rtv-pledge-iframe");
