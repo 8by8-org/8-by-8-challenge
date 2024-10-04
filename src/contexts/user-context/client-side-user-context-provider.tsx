@@ -95,11 +95,11 @@ export function ClientSideUserContextProvider(
         .subscribe();
     };
 
+    supabaseSubscriptionRef.current?.unsubscribe();
+
     if (user) {
       clearInviteCode();
       subscribeToBadges(user.uid);
-    } else {
-      supabaseSubscriptionRef.current?.unsubscribe();
     }
 
     return () => {

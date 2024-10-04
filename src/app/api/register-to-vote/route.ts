@@ -34,7 +34,6 @@ export async function POST(request: NextRequest) {
 
     if (!RTVResponse.ok) {
       const body = await RTVResponse.json();
-      console.log(body);
 
       return NextResponse.json(
         { error: 'Failed to create voter registration paperwork.' },
@@ -58,11 +57,9 @@ export async function POST(request: NextRequest) {
     const userRepo = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository);
     user = await userRepo.awardRegisterToVoteBadge(user.uid);
 
-    return NextResponse.json(user, { status: 200 });
+    return NextResponse.json({ user }, { status: 200 });
   } catch (e) {
     if (e instanceof ServerError) {
-      console.log(e);
-
       return NextResponse.json({ error: e.message }, { status: e.statusCode });
     } else if (e instanceof ZodError) {
       return NextResponse.json({ error: 'bad data.' }, { status: 400 });
