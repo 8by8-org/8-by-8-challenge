@@ -3,6 +3,7 @@ import { hasNotCompletedAction } from '@/components/guards/has-not-completed-act
 import { Actions } from '@/model/enums/actions';
 import { useState, useId } from 'react';
 import { useValue, ValidityUtils } from 'fully-formed';
+import { useScrollToTop } from '@/hooks/use-scroll-to-top';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { VoterRegistrationContext } from '../voter-registration-context';
 import { UserContext } from '@/contexts/user-context';
@@ -36,6 +37,7 @@ export const OtherDetails = hasNotCompletedAction(
     const { registerToVote } = useContextSafely(UserContext, 'OtherDetails');
     const { showAlert } = useContextSafely(AlertsContext, 'OtherDetails');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    useScrollToTop();
 
     const onSubmit: FormEventHandler<HTMLFormElement> = async e => {
       e.preventDefault();
