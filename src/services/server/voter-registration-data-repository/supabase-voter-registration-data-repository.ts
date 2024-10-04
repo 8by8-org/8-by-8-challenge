@@ -24,7 +24,7 @@ export const SupabaseVoterRegistrationDataRepository = inject(
       const supabase = this.createSupabaseClient();
 
       const { data, error, status } = await supabase
-        .from('registration_data')
+        .from('registration_information')
         .select('pdf_url')
         .eq('user_id', userId)
         .limit(1)

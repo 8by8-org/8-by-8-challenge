@@ -1,0 +1,18 @@
+@use '../../../styles/partials' as *;
+
+.view_pdf_button {
+  display: block;
+  margin: auto;
+  padding-left: 41px;
+  padding-right: 41px;
+  margin-bottom: $spacing-md;
+}
+
+.reminder {
+  margin-bottom: 60px;
+}
+
+.link_to_challenge {
+  @extend .link;
+  margin-bottom: $spacing-lg;
+}
