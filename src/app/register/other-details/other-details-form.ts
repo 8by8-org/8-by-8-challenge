@@ -26,7 +26,6 @@ export const OtherDetailsForm = FormFactory.createSubForm(
       NonTransientField<'race', string>,
       NonTransientField<'hasStateLicenseOrID', boolean>,
       NonTransientField<'idNumber', string>,
-      NonTransientField<'sendConfirmationReminders', boolean>,
       NonTransientField<'receiveEmailsFromRTV', boolean>,
       NonTransientField<'receiveSMSFromRTV', boolean>,
     ];
@@ -78,6 +77,7 @@ export const OtherDetailsForm = FormFactory.createSubForm(
           validators: [
             StringValidators.required({
               invalidMessage: 'Please enter your political party.',
+              trimBeforeValidation: true,
             }),
           ],
         }),
@@ -99,12 +99,11 @@ export const OtherDetailsForm = FormFactory.createSubForm(
         new Field({
           name: 'idNumber',
           defaultValue: '',
-          validators: [StringValidators.required()],
-        }),
-        new PersistentField({
-          name: 'sendConfirmationReminders',
-          key: this.key + '.sendConfirmationReminders',
-          defaultValue: false,
+          validators: [
+            StringValidators.required({
+              trimBeforeValidation: true,
+            }),
+          ],
         }),
         new PersistentField({
           name: 'receiveEmailsFromRTV',
@@ -131,7 +130,7 @@ export const OtherDetailsForm = FormFactory.createSubForm(
           source: this.groups[0],
           adaptFn: ({ value }) => {
             if (value.otherParty) {
-              return value.otherParty;
+              return value.otherParty.trim();
             }
 
             return value.party;

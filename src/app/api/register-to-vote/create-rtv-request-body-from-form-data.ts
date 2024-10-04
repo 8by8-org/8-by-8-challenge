@@ -64,8 +64,11 @@ export function createRTVRequestBodyFromFormData(
   return {
     lang: 'en',
     partner_id: `${RTV_PARTNER_ID}`,
-    send_confirmation_reminder_emails:
-      formData.otherDetails.sendConfirmationReminders,
+    /*
+      set send_confirmation_reminder_emails to true so that the user 
+      receives their completed voter registration form via email.
+    */
+    send_confirmation_reminder_emails: true,
     created_at: createdAt,
     updated_at: createdAt,
     date_of_birth: formData.eligibility.dob,

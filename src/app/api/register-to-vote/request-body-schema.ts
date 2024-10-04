@@ -44,7 +44,6 @@ export const requestBodySchema = z.object({
     race: z.string(),
     hasStateLicenseOrID: z.boolean(),
     idNumber: z.string(),
-    sendConfirmationReminders: z.boolean(),
     receiveEmailsFromRTV: z.boolean(),
     receiveSMSFromRTV: z.boolean(),
   }),

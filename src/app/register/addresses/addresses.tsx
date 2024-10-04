@@ -1,4 +1,6 @@
 'use client';
+import { hasNotCompletedAction } from '@/components/guards/has-not-completed-action';
+import { Actions } from '@/model/enums/actions';
 import { useState } from 'react';
 import { useExclude, ValidityUtils } from 'fully-formed';
 import { useRouter } from 'next/navigation';
@@ -23,94 +25,101 @@ import type { FormEventHandler } from 'react';
 import type { AddressErrors } from '@/model/types/addresses/address-errors';
 import styles from './styles.module.scss';
 
-export function Addresses() {
-  const { voterRegistrationForm } = useContextSafely(
-    VoterRegistrationContext,
-    'Addresses',
-  );
-  const addressesForm = voterRegistrationForm.fields.addresses;
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<AddressErrors[]>([]);
+export const Addresses = hasNotCompletedAction(
+  function Addresses() {
+    const { voterRegistrationForm } = useContextSafely(
+      VoterRegistrationContext,
+      'Addresses',
+    );
+    const addressesForm = voterRegistrationForm.fields.addresses;
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
+    const [errors, setErrors] = useState<AddressErrors[]>([]);
 
-  useScrollToTop();
-  usePrefetchOtherDetailsWithState(addressesForm.fields.homeAddress);
+    useScrollToTop();
+    usePrefetchOtherDetailsWithState(addressesForm.fields.homeAddress);
 
-  const onSubmit: FormEventHandler = async e => {
-    e.preventDefault();
-    if (isLoading) return;
+    const onSubmit: FormEventHandler = async e => {
+      e.preventDefault();
+      if (isLoading) return;
 
-    addressesForm.setSubmitted();
+      addressesForm.setSubmitted();
 
-    if (!ValidityUtils.isValidOrCaution(addressesForm)) {
+      if (!ValidityUtils.isValidOrCaution(addressesForm)) {
+        const firstNonValidInputId = getFirstNonValidInputId(addressesForm);
+        firstNonValidInputId && focusOnElementById(firstNonValidInputId);
+        return;
+      }
+
+      setIsLoading(true);
+      const errors = await validateAddresses(addressesForm.state.value);
+
+      if (errors.length) {
+        setIsLoading(false);
+        setErrors(errors);
+        applyCautionValidityToFormFields(addressesForm, errors);
+      } else {
+        router.push(
+          VoterRegistrationPathnames.OTHER_DETAILS +
+            `?state=${addressesForm.state.value.homeAddress.state}`,
+        );
+      }
+    };
+
+    const returnToEditing = () => {
+      setErrors([]);
       const firstNonValidInputId = getFirstNonValidInputId(addressesForm);
       firstNonValidInputId && focusOnElementById(firstNonValidInputId);
-      return;
-    }
+    };
 
-    setIsLoading(true);
-    const errors = await validateAddresses(addressesForm.state.value);
-
-    if (errors.length) {
-      setIsLoading(false);
-      setErrors(errors);
-      applyCautionValidityToFormFields(addressesForm, errors);
-    } else {
-      router.push(
-        VoterRegistrationPathnames.OTHER_DETAILS +
-          `?state=${addressesForm.state.value.homeAddress.state}`,
-      );
-    }
-  };
-
-  const returnToEditing = () => {
-    setErrors([]);
-    const firstNonValidInputId = getFirstNonValidInputId(addressesForm);
-    firstNonValidInputId && focusOnElementById(firstNonValidInputId);
-  };
-
-  return (
-    <form onSubmit={onSubmit}>
-      {isLoading && <LoadingWheel />}
-      <HomeAddress />
-      <Checkbox
-        checked={!useExclude(addressesForm.fields.mailingAddress)}
-        onChange={e => {
-          addressesForm.fields.mailingAddress.setExclude(!e.target.checked);
-        }}
-        labelContent="I get my mail at a different address from the one above"
-        name="hasMailingAddress"
-        containerClassName={
-          useExclude(addressesForm.fields.mailingAddress) ?
-            styles.has_mailing_address_unchecked
-          : styles.has_mailing_address_checked
-        }
-      />
-      <ExcludableContent excludableField={addressesForm.fields.mailingAddress}>
-        <MailingAddress />
-      </ExcludableContent>
-      <Checkbox
-        checked={!useExclude(addressesForm.fields.previousAddress)}
-        onChange={e => {
-          addressesForm.fields.previousAddress.setExclude(!e.target.checked);
-        }}
-        labelContent="I've changed my address since the last time I registered to vote"
-        name="hasPreviousAddress"
-        containerClassName="mb_md"
-      />
-      <ExcludableContent excludableField={addressesForm.fields.previousAddress}>
-        <PreviousAddress />
-      </ExcludableContent>
-      <Button type="submit" size="lg" wide className="mb_lg">
-        Next
-      </Button>
-      {!!errors.length && (
-        <AddressConfirmationModal
-          addressesForm={addressesForm}
-          errors={errors}
-          returnToEditing={returnToEditing}
+    return (
+      <form onSubmit={onSubmit}>
+        {isLoading && <LoadingWheel />}
+        <HomeAddress />
+        <Checkbox
+          checked={!useExclude(addressesForm.fields.mailingAddress)}
+          onChange={e => {
+            addressesForm.fields.mailingAddress.setExclude(!e.target.checked);
+          }}
+          labelContent="I get my mail at a different address from the one above"
+          name="hasMailingAddress"
+          containerClassName={
+            useExclude(addressesForm.fields.mailingAddress) ?
+              styles.has_mailing_address_unchecked
+            : styles.has_mailing_address_checked
+          }
         />
-      )}
-    </form>
-  );
-}
+        <ExcludableContent
+          excludableField={addressesForm.fields.mailingAddress}
+        >
+          <MailingAddress />
+        </ExcludableContent>
+        <Checkbox
+          checked={!useExclude(addressesForm.fields.previousAddress)}
+          onChange={e => {
+            addressesForm.fields.previousAddress.setExclude(!e.target.checked);
+          }}
+          labelContent="I've changed my address since the last time I registered to vote"
+          name="hasPreviousAddress"
+          containerClassName="mb_md"
+        />
+        <ExcludableContent
+          excludableField={addressesForm.fields.previousAddress}
+        >
+          <PreviousAddress />
+        </ExcludableContent>
+        <Button type="submit" size="lg" wide className="mb_lg">
+          Next
+        </Button>
+        {!!errors.length && (
+          <AddressConfirmationModal
+            addressesForm={addressesForm}
+            errors={errors}
+            returnToEditing={returnToEditing}
+          />
+        )}
+      </form>
+    );
+  },
+  { redirectTo: '/register/completed', action: Actions.RegisterToVote },
+);

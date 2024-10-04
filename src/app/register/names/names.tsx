@@ -1,4 +1,6 @@
 'use client';
+import { hasNotCompletedAction } from '@/components/guards/has-not-completed-action';
+import { Actions } from '@/model/enums/actions';
 import { useRouter } from 'next/navigation';
 import { ValidityUtils, useExclude } from 'fully-formed';
 import { useContextSafely } from '@/hooks/use-context-safely';
@@ -17,62 +19,65 @@ import { focusOnElementById } from '@/utils/client/focus-on-element-by-id';
 import type { FormEventHandler } from 'react';
 import styles from './styles.module.scss';
 
-export function Names() {
-  const { voterRegistrationForm } = useContextSafely(
-    VoterRegistrationContext,
-    'Names',
-  );
-  const namesForm = voterRegistrationForm.fields.names;
-  const router = useRouter();
-  usePrefetch(VoterRegistrationPathnames.ADDRESSES);
-  useScrollToTop();
+export const Names = hasNotCompletedAction(
+  function Names() {
+    const { voterRegistrationForm } = useContextSafely(
+      VoterRegistrationContext,
+      'Names',
+    );
+    const namesForm = voterRegistrationForm.fields.names;
+    const router = useRouter();
+    usePrefetch(VoterRegistrationPathnames.ADDRESSES);
+    useScrollToTop();
 
-  const onSubmit: FormEventHandler<HTMLFormElement> = e => {
-    e.preventDefault();
-    namesForm.setSubmitted();
+    const onSubmit: FormEventHandler<HTMLFormElement> = e => {
+      e.preventDefault();
+      namesForm.setSubmitted();
 
-    if (!ValidityUtils.isValid(namesForm)) {
-      const firstNonValidInputId = getFirstNonValidInputId(namesForm);
-      firstNonValidInputId && focusOnElementById(firstNonValidInputId);
-      return;
-    }
+      if (!ValidityUtils.isValid(namesForm)) {
+        const firstNonValidInputId = getFirstNonValidInputId(namesForm);
+        firstNonValidInputId && focusOnElementById(firstNonValidInputId);
+        return;
+      }
 
-    router.push(VoterRegistrationPathnames.ADDRESSES);
-  };
+      router.push(VoterRegistrationPathnames.ADDRESSES);
+    };
 
-  return (
-    <form onSubmit={onSubmit}>
-      <YourName />
-      <div className={styles.checkbox_container}>
-        <Checkbox
-          checked={!useExclude(namesForm.fields.previousName)}
-          onChange={e => {
-            namesForm.fields.previousName.setExclude(!e.target.checked);
-          }}
-          labelContent="I've changed my name."
-          name="changedName"
-          containerClassName={styles.checkbox}
-        />
-        <MoreInfo
-          buttonAltText={
-            'Click for more information about entering a previous name.'
-          }
-          dialogAriaLabel={'More information about entering a previous name.'}
-          info={
-            <p>
-              If you have changed your name since your last registration, check
-              this box and enter your previous name below.
-            </p>
-          }
-          className={styles.more_info_button}
-        />
-      </div>
-      <ExcludableContent excludableField={namesForm.fields.previousName}>
-        <PreviousName />
-      </ExcludableContent>
-      <Button type="submit" size="lg" wide className="mb_lg">
-        Next
-      </Button>
-    </form>
-  );
-}
+    return (
+      <form onSubmit={onSubmit}>
+        <YourName />
+        <div className={styles.checkbox_container}>
+          <Checkbox
+            checked={!useExclude(namesForm.fields.previousName)}
+            onChange={e => {
+              namesForm.fields.previousName.setExclude(!e.target.checked);
+            }}
+            labelContent="I've changed my name."
+            name="changedName"
+            containerClassName={styles.checkbox}
+          />
+          <MoreInfo
+            buttonAltText={
+              'Click for more information about entering a previous name.'
+            }
+            dialogAriaLabel={'More information about entering a previous name.'}
+            info={
+              <p>
+                If you have changed your name since your last registration,
+                check this box and enter your previous name below.
+              </p>
+            }
+            className={styles.more_info_button}
+          />
+        </div>
+        <ExcludableContent excludableField={namesForm.fields.previousName}>
+          <PreviousName />
+        </ExcludableContent>
+        <Button type="submit" size="lg" wide className="mb_lg">
+          Next
+        </Button>
+      </form>
+    );
+  },
+  { redirectTo: '/register/completed', action: Actions.RegisterToVote },
+);

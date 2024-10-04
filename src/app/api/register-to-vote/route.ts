@@ -33,8 +33,6 @@ export async function POST(request: NextRequest) {
     );
 
     if (!RTVResponse.ok) {
-      const body = await RTVResponse.json();
-
       return NextResponse.json(
         { error: 'Failed to create voter registration paperwork.' },
         {
