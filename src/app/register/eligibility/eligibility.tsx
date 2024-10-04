@@ -121,7 +121,7 @@ export function Eligibility() {
             state.submitted
           );
         })}
-        containerClassName={styles.eighteen_plus_checkbox_messages}
+        containerClassName={styles.checkbox_messages}
       />
       <Checkbox
         name={eligibilityForm.fields.isCitizen.name}
@@ -147,7 +147,17 @@ export function Eligibility() {
             state.submitted
           );
         })}
-        containerClassName={styles.is_citizen_checkbox_messages}
+        containerClassName={styles.checkbox_messages}
+      />
+      <Checkbox
+        name={eligibilityForm.fields.firstTimeRegistrant.name}
+        id={eligibilityForm.fields.firstTimeRegistrant.id}
+        checked={useValue(eligibilityForm.fields.firstTimeRegistrant)}
+        onChange={e => {
+          eligibilityForm.fields.firstTimeRegistrant.setValue(e.target.checked);
+        }}
+        labelContent="This is my first time registering to vote"
+        containerClassName={styles.first_time_registrant}
       />
       <Button type="submit" size="lg" wide className="mb_lg">
         Get Started

@@ -6,7 +6,7 @@ import { DateTime } from 'luxon';
 interface RTVRequestBody {
   lang: string;
   partner_id: string;
-  send_confirmation_emails: boolean;
+  send_confirmation_reminder_emails: boolean;
   created_at: string;
   updated_at: string;
   date_of_birth: string;
@@ -58,20 +58,17 @@ interface RTVRequestBody {
 
 export function createRTVRequestBodyFromFormData(
   formData: z.infer<typeof requestBodySchema>,
-) {
+): RTVRequestBody {
   const createdAt = DateTime.now().toFormat('MMddyyyy hh:mm:ss');
-  const formattedDob = DateTime.fromFormat(
-    formData.eligibility.dob,
-    'yyyy-MM-dd',
-  ).toFormat('MM-dd-yyyy');
 
   return {
     lang: 'en',
-    partner_id: RTV_PARTNER_ID,
-    send_confirmation_emails: formData.otherDetails.sendConfirmationReminders,
+    partner_id: `${RTV_PARTNER_ID}`,
+    send_confirmation_reminder_emails:
+      formData.otherDetails.sendConfirmationReminders,
     created_at: createdAt,
     updated_at: createdAt,
-    date_of_birth: formattedDob,
+    date_of_birth: formData.eligibility.dob,
     id_number: formData.otherDetails.idNumber,
     email_address: formData.eligibility.email,
     first_registration: formData.eligibility.firstTimeRegistrant,

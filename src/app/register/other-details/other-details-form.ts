@@ -23,9 +23,12 @@ export const OtherDetailsForm = FormFactory.createSubForm(
     public readonly fields: [
       TransientField<'party', string>,
       TransientField<'otherParty', string> & Excludable,
-      NonTransientField<'changedParties', boolean>,
       NonTransientField<'race', string>,
-      NonTransientField<'id', string>,
+      NonTransientField<'hasStateLicenseOrID', boolean>,
+      NonTransientField<'idNumber', string>,
+      NonTransientField<'sendConfirmationReminders', boolean>,
+      NonTransientField<'receiveEmailsFromRTV', boolean>,
+      NonTransientField<'receiveSMSFromRTV', boolean>,
     ];
 
     public readonly groups: [
@@ -79,11 +82,6 @@ export const OtherDetailsForm = FormFactory.createSubForm(
           ],
         }),
         new PersistentField({
-          name: 'changedParties',
-          key: this.key + '.changedParties',
-          defaultValue: false,
-        }),
-        new PersistentField({
           name: 'race',
           key: this.key + '.race',
           defaultValue: '',
@@ -93,10 +91,30 @@ export const OtherDetailsForm = FormFactory.createSubForm(
             }),
           ],
         }),
+        new PersistentField({
+          name: 'hasStateLicenseOrID',
+          key: this.key + '.hasStateLicenseOrID',
+          defaultValue: false,
+        }),
         new Field({
-          name: 'id',
+          name: 'idNumber',
           defaultValue: '',
           validators: [StringValidators.required()],
+        }),
+        new PersistentField({
+          name: 'sendConfirmationReminders',
+          key: this.key + '.sendConfirmationReminders',
+          defaultValue: false,
+        }),
+        new PersistentField({
+          name: 'receiveEmailsFromRTV',
+          key: this.key + '.receiveEmailsFromRTV',
+          defaultValue: false,
+        }),
+        new PersistentField({
+          name: 'receiveSMSFromRTV',
+          key: this.key + '.receiveSMSFromRTV',
+          defaultValue: false,
         }),
       ];
 

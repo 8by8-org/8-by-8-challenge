@@ -61,7 +61,7 @@ export const SupabaseVoterRegistrationDataRepository = inject(
       const supabase = this.createSupabaseClient();
 
       const { error, status } = await supabase
-        .from('registration_data')
+        .from('registration_information')
         .insert({
           user_id: userId,
           pdf_url: encryptedPDFUrl,

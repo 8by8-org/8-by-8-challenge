@@ -87,7 +87,7 @@ export function ClientSideUserContextProvider(
               another user. If the user earned the badge themselves, the
               user object will already have been updated.
             */
-            if ('player_name' in newBadge && 'player_avatar' in newBadge) {
+            if (newBadge['player_name'] && newBadge['player_avatar']) {
               await refreshUser();
             }
           },
@@ -198,15 +198,25 @@ export function ClientSideUserContextProvider(
     throw new Error('not implemented.');
   }
 
-  /* istanbul ignore next */
   async function registerToVote(
     formData: ValueOf<InstanceType<typeof VoterRegistrationForm>>,
   ): Promise<void> {
-    return new Promise<void>((_resolve, reject) => {
-      setTimeout(() => {
-        reject(new Error('not implemented.'));
-      }, 3000);
+    if (!user || user.completedActions.registerToVote) return;
+
+    const response = await fetch('/api/register-to-vote', {
+      method: 'POST',
+      body: JSON.stringify(formData),
     });
+
+    if (!response.ok) {
+      throw new Error('There was a problem registering to vote.');
+    }
+
+    const data = await response.json();
+
+    if (data.user.uid === user?.uid) {
+      setUser(data.user as User);
+    }
   }
 
   async function takeTheChallenge() {

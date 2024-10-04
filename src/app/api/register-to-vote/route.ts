@@ -1,8 +1,11 @@
 import 'server-only';
 import { NextResponse, NextRequest } from 'next/server';
-import { ServerError } from '@/errors/server-error';
+import { requestBodySchema } from './request-body-schema';
+import { createRTVRequestBodyFromFormData } from './create-rtv-request-body-from-form-data';
+import { RTVResponseBodySchema } from './rtv-response-body-schema';
 import { serverContainer } from '@/services/server/container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
+import { ServerError } from '@/errors/server-error';
 import { ZodError } from 'zod';
 
 export async function POST(request: NextRequest) {
@@ -15,9 +18,8 @@ export async function POST(request: NextRequest) {
 
   try {
     const data = await request.json();
-
-    // frontend sends form data
-    // need to verify that, then transform it for RTV
+    const parsed = requestBodySchema.parse(data);
+    const RTVRequestBody = createRTVRequestBodyFromFormData(parsed);
 
     const RTVResponse = await fetch(
       'https://register.rockthevote.com/api/v4/registrations',
@@ -26,11 +28,14 @@ export async function POST(request: NextRequest) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(RTVRequestBody),
       },
     );
 
     if (!RTVResponse.ok) {
+      const body = await RTVResponse.json();
+      console.log(body);
+
       return NextResponse.json(
         { error: 'Failed to create voter registration paperwork.' },
         {
@@ -40,13 +45,15 @@ export async function POST(request: NextRequest) {
     }
 
     const registrationResponseData = await RTVResponse.json();
-    const { pdfurl } = registrationResponseData;
+    const { pdfurl: pdfUrl } = RTVResponseBodySchema.parse(
+      registrationResponseData,
+    );
 
     const voterRegistrationDataRepository = serverContainer.get(
       SERVER_SERVICE_KEYS.VoterRegistrationDataRepository,
     );
 
-    await voterRegistrationDataRepository.savePDFUrl(user.uid, pdfurl);
+    await voterRegistrationDataRepository.savePDFUrl(user.uid, pdfUrl);
 
     const userRepo = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository);
     user = await userRepo.awardRegisterToVoteBadge(user.uid);
@@ -54,6 +61,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(user, { status: 200 });
   } catch (e) {
     if (e instanceof ServerError) {
+      console.log(e);
+
       return NextResponse.json({ error: e.message }, { status: e.statusCode });
     } else if (e instanceof ZodError) {
       return NextResponse.json({ error: 'bad data.' }, { status: 400 });

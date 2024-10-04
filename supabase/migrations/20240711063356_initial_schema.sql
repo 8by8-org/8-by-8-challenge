@@ -89,6 +89,7 @@ using ((select auth.uid()) = player_id);
 -- Create registration_information table, enable row level security, and set a policy
 create table public.registration_information (
   id serial,
+  user_id uuid unique not null references public.users on delete cascade,
   pdf_url varchar(255) not null,
   primary key (id, user_id)
 );

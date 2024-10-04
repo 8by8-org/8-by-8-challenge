@@ -57,7 +57,7 @@ export function OtherDetails({
 
   return (
     <form onSubmit={onSubmit}>
-      <h2>Other Details</h2>
+      <h2 className="mb_sm">Other Details</h2>
       <Select
         field={form.fields.party}
         label="Political party*"
@@ -78,13 +78,6 @@ export function OtherDetails({
           aria-required
         />
       </ExcludableContent>
-      <Checkbox
-        checked={useValue(form.fields.changedParties)}
-        onChange={e => form.fields.changedParties.setValue(e.target.checked)}
-        name={form.fields.changedParties.name}
-        labelContent="I've changed political parties"
-        containerClassName={styles.checkbox}
-      />
       <Select
         field={form.fields.race}
         label="Race*"
@@ -109,18 +102,52 @@ export function OtherDetails({
         }}
         aria-required
       />
-      <Label field={form.fields.id} variant="floating">
+      <Checkbox
+        checked={useValue(form.fields.hasStateLicenseOrID)}
+        onChange={e =>
+          form.fields.hasStateLicenseOrID.setValue(e.target.checked)
+        }
+        name={form.fields.hasStateLicenseOrID.name}
+        labelContent="I have a state-issued driver's license or ID card"
+        containerClassName={styles.mb_16}
+      />
+      <Label field={form.fields.idNumber} variant="floating">
         ID number*
       </Label>
       <Input
-        field={form.fields.id}
+        field={form.fields.idNumber}
         type="text"
         aria-required
         aria-describedby={idFieldDescriptionId}
       />
-      <p className={styles.id_explainer} id={idFieldDescriptionId}>
+      <p className="mb_md" id={idFieldDescriptionId}>
         {idNumberMessage}
       </p>
+      <Checkbox
+        checked={useValue(form.fields.sendConfirmationReminders)}
+        onChange={e =>
+          form.fields.sendConfirmationReminders.setValue(e.target.checked)
+        }
+        name={form.fields.sendConfirmationReminders.name}
+        labelContent="I'd like to receive emails reminding me to send in my completed paperwork"
+        containerClassName={styles.mb_16}
+      />
+      <Checkbox
+        checked={useValue(form.fields.receiveEmailsFromRTV)}
+        onChange={e =>
+          form.fields.receiveEmailsFromRTV.setValue(e.target.checked)
+        }
+        name={form.fields.receiveEmailsFromRTV.name}
+        labelContent="I'd like to receive emails from Rock the Vote"
+        containerClassName={styles.mb_16}
+      />
+      <Checkbox
+        checked={useValue(form.fields.receiveSMSFromRTV)}
+        onChange={e => form.fields.receiveSMSFromRTV.setValue(e.target.checked)}
+        name={form.fields.receiveSMSFromRTV.name}
+        labelContent="I'd like to receive SMS messages from Rock the Vote"
+        containerClassName="mb_md"
+      />
       <Button type="submit" size="lg" wide className="mb_lg">
         Submit
       </Button>

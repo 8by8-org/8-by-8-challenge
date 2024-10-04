@@ -19,8 +19,8 @@ export function getFirstNonValidInputId(
     return otherDetailsForm.fields.race.id;
   }
 
-  if (!ValidityUtils.isValid(otherDetailsForm.fields.id)) {
-    return otherDetailsForm.fields.id.id;
+  if (!ValidityUtils.isValid(otherDetailsForm.fields.idNumber)) {
+    return otherDetailsForm.fields.idNumber.id;
   }
 
   return null;
