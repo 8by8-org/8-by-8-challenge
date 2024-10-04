@@ -35,7 +35,12 @@ export class PhoneInputInternals {
     event: ChangeEvent<HTMLInputElement>,
     field: FieldOfType<string>,
   ) {
-    field.setValue(event.target.value);
+    field.setValue(
+      event.target.value
+        .split('')
+        .filter(c => /\d/.test(c))
+        .join(''),
+    );
   }
 
   public static handleBeforeInput(
