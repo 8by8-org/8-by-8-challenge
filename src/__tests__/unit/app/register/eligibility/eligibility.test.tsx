@@ -201,4 +201,18 @@ describe('Eligibility', () => {
     await user.click(screen.getByText(/get started/i));
     expect(router.push).toHaveBeenCalledWith(VoterRegistrationPathnames.NAMES);
   });
+
+  it('toggles the value of firstTimeRegistrant when the user clicks the checkbox.', async () => {
+    expect(eligibilityForm.fields.firstTimeRegistrant.state.value).toBe(false);
+
+    const firstTimeRegistrant = screen.getByLabelText(
+      'This is my first time registering to vote',
+    );
+
+    await user.click(firstTimeRegistrant);
+    expect(eligibilityForm.fields.firstTimeRegistrant.state.value).toBe(true);
+
+    await user.click(firstTimeRegistrant);
+    expect(eligibilityForm.fields.firstTimeRegistrant.state.value).toBe(false);
+  });
 });

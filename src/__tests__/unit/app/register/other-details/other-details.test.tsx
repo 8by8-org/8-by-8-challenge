@@ -168,20 +168,6 @@ describe('OtherDetails', () => {
     );
   });
 
-  // it('toggles the value of hasStateIssuedLicenseOrID when the user clicks the checkbox.', async () => {
-  //   expect(otherDetailsForm.fields.hasStateLicenseOrID.state.value).toBe(false);
-
-  //   const changedParties = screen.getByLabelText(
-  //     "I've changed political parties",
-  //   );
-  //   await user.click(changedParties);
-
-  //   expect(otherDetailsForm.fields.changedParties.state.value).toBe(true);
-
-  //   await user.click(changedParties);
-  //   expect(otherDetailsForm.fields.changedParties.state.value).toBe(false);
-  // });
-
   it('cannot be submitted if it is loading.', async () => {
     const promiseScheduler = new PromiseScheduler();
     const spy = jest
@@ -217,5 +203,52 @@ describe('OtherDetails', () => {
 
     const alert = await screen.findByRole('alert');
     expect(alert.textContent).toBe('Something went wrong. Please try again.');
+  });
+
+  it(`toggles the value of hasStateIssuedLicenseOrID when the user clicks the 
+  checkbox.`, async () => {
+    expect(otherDetailsForm.fields.hasStateLicenseOrID.state.value).toBe(false);
+
+    const hasStateIssuedLicenseOrID = screen.getByLabelText(
+      "I have a state-issued driver's license or ID card",
+    );
+
+    await user.click(hasStateIssuedLicenseOrID);
+    expect(otherDetailsForm.fields.hasStateLicenseOrID.state.value).toBe(true);
+
+    await user.click(hasStateIssuedLicenseOrID);
+    expect(otherDetailsForm.fields.hasStateLicenseOrID.state.value).toBe(false);
+  });
+
+  it('toggles the value of receiveEmailsFromRTV when the user clicks the checkbox.', async () => {
+    expect(otherDetailsForm.fields.receiveEmailsFromRTV.state.value).toBe(
+      false,
+    );
+
+    const receiveEmailsFromRTV = screen.getByLabelText(
+      "I'd like to receive emails from Rock the Vote",
+    );
+
+    await user.click(receiveEmailsFromRTV);
+    expect(otherDetailsForm.fields.receiveEmailsFromRTV.state.value).toBe(true);
+
+    await user.click(receiveEmailsFromRTV);
+    expect(otherDetailsForm.fields.receiveEmailsFromRTV.state.value).toBe(
+      false,
+    );
+  });
+
+  it('toggles the value of receiveSMSFromRTV when the user clicks the checkbox.', async () => {
+    expect(otherDetailsForm.fields.receiveSMSFromRTV.state.value).toBe(false);
+
+    const receiveSMSFromRTV = screen.getByLabelText(
+      "I'd like to receive SMS messages from Rock the Vote",
+    );
+    await user.click(receiveSMSFromRTV);
+
+    expect(otherDetailsForm.fields.receiveSMSFromRTV.state.value).toBe(true);
+
+    await user.click(receiveSMSFromRTV);
+    expect(otherDetailsForm.fields.receiveSMSFromRTV.state.value).toBe(false);
   });
 });
