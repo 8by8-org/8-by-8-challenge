@@ -8,8 +8,15 @@ export default async function Page() {
     SERVER_SERVICE_KEYS.VoterRegistrationDataRepository,
   );
   const user = await auth.loadSessionUser();
-  const pdfUrl =
-    user ? await voterRegistrationDataRepo.getPDFUrlByUserId(user.uid) : '';
+  let pdfUrl = '';
+
+  if (user) {
+    try {
+      pdfUrl = await voterRegistrationDataRepo.getPDFUrlByUserId(user.uid);
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   return <RegistrationCompleted pdfUrl={pdfUrl} />;
 }

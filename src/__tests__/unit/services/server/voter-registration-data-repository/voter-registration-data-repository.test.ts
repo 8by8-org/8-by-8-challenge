@@ -23,13 +23,6 @@ describe('SupabaseVoterRegistrationDataRepository', () => {
     return resetAuthAndDatabase();
   });
 
-  it(`returns an empty string when getPDFUrlByUserId is called but no record is 
-  found.`, async () => {
-    const data =
-      await voterRegistrationDataRepository.getPDFUrlByUserId(uuid());
-    expect(data).toBe('');
-  });
-
   it('encrypts the data it receives and stores it in the database.', async () => {
     const { uid: userId } = await new SupabaseUserRecordBuilder(
       'user@example.com',
@@ -57,6 +50,80 @@ describe('SupabaseVoterRegistrationDataRepository', () => {
       await voterRegistrationDataRepository.getPDFUrlByUserId(userId);
 
     expect(decryptedData).toBe(pdfUrl);
+  });
+
+  it(`returns an empty string when getPDFUrlByUserId is called but no record is 
+  found.`, async () => {
+    const data =
+      await voterRegistrationDataRepository.getPDFUrlByUserId(uuid());
+    expect(data).toBe('');
+  });
+
+  it(`throws a ServerError if an error is returned when selecting data from the 
+  registration_information table.`, async () => {
+    const errorMessage = 'Too many requests.';
+    const status = 429;
+
+    const createSupabaseClient = () => {
+      return {
+        from: () => ({
+          select: () => ({
+            eq: () => ({
+              limit: () => ({
+                maybeSingle: () => {
+                  return Promise.resolve({
+                    error: new Error(errorMessage),
+                    status,
+                  });
+                },
+              }),
+            }),
+          }),
+        }),
+      } as unknown as SupabaseClient;
+    };
+
+    voterRegistrationDataRepository =
+      new SupabaseVoterRegistrationDataRepository(
+        createSupabaseClient,
+        new WebCryptoSubtleEncryptor(),
+      );
+
+    await expect(
+      voterRegistrationDataRepository.getPDFUrlByUserId(uuid()),
+    ).rejects.toThrow(new ServerError(errorMessage, status));
+  });
+
+  it(`throws a ServerError if an error if it fails to decrypt the data`, async () => {
+    const createSupabaseClient = () => {
+      return {
+        from: () => ({
+          select: () => ({
+            eq: () => ({
+              limit: () => ({
+                maybeSingle: () => {
+                  return Promise.resolve({
+                    data: {
+                      pdf_url: 'not encrypted',
+                    },
+                  });
+                },
+              }),
+            }),
+          }),
+        }),
+      } as unknown as SupabaseClient;
+    };
+
+    voterRegistrationDataRepository =
+      new SupabaseVoterRegistrationDataRepository(
+        createSupabaseClient,
+        new WebCryptoSubtleEncryptor(),
+      );
+
+    await expect(
+      voterRegistrationDataRepository.getPDFUrlByUserId(uuid()),
+    ).rejects.toThrow(new ServerError('Could not decrypt PDF URL.', 400));
   });
 
   it('throws a ServerError if the data cannot be inserted.', async () => {

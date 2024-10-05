@@ -22,10 +22,12 @@ import { Actions } from '@/model/enums/actions';
 import supabaseModule from '@supabase/ssr';
 import { Subject } from 'rxjs';
 import ProgressPage from '@/app/progress/page';
+import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
+import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
 import type { User } from '@/model/types/user';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import type { Avatar } from '@/model/types/avatar';
-import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
+import type { ValueOf } from 'fully-formed';
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
@@ -1298,12 +1300,313 @@ describe('ClientSideUserContextProvider', () => {
       </AlertsContextProvider>,
     );
 
-    const alert = await screen.getByRole('alert');
+    const alert = screen.getByRole('alert');
     expect(alert.classList).toContain('hidden');
 
     await user.click(screen.getByText('Take the challenge'));
     expect(alert.classList).not.toContain('hidden');
     expect(alert.textContent).toBe('There was a problem taking the challenge.');
+    fetchSpy.mockRestore();
+  });
+
+  const registerBody: ValueOf<InstanceType<typeof VoterRegistrationForm>> = {
+    eligibility: {
+      email: 'user@example.com',
+      zip: '94043',
+      dob: '01-01-2000',
+      isCitizen: true,
+      eighteenPlus: true,
+      firstTimeRegistrant: false,
+    },
+    names: {
+      yourName: {
+        title: 'Mr.',
+        first: 'Test',
+        middle: '',
+        last: 'User',
+        suffix: '',
+      },
+    },
+    addresses: {
+      homeAddress: {
+        streetLine1: '1600 Amphitheatre Pkwy',
+        streetLine2: '',
+        city: 'Mountain View',
+        state: 'CA',
+        zip: '94043',
+        phone: '',
+        phoneType: 'Mobile',
+      },
+    },
+    otherDetails: {
+      party: 'Independent',
+      race: 'Decline to state',
+      hasStateLicenseOrID: true,
+      idNumber: '0000',
+      receiveEmailsFromRTV: true,
+      receiveSMSFromRTV: true,
+    },
+  };
+
+  it(`makes a request to /api/register-to-vote when registerToVote() is called, 
+  and if the response is ok, updates the user.`, async () => {
+    const signedInUser: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'User',
+      avatar: '0',
+      type: UserType.Challenger,
+      completedActions: {
+        electionReminders: false,
+        registerToVote: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(route => {
+        if (route === '/api/register-to-vote') {
+          return Promise.resolve(
+            NextResponse.json(
+              {
+                user: {
+                  ...signedInUser,
+                  completedActions: {
+                    ...signedInUser.completedActions,
+                    registerToVote: true,
+                  },
+                  badges: [
+                    {
+                      action: Actions.RegisterToVote,
+                    },
+                  ],
+                },
+              },
+              { status: 200 },
+            ),
+          );
+        }
+
+        return Promise.resolve(new Response(null, { status: 200 }));
+      });
+
+    let updatedUser: User | null = null;
+
+    function RegisterToVote() {
+      const { user, registerToVote } = useContextSafely(
+        UserContext,
+        'RegisterToVote',
+      );
+
+      useEffect(() => {
+        updatedUser = user;
+      }, [user]);
+
+      return (
+        <button onClick={() => registerToVote(registerBody)}>Register</button>
+      );
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={signedInUser}
+          invitedBy={null}
+          emailForSignIn="user@example.com"
+        >
+          <RegisterToVote />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await waitFor(() => expect(updatedUser).toStrictEqual(signedInUser));
+    await user.click(screen.getByText(/register/i));
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalled());
+    expect(updatedUser).toEqual({
+      ...signedInUser,
+      completedActions: {
+        ...signedInUser.completedActions,
+        registerToVote: true,
+      },
+      badges: [
+        {
+          action: Actions.RegisterToVote,
+        },
+      ],
+    });
+
+    fetchSpy.mockRestore();
+  });
+
+  it(`does not make a request to /api/register-to-vote when registerToVote() is
+  called but the user has already registered to vote.`, async () => {
+    const signedInUser: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'User',
+      avatar: '0',
+      type: UserType.Challenger,
+      completedActions: {
+        registerToVote: true,
+        electionReminders: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    const fetchSpy = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+      return Promise.resolve(NextResponse.json(null, { status: 200 }));
+    });
+
+    function RegisterToVote() {
+      const { registerToVote } = useContextSafely(
+        UserContext,
+        'RegisterToVote',
+      );
+
+      return (
+        <button onClick={() => registerToVote(registerBody)}>Register</button>
+      );
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={signedInUser}
+          invitedBy={null}
+          emailForSignIn="user@example.com"
+        >
+          <RegisterToVote />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await user.click(screen.getByText(/register/i));
+    expect(fetchSpy).not.toHaveBeenCalledWith('/api/register-to-vote');
+    fetchSpy.mockRestore();
+  });
+
+  it(`does not make a request to /api/register-to-vote when registerToVote() is
+  called but the user is signed out.`, async () => {
+    const fetchSpy = jest.spyOn(globalThis, 'fetch');
+
+    function RegisterToVote() {
+      const { registerToVote } = useContextSafely(
+        UserContext,
+        'RegisterToVote',
+      );
+
+      return (
+        <button onClick={() => registerToVote(registerBody)}>Register</button>
+      );
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={null}
+          invitedBy={null}
+          emailForSignIn=""
+        >
+          <RegisterToVote />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await user.click(screen.getByText(/register/i));
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
+  });
+
+  it(`throws an error when registerToVote() is called and the response from
+  /api/register-to-vote is not ok.`, async () => {
+    const signedInUser: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'User',
+      avatar: '0',
+      type: UserType.Challenger,
+      completedActions: {
+        registerToVote: false,
+        electionReminders: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(route => {
+        if (route === '/api/register-to-vote') {
+          return Promise.resolve(
+            NextResponse.json(
+              {
+                error: 'An unexpected error occurred.',
+              },
+              { status: 500 },
+            ),
+          );
+        }
+
+        return Promise.resolve(new Response(null, { status: 200 }));
+      });
+
+    mockDialogMethods();
+
+    function RegisterToVote() {
+      const { registerToVote } = useContextSafely(
+        UserContext,
+        'RegisterToVote',
+      );
+      const { showAlert } = useContextSafely(AlertsContext, 'RegisterToVote');
+
+      return (
+        <button
+          onClick={async () => {
+            try {
+              await registerToVote(registerBody);
+            } catch (e) {
+              showAlert('There was a problem registering to vote.', 'error');
+            }
+          }}
+        >
+          Register to Vote
+        </button>
+      );
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={signedInUser}
+          invitedBy={null}
+          emailForSignIn=""
+        >
+          <RegisterToVote />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    const alert = screen.getByRole('alert');
+    expect(alert.classList).toContain('hidden');
+
+    await user.click(screen.getByText(/register to vote/i));
+    expect(alert.classList).not.toContain('hidden');
+    expect(alert.textContent).toBe('There was a problem registering to vote.');
     fetchSpy.mockRestore();
   });
 });

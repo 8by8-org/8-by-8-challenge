@@ -1,7 +1,9 @@
 'use client';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
+import { AlertsContext } from '@/contexts/alerts-context';
 import { Button } from '@/components/utils/button';
 import { UserType } from '@/model/enums/user-type';
 import styles from './styles.module.scss';
@@ -12,6 +14,22 @@ interface RegistrationCompletedProps {
 
 export function RegistrationCompleted({ pdfUrl }: RegistrationCompletedProps) {
   const { user } = useContextSafely(UserContext, 'RegistrationCompleted');
+  const { showAlert } = useContextSafely(
+    AlertsContext,
+    'RegistrationCompleted',
+  );
+  const [disableViewPDF, setDisableViewPDF] = useState(!pdfUrl);
+
+  useEffect(() => {
+    if (!pdfUrl) {
+      showAlert(
+        `Oops! We couldn't retrieve your PDF. Please try again later.`,
+        'error',
+      );
+    }
+
+    setDisableViewPDF(!pdfUrl);
+  }, [pdfUrl, showAlert]);
 
   return (
     <div>
@@ -29,6 +47,7 @@ export function RegistrationCompleted({ pdfUrl }: RegistrationCompletedProps) {
         onClick={() => {
           window.open(pdfUrl, '_blank');
         }}
+        disabled={disableViewPDF}
         className={styles.view_pdf_button}
       >
         View PDF

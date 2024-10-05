@@ -30,6 +30,7 @@ const config = {
     '<rootDir>/src/app/register/eligibility/page.tsx',
     '<rootDir>/src/app/register/names/page.tsx',
     '<rootDir>/src/app/register/other-details/page.tsx',
+    '<rootDir>/src/app/register/completed/page.tsx',
     // pledge to vote iframe is heavily reliant on the ResizeObserver and
     // content dimensions
     '<rootDir>/src/app/reminders/pledge-to-vote-iframe/pledge-to-vote-iframe.tsx',
