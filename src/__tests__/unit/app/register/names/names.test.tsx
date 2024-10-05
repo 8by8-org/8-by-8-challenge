@@ -2,6 +2,7 @@ import { render, screen, cleanup, act } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { clearAllPersistentFormElements } from 'fully-formed';
 import { Names } from '@/app/register/names/names';
+import { UserContext, type UserContextType } from '@/contexts/user-context';
 import { VoterRegistrationContext } from '@/app/register/voter-registration-context';
 import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
 import { YourNameForm } from '@/app/register/names/your-name/your-name-form';
@@ -38,22 +39,32 @@ describe('Names', () => {
 
     jest.spyOn(navigation, 'useRouter').mockImplementation(() => router);
 
-    voterRegistrationForm = new VoterRegistrationForm(
-      Builder<User>().email('user@example.com').build(),
-    );
+    const appUser = Builder<User>()
+      .email('user@example.com')
+      .completedActions({
+        registerToVote: false,
+        sharedChallenge: false,
+        electionReminders: false,
+      })
+      .build();
 
+    voterRegistrationForm = new VoterRegistrationForm(appUser);
     yourNameForm = voterRegistrationForm.fields.names.fields.yourName;
     previousNameForm = voterRegistrationForm.fields.names.fields.previousName;
 
     NamesWithContext = function NamesWithContext() {
       return (
-        <VoterRegistrationContext.Provider
-          value={{
-            voterRegistrationForm,
-          }}
+        <UserContext.Provider
+          value={Builder<UserContextType>().user(appUser).build()}
         >
-          <Names />
-        </VoterRegistrationContext.Provider>
+          <VoterRegistrationContext.Provider
+            value={{
+              voterRegistrationForm,
+            }}
+          >
+            <Names />
+          </VoterRegistrationContext.Provider>
+        </UserContext.Provider>
       );
     };
 

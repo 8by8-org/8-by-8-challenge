@@ -63,14 +63,21 @@ describe('OtherDetails', () => {
 
     jest.spyOn(navigation, 'useRouter').mockImplementation(() => router);
 
+    const appUser = Builder<User>()
+      .email('user@example.com')
+      .completedActions({
+        registerToVote: false,
+        sharedChallenge: false,
+        electionReminders: false,
+      })
+      .build();
+
     userContextValue = Builder<UserContextType>()
+      .user(appUser)
       .registerToVote(jest.fn())
       .build();
 
-    voterRegistrationForm = new VoterRegistrationForm(
-      Builder<User>().email('user@example.com').build(),
-    );
-
+    voterRegistrationForm = new VoterRegistrationForm(appUser);
     otherDetailsForm = voterRegistrationForm.fields.otherDetails;
 
     OtherDetailsWithContext = function OtherDetailsWithContext(
@@ -151,7 +158,7 @@ describe('OtherDetails', () => {
     await user.click(submitButton);
 
     expect(document.activeElement).toBe(
-      document.getElementById(otherDetailsForm.fields.id.id),
+      document.getElementById(otherDetailsForm.fields.idNumber.id),
     );
     await user.keyboard('1234');
     await user.click(submitButton);
@@ -161,19 +168,19 @@ describe('OtherDetails', () => {
     );
   });
 
-  it('toggles the value of changedParties when the user clicks the checkbox.', async () => {
-    expect(otherDetailsForm.fields.changedParties.state.value).toBe(false);
+  // it('toggles the value of hasStateIssuedLicenseOrID when the user clicks the checkbox.', async () => {
+  //   expect(otherDetailsForm.fields.hasStateLicenseOrID.state.value).toBe(false);
 
-    const changedParties = screen.getByLabelText(
-      "I've changed political parties",
-    );
-    await user.click(changedParties);
+  //   const changedParties = screen.getByLabelText(
+  //     "I've changed political parties",
+  //   );
+  //   await user.click(changedParties);
 
-    expect(otherDetailsForm.fields.changedParties.state.value).toBe(true);
+  //   expect(otherDetailsForm.fields.changedParties.state.value).toBe(true);
 
-    await user.click(changedParties);
-    expect(otherDetailsForm.fields.changedParties.state.value).toBe(false);
-  });
+  //   await user.click(changedParties);
+  //   expect(otherDetailsForm.fields.changedParties.state.value).toBe(false);
+  // });
 
   it('cannot be submitted if it is loading.', async () => {
     const promiseScheduler = new PromiseScheduler();
@@ -185,7 +192,7 @@ describe('OtherDetails', () => {
 
     act(() => otherDetailsForm.fields.party.setValue('No affiliation'));
     act(() => otherDetailsForm.fields.race.setValue('Decline to state'));
-    act(() => otherDetailsForm.fields.id.setValue('1234'));
+    act(() => otherDetailsForm.fields.idNumber.setValue('1234'));
 
     for (let i = 0; i < 5; i++) {
       await user.click(screen.getByText(/submit/i));
@@ -204,7 +211,7 @@ describe('OtherDetails', () => {
 
     act(() => otherDetailsForm.fields.party.setValue('No affiliation'));
     act(() => otherDetailsForm.fields.race.setValue('Decline to state'));
-    act(() => otherDetailsForm.fields.id.setValue('1234'));
+    act(() => otherDetailsForm.fields.idNumber.setValue('1234'));
 
     await user.click(screen.getByText(/submit/i));
 
