@@ -1,0 +1,130 @@
+import '@testing-library/jest-dom';
+import { render, screen, cleanup, waitFor } from '@testing-library/react';
+import {Share} from '@/app/share/share';
+import { UserContext, type UserContextType } from '@/contexts/user-context';
+import { Builder } from 'builder-pattern';
+import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
+import type { User } from '@/model/types/user';
+import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
+import { SearchParams } from '@/constants/search-params';
+import { createId } from '@paralleldrive/cuid2';
+import { AlertsContextProvider } from '@/contexts/alerts-context';
+import { PromiseScheduler } from '@/utils/test/promise-scheduler';
+
+describe('Share', () => {
+    afterEach(cleanup);
+    it('renders', () => {
+        const user = Builder<User>().inviteCode('').build();
+        const userContextValue = Builder<UserContextType>()
+          .user(user)
+          .shareChallenge(jest.fn())
+            .build();
+        
+        render(
+            <AlertsContextProvider>
+            <UserContext.Provider value={userContextValue}>
+              {' '}
+              <Share shareLink="test" />{' '}
+            </UserContext.Provider>
+          </AlertsContextProvider>, 
+        )
+    })
+    it('should call shareChallenge and copy the user\'s invitation link when the user clicks the copylink button. ', async () => {
+        const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
+        const inviteCode = createId();
+        const appUser = Builder<User>().inviteCode(inviteCode).completedActions({electionReminders: false, registerToVote: false, sharedChallenge: false}).build();
+        const userContextValue = Builder<UserContextType>()
+          .user(appUser)
+          .shareChallenge(jest.fn())
+            .build();
+        const user = userEvent.setup()
+        
+        render(
+            <AlertsContextProvider>
+            <UserContext.Provider value={userContextValue}>
+              <Share shareLink={shareLink} />
+            </UserContext.Provider>
+          </AlertsContextProvider>, 
+        )
+        await user.click(screen.getByText(/copy link/i))
+        expect(userContextValue.shareChallenge).toHaveBeenCalled();
+        const copiedLink = await navigator.clipboard.readText();
+        expect(copiedLink).toBe(shareLink + inviteCode);
+    })
+    it('should not award the user if the user clicks the copyLink button but it should copy the url link', async () => {
+        const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
+        const inviteCode = createId();
+        const appUser = Builder<User>().inviteCode(inviteCode).completedActions({electionReminders: false, registerToVote: false, sharedChallenge: true}).build();
+        const userContextValue = Builder<UserContextType>()
+          .user(appUser)
+          .shareChallenge(jest.fn())
+            .build();
+        const user = userEvent.setup()
+        
+        render(
+            <AlertsContextProvider>
+            <UserContext.Provider value={userContextValue}>
+              <Share shareLink={shareLink} />
+            </UserContext.Provider>
+          </AlertsContextProvider>, 
+        )
+        await user.click(screen.getByText(/copy link/i))
+        expect(userContextValue.shareChallenge).not.toHaveBeenCalled();
+        const copiedLink = await navigator.clipboard.readText();
+        expect(copiedLink).toBe(shareLink + inviteCode);
+    })
+    
+    
+    it('should display an alert if shareChallege throws an error', async () => {
+        const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
+        const inviteCode = createId();
+        const appUser = Builder<User>().inviteCode(inviteCode).completedActions({electionReminders: false, registerToVote: false, sharedChallenge: false}).build();
+        const userContextValue = Builder<UserContextType>()
+          .user(appUser)
+          .shareChallenge(() => Promise.reject())
+            .build();
+        const user = userEvent.setup()
+        
+        render(
+            <AlertsContextProvider>
+            <UserContext.Provider value={userContextValue}>
+              <Share shareLink={shareLink} />
+            </UserContext.Provider>
+          </AlertsContextProvider>, 
+        )
+        expect(screen.queryByText( 'Sorry there was an error awarding the badge, please try again later.')).not.toBeInTheDocument()
+        await user.click(screen.getByText(/copy link/i))
+        expect(screen.queryByText('Sorry there was an error awarding the badge, please try again later.')).toBeInTheDocument()
+        
+    })
+    
+    it('should not call shareChallenge if the loading state is true', async () => {
+        const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
+        const inviteCode = createId();
+        const appUser = Builder<User>().inviteCode(inviteCode).completedActions({ electionReminders: false, registerToVote: false, sharedChallenge: false }).build();
+        const promiseScheduler = new PromiseScheduler()
+        const userContextValue = Builder<UserContextType>()
+          .user(appUser)
+          .shareChallenge(jest.fn().mockImplementation(() => promiseScheduler.createScheduledPromise(undefined)))
+            .build();
+        const user = userEvent.setup()
+     
+        
+        render(
+            <AlertsContextProvider>
+            <UserContext.Provider value={userContextValue}>
+              <Share shareLink={shareLink} />
+            </UserContext.Provider>
+          </AlertsContextProvider>, 
+        )
+        for (let i = 0; i < 6; i++){
+            await user.click(screen.getByText(/copy link/i))
+        }
+      expect(userContextValue.shareChallenge).toHaveBeenCalledTimes(1)
+        
+    })
+    
+
+
+    })

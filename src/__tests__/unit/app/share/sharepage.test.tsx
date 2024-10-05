@@ -25,7 +25,7 @@ describe('SharePage', () => {
       value: jest.fn(),
       writable: true,
     });
-  })
+  });
   afterEach(cleanup);
 
   it('renders a heading', () => {
@@ -36,12 +36,12 @@ describe('SharePage', () => {
       .build();
     render(
       <AlertsContextProvider>
-         <UserContext.Provider value={userContextValue}>
-        {' '}
-        <SharePage shareLink="test" />{' '}
-      </UserContext.Provider>,
-      </AlertsContextProvider>
-  
+        <UserContext.Provider value={userContextValue}>
+          {' '}
+          <SharePage shareLink="test" />{' '}
+        </UserContext.Provider>
+        ,
+      </AlertsContextProvider>,
     );
     expect(screen.getAllByText(/invite friends/i).length).toBeGreaterThan(0);
   });
@@ -57,11 +57,11 @@ describe('SharePage', () => {
     render(
       <AlertsContextProvider>
         <UserContext.Provider value={userContextValue}>
-        {' '}
-        <SharePage shareLink={sharelink} />{' '}
-      </UserContext.Provider>,
-      </AlertsContextProvider>
-   
+          {' '}
+          <SharePage shareLink={sharelink} />{' '}
+        </UserContext.Provider>
+        ,
+      </AlertsContextProvider>,
     );
     const copyLinkbutton = screen.getByAltText('copy-link');
     await user.click(copyLinkbutton);
@@ -76,11 +76,11 @@ describe('SharePage', () => {
     const user = userEvent.setup();
     const userContextValue = Builder<UserContextType>()
       .user(Builder<User>().inviteCode(inviteCode).build())
-      .shareChallenge(() => { 
-        throw new Error()
+      .shareChallenge(() => {
+        throw new Error();
       })
       .build();
-    
+
     render(
       <AlertsContextProvider>
         <UserContext.Provider value={userContextValue}>
@@ -92,36 +92,35 @@ describe('SharePage', () => {
     const copyLinkbutton = screen.getByAltText('copy-link');
     await user.click(copyLinkbutton);
     waitFor(() => {
-      expect(screen.getByRole('alert').textContent).toBe('Failed to copy link or share challenge');
-    })
+      expect(screen.getByRole('alert').textContent).toBe(
+        'Failed to copy link or share challenge',
+      );
+    });
   });
- 
+
   // should check if the handleShare button is rendered
-  it('should render the share button if the Share API is available in the browser',  async () => { 
-   
-    jest.spyOn(navigator, 'share').mockImplementation(jest.fn())
-    jest.spyOn(navigator, 'canShare').mockImplementation(() => true) 
-     
+  it('should render the share button if the Share API is available in the browser', async () => {
+    jest.spyOn(navigator, 'share').mockImplementation(jest.fn());
+    jest.spyOn(navigator, 'canShare').mockImplementation(() => true);
+
     const sharelink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
     const inviteCode = createId();
-    
+
     const userContextValue = Builder<UserContextType>()
       .user(Builder<User>().inviteCode(inviteCode).build())
       .shareChallenge(jest.fn())
       .build();
-  
+
     render(
       <AlertsContextProvider>
         <UserContext.Provider value={userContextValue}>
           <SharePage shareLink={sharelink} />
         </UserContext.Provider>
-      </AlertsContextProvider>
+      </AlertsContextProvider>,
     );
-
 
     // Check if the share button is rendered automatically
     const shareButton = await screen.findByTestId('share-button');
     expect(shareButton).toBeInTheDocument();
-
   });
 });
