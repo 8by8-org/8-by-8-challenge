@@ -4,12 +4,9 @@ import { resetAuthAndDatabase } from '@/utils/test/reset-auth-and-database';
 import { SupabaseUserRecordBuilder } from '@/utils/test/supabase-user-record-builder';
 import { createSupabaseServiceRoleClient } from '@/services/server/create-supabase-client/create-supabase-service-role-client';
 import { v4 as uuid } from 'uuid';
-import type {
-  RegistrationData,
-  VoterRegistrationDataRepository,
-} from '@/services/server/voter-registration-data-repository/voter-registration-data-repository';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { ServerError } from '@/errors/server-error';
+import type { VoterRegistrationDataRepository } from '@/services/server/voter-registration-data-repository/voter-registration-data-repository';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 describe('SupabaseVoterRegistrationDataRepository', () => {
   let voterRegistrationDataRepository: VoterRegistrationDataRepository;
@@ -26,13 +23,11 @@ describe('SupabaseVoterRegistrationDataRepository', () => {
     return resetAuthAndDatabase();
   });
 
-  it(`returns null when getVoterRegistrationDataByUserId is called but no 
-  record is found.`, async () => {
+  it(`returns an empty string when getPDFUrlByUserId is called but no record is 
+  found.`, async () => {
     const data =
-      await voterRegistrationDataRepository.getVoterRegistrationDataByUserId(
-        uuid(),
-      );
-    expect(data).toBeNull();
+      await voterRegistrationDataRepository.getPDFUrlByUserId(uuid());
+    expect(data).toBe('');
   });
 
   it('encrypts the data it receives and stores it in the database.', async () => {
@@ -40,51 +35,28 @@ describe('SupabaseVoterRegistrationDataRepository', () => {
       'user@example.com',
     ).build();
 
-    const registrationData: RegistrationData = {
-      us_state: 'FL',
-      city: 'Davie',
-      street: '2161 SW 152 Ter',
-      name_first: 'John',
-      name_last: 'Doe',
-      dob: '09/20/2003',
-      zip: '33027',
-      email: 'test@me.come',
-      citizen: 'yes',
-      eighteen_plus: 'yes',
-      party: 'Democrat',
-      id_number: '123',
-    };
+    const pdfUrl = 'test';
 
-    await voterRegistrationDataRepository.insertVoterRegistrationData(
-      userId,
-      registrationData,
-    );
+    await voterRegistrationDataRepository.savePDFUrl(userId, pdfUrl);
 
     // Verify that data has been encrypted.
     const supabase = createSupabaseServiceRoleClient();
-    const retrievedData = await supabase
+    const { data } = await supabase
       .from('registration_information')
-      .select()
+      .select('pdf_url')
       .eq('user_id', userId)
       .limit(1)
       .maybeSingle();
 
-    expect(retrievedData).not.toBeNull();
-
-    for (const [key, value] of Object.entries(retrievedData)) {
-      if (key in registrationData) {
-        expect(value).not.toEqual(
-          registrationData[key as keyof typeof registrationData],
-        );
-      }
-    }
+    expect(data).not.toBeNull();
+    expect(data!.pdf_url).toEqual(expect.any(String));
+    expect(data!.pdf_url.length).toBeGreaterThan(0);
+    expect(data!.pdf_url).not.toBe(pdfUrl);
 
     const decryptedData =
-      await voterRegistrationDataRepository.getVoterRegistrationDataByUserId(
-        userId,
-      );
+      await voterRegistrationDataRepository.getPDFUrlByUserId(userId);
 
-    expect(decryptedData).toEqual(registrationData);
+    expect(decryptedData).toBe(pdfUrl);
   });
 
   it('throws a ServerError if the data cannot be inserted.', async () => {
@@ -111,20 +83,7 @@ describe('SupabaseVoterRegistrationDataRepository', () => {
       );
 
     await expect(
-      voterRegistrationDataRepository.insertVoterRegistrationData(uuid(), {
-        us_state: 'FL',
-        city: 'Davie',
-        street: '2161 SW 152 Ter',
-        name_first: 'John',
-        name_last: 'Doe',
-        dob: '09/20/2003',
-        zip: '33027',
-        email: 'test@me.come',
-        citizen: 'yes',
-        eighteen_plus: 'yes',
-        party: 'Democrat',
-        id_number: '123',
-      }),
+      voterRegistrationDataRepository.savePDFUrl(uuid(), 'test'),
     ).rejects.toThrow(new ServerError(errorMessage, status));
   });
 });
