@@ -26,6 +26,7 @@ export function Share({ shareLink, hideShareButton }: ShareProps) {
   const { user, shareChallenge } = useContextSafely(UserContext, 'Share');
   const { showAlert } = useContextSafely(AlertsContext, 'Share');
   const fullLink = shareLink + (user?.inviteCode ?? '');
+  const shareData = {url: fullLink}
 
   const copyLink = async () => {
     if (isLoading) {
@@ -48,6 +49,44 @@ export function Share({ shareLink, hideShareButton }: ShareProps) {
 
     navigator.clipboard.writeText(fullLink);
   };
+
+  const canShare =
+    !!window &&
+    !!window.navigator.share &&
+    !!window.navigator.canShare &&
+    window.navigator.canShare(shareData);
+  
+  const showShareButton = !hideShareButton && canShare;
+  
+  const share = async () => {
+    if (isLoading || !canShare) {
+      return;
+    }
+
+    if (!user?.completedActions.sharedChallenge) {
+      setIsLoading(true);
+      try {
+        await shareChallenge();
+      } catch (err) {
+        showAlert(
+          'Sorry there was an error awarding the badge, please try again later.',
+          'error',
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    try {
+      if (canShare) {
+        await navigator.share(shareData);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+   }
+
+
 
   return (
     <PageContainer>
@@ -72,8 +111,8 @@ export function Share({ shareLink, hideShareButton }: ShareProps) {
           <Image src={copyLinkIcon} alt="copylink" />
           Copy link
         </button>
-        {!hideShareButton && (
-          <button className={styles.button}>
+        {showShareButton && (
+          <button onClick={share} className={styles.button}>
             <Image src={socialShareIcon} alt="socialshareicon" />
             Share via
           </button>
