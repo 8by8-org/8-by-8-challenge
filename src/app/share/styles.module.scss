@@ -12,10 +12,11 @@
 
 .back_icon{
   display: flex;
-  background: transparent;
+  align-items: center; // center items along the y access
   border: none;
-  align-items: center;
-  padding-right: 10px; 
+  background-color: transparent;
+  @extend .b6;
+
 }
 
 .calendar_image{
