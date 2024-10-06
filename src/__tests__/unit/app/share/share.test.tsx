@@ -11,9 +11,12 @@ import { SearchParams } from '@/constants/search-params';
 import { createId } from '@paralleldrive/cuid2';
 import { AlertsContextProvider } from '@/contexts/alerts-context';
 import { PromiseScheduler } from '@/utils/test/promise-scheduler';
+import { mockShareAPI } from '@/utils/test/mock-share-api';
 
 describe('Share', () => {
-    afterEach(cleanup);
+  afterEach(cleanup);
+  mockDialogMethods();
+  mockShareAPI();
     it('renders', () => {
         const user = Builder<User>().inviteCode('').build();
         const userContextValue = Builder<UserContextType>()
@@ -125,6 +128,148 @@ describe('Share', () => {
         
     })
     
+  it('should render the button if the shareAPi is available in the browser', async () => {
+    const canShareSpy = jest.spyOn(navigator, 'canShare').mockImplementation(() => true)
+    const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
+    const inviteCode = createId();
+    const appUser = Builder<User>().inviteCode(inviteCode).completedActions({ electionReminders: false, registerToVote: false, sharedChallenge: false }).build();
+    const promiseScheduler = new PromiseScheduler()
+    const userContextValue = Builder<UserContextType>()
+      .user(appUser)
+      .shareChallenge(jest.fn().mockImplementation(() => promiseScheduler.createScheduledPromise(undefined)))
+      .build();
+    
+    render(
+      <AlertsContextProvider>
+      <UserContext.Provider value={userContextValue}>
+        <Share shareLink={shareLink} />
+      </UserContext.Provider>
+    </AlertsContextProvider>, 
+    )
+    expect(screen.queryByText('Share via')).toBeInTheDocument()
+    canShareSpy.mockRestore()
+  })
+  it('should not render the button if the shareAPI is not available in the browser', async () => {
+    const canShareSpy = jest.spyOn(navigator, 'canShare').mockImplementation(() => false)
+    const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
+    const inviteCode = createId();
+    const appUser = Builder<User>().inviteCode(inviteCode).completedActions({ electionReminders: false, registerToVote: false, sharedChallenge: false }).build();
+    const promiseScheduler = new PromiseScheduler()
+    const userContextValue = Builder<UserContextType>()
+      .user(appUser)
+      .shareChallenge(jest.fn().mockImplementation(() => promiseScheduler.createScheduledPromise(undefined)))
+      .build();
+    
+      render(
+        <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <Share shareLink={shareLink} />
+        </UserContext.Provider>
+      </AlertsContextProvider>, 
+      )
+    expect(screen.queryByText('Share via')).not.toBeInTheDocument()
+    canShareSpy.mockRestore()
+  })
 
+  it('should call the share function if the user clicks on the share button', async () => {
+    const canShareSpy = jest.spyOn(navigator, 'canShare').mockImplementation(() => true)
+    const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
+    const inviteCode = createId();
+    const appUser = Builder<User>().inviteCode(inviteCode).completedActions({electionReminders: false, registerToVote: false, sharedChallenge: false}).build();
+    const userContextValue = Builder<UserContextType>()
+      .user(appUser)
+      .shareChallenge(jest.fn())
+        .build();
+    const user = userEvent.setup()
+    
+    render(
+        <AlertsContextProvider>
+        <UserContext.Provider value={userContextValue}>
+          <Share shareLink={shareLink} />
+        </UserContext.Provider>
+      </AlertsContextProvider>, 
+    )
+    await user.click(screen.getByText(/Share via/i))
+    expect(userContextValue.shareChallenge).toHaveBeenCalled();
+    canShareSpy.mockRestore()
+    
+})
 
+  it('should not call the shareChallenge function if the loading state is true', async () => {
+  const canShareSpy = jest.spyOn(navigator, 'canShare').mockImplementation(() => true)
+  const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
+  const inviteCode = createId();
+  const appUser = Builder<User>().inviteCode(inviteCode).completedActions({ electionReminders: false, registerToVote: false, sharedChallenge: false }).build();
+  const promiseScheduler = new PromiseScheduler()
+  const userContextValue = Builder<UserContextType>()
+    .user(appUser)
+    .shareChallenge(jest.fn().mockImplementation(() => promiseScheduler.createScheduledPromise(undefined)))
+      .build();
+  const user = userEvent.setup()
+  
+  render(
+      <AlertsContextProvider>
+      <UserContext.Provider value={userContextValue}>
+        <Share shareLink={shareLink} />
+      </UserContext.Provider>
+    </AlertsContextProvider>, 
+  )
+  for (let i = 0; i < 6; i++){
+    await user.click(screen.getByText(/Share via/i))
+  }
+    expect(userContextValue.shareChallenge).toHaveBeenCalledTimes(1)
+    canShareSpy.mockRestore()
+  })
+  
+  it('should render the alerts if the shareChallenge fails', async () => {
+    const canShareSpy = jest.spyOn(navigator, 'canShare').mockImplementation(() => true)
+  const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
+  const inviteCode = createId();
+  const appUser = Builder<User>().inviteCode(inviteCode).completedActions({ electionReminders: false, registerToVote: false, sharedChallenge: false }).build();
+  const userContextValue = Builder<UserContextType>()
+    .user(appUser)
+    .shareChallenge(jest.fn().mockImplementation(() => Promise.reject()))
+      .build();
+  const user = userEvent.setup()
+  
+  render(
+      <AlertsContextProvider>
+      <UserContext.Provider value={userContextValue}>
+        <Share shareLink={shareLink} />
+      </UserContext.Provider>
+    </AlertsContextProvider>, 
+  )
+    expect(screen.queryByText('Sorry there was an error awarding the badge, please try again later.')).not.toBeInTheDocument()
+    await user.click(screen.getByText(/Share via/i))
+    expect(screen.queryByText('Sorry there was an error awarding the badge, please try again later.')).toBeInTheDocument()
+    canShareSpy.mockRestore()
+  })
+
+  it('should console.error if the navigator.share fails ', async () => {
+    const canShareSpy = jest.spyOn(navigator, 'canShare').mockImplementation(() => true)
+    const shareSpy = jest.spyOn(navigator, 'share').mockImplementation(() => Promise.reject())
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+  const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
+  const inviteCode = createId();
+  const appUser = Builder<User>().inviteCode(inviteCode).completedActions({ electionReminders: false, registerToVote: false, sharedChallenge: true }).build();
+  const userContextValue = Builder<UserContextType>()
+    .user(appUser)
+    .shareChallenge(() => Promise.resolve())
+      .build();
+  const user = userEvent.setup()
+  
+  render(
+      <AlertsContextProvider>
+      <UserContext.Provider value={userContextValue}>
+        <Share shareLink={shareLink} />
+      </UserContext.Provider>
+    </AlertsContextProvider>, 
+  )
+    expect(consoleSpy).not.toHaveBeenCalled()
+    await user.click(screen.getByText(/Share via/i))
+    expect(consoleSpy).toHaveBeenCalled()
+    canShareSpy.mockRestore()
+    shareSpy.mockRestore()
+    consoleSpy.mockRestore()
+  })
     })

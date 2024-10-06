@@ -89,6 +89,7 @@ export function Share({ shareLink, hideShareButton }: ShareProps) {
     } catch (e) {
       console.error(e);
     }
+    
    }
 
 

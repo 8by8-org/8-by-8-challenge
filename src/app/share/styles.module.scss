@@ -16,7 +16,10 @@
   border: none;
   background-color: transparent;
   @extend .b6;
-
+  
+  img{
+    margin-right: 10px; 
+  }
 }
 
 .calendar_image{
