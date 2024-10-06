@@ -15,6 +15,10 @@ import { PageContainer } from '@/components/utils/page-container';
 import backArrow from '../../../public/static/images/pages/share/back-icon.svg';
 import socialShareIcon from '../../../public/static/images/pages/share/share-icon.svg';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
+import { Modal } from '../../components/utils/modal/modal';
+import socialMediaPostImage0 from '../../../public/static/images/pages/share/social-media-post-image-0.png';
+import socialMediaPostImage1 from '../../../public/static/images/pages/share/social-media-post-image-1.png';
+import socialMediaPostImage2 from '../../../public/static/images/pages/share/social-media-post-image-2.png';
 
 interface ShareProps {
   shareLink: string;
@@ -23,6 +27,7 @@ interface ShareProps {
 
 export function Share({ shareLink, hideShareButton }: ShareProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { user, shareChallenge } = useContextSafely(UserContext, 'Share');
   const { showAlert } = useContextSafely(AlertsContext, 'Share');
   const fullLink = shareLink + (user?.inviteCode ?? '');
@@ -87,11 +92,15 @@ export function Share({ shareLink, hideShareButton }: ShareProps) {
    }
 
 
+   const openModal = () => setIsModalOpen(true);
+    
+
+   const closeModal = () => setIsModalOpen(false);
 
   return (
     <PageContainer>
       <div className={styles.main_content}>
-        <button className={styles.button}>
+        <button className={styles.back_icon}>
           <Image src={backArrow} alt="backicon" />
           Back
         </button>
@@ -117,10 +126,20 @@ export function Share({ shareLink, hideShareButton }: ShareProps) {
             Share via
           </button>
         )}
-        <button className={styles.button}>
+        <button className={styles.button} onClick={openModal}>
           <Image src={imagesIcon} alt="imagesicon" />
           Images for posts
         </button>
+        <Modal
+            ariaLabel=""
+            theme="light"
+            isOpen={isModalOpen}
+            closeModal={closeModal}
+          >
+            <Image src={socialMediaPostImage0} alt="images0-icon" priority />
+            <Image src={socialMediaPostImage1} alt="images1-icon" priority />
+            <Image src={socialMediaPostImage2} alt="images2-icon" priority />
+          </Modal>
       </div>
       {isLoading && <LoadingWheel />}
     </PageContainer>
