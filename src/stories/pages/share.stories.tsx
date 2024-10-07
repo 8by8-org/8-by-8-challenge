@@ -42,13 +42,19 @@ export const ShowShareButton: Story = {
       .shareChallenge(() => {
         return new Promise(resolve => {
           setTimeout(() => {
-            setUser({...user, completedActions:{...user.completedActions, sharedChallenge: true}})
+            setUser({
+              ...user,
+              completedActions: {
+                ...user.completedActions,
+                sharedChallenge: true,
+              },
+            });
             resolve();
           }, 1000);
         });
       })
       .build();
-    
+
     return (
       <GlobalStylesProvider>
         <AlertsContextProvider>
@@ -80,18 +86,24 @@ export const HideShareButton: Story = {
       .shareChallenge(() => {
         return new Promise(resolve => {
           setTimeout(() => {
-            setUser({...user, completedActions:{...user.completedActions, sharedChallenge: true}})
+            setUser({
+              ...user,
+              completedActions: {
+                ...user.completedActions,
+                sharedChallenge: true,
+              },
+            });
             resolve();
           }, 1000);
         });
       })
       .build();
-    
+
     return (
       <GlobalStylesProvider>
         <AlertsContextProvider>
           <UserContext.Provider value={userContextValue}>
-            <Share shareLink={'http://localhost:3000/SHARE'} hideShareButton/>
+            <Share shareLink={'http://localhost:3000/SHARE'} hideShareButton />
             <Footer />
           </UserContext.Provider>
         </AlertsContextProvider>

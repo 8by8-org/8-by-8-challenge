@@ -1,4 +1,5 @@
 'use client';
+import {isSignedIn} from '@/components/guards/is-signed-in'; 
 import { useState } from 'react';
 import { UserContext } from '@/contexts/user-context';
 import { useContextSafely } from '@/hooks/use-context-safely';
@@ -19,19 +20,21 @@ import { Modal } from '../../components/utils/modal/modal';
 import socialMediaPostImage0 from '../../../public/static/images/pages/share/social-media-post-image-0.png';
 import socialMediaPostImage1 from '../../../public/static/images/pages/share/social-media-post-image-1.png';
 import socialMediaPostImage2 from '../../../public/static/images/pages/share/social-media-post-image-2.png';
+import {useRouter} from 'next/navigation'; 
 
 interface ShareProps {
   shareLink: string;
   hideShareButton?: boolean;
 }
 
-export function Share({ shareLink, hideShareButton }: ShareProps) {
+export const Share = isSignedIn(function Share({ shareLink, hideShareButton }: ShareProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user, shareChallenge } = useContextSafely(UserContext, 'Share');
   const { showAlert } = useContextSafely(AlertsContext, 'Share');
-  const fullLink = shareLink + (user?.inviteCode ?? '');
-  const shareData = {url: fullLink}
+  const fullLink = shareLink + (user!.inviteCode);
+  const shareData = { url: fullLink };
+  const router = useRouter()
 
   const copyLink = async () => {
     if (isLoading) {
@@ -60,9 +63,9 @@ export function Share({ shareLink, hideShareButton }: ShareProps) {
     !!window.navigator.share &&
     !!window.navigator.canShare &&
     window.navigator.canShare(shareData);
-  
+
   const showShareButton = !hideShareButton && canShare;
-  
+
   const share = async () => {
     if (isLoading || !canShare) {
       return;
@@ -89,19 +92,16 @@ export function Share({ shareLink, hideShareButton }: ShareProps) {
     } catch (e) {
       console.error(e);
     }
-    
-   }
+  };
 
+  const openModal = () => setIsModalOpen(true);
 
-   const openModal = () => setIsModalOpen(true);
-    
-
-   const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => setIsModalOpen(false);
 
   return (
     <PageContainer>
       <div className={styles.main_content}>
-        <button className={styles.back_icon}>
+        <button className={styles.back_icon} onClick={() => router.back()}>
           <Image src={backArrow} alt="backicon" />
           Back
         </button>
@@ -132,17 +132,17 @@ export function Share({ shareLink, hideShareButton }: ShareProps) {
           Images for posts
         </button>
         <Modal
-            ariaLabel=""
-            theme="light"
-            isOpen={isModalOpen}
-            closeModal={closeModal}
-          >
-            <Image src={socialMediaPostImage0} alt="images0-icon" priority />
-            <Image src={socialMediaPostImage1} alt="images1-icon" priority />
-            <Image src={socialMediaPostImage2} alt="images2-icon" priority />
-          </Modal>
+          ariaLabel="Images for posts"
+          theme="light"
+          isOpen={isModalOpen}
+          closeModal={closeModal}
+        >
+          <Image src={socialMediaPostImage0} alt="images0-icon" priority />
+          <Image src={socialMediaPostImage1} alt="images1-icon" priority />
+          <Image src={socialMediaPostImage2} alt="images2-icon" priority />
+        </Modal>
       </div>
       {isLoading && <LoadingWheel />}
     </PageContainer>
   );
-}
+});
