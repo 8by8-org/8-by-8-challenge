@@ -122,8 +122,11 @@ export default function TermsOfServicePage() {
           <li>
             Privacy
             <p>
-              Your use of the Service is subject to our Privacy Policy, which
-              explains how we collect, use, and protect your personal
+              Your use of the Service is subject to our{' '}
+              <Link href="/privacy" className="link">
+                Privacy Policy
+              </Link>
+              , which explains how we collect, use, and protect your personal
               information. By using the Service, you agree to the terms of the
               Privacy Policy.
             </p>
