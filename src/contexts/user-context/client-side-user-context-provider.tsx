@@ -173,7 +173,7 @@ export function ClientSideUserContextProvider(
 
     const data = await response.json();
 
-    if (data.user.uid == user?.uid) {
+    if (data.user.uid === user?.uid) {
       setUser(data.user as User);
     }
   }
@@ -199,13 +199,23 @@ export function ClientSideUserContextProvider(
 
   // share Challenge Function to call the share-challenge API
   async function shareChallenge() {
+    if (!user || user.completedActions.sharedChallenge) return;
+
     const response = await fetch('/api/share-challenge', {
       method: 'PUT',
     });
+
     if (!response.ok) {
       throw new Error('Put request is not successfull.');
     }
+
+    const data = await response.json()
+
+    if (data.user.uid === user?.uid) {
+      setUser(data.user as User)
+    }
   }
+
 
   /* istanbul ignore next */
   async function registerToVote(

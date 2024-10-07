@@ -1017,4 +1017,100 @@ describe('ClientSideUserContextProvider', () => {
     supabaseSpy.mockRestore();
     fetchSpy.mockRestore();
   });
+
+  test(`When shareChallenge is called, if the user is signed in and hasn't 
+  previously shared the challenge , it makes a PUT request to 
+  /api/share-challenge, and then updates the user.`, async () => {
+      const signedInUser: User = {
+        uid: '1',
+        email: 'user@example.com',
+        name: 'User',
+        avatar: '0',
+        type: UserType.Challenger,
+        completedActions: {
+          electionReminders: false,
+          registerToVote: false,
+          sharedChallenge: false,
+        },
+        badges: [],
+        contributedTo: [],
+        completedChallenge: false,
+        challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+        inviteCode: '',
+      };
+  
+      const fetchSpy = jest
+        .spyOn(globalThis, 'fetch')
+        .mockImplementation(route => {
+          if (route === '/api/share-challenge') {
+            return Promise.resolve(
+              NextResponse.json(
+                {
+                  user: {
+                    ...signedInUser,
+                    completedActions: {
+                      ...signedInUser.completedActions,
+                      sharedChallenge: true,
+                    },
+                    badges: [
+                      {
+                        action: Actions.SharedChallenge,
+                      },
+                    ],
+                  },
+                },
+                { status: 200 },
+              ),
+            );
+          }
+  
+          return Promise.resolve(new Response(null, { status: 200 }));
+        });
+  
+      let updatedUser: User | null = null;
+  
+      function ShareTheChallenge() {
+        const { user, shareChallenge } = useContextSafely(
+          UserContext,
+          'ShareTheChallenge',
+        );
+  
+        useEffect(() => {
+          updatedUser = user;
+        }, [user]);
+  
+        return <button onClick={shareChallenge}>Share via</button>;
+      }
+  
+      render(
+        <AlertsContextProvider>
+          <ClientSideUserContextProvider
+            user={signedInUser}
+            invitedBy={null}
+            emailForSignIn="user@example.com"
+          >
+            <ShareTheChallenge/>
+          </ClientSideUserContextProvider>
+        </AlertsContextProvider>,
+      );
+  
+      await waitFor(() => expect(updatedUser).toStrictEqual(signedInUser));
+      await user.click(screen.getByText(/Share via/i));
+      await waitFor(() => expect(fetchSpy).toHaveBeenCalled());
+      expect(updatedUser).toEqual({
+        ...signedInUser,
+        completedActions: {
+          ...signedInUser.completedActions,
+          sharedChallenge: true,
+        },
+        badges: [
+          {
+            action: Actions.SharedChallenge,
+          },
+        ],
+      });
+  
+      fetchSpy.mockRestore();
+    });
+  
 });
