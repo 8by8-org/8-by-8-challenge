@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { PageContainer } from '@/components/utils/page-container';
 import styles from './styles.module.scss';
 
@@ -36,6 +37,14 @@ export default function TermsOfServicePage() {
               <li>Sign up for election reminders.</li>
               <li>Generate voter registration paperwork, if needed.</li>
               <li>Invite friends to use the Service.</li>
+              <li>
+                Earn badges for actions such as registering to vote, signing up
+                for election reminders, and inviting friends to participate.
+                Users receive badges when they or their friends complete certain
+                actions. When a user earns 8 badges, they complete the
+                challenge, although no tangible rewards are currently offered
+                for completing the challenge.
+              </li>
             </ul>
             <p>By using the Service, you agree to:</p>
             <ul>
@@ -62,14 +71,15 @@ export default function TermsOfServicePage() {
             Eligibility
             <p>
               You are eligible to use the Service if you are a U.S. citizen and
-              meet the minimum voter pre-registration age for your state. By
-              using the Service, you represent and warrant that you meet these
-              eligibility requirements. For more information on state-specific
-              pre-registration ages, please visit{' '}
+              are at least 18 years old or meet the minimum pre-registration age
+              requirement in your state. By using the Service, you represent and
+              warrant that you meet these eligibility requirements. For more
+              information on state-specific pre-registration ages, please visit{' '}
               <a
                 href="https://www.rockthevote.org/how-to-vote/nationwide-voting-info/voter-pre-registration/"
                 target="_blank"
                 rel="noreferrer"
+                className="link"
               >
                 this page.
               </a>
@@ -100,13 +110,13 @@ export default function TermsOfServicePage() {
           <li>
             Third-Party Services
             <p>
-              Our Service integrates with third-party services, including but
-              not limited to APIs from Rock the Vote, to facilitate voter
-              registration and reminders. By using these third-party services
-              through our Service, you agree to comply with their terms and
-              conditions. We are not responsible for the availability, accuracy,
-              or content of third-party services, nor do we endorse or assume
-              liability for any third-party services.
+              We use third-party services, including but not limited to Rock the
+              Vote for voter registration and reminders, and Supabase for
+              authentication and database management. By using these third-party
+              services through our Service, you agree to comply with their terms
+              and conditions. We are not responsible for the availability,
+              accuracy, or content of third-party services, nor do we endorse or
+              assume liability for any third-party services.
             </p>
           </li>
           <li>
@@ -182,9 +192,24 @@ export default function TermsOfServicePage() {
           <li>
             Entire Agreement
             <p>
-              These Terms, along with our Privacy Policy, constitute the entire
-              agreement between you and 8by8 Inc regarding the use of the
-              Service and supersede any prior agreements or understandings.
+              These Terms, along with our{' '}
+              <Link href="/privacy" className="link">
+                Privacy Policy
+              </Link>
+              , constitute the entire agreement between you and 8by8 Inc
+              regarding the use of the Service and supersede any prior
+              agreements or understandings.
+            </p>
+          </li>
+          <li>
+            Contact Information
+            <p>
+              If you have any questions or concerns about these Terms, please
+              contact us at{' '}
+              <a href="mailto:info@8by8.us" className="link">
+                info@8by8.us
+              </a>
+              .
             </p>
           </li>
         </ol>

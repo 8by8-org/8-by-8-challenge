@@ -46,11 +46,4 @@ $base-margin: 15px;
   li > ul > li:has(+ p) {
     margin-bottom: 0px;
   }
-
-  a {
-    font-size: $font-size-xxs;
-    font-weight: $font-weight-black;
-    color: $color-black-text;
-    text-decoration: underline;
-  }
 }
