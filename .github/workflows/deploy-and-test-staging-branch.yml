@@ -20,7 +20,7 @@ jobs:
           version: latest
 
       - run: supabase link --project-ref $SUPABASE_PROJECT_ID
-      - run: yes | supabase db reset --linked
+      - run: supabase db reset --linked <<< 'y'
 
   deploy:
     runs-on: ubuntu-latest
