@@ -1137,7 +1137,7 @@ describe('SupabaseUserRepository', () => {
 
   it('should not award the user a badge when the awardSharedbadge method is called if the actions is already completed', async() => {
     let user = await  new SupabaseUserRecordBuilder('user@example.com').completedActions({
-      sharedChallenge: false
+      sharedChallenge: true
     }).build()
     createSupabaseClient = jest.fn().mockImplementation(() => {
       return {
@@ -1159,4 +1159,32 @@ describe('SupabaseUserRepository', () => {
       new ServerError('Failed to award the user.', 422),
     );
   })
+
+  it(`throws a ServerError if the user returned after the update operation
+    initiated by awardSharedBadge is null.`, async () => {
+      let user = await  new SupabaseUserRecordBuilder('user@example.com').completedActions({
+        sharedChallenge: false
+      }).build()
+      createSupabaseClient = jest.fn().mockImplementation(() => {
+        return {
+          rpc: () => {
+            return Promise.resolve({
+              data: null,
+              error: null,
+            });
+          },
+        };
+      });
+  
+      userRepository = new SupabaseUserRepository(
+        createSupabaseClient,
+        new UserRecordParser(),
+      );
+  
+      expect(userRepository.awardSharedBadge(user.uid)).rejects.toThrow(
+        new ServerError('Update operation returned null user.', 500),
+      );
+  });
+  
+
 });
