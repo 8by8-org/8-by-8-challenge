@@ -44,6 +44,7 @@ export const UserRecordParser = inject(
     }
 
     private dbContributedToSchema = z.object({
+      challenger_invite_code: z.string(),
       challenger_name: z.string(),
       challenger_avatar: z.enum(['0', '1', '2', '3']),
     });
@@ -90,8 +91,9 @@ export const UserRecordParser = inject(
           }
         }),
         contributedTo: validatedDBUser.contributed_to.map(contributedTo => ({
-          name: contributedTo.challenger_name,
-          avatar: contributedTo.challenger_avatar,
+          challengerInviteCode: contributedTo.challenger_invite_code,
+          challengerName: contributedTo.challenger_name,
+          challengerAvatar: contributedTo.challenger_avatar,
         })),
         challengeEndTimestamp: validatedDBUser.challenge_end_timestamp,
         completedChallenge: validatedDBUser.completed_challenge,

@@ -13,6 +13,9 @@ import { DateTime } from 'luxon';
 
 const meta: Meta<typeof Header> = {
   component: Header,
+  parameters: {
+    layout: 'fullscreen',
+  },
 };
 
 export default meta;
@@ -104,6 +107,17 @@ export const PlayerIsSignedIn: Story = {
               {
                 user,
                 signOut: () => setUser(null),
+                takeTheChallenge: () => {
+                  return new Promise(resolve => {
+                    setTimeout(() => {
+                      setUser({
+                        ...user!,
+                        type: UserType.Hybrid,
+                      });
+                      resolve();
+                    }, 3000);
+                  });
+                },
               } as UserContextType
             }
           >

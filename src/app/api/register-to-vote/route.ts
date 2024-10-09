@@ -1,10 +1,11 @@
 import 'server-only';
 import { NextResponse, NextRequest } from 'next/server';
-import { ServerError } from '@/errors/server-error';
 import { requestBodySchema } from './request-body-schema';
+import { createRTVRequestBodyFromFormData } from './create-rtv-request-body-from-form-data';
+import { RTVResponseBodySchema } from './rtv-response-body-schema';
 import { serverContainer } from '@/services/server/container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
-import { createRegistrationDataFromRequestBody } from './create-registration-data-from-request-body';
+import { ServerError } from '@/errors/server-error';
 import { ZodError } from 'zod';
 
 export async function POST(request: NextRequest) {
@@ -15,43 +16,46 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
   }
 
-  const userRepo = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository);
-  const voterRegistrationDataRepository = serverContainer.get(
-    SERVER_SERVICE_KEYS.VoterRegistrationDataRepository,
-  );
-
   try {
     const data = await request.json();
-    const requestBody = requestBodySchema.parse(data);
+    const parsed = requestBodySchema.parse(data);
+    const RTVRequestBody = createRTVRequestBodyFromFormData(parsed);
 
-    const fetchResponse = await fetch(
-      'https://usvotes-6vsnwycl4q-uw.a.run.app/registertovote',
+    const RTVResponse = await fetch(
+      'https://register.rockthevote.com/api/v4/registrations',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify(RTVRequestBody),
       },
     );
 
-    const registerToVoteAPI = await fetchResponse.json();
-    if (registerToVoteAPI.status !== 'email sent') {
+    if (!RTVResponse.ok) {
       return NextResponse.json(
-        { error: registerToVoteAPI.error },
-        { status: fetchResponse.status },
+        { error: 'Failed to create voter registration paperwork.' },
+        {
+          status: RTVResponse.status,
+        },
       );
     }
 
-    const registrationData = createRegistrationDataFromRequestBody(requestBody);
-
-    await voterRegistrationDataRepository.insertVoterRegistrationData(
-      user.uid,
-      registrationData,
+    const registrationResponseData = await RTVResponse.json();
+    const { pdfurl: pdfUrl } = RTVResponseBodySchema.parse(
+      registrationResponseData,
     );
 
+    const voterRegistrationDataRepository = serverContainer.get(
+      SERVER_SERVICE_KEYS.VoterRegistrationDataRepository,
+    );
+
+    await voterRegistrationDataRepository.savePDFUrl(user.uid, pdfUrl);
+
+    const userRepo = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository);
     user = await userRepo.awardRegisterToVoteBadge(user.uid);
-    return NextResponse.json(user, { status: 200 });
+
+    return NextResponse.json({ user }, { status: 200 });
   } catch (e) {
     if (e instanceof ServerError) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });

@@ -33,36 +33,10 @@ export function YourName() {
       <Select
         field={form.fields.title}
         label="Title*"
-        options={[
-          {
-            text: 'Mr.',
-            value: 'mr.',
-          },
-          {
-            text: 'Mrs.',
-            value: 'mrs.',
-          },
-          {
-            text: 'Miss',
-            value: 'miss',
-          },
-          {
-            text: 'Ms.',
-            value: 'ms.',
-          },
-          {
-            text: 'Sr.',
-            value: 'sr.',
-          },
-          {
-            text: 'Sra.',
-            value: 'sra.',
-          },
-          {
-            text: 'Srta.',
-            value: 'srta.',
-          },
-        ]}
+        options={['Mr.', 'Mrs.', 'Miss', 'Ms.'].map(option => ({
+          text: option,
+          value: option,
+        }))}
         className={styles.select}
         aria-required
       />

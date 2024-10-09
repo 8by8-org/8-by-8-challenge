@@ -6,7 +6,7 @@ import { createId } from '@paralleldrive/cuid2';
 import { v4 as uuid } from 'uuid';
 import type { InvitationsRepository } from '@/services/server/invitations-repository/invitations-repository';
 import type { CreateSupabaseClient } from '@/services/server/create-supabase-client/create-supabase-client';
-import type { InvitedBy } from '@/model/types/invited-by';
+import type { ChallengerData } from '@/model/types/challenger-data';
 
 describe('SupabaseInvitationsRepository', () => {
   let invitationsRepository: InvitationsRepository;
@@ -145,7 +145,7 @@ describe('SupabaseInvitationsRepository', () => {
     );
     expect(actualInvitedBy).toBeNull();
 
-    const expectedInvitedBy: InvitedBy = {
+    const expectedInvitedBy: ChallengerData = {
       challengerName: 'Challenger',
       challengerAvatar: '2',
       challengerInviteCode: createId(),
@@ -185,7 +185,7 @@ describe('SupabaseInvitationsRepository', () => {
       throw new Error(playerInsertionError.message);
     }
 
-    const initialInvitedBy: InvitedBy = {
+    const initialInvitedBy: ChallengerData = {
       challengerName: 'Challenger',
       challengerAvatar: '2',
       challengerInviteCode: createId(),
@@ -202,7 +202,7 @@ describe('SupabaseInvitationsRepository', () => {
 
     expect(actualInvitedBy).toStrictEqual(initialInvitedBy);
 
-    const updatedInvitedBy: InvitedBy = {
+    const updatedInvitedBy: ChallengerData = {
       challengerName: 'Another Challenger',
       challengerAvatar: '3',
       challengerInviteCode: createId(),

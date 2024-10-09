@@ -1,12 +1,12 @@
-import { InvitedBy } from '@/model/types/invited-by';
+import { ChallengerData } from '@/model/types/challenger-data';
 
 export interface InvitationsRepository {
   getInvitedByFromChallengerInviteCode(
     inviteCode: string,
-  ): Promise<InvitedBy | null>;
-  getInvitedByFromPlayerId(playerId: string): Promise<InvitedBy | null>;
+  ): Promise<ChallengerData | null>;
+  getInvitedByFromPlayerId(playerId: string): Promise<ChallengerData | null>;
   insertOrUpdateInvitedBy(
     playerId: string,
-    invitedBy: InvitedBy,
+    invitedBy: ChallengerData,
   ): Promise<void>;
 }

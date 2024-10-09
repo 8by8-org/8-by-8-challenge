@@ -43,6 +43,7 @@ create table public.badges (
   player_name varchar(255),
   player_avatar char(1),
   challenger_id uuid not null references public.users on delete cascade,
+  awarded_at timestamp not null default current_timestamp,
   primary key (id, challenger_id)
 );
 
@@ -75,6 +76,7 @@ create table public.contributed_to (
   challenger_invite_code varchar not null,
   challenger_name varchar(255) not null,
   challenger_avatar char(1) not null,
+  contributed_to_at timestamp not null default current_timestamp,
   primary key (id, player_id)
 );
 
@@ -87,40 +89,8 @@ using ((select auth.uid()) = player_id);
 -- Create registration_information table, enable row level security, and set a policy
 create table public.registration_information (
   id serial,
-  user_id uuid not null references public.users on delete cascade, 
-  us_state varchar(255) not null,
-  city varchar(255) not null, 
-  street varchar(255) not null,
-  name_first varchar(255) not null, 
-  name_last varchar(255) not null, 
-  dob varchar(255) not null, 
-  zip varchar(255) not null, 
-  email varchar(255) not null, 
-  citizen varchar(255) not null, 
-  eighteen_plus varchar(255) not null, 
-  party varchar(255) not null, 
-  id_number varchar(255) not null, 
-  unit varchar(255) null,
-  name_middle varchar(255) null,
-  suffix varchar(255) null,
-  race varchar(255) null,
-  change_of_name varchar(255) null,
-  prev_title varchar(255) null,
-  prev_name_first varchar(255) null,
-  prev_name_middle varchar(255) null,
-  prev_name_last varchar(255) null,
-  prev_suffix varchar(255) null,
-  change_of_address varchar(255) null,
-  prev_state varchar(255) null,
-  prev_city varchar(255) null,
-  prev_street varchar(255) null,
-  prev_zip varchar(255) null,
-  prev_unit varchar(255) null,
-  diff_mail_address varchar(255) null,
-  mail_state varchar(255) null,
-  mail_city varchar(255) null,
-  mail_street varchar(255) null,
-  mail_zip varchar(255) null,
+  user_id uuid unique not null references public.users on delete cascade,
+  pdf_url varchar(255) not null,
   primary key (id, user_id)
 );
 

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { isSignedOut } from '@/components/guards/is-signed-out';
 import { PageContainer } from '@/components/utils/page-container';
 import { Button } from '@/components/utils/button';
 import logo from '../../public/static/images/shared/8by8-logo.svg';
@@ -16,7 +17,7 @@ import fatherAndDaughterWithSign from '../../public/static/images/pages/home/fat
 import speakerWithMicAndSign from '../../public/static/images/pages/home/speaker-with-mic-and-sign.png';
 import styles from './styles.module.scss';
 
-export default function Home() {
+export default isSignedOut(function Home() {
   const router = useRouter();
 
   useEffect(() => {
@@ -169,4 +170,4 @@ export default function Home() {
       </section>
     </PageContainer>
   );
-}
+});

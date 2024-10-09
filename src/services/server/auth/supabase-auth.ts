@@ -10,7 +10,7 @@ import type { CreateSupabaseClient } from '../create-supabase-client/create-supa
 import type { UserRepository } from '../user-repository/user-repository';
 import type { Avatar } from '@/model/types/avatar';
 import type { InvitationsRepository } from '../invitations-repository/invitations-repository';
-import type { InvitedBy } from '@/model/types/invited-by';
+import type { ChallengerData } from '@/model/types/challenger-data';
 import type { ICookies } from '../cookies/i-cookies';
 import type { Session } from '@/model/types/session';
 
@@ -187,11 +187,11 @@ export const SupabaseAuth = inject(
       return { user, invitedBy };
     }
 
-    private async loadInvitedByForGuest(): Promise<InvitedBy | null> {
+    private async loadInvitedByForGuest(): Promise<ChallengerData | null> {
       return this.loadInvitedByFromCookies();
     }
 
-    private async loadInvitedByFromCookies(): Promise<InvitedBy | null> {
+    private async loadInvitedByFromCookies(): Promise<ChallengerData | null> {
       const inviteCode = this.cookies.getInviteCode();
 
       if (inviteCode) {
@@ -206,7 +206,7 @@ export const SupabaseAuth = inject(
       return null;
     }
 
-    private isInvitedByValid(invitedBy: InvitedBy, user: User) {
+    private isInvitedByValid(invitedBy: ChallengerData, user: User) {
       return invitedBy.challengerInviteCode !== user.inviteCode;
     }
   },

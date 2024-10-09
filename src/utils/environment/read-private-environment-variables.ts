@@ -46,5 +46,26 @@ export function readPrivateEnvironmentVariables() {
         return cryptoKey;
       })
       .parseAsync(process.env.VOTER_REGISTRATION_REPO_ENCRYPTION_KEY),
+    CRYPTO_KEY_COOKIES: z
+      .string({
+        required_error:
+          'Could not load environment variable CRYPTO_KEY_COOKIES',
+      })
+      .transform(async (key: string): Promise<CryptoKey> => {
+        const rawKey = new Uint8Array(
+          atob(key)
+            .split('')
+            .map(char => char.charCodeAt(0)),
+        );
+        const cryptoKey = await crypto.subtle.importKey(
+          'raw',
+          rawKey,
+          { name: 'AES-GCM' },
+          true,
+          ['encrypt', 'decrypt'],
+        );
+        return cryptoKey;
+      })
+      .parseAsync(process.env.CRYPTO_KEY_COOKIES),
   };
 }

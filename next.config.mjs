@@ -19,6 +19,16 @@ const nextConfig = {
       },
     ];
   },
+
+  async redirects() {
+    return [
+      {
+        source: '/register',
+        destination: '/register/eligibility',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

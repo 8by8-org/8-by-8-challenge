@@ -6,20 +6,13 @@ import { SupabaseAuth } from './auth/supabase-auth';
 import { Cookies } from './cookies/cookies';
 import { createSupabaseSSRClient } from './create-supabase-client/create-supabase-ssr-client';
 import { UserRecordParser } from './user-record-parser/user-record-parser';
-import { Middleware } from './middleware/middleware';
-import { redirectIfOTPNotSent } from './redirect-if-otp-not-sent/redirect-if-otp-not-sent';
-import { redirectIfSignedInWithSupabase } from './redirect-if-signed-in/redirect-if-signed-in-with-supabase';
-import { redirectIfSignedOutFromSupabase } from './redirect-if-signed-out/redirect-if-signed-out-from-supabase';
-import { refreshSupabaseSession } from './refresh-session/refresh-supabase-session';
 import { SupabaseUserRepository } from './user-repository/supabase-user-repository';
 import { WebCryptoSubtleEncryptor } from './encryptor/web-crypto-subtle-encryptor';
 import { RockTheVoteUSStateInformation } from './us-state-information/rtv-us-state-information';
 import { validateAddressesWithGoogleMaps } from './validate-addresses/validate-addresses-with-google-maps';
 import { SupabaseVoterRegistrationDataRepository } from './voter-registration-data-repository/supabase-voter-registration-data-repository';
 import { createSupabaseServiceRoleClient } from './create-supabase-client/create-supabase-service-role-client';
-import { setInviteCodeCookie } from './set-invite-code-cookie/set-invite-code-cookie';
 import { SupabaseInvitationsRepository } from './invitations-repository/supabase-invitations-repository';
-import { redirectIfSupabaseUserCompletedAction } from './redirect-if-completed-action/redirect-if-supabase-user-completed-action';
 
 /**
  * An inversion of control container that should be used to obtain instances of
@@ -58,20 +51,6 @@ export const serverContainer = ContainerBuilder.createBuilder()
     createSupabaseServiceRoleClient,
   )
   .registerClass(SERVER_SERVICE_KEYS.UserRecordParser, UserRecordParser)
-  .registerClass(SERVER_SERVICE_KEYS.Middleware, Middleware)
-  .registerFunction(
-    SERVER_SERVICE_KEYS.redirectIfOTPNotSent,
-    redirectIfOTPNotSent,
-  )
-  .registerFunction(
-    SERVER_SERVICE_KEYS.redirectIfSignedIn,
-    redirectIfSignedInWithSupabase,
-  )
-  .registerFunction(
-    SERVER_SERVICE_KEYS.redirectIfSignedOut,
-    redirectIfSignedOutFromSupabase,
-  )
-  .registerFunction(SERVER_SERVICE_KEYS.refreshSession, refreshSupabaseSession)
   .registerClass(SERVER_SERVICE_KEYS.UserRepository, SupabaseUserRepository)
   .registerClass(SERVER_SERVICE_KEYS.Encryptor, WebCryptoSubtleEncryptor)
   .registerClass(
@@ -82,10 +61,6 @@ export const serverContainer = ContainerBuilder.createBuilder()
     SERVER_SERVICE_KEYS.validateAddresses,
     validateAddressesWithGoogleMaps,
   )
-  .registerFunction(
-    SERVER_SERVICE_KEYS.setInviteCodeCookie,
-    setInviteCodeCookie,
-  )
   .registerClass(
     SERVER_SERVICE_KEYS.InvitationsRepository,
     SupabaseInvitationsRepository,
@@ -93,9 +68,5 @@ export const serverContainer = ContainerBuilder.createBuilder()
   .registerClass(
     SERVER_SERVICE_KEYS.VoterRegistrationDataRepository,
     SupabaseVoterRegistrationDataRepository,
-  )
-  .registerFunction(
-    SERVER_SERVICE_KEYS.redirectIfCompletedAction,
-    redirectIfSupabaseUserCompletedAction,
   )
   .build();

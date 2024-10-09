@@ -6,7 +6,7 @@ exports[`Why8by8 renders why8by8 page unchanged 1`] = `
     class="outer_container"
   >
     <div
-      class="inner_container"
+      class="inner_container_light"
     >
       <div
         class="why_8by8"

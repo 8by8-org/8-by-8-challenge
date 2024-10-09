@@ -1,6 +1,8 @@
 'use client';
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { createBrowserClient } from '@supabase/ssr';
+import { PUBLIC_ENVIRONMENT_VARIABLES } from '@/constants/public-environment-variables';
 import {
   SendOTPToEmailParams,
   SignUpWithEmailParams,
@@ -10,8 +12,10 @@ import {
 import { clearInviteCode } from './clear-invite-code-cookie';
 import { clearAllPersistentFormElements, ValueOf } from 'fully-formed';
 import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
+import { UserType } from '@/model/enums/user-type';
 import type { User } from '@/model/types/user';
-import type { InvitedBy } from '@/model/types/invited-by';
+import type { ChallengerData } from '@/model/types/challenger-data';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 /**
  * Props that can be passed from a server component into a
@@ -21,7 +25,7 @@ import type { InvitedBy } from '@/model/types/invited-by';
 interface ClientSideUserContextProviderProps {
   user: User | null;
   emailForSignIn: string;
-  invitedBy: InvitedBy | null;
+  invitedBy: ChallengerData | null;
   children?: ReactNode;
 }
 
@@ -38,13 +42,69 @@ export function ClientSideUserContextProvider(
 ) {
   const [user, setUser] = useState<User | null>(props.user);
   const [emailForSignIn, setEmailForSignIn] = useState(props.emailForSignIn);
-  const [invitedBy, setInvitedBy] = useState<InvitedBy | null>(props.invitedBy);
+  const [invitedBy, setInvitedBy] = useState<ChallengerData | null>(
+    props.invitedBy,
+  );
+  const supabaseSubscriptionRef = useRef<RealtimeChannel | null>(null);
   const router = useRouter();
 
   useEffect(() => {
+    const refreshUser = async () => {
+      const response = await fetch('/api/refresh-user', {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        if (data.user.uid === user?.uid) {
+          setUser(data.user as User);
+        }
+      }
+    };
+
+    const subscribeToBadges = (userId: string) => {
+      const supabase = createBrowserClient(
+        PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_URL,
+        PUBLIC_ENVIRONMENT_VARIABLES.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      );
+
+      supabaseSubscriptionRef.current = supabase
+        .channel('badges')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'badges',
+            filter: `challenger_id=eq.${userId}`,
+          },
+          async payload => {
+            const newBadge = payload.new;
+
+            /* 
+              Only refresh the user if the badge was awarded due to the actions of 
+              another user. If the user earned the badge themselves, the
+              user object will already have been updated.
+            */
+            if (newBadge['player_name'] && newBadge['player_avatar']) {
+              await refreshUser();
+            }
+          },
+        )
+        .subscribe();
+    };
+
+    supabaseSubscriptionRef.current?.unsubscribe();
+
     if (user) {
       clearInviteCode();
+      subscribeToBadges(user.uid);
     }
+
+    return () => {
+      supabaseSubscriptionRef.current?.unsubscribe();
+    };
   }, [user]);
 
   async function signUpWithEmail(params: SignUpWithEmailParams) {
@@ -58,7 +118,6 @@ export function ClientSideUserContextProvider(
     }
 
     setEmailForSignIn(params.email);
-
     router.push('/signin-with-otp');
   }
 
@@ -73,7 +132,6 @@ export function ClientSideUserContextProvider(
     }
 
     setEmailForSignIn(params.email);
-
     router.push('/signin-with-otp');
   }
 
@@ -100,7 +158,7 @@ export function ClientSideUserContextProvider(
 
     const data = await response.json();
     setUser(data.user as User);
-    setInvitedBy(data.invitedBy as InvitedBy);
+    setInvitedBy(data.invitedBy as ChallengerData);
   }
 
   async function gotElectionReminders() {
@@ -116,7 +174,7 @@ export function ClientSideUserContextProvider(
 
     const data = await response.json();
 
-    if (user) {
+    if (data.user.uid === user?.uid) {
       setUser(data.user as User);
     }
   }
@@ -140,15 +198,49 @@ export function ClientSideUserContextProvider(
     throw new Error('not implemented.');
   }
 
-  /* istanbul ignore next */
   async function registerToVote(
     formData: ValueOf<InstanceType<typeof VoterRegistrationForm>>,
   ): Promise<void> {
-    return new Promise<void>((_resolve, reject) => {
-      setTimeout(() => {
-        reject(new Error('not implemented.'));
-      }, 3000);
+    if (!user || user.completedActions.registerToVote) return;
+
+    const response = await fetch('/api/register-to-vote', {
+      method: 'POST',
+      body: JSON.stringify(formData),
     });
+
+    if (!response.ok) {
+      throw new Error('There was a problem registering to vote.');
+    }
+
+    const data = await response.json();
+
+    if (data.user.uid === user?.uid) {
+      setUser(data.user as User);
+    }
+  }
+
+  async function takeTheChallenge() {
+    if (
+      !user ||
+      user.type === UserType.Challenger ||
+      user.type === UserType.Hybrid
+    ) {
+      return;
+    }
+
+    const response = await fetch('/api/take-the-challenge', {
+      method: 'PUT',
+    });
+
+    if (!response.ok) {
+      throw new Error('There was a problem taking the challenge.');
+    }
+
+    const data = await response.json();
+
+    if (data.user.uid === user?.uid) {
+      setUser(data.user as User);
+    }
   }
 
   return (
@@ -165,6 +257,7 @@ export function ClientSideUserContextProvider(
         signOut,
         restartChallenge,
         registerToVote,
+        takeTheChallenge,
       }}
     >
       {props.children}

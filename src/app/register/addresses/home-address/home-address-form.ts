@@ -84,6 +84,7 @@ export const HomeAddressForm = FormFactory.createSubForm(
           validators: [
             StringValidators.required({
               invalidMessage: 'Please enter your street address.',
+              trimBeforeValidation: true,
             }),
           ],
         }),
@@ -99,6 +100,7 @@ export const HomeAddressForm = FormFactory.createSubForm(
           validators: [
             StringValidators.required({
               invalidMessage: 'Please enter your city.',
+              trimBeforeValidation: true,
             }),
           ],
         }),
