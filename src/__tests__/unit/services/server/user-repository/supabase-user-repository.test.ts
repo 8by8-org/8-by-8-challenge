@@ -13,7 +13,8 @@ import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 import type { CreateSupabaseClient } from '@/services/server/create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '@/services/server/user-record-parser/i-user-record-parser';
 import type { Badge } from '@/model/types/badges/badge';
-
+import { calculateDaysRemaining } from '@/app/progress/calculate-days-remaining';
+import { promise } from 'zod';
 describe('SupabaseUserRepository', () => {
   let userRepository: InstanceType<typeof SupabaseUserRepository>;
   let createSupabaseClient: CreateSupabaseClient;
@@ -1117,4 +1118,43 @@ describe('SupabaseUserRepository', () => {
       },
     ]);
   });
+
+  
+  it('restart challenge', async () => {
+    const user = await new SupabaseUserRecordBuilder('player@example.com')
+    .challengeEndTimestamp(0)
+    .build();
+  expect(calculateDaysRemaining(user)).toBe(0);
+  user.challengeEndTimestamp= await userRepository.restartChallenge(user.uid);
+  expect(calculateDaysRemaining(user)).toBe(8);
+    }
+  );
+  it(`throws a ServerError when fails to update the challengeEndStamp if restart challenge is called.`, async () => {
+      const errorMessage = 'Failed to update user.';
+  
+      createSupabaseClient = jest.fn().mockImplementation(() => {
+        return {
+          from: () => {
+            return {
+              update: () => {
+                return{
+                  eq: () => {return Promise.resolve({ data: null,
+                    error: new Error(errorMessage),
+                    status: 500,})},
+                }
+              },
+            };
+          }
+        };
+      });
+  
+      userRepository = new SupabaseUserRepository(
+        createSupabaseClient,
+        new UserRecordParser(),
+      );
+  
+      await expect(userRepository.restartChallenge('')).rejects.toThrow(
+        new ServerError(errorMessage, 500),
+      );
+    });   
 });
