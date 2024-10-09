@@ -11,7 +11,7 @@ export async function PUT() {
   try {
     const user = await auth.loadSessionUser();
     if (!user) {
-      return NextResponse.json({ message: 'user not found', status: 401 });
+      return NextResponse.json({ message: 'user not found'}, { status: 401 });
     }
 
     const updatedUser = await userRepo.awardSharedBadge(user.uid);
