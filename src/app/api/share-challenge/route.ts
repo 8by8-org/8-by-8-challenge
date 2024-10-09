@@ -4,9 +4,8 @@ import { serverContainer } from '@/services/server/container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 import { ServerError } from '@/errors/server-error';
 
-export async function PUT(request: NextRequest) {
+export async function PUT() {
   const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
-
   const userRepo = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository);
 
   try {
@@ -17,11 +16,11 @@ export async function PUT(request: NextRequest) {
 
     const updatedUser = await userRepo.awardSharedBadge(user.uid);
 
-    return NextResponse.json(updatedUser, { status: 200 });
+    return NextResponse.json({user: updatedUser}, { status: 200 });
   } catch (e) {
     if (e instanceof ServerError) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });
     }
-    return NextResponse.json({ error: 'Bad data.' }, { status: 400 });
+    return NextResponse.json({ error: 'Unexpected error' }, { status: 500 });
   }
 }
