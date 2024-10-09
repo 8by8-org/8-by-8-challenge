@@ -1144,7 +1144,7 @@ describe('SupabaseUserRepository', () => {
         rpc: () => {
           return Promise.resolve({
             data: null,
-            error: new Error('Failed to update user.'),
+            error: new Error('Failed to award the user.'),
             status: 422,
           });
         },
@@ -1156,7 +1156,7 @@ describe('SupabaseUserRepository', () => {
       new UserRecordParser(),
     );
     expect(userRepository.awardSharedBadge(user.uid)).rejects.toThrow(
-      new ServerError('Failed to award  user.', 422),
+      new ServerError('Failed to award the user.', 422),
     );
   })
 });
