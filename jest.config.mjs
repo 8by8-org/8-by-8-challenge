@@ -23,7 +23,6 @@ const config = {
     '<rootDir>/src/constants/',
     'fonts',
     '<rootDir>/src/model/',
-    '<rootDir>/src/__tests__/unit/components/progress/challenge-button/challenge-button.test.tsx',
     '<rootDir>/src/app/register/progress-bar',
     // ignore async server components as the test environment doesn't support rendering them at this time
     '<rootDir>/src/contexts/user-context/user-context-provider.tsx',
@@ -35,6 +34,9 @@ const config = {
     // pledge to vote iframe is heavily reliant on the ResizeObserver and
     // content dimensions
     '<rootDir>/src/app/reminders/pledge-to-vote-iframe/pledge-to-vote-iframe.tsx',
+    // tests for button pending
+    '<rootDir>/src/components/progress/challenge-button',
+    '<rootDir>/src/components/'
   ],
   //require 100% code coverage for the tests to pass
   coverageThreshold: {

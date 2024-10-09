@@ -1121,4 +1121,19 @@ describe('SupabaseUserRepository', () => {
       },
     ]);
   });
+
+  it('should award the user a badge when the awardSharedbadge method is called', async() => {
+    let user = await  new SupabaseUserRecordBuilder('user@example.com').completedActions({
+      sharedChallenge: false
+    }).build()
+    expect(user.completedActions.sharedChallenge).toBe(false)
+    user = await userRepository.awardSharedBadge(user.uid)
+    expect(user.completedActions.sharedChallenge).toBe(true)
+    expect(user.badges).toContainEqual({
+      action: Actions.SharedChallenge
+    })    
+
+  })
+
+  
 });
