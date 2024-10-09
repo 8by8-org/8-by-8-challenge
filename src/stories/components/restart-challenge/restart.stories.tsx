@@ -8,6 +8,7 @@ import { PropsWithChildren, useState } from 'react';
 import { time } from 'console';
 import { promise } from 'zod';
 import { DateTime } from 'luxon';
+import { AlertsContext, AlertsContextProvider } from "@/contexts/alerts-context";
 const meta: Meta<typeof RestartChallengeModal> = {
   component: RestartChallengeModal,
 };
@@ -29,6 +30,7 @@ function UserContextProvider({ children } : PropsWithChildren) {
       },3000);   });
   };
   return (
+    <AlertsContextProvider>
     <UserContext.Provider value={Builder<UserContextType>()
       .user(user)
       .restartChallenge(restartChallenge)
@@ -36,6 +38,7 @@ function UserContextProvider({ children } : PropsWithChildren) {
       >
       {children}
     </UserContext.Provider>
+    </AlertsContextProvider>
     );
     
 

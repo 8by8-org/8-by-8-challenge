@@ -12,6 +12,3 @@ const preview: Preview = {
 };
 
 export default preview;
-import withAlertsContext from './withAlertsContext';
-
-export const decorators = [withAlertsContext];
