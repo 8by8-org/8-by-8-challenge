@@ -29,13 +29,18 @@ export const SupabaseUserRepository = inject(
     ) {}
     async restartChallenge(userId: string): Promise<number> {
       const supabase = this.createSupabaseClient();
-      const updatedChallengeEndTimestamp = DateTime.now().plus({ days: 8 }).toUnixInteger();
-      const { error } = await supabase.from('users').update({ challenge_end_timestamp: updatedChallengeEndTimestamp }).eq('id', userId);
-      
-      if(error) {
+      const updatedChallengeEndTimestamp = DateTime.now()
+        .plus({ days: 8 })
+        .toUnixInteger();
+      const { error } = await supabase
+        .from('users')
+        .update({ challenge_end_timestamp: updatedChallengeEndTimestamp })
+        .eq('id', userId);
+
+      if (error) {
         throw new ServerError('Failed to update user.', 500);
       }
-      
+
       return updatedChallengeEndTimestamp;
     }
     async getUserById(userId: string): Promise<User | null> {

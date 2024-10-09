@@ -6,15 +6,14 @@ import { ServerError } from '@/errors/server-error';
 
 export async function PUT(request: NextRequest) {
   const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
-  const userRepository = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository);
+  const userRepository = serverContainer.get(
+    SERVER_SERVICE_KEYS.UserRepository,
+  );
 
   try {
     const user = await auth.loadSessionUser();
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const newTimestamp = await userRepository.restartChallenge(user.uid);
@@ -28,6 +27,9 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });
     }
 
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 },
+    );
   }
 }

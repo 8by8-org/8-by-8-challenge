@@ -34,26 +34,27 @@ describe('PUT /restart_challenge', () => {
                 completedActions: {
                   electionReminders: true,
                   registerToVote: true,
-                  sharedChallenge: true
+                  sharedChallenge: true,
                 },
                 badges: [
                   { action: Actions.RegisterToVote }, // Removed type casting to ActionBadge
-                  { action: Actions.SharedChallenge }
+                  { action: Actions.SharedChallenge },
                 ],
                 challengeEndTimestamp: newTimestamp,
                 completedChallenge: true,
                 contributedTo: [
-                  { challengerInviteCode: 'INVITECODE123',
+                  {
+                    challengerInviteCode: 'INVITECODE123',
                     challengerName: 'Jane Doe',
-                    challengerAvatar: '0' },
-                  
+                    challengerAvatar: '0',
+                  },
                 ],
                 inviteCode: 'INVITE123',
                 invitedBy: {
                   challengerInviteCode: 'INVITECODE123',
                   challengerName: 'Jane Doe',
-                  challengerAvatar: '0'
-                }
+                  challengerAvatar: '0',
+                },
               });
             })
             .build();

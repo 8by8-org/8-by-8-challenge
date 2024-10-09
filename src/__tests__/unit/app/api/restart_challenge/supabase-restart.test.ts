@@ -28,7 +28,9 @@ describe('SupabaseUserRepository.restartChallenge', () => {
         return getActualService(key);
       });
 
-    const userRepository = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository) as UserRepository;
+    const userRepository = serverContainer.get(
+      SERVER_SERVICE_KEYS.UserRepository,
+    ) as UserRepository;
     const result = await userRepository.restartChallenge(userId);
 
     expect(result).toBe(newTimestamp);
@@ -44,7 +46,11 @@ describe('SupabaseUserRepository.restartChallenge', () => {
       .mockImplementation(key => {
         if (key.name === SERVER_SERVICE_KEYS.UserRepository.name) {
           return {
-            restartChallenge: jest.fn().mockRejectedValue(new ServerError('Failed to update user.', 500)),
+            restartChallenge: jest
+              .fn()
+              .mockRejectedValue(
+                new ServerError('Failed to update user.', 500),
+              ),
             getUserById: jest.fn(),
             makeHybrid: jest.fn(),
             awardRegisterToVoteBadge: jest.fn(),
@@ -54,9 +60,13 @@ describe('SupabaseUserRepository.restartChallenge', () => {
         return getActualService(key);
       });
 
-    const userRepository = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository) as UserRepository;
+    const userRepository = serverContainer.get(
+      SERVER_SERVICE_KEYS.UserRepository,
+    ) as UserRepository;
 
-    await expect(userRepository.restartChallenge(userId)).rejects.toThrow(ServerError);
+    await expect(userRepository.restartChallenge(userId)).rejects.toThrow(
+      ServerError,
+    );
 
     containerSpy.mockRestore();
   });
@@ -69,7 +79,9 @@ describe('SupabaseUserRepository.restartChallenge', () => {
       .mockImplementation(key => {
         if (key.name === SERVER_SERVICE_KEYS.UserRepository.name) {
           return {
-            restartChallenge: jest.fn().mockRejectedValue(new Error('Unknown error')),
+            restartChallenge: jest
+              .fn()
+              .mockRejectedValue(new Error('Unknown error')),
             getUserById: jest.fn(),
             makeHybrid: jest.fn(),
             awardRegisterToVoteBadge: jest.fn(),
@@ -79,9 +91,13 @@ describe('SupabaseUserRepository.restartChallenge', () => {
         return getActualService(key);
       });
 
-    const userRepository = serverContainer.get(SERVER_SERVICE_KEYS.UserRepository) as UserRepository;
+    const userRepository = serverContainer.get(
+      SERVER_SERVICE_KEYS.UserRepository,
+    ) as UserRepository;
 
-    await expect(userRepository.restartChallenge(userId)).rejects.toThrow('Unknown error');
+    await expect(userRepository.restartChallenge(userId)).rejects.toThrow(
+      'Unknown error',
+    );
 
     containerSpy.mockRestore();
   });

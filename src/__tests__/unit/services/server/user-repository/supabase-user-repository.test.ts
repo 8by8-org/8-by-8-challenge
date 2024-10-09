@@ -20,8 +20,11 @@ describe('SupabaseUserRepository', () => {
   let createSupabaseClient: CreateSupabaseClient;
 
   beforeEach(() => {
-    createSupabaseClient = createSupabaseServiceRoleClient
-    userRepository = new SupabaseUserRepository(createSupabaseClient, new UserRecordParser())
+    createSupabaseClient = createSupabaseServiceRoleClient;
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
   });
 
   afterEach(() => {
@@ -1119,42 +1122,46 @@ describe('SupabaseUserRepository', () => {
     ]);
   });
 
-  
   it('restart challenge', async () => {
     const user = await new SupabaseUserRecordBuilder('player@example.com')
-    .challengeEndTimestamp(0)
-    .build();
-  expect(calculateDaysRemaining(user)).toBe(0);
-  user.challengeEndTimestamp= await userRepository.restartChallenge(user.uid);
-  expect(calculateDaysRemaining(user)).toBe(8);
-    }
-  );
+      .challengeEndTimestamp(0)
+      .build();
+    expect(calculateDaysRemaining(user)).toBe(0);
+    user.challengeEndTimestamp = await userRepository.restartChallenge(
+      user.uid,
+    );
+    expect(calculateDaysRemaining(user)).toBe(8);
+  });
   it(`throws a ServerError when fails to update the challengeEndStamp if restart challenge is called.`, async () => {
-      const errorMessage = 'Failed to update user.';
-  
-      createSupabaseClient = jest.fn().mockImplementation(() => {
-        return {
-          from: () => {
-            return {
-              update: () => {
-                return{
-                  eq: () => {return Promise.resolve({ data: null,
+    const errorMessage = 'Failed to update user.';
+
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        from: () => {
+          return {
+            update: () => {
+              return {
+                eq: () => {
+                  return Promise.resolve({
+                    data: null,
                     error: new Error(errorMessage),
-                    status: 500,})},
-                }
-              },
-            };
-          }
-        };
-      });
-  
-      userRepository = new SupabaseUserRepository(
-        createSupabaseClient,
-        new UserRecordParser(),
-      );
-  
-      await expect(userRepository.restartChallenge('')).rejects.toThrow(
-        new ServerError(errorMessage, 500),
-      );
-    });   
+                    status: 500,
+                  });
+                },
+              };
+            },
+          };
+        },
+      };
+    });
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+
+    await expect(userRepository.restartChallenge('')).rejects.toThrow(
+      new ServerError(errorMessage, 500),
+    );
+  });
 });
