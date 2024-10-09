@@ -36,7 +36,6 @@ const config = {
     '<rootDir>/src/app/reminders/pledge-to-vote-iframe/pledge-to-vote-iframe.tsx',
     // tests for button pending
     '<rootDir>/src/components/progress/challenge-button',
-    '<rootDir>/src/components/'
   ],
   //require 100% code coverage for the tests to pass
   coverageThreshold: {

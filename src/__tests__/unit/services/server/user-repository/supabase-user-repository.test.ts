@@ -289,7 +289,7 @@ describe('SupabaseUserRepository', () => {
       },
     ]);
   });
-
+// check these out!
   it(`throws a ServerError when the update operation initiated by
   makeHybrid fails.`, () => {
     createSupabaseClient = jest.fn().mockImplementation(() => {
@@ -365,7 +365,7 @@ describe('SupabaseUserRepository', () => {
       new ServerError('Failed to parse user data.', 400),
     );
   });
-
+//until here 
   it(`sets completedActions.electionReminders to true when
   awardElectionRemindersBadge is called.`, async () => {
     let user = await new SupabaseUserRecordBuilder('user@example.com').build();
@@ -1135,5 +1135,28 @@ describe('SupabaseUserRepository', () => {
 
   })
 
-  
+  it('should not award the user a badge when the awardSharedbadge method is called if the actions is already completed', async() => {
+    let user = await  new SupabaseUserRecordBuilder('user@example.com').completedActions({
+      sharedChallenge: false
+    }).build()
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        rpc: () => {
+          return Promise.resolve({
+            data: null,
+            error: new Error('Failed to update user.'),
+            status: 422,
+          });
+        },
+      };
+    });
+
+     userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+    expect(userRepository.awardSharedBadge(user.uid)).rejects.toThrow(
+      new ServerError('Failed to award  user.', 422),
+    );
+  })
 });
