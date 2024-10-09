@@ -43,13 +43,16 @@ describe('PUT /restart_challenge', () => {
                 challengeEndTimestamp: newTimestamp,
                 completedChallenge: true,
                 contributedTo: [
-                  { name: 'Jane Doe', avatar: 'https://example.com/avatar2.png' as Avatar }
+                  { challengerInviteCode: 'INVITECODE123',
+                    challengerName: 'Jane Doe',
+                    challengerAvatar: '0' },
+                  
                 ],
                 inviteCode: 'INVITE123',
                 invitedBy: {
-                  inviteCode: 'INVITE456',
-                  name: 'Jane Smith',
-                  avatar: 'https://example.com/avatar3.png' as Avatar
+                  challengerInviteCode: 'INVITECODE123',
+                  challengerName: 'Jane Doe',
+                  challengerAvatar: '0'
                 }
               });
             })

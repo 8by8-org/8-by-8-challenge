@@ -2,11 +2,11 @@
 import { createNamedContext } from '@/hooks/create-named-context';
 import { Alert, useAlert } from '@/components/utils/alert';
 import type { PropsWithChildren } from 'react';
-import { useContext } from 'react';
+
 /**
  * The value provided to consumers of the {@link AlertsContext}.
  */
-interface AlertsContextType {
+export interface AlertsContextType {
   showAlert(message: string, variant: 'error' | 'success'): void;
 }
 

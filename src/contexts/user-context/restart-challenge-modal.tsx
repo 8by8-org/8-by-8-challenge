@@ -16,7 +16,8 @@ export function RestartChallengeModal() {
 
   if (!user) return null;
   const showModal = calculateDaysRemaining(user) === 0;
-
+  /* istanbul ignore next */
+  const preventClose = () => {};
   const restartAndChangeisLoading = async () => {
     try {
       setLoading(true);
@@ -30,7 +31,7 @@ export function RestartChallengeModal() {
 
   return (
 
-        <Modal ariaLabel="Restart Challenge" theme="dark" isOpen={showModal} closeModal={() => {}}>
+        <Modal ariaLabel="Restart Challenge" theme="dark" isOpen={showModal} closeModal={preventClose}>
    
               
           {isLoading ? (
