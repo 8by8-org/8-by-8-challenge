@@ -1182,9 +1182,10 @@ describe('SupabaseUserRepository', () => {
       );
   
       expect(userRepository.awardSharedBadge(user.uid)).rejects.toThrow(
-        new ServerError('Update operation returned null user.', 500),
+        new ServerError('User was null after update ', 500),
       );
   });
+  
   
 
 });
