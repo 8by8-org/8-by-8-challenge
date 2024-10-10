@@ -1186,33 +1186,36 @@ describe('SupabaseUserRepository', () => {
   });
   
 
-  // it(`throws a ServerError if the user record returned after the update
-  //   operation initiated by awardSharedbadge cannot be parsed.`, async () => {
-  //     createSupabaseClient = jest.fn().mockImplementation(() => {
-  //       return {
-  //         rpc: () => {
-  //           return Promise.resolve({
-  //             data: {},
-  //             error: null,
-  //           });
-  //         },
-  //       };
-  //     });
+  it(`throws a ServerError if the user record returned after the update
+    operation initiated by awardSharedbadge cannot be parsed.`, async () => {
+      let user = await new SupabaseUserRecordBuilder('user@example.com').completedActions({
+        sharedChallenge: false
+      }).build();
+      createSupabaseClient = jest.fn().mockImplementation(() => {
+        return {
+          rpc: () => {
+            return Promise.resolve({
+              data: {},
+              error: null,
+            });
+          },
+        };
+      });
   
-  //     const userRecordParser: IUserRecordParser = {
-  //       parseUserRecord: () => {
-  //         throw new Error('Error parsing user.');
-  //       },
-  //     };
+      const userRecordParser: IUserRecordParser = {
+        parseUserRecord: () => {
+          throw new Error('Error parsing user.');
+        },
+      };
   
-  //     userRepository = new SupabaseUserRepository(
-  //       createSupabaseClient,
-  //       userRecordParser,
-  //     );
+      userRepository = new SupabaseUserRepository(
+        createSupabaseClient,
+        userRecordParser,
+      );
   
-  //     await expect(userRepository.makeHybrid(uuid())).rejects.toThrow(
-  //       new ServerError('Failed to parse user data.', 400),
-  //     );
-  //   });
+      await expect(userRepository.awardSharedBadge(user.uid)).rejects.toThrow(
+        new ServerError('Failed to parse user data.', 400),
+      );
+    });
 
 });
