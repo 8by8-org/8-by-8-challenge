@@ -1160,32 +1160,59 @@ describe('SupabaseUserRepository', () => {
     );
   })
 
-  it(`throws a ServerError if the user returned after the update operation
-    initiated by awardSharedBadge is null.`, async () => {
-      let user = await  new SupabaseUserRecordBuilder('user@example.com').completedActions({
-        sharedChallenge: false
-      }).build()
-      createSupabaseClient = jest.fn().mockImplementation(() => {
-        return {
-          rpc: () => {
-            return Promise.resolve({
-              data: null,
-              error: null,
-            });
-          },
-        };
-      });
+  it('throws a ServerError if the user returned after the update operation initiated by awardSharedBadge is null.', async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com').completedActions({
+      sharedChallenge: false
+    }).build();
   
-      userRepository = new SupabaseUserRepository(
-        createSupabaseClient,
-        new UserRecordParser(),
-      );
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        rpc: () => {
+          return Promise.resolve({
+            data: null,
+            error: null,
+          });
+        },
+      };
+    });
   
-      expect(userRepository.awardSharedBadge(user.uid)).rejects.toThrow(
-        new ServerError('User was null after update.', 500),
-      );
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+    await expect(userRepository.awardSharedBadge(user.uid)).rejects.toThrow(
+      new ServerError('User was null after update.', 500),
+    );
   });
-
   
+
+  // it(`throws a ServerError if the user record returned after the update
+  //   operation initiated by awardSharedbadge cannot be parsed.`, async () => {
+  //     createSupabaseClient = jest.fn().mockImplementation(() => {
+  //       return {
+  //         rpc: () => {
+  //           return Promise.resolve({
+  //             data: {},
+  //             error: null,
+  //           });
+  //         },
+  //       };
+  //     });
+  
+  //     const userRecordParser: IUserRecordParser = {
+  //       parseUserRecord: () => {
+  //         throw new Error('Error parsing user.');
+  //       },
+  //     };
+  
+  //     userRepository = new SupabaseUserRepository(
+  //       createSupabaseClient,
+  //       userRecordParser,
+  //     );
+  
+  //     await expect(userRepository.makeHybrid(uuid())).rejects.toThrow(
+  //       new ServerError('Failed to parse user data.', 400),
+  //     );
+  //   });
 
 });
