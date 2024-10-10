@@ -8,7 +8,7 @@ import type { User } from '@/model/types/user';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '../user-record-parser/i-user-record-parser';
 import { Actions } from '@/model/enums/actions';
-
+import { DateTime } from 'luxon';
 /**
  * An implementation of {@link UserRepository} that interacts with
  * a [Supabase](https://supabase.com/) database and parses rows returned from
@@ -29,7 +29,22 @@ export const SupabaseUserRepository = inject(
 
       private userRecordParser: IUserRecordParser,
     ) {}
+    async restartChallenge(userId: string): Promise<number> {
+      const supabase = this.createSupabaseClient();
+      const updatedChallengeEndTimestamp = DateTime.now()
+        .plus({ days: 8 })
+        .toUnixInteger();
+      const { error } = await supabase
+        .from('users')
+        .update({ challenge_end_timestamp: updatedChallengeEndTimestamp })
+        .eq('id', userId);
 
+      if (error) {
+        throw new ServerError('Failed to update user.', 500);
+      }
+
+      return updatedChallengeEndTimestamp;
+    }
     async getUserById(userId: string): Promise<User | null> {
       const supabase = this.createSupabaseClient();
 
