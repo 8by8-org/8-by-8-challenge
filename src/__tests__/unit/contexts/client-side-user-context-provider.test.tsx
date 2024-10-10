@@ -34,13 +34,13 @@ jest.mock('next/navigation', () => ({
 }));
 
 jest.mock('@supabase/ssr', () => ({
-  createBrowserClient: jest.fn().mockImplementation(() => ({
+  createBrowserClient: () => ({
     channel: () => ({
       on: () => ({
         subscribe: jest.fn(),
       }),
     }),
-  })),
+  }),
 }));
 
 describe('ClientSideUserContextProvider', () => {
@@ -1607,6 +1607,213 @@ describe('ClientSideUserContextProvider', () => {
     await user.click(screen.getByText(/register to vote/i));
     expect(alert.classList).not.toContain('hidden');
     expect(alert.textContent).toBe('There was a problem registering to vote.');
+    fetchSpy.mockRestore();
+  });
+
+  test(`When shareChallenge is called, if the user is signed in and hasn't 
+  previously shared the challenge , it makes a PUT request to 
+  /api/share-challenge, and then updates the user.`, async () => {
+    const signedInUser: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'User',
+      avatar: '0',
+      type: UserType.Challenger,
+      completedActions: {
+        electionReminders: false,
+        registerToVote: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(route => {
+        if (route === '/api/share-challenge') {
+          return Promise.resolve(
+            NextResponse.json(
+              {
+                user: {
+                  ...signedInUser,
+                  completedActions: {
+                    ...signedInUser.completedActions,
+                    sharedChallenge: true,
+                  },
+                  badges: [
+                    {
+                      action: Actions.SharedChallenge,
+                    },
+                  ],
+                },
+              },
+              { status: 200 },
+            ),
+          );
+        }
+
+        return Promise.resolve(new Response(null, { status: 200 }));
+      });
+
+    let updatedUser: User | null = null;
+
+    function ShareTheChallenge() {
+      const { user, shareChallenge } = useContextSafely(
+        UserContext,
+        'ShareTheChallenge',
+      );
+
+      useEffect(() => {
+        updatedUser = user;
+      }, [user]);
+
+      return <button onClick={shareChallenge}>Share via</button>;
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={signedInUser}
+          invitedBy={null}
+          emailForSignIn="user@example.com"
+        >
+          <ShareTheChallenge />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await waitFor(() => expect(updatedUser).toStrictEqual(signedInUser));
+    await user.click(screen.getByText(/Share via/i));
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalled());
+    expect(updatedUser).toEqual({
+      ...signedInUser,
+      completedActions: {
+        ...signedInUser.completedActions,
+        sharedChallenge: true,
+      },
+      badges: [
+        {
+          action: Actions.SharedChallenge,
+        },
+      ],
+    });
+
+    fetchSpy.mockRestore();
+  });
+
+  test(`If the response from /api/share-challenge then we throw an error`, async () => {
+    const signedInUser: User = {
+      uid: '1',
+      email: 'user@example.com',
+      name: 'User',
+      avatar: '0',
+      type: UserType.Challenger,
+      completedActions: {
+        electionReminders: false,
+        registerToVote: false,
+        sharedChallenge: false,
+      },
+      badges: [],
+      contributedTo: [],
+      completedChallenge: false,
+      challengeEndTimestamp: DateTime.now().plus({ days: 8 }).toUnixInteger(),
+      inviteCode: '',
+    };
+
+    const fetchSpy = jest
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(route => {
+        if (route === '/api/share-challenge') {
+          return Promise.resolve(
+            NextResponse.json(
+              {
+                message: 'Error making the put request status 400',
+              },
+              { status: 400 },
+            ),
+          );
+        }
+
+        return Promise.resolve(new Response(null, { status: 200 }));
+      });
+
+    function ShareChallenge() {
+      const { shareChallenge } = useContextSafely(
+        UserContext,
+        'ShareChallenge',
+      );
+      const { showAlert } = useContextSafely(AlertsContext, 'ShareChallenge');
+
+      const onClick = async () => {
+        try {
+          await shareChallenge();
+        } catch (e) {
+          showAlert('There was a problem sending the request.', 'error');
+        }
+      };
+
+      return <button onClick={onClick}>Share via</button>;
+    }
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={signedInUser}
+          invitedBy={null}
+          emailForSignIn="user@example.com"
+        >
+          <ShareChallenge />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+
+    await user.click(screen.getByText(/Share via/i));
+    await waitFor(() => {
+      const alert = screen.queryByRole('alert');
+      expect(alert).toBeInTheDocument();
+      expect(alert?.textContent).toBe(
+        'There was a problem sending the request.',
+      );
+    });
+
+    fetchSpy.mockRestore();
+  });
+
+  it('should return without making an api request when the user is null and the shareChallenge is called', async () => {
+    const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, {
+        status: 200,
+      }),
+    );
+
+    function ShareChallenge() {
+      const { shareChallenge } = useContextSafely(
+        UserContext,
+        'ShareChallenge',
+      );
+      return <button onClick={shareChallenge}>Share via</button>;
+    }
+    const user = userEvent.setup();
+
+    render(
+      <AlertsContextProvider>
+        <ClientSideUserContextProvider
+          user={null}
+          invitedBy={null}
+          emailForSignIn="user@example.com"
+        >
+          <ShareChallenge />
+        </ClientSideUserContextProvider>
+      </AlertsContextProvider>,
+    );
+    await user.click(screen.getByText(/Share via/i));
+    expect(fetchSpy).not.toHaveBeenCalledWith('/api/share-challenge', {
+      method: 'PUT',
+    });
     fetchSpy.mockRestore();
   });
 });

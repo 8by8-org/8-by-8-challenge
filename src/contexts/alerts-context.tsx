@@ -6,7 +6,7 @@ import type { PropsWithChildren } from 'react';
 /**
  * The value provided to consumers of the {@link AlertsContext}.
  */
-interface AlertsContextType {
+export interface AlertsContextType {
   showAlert(message: string, variant: 'error' | 'success'): void;
 }
 

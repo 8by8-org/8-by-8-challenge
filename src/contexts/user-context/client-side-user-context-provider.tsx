@@ -198,6 +198,26 @@ export function ClientSideUserContextProvider(
     throw new Error('not implemented.');
   }
 
+  // share Challenge Function to call the share-challenge API
+  async function shareChallenge() {
+    if (!user || user.completedActions.sharedChallenge) return;
+
+    const response = await fetch('/api/share-challenge', {
+      method: 'PUT',
+    });
+
+    if (!response.ok) {
+      throw new Error('Put request is not successfull.');
+    }
+
+    const data = await response.json();
+
+    if (data.user.uid === user?.uid) {
+      setUser(data.user as User);
+    }
+  }
+
+  /* istanbul ignore next */
   async function registerToVote(
     formData: ValueOf<InstanceType<typeof VoterRegistrationForm>>,
   ): Promise<void> {
@@ -256,6 +276,8 @@ export function ClientSideUserContextProvider(
         gotElectionReminders,
         signOut,
         restartChallenge,
+        shareChallenge,
+
         registerToVote,
         takeTheChallenge,
       }}

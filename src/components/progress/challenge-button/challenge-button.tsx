@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import type { User } from '@/model/types/user';
 import styles from './styles.module.scss';
+import { useRouter } from 'next/navigation';
 
 interface ChallengeButtonProps {
   user: User | null;
@@ -48,6 +49,8 @@ export function ChallengeButton({
     </button>,
   );
 
+  const router = useRouter();
+
   useEffect(() => {
     let challengeFinished = user?.completedChallenge;
     if (challengeFinished) {
@@ -59,20 +62,21 @@ export function ChallengeButton({
           <span>Share</span>
         </button>,
       );
+    } else if (!challengeFinished && daysLeft > 0) {
+      setButton(
+        <button
+          className={styles.gradient}
+          onClick={() => router.push('/share')}
+        >
+          <span>Invite friends</span>
+        </button>,
+      );
     } else if (!challengeFinished && daysLeft == 0) {
       setButton(
         <button
           className={styles.gradient}
           onClick={() => {
             restartChallenge();
-            setButton(
-              <button
-                className={styles.gradient}
-                onClick={() => toggleInvite.current?.()}
-              >
-                <span>Invite friends</span>
-              </button>,
-            );
           }}
         >
           <span>Restart Challenge</span>
@@ -80,7 +84,7 @@ export function ChallengeButton({
       );
       setOpenModal(true);
     }
-  }, [user, daysLeft, toggleInvite, restartChallenge, setOpenModal]);
+  }, [user, daysLeft, toggleInvite, restartChallenge, setOpenModal, router]);
 
   return button;
 }
