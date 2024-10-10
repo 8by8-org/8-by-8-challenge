@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const copyPaste = require('copy-paste');
 
 (async () => {

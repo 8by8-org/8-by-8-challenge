@@ -6,7 +6,7 @@ exports[`Not Found renders 404 page 1`] = `
     class="outer_container"
   >
     <div
-      class="inner_container"
+      class="inner_container_light"
     >
       <section
         class="container"

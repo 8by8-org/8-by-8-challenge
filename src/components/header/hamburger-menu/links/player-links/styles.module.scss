@@ -1,7 +1,6 @@
 @use '../link-utils';
 
 .take_the_challenge_btn {
-  @include link-utils.take-the-challenge-btn();
   margin-top: 38px;
   margin-left: 30px;
 }

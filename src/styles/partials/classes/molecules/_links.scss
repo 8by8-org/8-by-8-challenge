@@ -21,14 +21,12 @@
     cursor: pointer;
   }
 
-  &--light{
+  &--teal {
     @extend .link;
-    font-weight: font-weights.$bold;
-  }
+    color: colors.$teal;
 
-  &-left {
-    @extend .link;
-    display: block;
-    text-align: left;
+    &:hover {
+      color: colors.$teal;
+    }
   }
 }

@@ -100,11 +100,11 @@ export default isSignedOut(function SignUp() {
         <div className={styles.tos_agreement_container}>
           <p className={styles.tos_agreement}>
             By clicking on &quot;Sign Up,&quot; I agree to the{' '}
-            <Link href="termsofservice" className="link">
+            <Link href="/tos" className="link">
               Terms of Service
             </Link>{' '}
             and{' '}
-            <Link href="privacypolicy" className="link">
+            <Link href="/privacy" className="link">
               Privacy Policy
             </Link>
             .

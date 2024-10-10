@@ -63,14 +63,21 @@ describe('OtherDetails', () => {
 
     jest.spyOn(navigation, 'useRouter').mockImplementation(() => router);
 
+    const appUser = Builder<User>()
+      .email('user@example.com')
+      .completedActions({
+        registerToVote: false,
+        sharedChallenge: false,
+        electionReminders: false,
+      })
+      .build();
+
     userContextValue = Builder<UserContextType>()
+      .user(appUser)
       .registerToVote(jest.fn())
       .build();
 
-    voterRegistrationForm = new VoterRegistrationForm(
-      Builder<User>().email('user@example.com').build(),
-    );
-
+    voterRegistrationForm = new VoterRegistrationForm(appUser);
     otherDetailsForm = voterRegistrationForm.fields.otherDetails;
 
     OtherDetailsWithContext = function OtherDetailsWithContext(
@@ -151,7 +158,7 @@ describe('OtherDetails', () => {
     await user.click(submitButton);
 
     expect(document.activeElement).toBe(
-      document.getElementById(otherDetailsForm.fields.id.id),
+      document.getElementById(otherDetailsForm.fields.idNumber.id),
     );
     await user.keyboard('1234');
     await user.click(submitButton);
@@ -159,20 +166,6 @@ describe('OtherDetails', () => {
     expect(userContextValue.registerToVote).toHaveBeenCalledWith(
       voterRegistrationForm.state.value,
     );
-  });
-
-  it('toggles the value of changedParties when the user clicks the checkbox.', async () => {
-    expect(otherDetailsForm.fields.changedParties.state.value).toBe(false);
-
-    const changedParties = screen.getByLabelText(
-      "I've changed political parties",
-    );
-    await user.click(changedParties);
-
-    expect(otherDetailsForm.fields.changedParties.state.value).toBe(true);
-
-    await user.click(changedParties);
-    expect(otherDetailsForm.fields.changedParties.state.value).toBe(false);
   });
 
   it('cannot be submitted if it is loading.', async () => {
@@ -185,7 +178,7 @@ describe('OtherDetails', () => {
 
     act(() => otherDetailsForm.fields.party.setValue('No affiliation'));
     act(() => otherDetailsForm.fields.race.setValue('Decline to state'));
-    act(() => otherDetailsForm.fields.id.setValue('1234'));
+    act(() => otherDetailsForm.fields.idNumber.setValue('1234'));
 
     for (let i = 0; i < 5; i++) {
       await user.click(screen.getByText(/submit/i));
@@ -204,11 +197,58 @@ describe('OtherDetails', () => {
 
     act(() => otherDetailsForm.fields.party.setValue('No affiliation'));
     act(() => otherDetailsForm.fields.race.setValue('Decline to state'));
-    act(() => otherDetailsForm.fields.id.setValue('1234'));
+    act(() => otherDetailsForm.fields.idNumber.setValue('1234'));
 
     await user.click(screen.getByText(/submit/i));
 
     const alert = await screen.findByRole('alert');
     expect(alert.textContent).toBe('Something went wrong. Please try again.');
+  });
+
+  it(`toggles the value of hasStateIssuedLicenseOrID when the user clicks the 
+  checkbox.`, async () => {
+    expect(otherDetailsForm.fields.hasStateLicenseOrID.state.value).toBe(false);
+
+    const hasStateIssuedLicenseOrID = screen.getByLabelText(
+      "I have a state-issued driver's license or ID card",
+    );
+
+    await user.click(hasStateIssuedLicenseOrID);
+    expect(otherDetailsForm.fields.hasStateLicenseOrID.state.value).toBe(true);
+
+    await user.click(hasStateIssuedLicenseOrID);
+    expect(otherDetailsForm.fields.hasStateLicenseOrID.state.value).toBe(false);
+  });
+
+  it('toggles the value of receiveEmailsFromRTV when the user clicks the checkbox.', async () => {
+    expect(otherDetailsForm.fields.receiveEmailsFromRTV.state.value).toBe(
+      false,
+    );
+
+    const receiveEmailsFromRTV = screen.getByLabelText(
+      "I'd like to receive emails from Rock the Vote",
+    );
+
+    await user.click(receiveEmailsFromRTV);
+    expect(otherDetailsForm.fields.receiveEmailsFromRTV.state.value).toBe(true);
+
+    await user.click(receiveEmailsFromRTV);
+    expect(otherDetailsForm.fields.receiveEmailsFromRTV.state.value).toBe(
+      false,
+    );
+  });
+
+  it('toggles the value of receiveSMSFromRTV when the user clicks the checkbox.', async () => {
+    expect(otherDetailsForm.fields.receiveSMSFromRTV.state.value).toBe(false);
+
+    const receiveSMSFromRTV = screen.getByLabelText(
+      "I'd like to receive SMS messages from Rock the Vote",
+    );
+    await user.click(receiveSMSFromRTV);
+
+    expect(otherDetailsForm.fields.receiveSMSFromRTV.state.value).toBe(true);
+
+    await user.click(receiveSMSFromRTV);
+    expect(otherDetailsForm.fields.receiveSMSFromRTV.state.value).toBe(false);
   });
 });

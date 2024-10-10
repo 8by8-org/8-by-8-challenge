@@ -19,12 +19,8 @@ describe('SupabaseUserRepository', () => {
   let createSupabaseClient: CreateSupabaseClient;
 
   beforeEach(() => {
-    createSupabaseClient = createSupabaseServiceRoleClient;
-
-    userRepository = new SupabaseUserRepository(
-      createSupabaseClient,
-      new UserRecordParser(),
-    );
+    createSupabaseClient = createSupabaseServiceRoleClient
+    userRepository = new SupabaseUserRepository(createSupabaseClient, new UserRecordParser())
   });
 
   afterEach(() => {

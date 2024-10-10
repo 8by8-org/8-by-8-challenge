@@ -5,7 +5,8 @@ import {
   PersistentField,
   FormFactory,
   IAdapter,
-  IField,
+  TransientField,
+  NonTransientField,
   Validator,
   ValidityUtils,
 } from 'fully-formed';
@@ -18,18 +19,15 @@ class EligibilityTemplate extends SubFormTemplate {
   };
 
   public readonly fields: [
-    IField<'email', string, false>,
-    IField<'zip', string, false>,
-    IField<'dob', string, true>,
-    IField<'eighteenPlus', boolean, true>,
-    IField<'isCitizen', boolean, true>,
+    NonTransientField<'email', string>,
+    NonTransientField<'zip', string>,
+    TransientField<'dob', string>,
+    NonTransientField<'eighteenPlus', boolean>,
+    NonTransientField<'isCitizen', boolean>,
+    NonTransientField<'firstTimeRegistrant', boolean>,
   ];
 
-  public readonly adapters: [
-    IAdapter<'dob', string>,
-    IAdapter<'eighteenPlus', string>,
-    IAdapter<'isCitizen', string>,
-  ];
+  public readonly adapters: [IAdapter<'dob', string>];
 
   private readonly key = 'eligibility';
 
@@ -66,7 +64,6 @@ class EligibilityTemplate extends SubFormTemplate {
         name: 'eighteenPlus',
         key: this.key + '.eighteenPlus',
         defaultValue: false,
-        transient: true,
         validatorTemplates: [
           {
             predicate: value => {
@@ -81,7 +78,6 @@ class EligibilityTemplate extends SubFormTemplate {
         name: 'isCitizen',
         key: this.key + '.isCitizen',
         defaultValue: false,
-        transient: true,
         validatorTemplates: [
           {
             predicate: value => {
@@ -90,6 +86,11 @@ class EligibilityTemplate extends SubFormTemplate {
             invalidMessage: 'You must be a US Citizen to vote.',
           },
         ],
+      }),
+      new PersistentField({
+        name: 'firstTimeRegistrant',
+        key: this.key + '.firstTimeRegistrant',
+        defaultValue: false,
       }),
     ];
 
@@ -102,21 +103,8 @@ class EligibilityTemplate extends SubFormTemplate {
 
           const [year, month, day] = value.trim().split('-');
 
-          return `${month}/${day}/${year}`;
-        },
-      }),
-      new Adapter({
-        name: 'eighteenPlus',
-        source: this.fields[3],
-        adaptFn: ({ value }) => {
-          return value ? 'yes' : '';
-        },
-      }),
-      new Adapter({
-        name: 'isCitizen',
-        source: this.fields[4],
-        adaptFn: ({ value }) => {
-          return value ? 'yes' : '';
+          // Rock the Vote expects the format MM-dd-yyyy
+          return `${month}-${day}-${year}`;
         },
       }),
     ];

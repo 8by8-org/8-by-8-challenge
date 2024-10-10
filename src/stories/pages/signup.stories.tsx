@@ -10,6 +10,9 @@ const meta: Meta<typeof SignUp> = {
   component: SignUp,
   parameters: {
     layout: 'fullscreen',
+    nextjs: {
+      appDirectory: true,
+    },
   },
 };
 

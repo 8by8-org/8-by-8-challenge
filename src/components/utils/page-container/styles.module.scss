@@ -17,3 +17,16 @@
   max-width: partials.$page-width-max;
   min-width: partials.$page-width-min;
 }
+
+.inner_container_light {
+  @extend .inner_container;
+
+  background-color: partials.$color-white;
+}
+
+.inner_container_dark {
+  @extend .inner_container;
+
+  background-color: partials.$color-black-8by8;
+  color: partials.$color-white;
+}

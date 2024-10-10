@@ -23,9 +23,11 @@ export const OtherDetailsForm = FormFactory.createSubForm(
     public readonly fields: [
       TransientField<'party', string>,
       TransientField<'otherParty', string> & Excludable,
-      NonTransientField<'changedParties', boolean>,
       NonTransientField<'race', string>,
-      NonTransientField<'id', string>,
+      NonTransientField<'hasStateLicenseOrID', boolean>,
+      NonTransientField<'idNumber', string>,
+      NonTransientField<'receiveEmailsFromRTV', boolean>,
+      NonTransientField<'receiveSMSFromRTV', boolean>,
     ];
 
     public readonly groups: [
@@ -75,13 +77,9 @@ export const OtherDetailsForm = FormFactory.createSubForm(
           validators: [
             StringValidators.required({
               invalidMessage: 'Please enter your political party.',
+              trimBeforeValidation: true,
             }),
           ],
-        }),
-        new PersistentField({
-          name: 'changedParties',
-          key: this.key + '.changedParties',
-          defaultValue: false,
         }),
         new PersistentField({
           name: 'race',
@@ -93,10 +91,29 @@ export const OtherDetailsForm = FormFactory.createSubForm(
             }),
           ],
         }),
+        new PersistentField({
+          name: 'hasStateLicenseOrID',
+          key: this.key + '.hasStateLicenseOrID',
+          defaultValue: false,
+        }),
         new Field({
-          name: 'id',
+          name: 'idNumber',
           defaultValue: '',
-          validators: [StringValidators.required()],
+          validators: [
+            StringValidators.required({
+              trimBeforeValidation: true,
+            }),
+          ],
+        }),
+        new PersistentField({
+          name: 'receiveEmailsFromRTV',
+          key: this.key + '.receiveEmailsFromRTV',
+          defaultValue: false,
+        }),
+        new PersistentField({
+          name: 'receiveSMSFromRTV',
+          key: this.key + '.receiveSMSFromRTV',
+          defaultValue: false,
         }),
       ];
 
@@ -113,7 +130,7 @@ export const OtherDetailsForm = FormFactory.createSubForm(
           source: this.groups[0],
           adaptFn: ({ value }) => {
             if (value.otherParty) {
-              return value.otherParty;
+              return value.otherParty.trim();
             }
 
             return value.party;

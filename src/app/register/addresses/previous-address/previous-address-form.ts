@@ -71,6 +71,7 @@ export const PreviousAddressForm =
             validators: [
               StringValidators.required({
                 invalidMessage: 'Please enter your street address.',
+                trimBeforeValidation: true,
               }),
             ],
           }),
@@ -88,6 +89,7 @@ export const PreviousAddressForm =
             validators: [
               StringValidators.required({
                 invalidMessage: 'Please enter your city.',
+                trimBeforeValidation: true,
               }),
             ],
           }),

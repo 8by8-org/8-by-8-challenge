@@ -100,13 +100,10 @@ export default isSignedOut(
             className={styles.image}
           />
 
-          <h3 className={styles.step_header}>
-            4. Win the challenge, get a reward!
-          </h3>
+          <h3 className={styles.step_header}>4. Win the challenge!</h3>
           <p className={styles.step_text}>
-            When all 8 of your friends took action in your challenge within 8
-            days, and you win! Then select and enjoy a reward from one of our
-            amazing partners.
+            When 8 of your friends have taken action towards your challenge in 8
+            days, you win!
           </p>
           <Image
             src={stepFour}

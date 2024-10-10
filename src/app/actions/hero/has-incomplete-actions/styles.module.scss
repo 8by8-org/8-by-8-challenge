@@ -1,0 +1,25 @@
+@use '../../../../styles/partials' as *;
+
+.container {
+  display: flex;
+  justify-content: space-evenly;
+  padding-left: $spacing-vertical-gutter;
+  padding-right: $spacing-vertical-gutter;
+  padding-top: $spacing-md;
+  padding-bottom: $spacing-sm;
+  background-color: $color-white;
+  color: $color-black-text;
+}
+
+.avatar_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: url('/static/images/pages/actions/blob-0.png');
+  background-position: 0 0;
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 138px;
+  height: 176px;
+}

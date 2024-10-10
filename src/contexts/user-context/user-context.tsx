@@ -37,6 +37,7 @@ interface UserContextType {
   ): Promise<void>;
   gotElectionReminders(): Promise<void>;
   shareChallenge(): Promise<void>;
+  takeTheChallenge(): Promise<void>;
 }
 
 const UserContext = createNamedContext<UserContextType>('UserContext');

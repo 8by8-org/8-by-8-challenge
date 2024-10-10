@@ -86,11 +86,10 @@ class HomePageTests(unittest.TestCase):
           "Take the challenge", 
           "Take action", 
           "Why 8by8",
-          "Rewards",
-          "FAQs",
+          "Terms of Service",
           "Privacy Policy",
-          "Settings",
           "Sign up",
+          "Sign in",
         )
 
         self.assertEqual(len(text_of_expected_menu_items), len(menu_items))

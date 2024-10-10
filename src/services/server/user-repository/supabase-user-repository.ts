@@ -7,6 +7,7 @@ import type { UserRepository } from './user-repository';
 import type { User } from '@/model/types/user';
 import type { CreateSupabaseClient } from '../create-supabase-client/create-supabase-client';
 import type { IUserRecordParser } from '../user-record-parser/i-user-record-parser';
+import { Actions } from '@/model/enums/actions';
 
 /**
  * An implementation of {@link UserRepository} that interacts with

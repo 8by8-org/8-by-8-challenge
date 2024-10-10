@@ -17,9 +17,9 @@ describe('getFirstNonValidInputId', () => {
     expect(getFirstNonValidInputId(form)).toBe(form.fields.race.id);
 
     form.fields.race.setValue('Decline to state');
-    expect(getFirstNonValidInputId(form)).toBe(form.fields.id.id);
+    expect(getFirstNonValidInputId(form)).toBe(form.fields.idNumber.id);
 
-    form.fields.id.setValue('1234');
+    form.fields.idNumber.setValue('1234');
     expect(getFirstNonValidInputId(form)).toBe(null);
   });
 });

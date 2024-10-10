@@ -1,23 +1,19 @@
 @use '../../../styles/partials' as *;
 
-.other_party {
-  margin-top: 10px;
-}
-
-.checkbox {
-  margin-top: 16px;
-  margin-bottom: $spacing-md;
-}
-
 .select {
   width: 100% !important;
 }
 
-.race {
-  @extend .select;
-  margin-bottom: 10px;
+.other_party {
+  margin-top: 10px;
 }
 
-.id_explainer {
+.race {
+  @extend .select;
+  margin-top: $spacing-md;
   margin-bottom: $spacing-md;
+}
+
+.mb_16 {
+  margin-bottom: 16px;
 }

@@ -14,6 +14,13 @@ interface RootLayoutProps {
 
 export const metadata: Metadata = {
   title: '8by8 Challenge',
+  openGraph: {
+    images: {
+      url: '/static/images/open-graph/thumbnail.png',
+      height: 1337,
+      width: 1337,
+    },
+  },
 };
 
 export default function RootLayout({ children }: RootLayoutProps) {
