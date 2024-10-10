@@ -3,15 +3,11 @@ import { GlobalStylesProvider } from '@/stories/global-styles-provider';
 import { RestartChallengeModal } from '@/contexts/user-context/restart-challenge-modal';
 import { Builder } from 'builder-pattern';
 import { UserContext, type UserContextType } from '@/contexts/user-context';
-import type { User } from '@/model/types/user';
 import { PropsWithChildren, useState } from 'react';
-import { time } from 'console';
-import { promise } from 'zod';
 import { DateTime } from 'luxon';
-import {
-  AlertsContext,
-  AlertsContextProvider,
-} from '@/contexts/alerts-context';
+import { AlertsContextProvider } from '@/contexts/alerts-context';
+import type { User } from '@/model/types/user';
+
 const meta: Meta<typeof RestartChallengeModal> = {
   component: RestartChallengeModal,
 };
@@ -20,9 +16,6 @@ export default meta;
 
 type Story = StoryObj<typeof RestartChallengeModal>;
 
-const createUserContext = () => {
-  const user: User = Builder<User>().uid('1').challengeEndTimestamp(0).build();
-};
 function UserContextProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<User>(
     Builder<User>().uid('1').challengeEndTimestamp(0).build(),
@@ -40,6 +33,7 @@ function UserContextProvider({ children }: PropsWithChildren) {
       }, 3000);
     });
   };
+
   return (
     <AlertsContextProvider>
       <UserContext.Provider
@@ -53,6 +47,7 @@ function UserContextProvider({ children }: PropsWithChildren) {
     </AlertsContextProvider>
   );
 }
+
 export const RestartChallenge: Story = {
   render: () => {
     return (

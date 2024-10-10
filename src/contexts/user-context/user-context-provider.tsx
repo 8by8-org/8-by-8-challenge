@@ -2,7 +2,6 @@ import 'server-only';
 import { serverContainer } from '@/services/server/container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 import { ClientSideUserContextProvider } from './client-side-user-context-provider';
-import { AlertsContextProvider } from '@/contexts/alerts-context';
 import type { PropsWithChildren } from 'react';
 
 /**
@@ -17,14 +16,12 @@ export async function UserContextProvider({ children }: PropsWithChildren) {
   const session = await auth.loadSession();
 
   return (
-    <AlertsContextProvider>
-      <ClientSideUserContextProvider
-        user={session.user}
-        invitedBy={session.invitedBy}
-        emailForSignIn={emailForSignIn}
-      >
-        {children}
-      </ClientSideUserContextProvider>
-    </AlertsContextProvider>
+    <ClientSideUserContextProvider
+      user={session.user}
+      invitedBy={session.invitedBy}
+      emailForSignIn={emailForSignIn}
+    >
+      {children}
+    </ClientSideUserContextProvider>
   );
 }

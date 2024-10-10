@@ -1,5 +1,4 @@
 import { PUT } from '@/app/api/restart-challenge/route';
-import { NextRequest } from 'next/server';
 import { serverContainer } from '@/services/server/container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 import { Builder } from 'builder-pattern';
@@ -70,14 +69,7 @@ describe('PUT', () => {
         return getActualService(key);
       });
 
-    const request = new NextRequest(
-      'https://challenge.8by8.us/api/restart-challenge',
-      {
-        method: 'PUT',
-      },
-    );
-
-    const response = await PUT(request);
+    const response = await PUT();
     expect(response.status).toBe(200);
 
     const responseBody = await response.json();
@@ -102,14 +94,7 @@ describe('PUT', () => {
         return getActualService(key);
       });
 
-    const request = new NextRequest(
-      'https://challenge.8by8.us/api/restart-challenge',
-      {
-        method: 'PUT',
-      },
-    );
-
-    const response = await PUT(request);
+    const response = await PUT();
     expect(response.status).toBe(401);
 
     const responseBody = await response.json();
@@ -136,11 +121,7 @@ describe('PUT', () => {
         return getActualService(key);
       });
 
-    const request = new NextRequest(
-      'https://challenge.8by8.us/api/restart-challenge',
-    );
-
-    const response = await PUT(request);
+    const response = await PUT();
     expect(response.status).toBe(errorCode);
 
     const responseBody = await response.json();
@@ -165,14 +146,7 @@ describe('PUT', () => {
         return getActualService(key);
       });
 
-    const request = new NextRequest(
-      'https://challenge.8by8.us/api/restart-challenge',
-      {
-        method: 'PUT',
-      },
-    );
-
-    const response = await PUT(request);
+    const response = await PUT();
     expect(response.status).toBe(500);
 
     const responseBody = await response.json();

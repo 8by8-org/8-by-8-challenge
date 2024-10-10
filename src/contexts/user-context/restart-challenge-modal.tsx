@@ -9,20 +9,22 @@ import { useState } from 'react';
 
 export function RestartChallengeModal() {
   const [isLoading, setLoading] = useState(false);
+
   const { restartChallenge, user } = useContextSafely(
     UserContext,
     'RestartChallengeModal',
   );
-  if (!user) return null;
 
   const { showAlert } = useContextSafely(
     AlertsContext,
     'RestartChallengeModal',
   );
+
   const showModal = calculateDaysRemaining(user) === 0;
 
   /* istanbul ignore next */
   const preventClose = () => {};
+
   const restartAndChangeisLoading = async () => {
     try {
       setLoading(true);
@@ -33,6 +35,8 @@ export function RestartChallengeModal() {
       setLoading(false);
     }
   };
+
+  if (!user) return null;
 
   return (
     <Modal

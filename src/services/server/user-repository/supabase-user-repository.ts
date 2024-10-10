@@ -29,22 +29,7 @@ export const SupabaseUserRepository = inject(
 
       private userRecordParser: IUserRecordParser,
     ) {}
-    async restartChallenge(userId: string): Promise<number> {
-      const supabase = this.createSupabaseClient();
-      const updatedChallengeEndTimestamp = DateTime.now()
-        .plus({ days: 8 })
-        .toUnixInteger();
-      const { error } = await supabase
-        .from('users')
-        .update({ challenge_end_timestamp: updatedChallengeEndTimestamp })
-        .eq('id', userId);
 
-      if (error) {
-        throw new ServerError('Failed to update user.', 500);
-      }
-
-      return updatedChallengeEndTimestamp;
-    }
     async getUserById(userId: string): Promise<User | null> {
       const supabase = this.createSupabaseClient();
 
@@ -184,6 +169,25 @@ export const SupabaseUserRepository = inject(
       } catch (e) {
         throw new ServerError('Failed to parse user data.', 400);
       }
+    }
+
+    async restartChallenge(userId: string): Promise<number> {
+      const supabase = this.createSupabaseClient();
+
+      const updatedChallengeEndTimestamp = DateTime.now()
+        .plus({ days: 8 })
+        .toUnixInteger();
+
+      const { error } = await supabase
+        .from('users')
+        .update({ challenge_end_timestamp: updatedChallengeEndTimestamp })
+        .eq('id', userId);
+
+      if (error) {
+        throw new ServerError('Failed to update user.', 500);
+      }
+
+      return updatedChallengeEndTimestamp;
     }
   },
 

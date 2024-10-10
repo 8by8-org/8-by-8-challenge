@@ -1,10 +1,10 @@
 import 'server-only';
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { serverContainer } from '@/services/server/container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 import { ServerError } from '@/errors/server-error';
 
-export async function PUT(request: NextRequest) {
+export async function PUT() {
   const auth = serverContainer.get(SERVER_SERVICE_KEYS.Auth);
   const userRepository = serverContainer.get(
     SERVER_SERVICE_KEYS.UserRepository,
