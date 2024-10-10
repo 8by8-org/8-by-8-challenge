@@ -9,6 +9,6 @@ export function Hero() {
   const { user } = useContextSafely(UserContext, 'Hero');
 
   return hasCompletedAllActions(user) ?
-    <HasCompletedAllActions />
+      <HasCompletedAllActions />
     : <HasIncompleteActions />;
 }

@@ -11,12 +11,12 @@ export async function PUT() {
   try {
     const user = await auth.loadSessionUser();
     if (!user) {
-      return NextResponse.json({ message: 'user not found'}, { status: 401 });
+      return NextResponse.json({ message: 'user not found' }, { status: 401 });
     }
 
     const updatedUser = await userRepo.awardSharedBadge(user.uid);
 
-    return NextResponse.json({user: updatedUser}, { status: 200 });
+    return NextResponse.json({ user: updatedUser }, { status: 200 });
   } catch (e) {
     if (e instanceof ServerError) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });

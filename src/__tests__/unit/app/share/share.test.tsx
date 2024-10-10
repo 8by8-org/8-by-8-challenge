@@ -408,9 +408,6 @@ describe('Share', () => {
     consoleSpy.mockRestore();
   });
 
-
-
-
   it('should call router.back function when the user clicks the back button', async () => {
     const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
     const inviteCode = createId();
@@ -435,12 +432,9 @@ describe('Share', () => {
         </UserContext.Provider>
       </AlertsContextProvider>,
     );
-    await user.click(screen.getByText(/Back/i))
-    expect(router.back).toHaveBeenCalled()
+    await user.click(screen.getByText(/Back/i));
+    expect(router.back).toHaveBeenCalled();
   });
-
-
-
 
   it('should display the Modal if the user clicks the image button', async () => {
     const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
@@ -466,11 +460,10 @@ describe('Share', () => {
         </UserContext.Provider>
       </AlertsContextProvider>,
     );
-    expect(HTMLDialogElement.prototype.showModal).not.toHaveBeenCalled()
-    await user.click(screen.getByText(/Images for posts/i))
-    expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalled()
-
-  })
+    expect(HTMLDialogElement.prototype.showModal).not.toHaveBeenCalled();
+    await user.click(screen.getByText(/Images for posts/i));
+    expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalled();
+  });
 
   it('should close the Modal when the user clicks on the close button', async () => {
     const shareLink = `https://challenge.8by8.us/share?${SearchParams.InviteCode}=`;
@@ -496,8 +489,7 @@ describe('Share', () => {
         </UserContext.Provider>
       </AlertsContextProvider>,
     );
-    await user.click(screen.getByLabelText('close dialog'))
-    expect(HTMLDialogElement.prototype.close).toHaveBeenCalled() 
-    
-  })
+    await user.click(screen.getByLabelText('close dialog'));
+    expect(HTMLDialogElement.prototype.close).toHaveBeenCalled();
+  });
 });

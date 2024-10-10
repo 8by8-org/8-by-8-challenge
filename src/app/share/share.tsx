@@ -1,5 +1,5 @@
 'use client';
-import {isSignedIn} from '@/components/guards/is-signed-in'; 
+import { isSignedIn } from '@/components/guards/is-signed-in';
 import { useState } from 'react';
 import { UserContext } from '@/contexts/user-context';
 import { useContextSafely } from '@/hooks/use-context-safely';
@@ -20,21 +20,24 @@ import { Modal } from '../../components/utils/modal/modal';
 import socialMediaPostImage0 from '../../../public/static/images/pages/share/social-media-post-image-0.png';
 import socialMediaPostImage1 from '../../../public/static/images/pages/share/social-media-post-image-1.png';
 import socialMediaPostImage2 from '../../../public/static/images/pages/share/social-media-post-image-2.png';
-import {useRouter} from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 
 interface ShareProps {
   shareLink: string;
   hideShareButton?: boolean;
 }
 
-export const Share = isSignedIn(function Share({ shareLink, hideShareButton }: ShareProps) {
+export const Share = isSignedIn(function Share({
+  shareLink,
+  hideShareButton,
+}: ShareProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user, shareChallenge } = useContextSafely(UserContext, 'Share');
   const { showAlert } = useContextSafely(AlertsContext, 'Share');
-  const fullLink = shareLink + (user!.inviteCode);
+  const fullLink = shareLink + user!.inviteCode;
   const shareData = { url: fullLink };
-  const router = useRouter()
+  const router = useRouter();
 
   const copyLink = async () => {
     if (isLoading) {

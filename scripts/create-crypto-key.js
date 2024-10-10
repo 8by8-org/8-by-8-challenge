@@ -13,7 +13,6 @@ const copyPaste = require('copy-paste');
       true,
       ['encrypt', 'decrypt'],
     );
-
     const rawKey = await crypto.subtle.exportKey('raw', cryptoKey);
     const keyAsBase64 = btoa(String.fromCharCode(...new Uint8Array(rawKey)));
     copyPaste.copy(keyAsBase64, () => {

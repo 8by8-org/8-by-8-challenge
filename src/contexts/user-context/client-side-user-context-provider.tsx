@@ -210,13 +210,12 @@ export function ClientSideUserContextProvider(
       throw new Error('Put request is not successfull.');
     }
 
-    const data = await response.json()
+    const data = await response.json();
 
     if (data.user.uid === user?.uid) {
-      setUser(data.user as User)
+      setUser(data.user as User);
     }
   }
-
 
   /* istanbul ignore next */
   async function registerToVote(

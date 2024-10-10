@@ -54,7 +54,6 @@ export const SupabaseUserRepository = inject(
         throw new ServerError('Failed to parse user data.', 400);
       }
     }
-    
 
     async makeHybrid(userId: string): Promise<User> {
       const supabase = this.createSupabaseClient();
@@ -172,11 +171,9 @@ export const SupabaseUserRepository = inject(
       }
     }
   },
-  
+
   [
     SERVER_SERVICE_KEYS.createSupabaseServiceRoleClient,
     SERVER_SERVICE_KEYS.UserRecordParser,
   ],
 );
-
-
