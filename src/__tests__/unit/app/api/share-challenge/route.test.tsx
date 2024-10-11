@@ -123,6 +123,7 @@ describe('PUT', () => {
     expect(response.status).toBe(429);
     containerSpy.mockRestore();
   });
+
   it('returns a status of 500 for any other error', async () => {
     const containerSpy = jest
       .spyOn(serverContainer, 'get')

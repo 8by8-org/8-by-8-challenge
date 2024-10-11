@@ -141,6 +141,7 @@ export const SupabaseUserRepository = inject(
         throw new ServerError('Failed to parse user data.', 400);
       }
     }
+
     async awardSharedBadge(userId: string): Promise<User> {
       const supabase = this.createSupabaseClient();
 

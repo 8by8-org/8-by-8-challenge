@@ -1,26 +1,23 @@
 'use client';
 import { isSignedIn } from '@/components/guards/is-signed-in';
 import { useState } from 'react';
-import { UserContext } from '@/contexts/user-context';
+import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/use-context-safely';
-import {
-  AlertsContext,
-  AlertsContextProvider,
-} from '@/contexts/alerts-context';
-import styles from './styles.module.scss';
+import { UserContext } from '@/contexts/user-context';
+import { AlertsContext } from '@/contexts/alerts-context';
 import Image from 'next/image';
-import copyLinkIcon from '../../../public/static/images/pages/share/copy-link.svg';
-import imagesIcon from '../../../public/static/images/pages/share/images-icon.svg';
-import calendarImage from '../../../public/static/images/pages/share/calendar-image.png';
 import { PageContainer } from '@/components/utils/page-container';
-import backArrow from '../../../public/static/images/pages/share/back-icon.svg';
-import socialShareIcon from '../../../public/static/images/pages/share/share-icon.svg';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { Modal } from '../../components/utils/modal/modal';
+import copyLinkIcon from '../../../public/static/images/pages/share/copy-link.svg';
+import imagesIcon from '../../../public/static/images/pages/share/images-icon.svg';
+import backArrow from '../../../public/static/images/pages/share/back-icon.svg';
+import calendarImage from '../../../public/static/images/pages/share/calendar-image.png';
+import socialShareIcon from '../../../public/static/images/pages/share/share-icon.svg';
 import socialMediaPostImage0 from '../../../public/static/images/pages/share/social-media-post-image-0.png';
 import socialMediaPostImage1 from '../../../public/static/images/pages/share/social-media-post-image-1.png';
 import socialMediaPostImage2 from '../../../public/static/images/pages/share/social-media-post-image-2.png';
-import { useRouter } from 'next/navigation';
+import styles from './styles.module.scss';
 
 interface ShareProps {
   shareLink: string;

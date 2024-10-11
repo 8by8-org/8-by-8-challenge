@@ -1,5 +1,5 @@
 import 'server-only';
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { serverContainer } from '@/services/server/container';
 import { SERVER_SERVICE_KEYS } from '@/services/server/keys';
 import { ServerError } from '@/errors/server-error';
@@ -10,6 +10,7 @@ export async function PUT() {
 
   try {
     const user = await auth.loadSessionUser();
+
     if (!user) {
       return NextResponse.json({ message: 'user not found' }, { status: 401 });
     }
@@ -21,6 +22,7 @@ export async function PUT() {
     if (e instanceof ServerError) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });
     }
+
     return NextResponse.json({ error: 'Unexpected error' }, { status: 500 });
   }
 }

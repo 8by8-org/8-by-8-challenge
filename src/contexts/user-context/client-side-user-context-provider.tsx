@@ -207,7 +207,7 @@ export function ClientSideUserContextProvider(
     });
 
     if (!response.ok) {
-      throw new Error('Put request is not successfull.');
+      throw new Error('Failed to award a badge.');
     }
 
     const data = await response.json();
@@ -217,7 +217,6 @@ export function ClientSideUserContextProvider(
     }
   }
 
-  /* istanbul ignore next */
   async function registerToVote(
     formData: ValueOf<InstanceType<typeof VoterRegistrationForm>>,
   ): Promise<void> {

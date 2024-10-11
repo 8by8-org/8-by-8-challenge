@@ -1,59 +1,57 @@
 @use '../../styles/partials' as *;
 
-.main_content{
-    margin: 40px 30px;
+.main_content {
+  margin: 40px 30px;
 }
 
-
-.header{
+.header {
   text-align: center;
   margin-bottom: 16px;
 }
 
-.back_icon{
+.back_icon {
   display: flex;
-  align-items: center; // center items along the y access
+  align-items: center;
   border: none;
   background-color: transparent;
   @extend .b6;
-  
-  img{
-    margin-right: 10px; 
+
+  img {
+    margin-right: 10px;
   }
 }
 
-.calendar_image{
+.calendar_image {
   margin-bottom: 8px;
   display: block;
   margin: auto;
 }
 
-.paragraph{
+.paragraph {
   @extend .b2;
   text-align: center;
   margin-bottom: 32px;
 }
 
-.button_container{
+.button_container {
   display: flex;
   justify-content: center;
   background: transparent;
   border: none;
-  margin-bottom:40px;
+  margin-bottom: 40px;
 }
 
-.button{
-  width:78px;
-  display:flex;
-  flex-direction: column; 
-  align-items:center;
+.button {
+  width: 78px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: transparent;
   border: none;
   font-family: $font-family-lato;
   font-size: $font-size-xs;
 
-  &:has(+ .button){
-    margin-right:41px;
+  &:has(+ .button) {
+    margin-right: 41px;
   }
 }
-

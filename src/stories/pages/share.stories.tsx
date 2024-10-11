@@ -1,14 +1,13 @@
-import { useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { Share } from '@/app/share/share';
+import { useState } from 'react';
 import { UserContext, type UserContextType } from '@/contexts/user-context';
 import { GlobalStylesProvider } from '../global-styles-provider';
 import { AlertsContextProvider } from '@/contexts/alerts-context';
 import { Builder } from 'builder-pattern';
 import { createId } from '@paralleldrive/cuid2';
-import { SearchParams } from '@/constants/search-params';
 import { Footer } from '@/components/footer';
 import type { User } from '@/model/types/user';
-import { Share } from '@/app/share/share';
 
 const meta: Meta<typeof Share> = {
   component: Share,

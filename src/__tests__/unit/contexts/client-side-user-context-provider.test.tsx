@@ -1611,7 +1611,7 @@ describe('ClientSideUserContextProvider', () => {
   });
 
   test(`When shareChallenge is called, if the user is signed in and hasn't 
-  previously shared the challenge , it makes a PUT request to 
+  previously shared the challenge, it makes a PUT request to 
   /api/share-challenge, and then updates the user.`, async () => {
     const signedInUser: User = {
       uid: '1',
@@ -1705,7 +1705,8 @@ describe('ClientSideUserContextProvider', () => {
     fetchSpy.mockRestore();
   });
 
-  test(`If the response from /api/share-challenge then we throw an error`, async () => {
+  it(`should throw an error when shareChallenge() is called and the response 
+  from /api/share-challenge is not ok.`, async () => {
     const signedInUser: User = {
       uid: '1',
       email: 'user@example.com',
@@ -1783,7 +1784,8 @@ describe('ClientSideUserContextProvider', () => {
     fetchSpy.mockRestore();
   });
 
-  it('should return without making an api request when the user is null and the shareChallenge is called', async () => {
+  it(`should return without making an api request when the user is null and 
+  shareChallenge() is called.`, async () => {
     const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(null, {
         status: 200,
