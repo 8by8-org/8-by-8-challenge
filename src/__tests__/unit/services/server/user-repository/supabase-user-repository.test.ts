@@ -289,7 +289,7 @@ describe('SupabaseUserRepository', () => {
       },
     ]);
   });
-  // check these out!
+
   it(`throws a ServerError when the update operation initiated by
   makeHybrid fails.`, () => {
     createSupabaseClient = jest.fn().mockImplementation(() => {
@@ -365,7 +365,7 @@ describe('SupabaseUserRepository', () => {
       new ServerError('Failed to parse user data.', 400),
     );
   });
-  //until here
+
   it(`sets completedActions.electionReminders to true when
   awardElectionRemindersBadge is called.`, async () => {
     let user = await new SupabaseUserRecordBuilder('user@example.com').build();

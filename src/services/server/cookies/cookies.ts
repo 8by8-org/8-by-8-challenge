@@ -7,6 +7,7 @@ import { Encryptor } from '../encryptor/encryptor';
 import { SERVER_SERVICE_KEYS } from '../keys';
 import { PRIVATE_ENVIRONMENT_VARIABLES } from '@/constants/private-environment-variables';
 import type { ICookies } from './i-cookies';
+
 /**
  * An implementation of {@link ICookies}. Provides a mechanism for setting
  * cookies to track various settings, such as the email address to which a
