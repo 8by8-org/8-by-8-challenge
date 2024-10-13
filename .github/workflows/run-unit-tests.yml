@@ -1,7 +1,13 @@
 name: 'Run Unit Tests'
 on:
   push:
+    branches-ignore:
+      - staging
+      - production
   pull_request:
+    branches-ignore:
+      - staging
+      - production
 
 jobs:
   run-unit-tests:

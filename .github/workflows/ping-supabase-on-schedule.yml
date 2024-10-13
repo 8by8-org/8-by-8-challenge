@@ -1,0 +1,16 @@
+name: 'Ping Supabase Instances on Schedule'
+
+on:
+  schedule:
+    - cron: '35 11 * * 0'
+
+jobs:
+  ping-staging:
+    uses: ./github/workflows/ping-supabase.yml
+    with:
+      environment-name: staging
+
+  # ping-prod:
+  #   uses: ./github/workflows/ping-supabase.yml
+  #   with:
+  #     environment-name: production
