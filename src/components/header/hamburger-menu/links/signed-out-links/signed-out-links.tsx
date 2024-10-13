@@ -1,17 +1,19 @@
+'use client';
+import { useContextSafely } from '@/hooks/use-context-safely';
+import { UserContext } from '@/contexts/user-context';
 import { HamburgerLink } from '../hamburger-link';
 import styles from './styles.module.scss';
 
 export function SignedOutLinks() {
+  const { invitedBy } = useContextSafely(UserContext, 'SignedOutLinks');
+
   return (
     <>
       <HamburgerLink
-        href="/challengerwelcome"
+        href={invitedBy ? '/playerwelcome' : '/challengerwelcome'}
         className={styles.take_the_challenge_btn}
       >
-        Take The Challenge
-      </HamburgerLink>
-      <HamburgerLink href="/actions" className={styles.link_lg_top}>
-        Take Action
+        {invitedBy ? 'Take Action' : 'Take The Challenge'}
       </HamburgerLink>
       <HamburgerLink href="/why8by8" className={styles.link_lg}>
         Why 8by8

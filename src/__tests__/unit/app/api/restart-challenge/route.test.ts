@@ -6,6 +6,8 @@ import { saveActualImplementation } from '@/utils/test/save-actual-implementatio
 import { Actions } from '@/model/enums/actions';
 import { UserType } from '@/model/enums/user-type';
 import { ServerError } from '@/errors/server-error';
+import { DateTime } from 'luxon';
+import { v4 as uuid } from 'uuid';
 import type { Auth } from '@/services/server/auth/auth';
 import type { UserRepository } from '@/services/server/user-repository/user-repository';
 import type { User } from '@/model/types/user';
@@ -14,10 +16,30 @@ import type { Avatar } from '@/model/types/avatar';
 describe('PUT', () => {
   const getActualService = saveActualImplementation(serverContainer, 'get');
 
-  it(`returns a status code of 200 and the new challenge end timestamp if the 
+  it(`returns a status code of 200 and the updated user if the 
   user was successfully authorized and the challenge was restarted.`, async () => {
-    const userId = '123e4567-e89b-12d3-a456-426614174000';
-    const newTimestamp = Date.now();
+    const user: User = {
+      uid: uuid(),
+      email: 'user@example.com',
+      name: 'John Doe',
+      avatar: '0',
+      type: UserType.Challenger,
+      completedActions: {
+        electionReminders: true,
+        registerToVote: true,
+        sharedChallenge: true,
+      },
+      badges: [
+        { action: Actions.RegisterToVote },
+        { action: Actions.SharedChallenge },
+      ],
+      challengeEndTimestamp: 0,
+      completedChallenge: false,
+      contributedTo: [],
+      inviteCode: 'INVITE123',
+    };
+
+    const newTimestamp = DateTime.now().plus({ days: 8 }).toUnixInteger();
 
     const containerSpy = jest
       .spyOn(serverContainer, 'get')
@@ -25,43 +47,16 @@ describe('PUT', () => {
         if (key.name === SERVER_SERVICE_KEYS.Auth.name) {
           return Builder<Auth>()
             .loadSessionUser((): Promise<User> => {
-              return Promise.resolve({
-                uid: userId,
-                email: 'user@example.com',
-                name: 'John Doe',
-                avatar: 'https://example.com/avatar.png' as Avatar,
-                type: UserType.Challenger,
-                completedActions: {
-                  electionReminders: true,
-                  registerToVote: true,
-                  sharedChallenge: true,
-                },
-                badges: [
-                  { action: Actions.RegisterToVote },
-                  { action: Actions.SharedChallenge },
-                ],
-                challengeEndTimestamp: newTimestamp,
-                completedChallenge: true,
-                contributedTo: [
-                  {
-                    challengerInviteCode: 'INVITECODE123',
-                    challengerName: 'Jane Doe',
-                    challengerAvatar: '0',
-                  },
-                ],
-                inviteCode: 'INVITE123',
-                invitedBy: {
-                  challengerInviteCode: 'INVITECODE123',
-                  challengerName: 'Jane Doe',
-                  challengerAvatar: '0',
-                },
-              });
+              return Promise.resolve(user);
             })
             .build();
         } else if (key.name === SERVER_SERVICE_KEYS.UserRepository.name) {
           return Builder<UserRepository>()
             .restartChallenge(() => {
-              return Promise.resolve(newTimestamp);
+              return Promise.resolve({
+                ...user,
+                challengeEndTimestamp: newTimestamp,
+              });
             })
             .build();
         }
@@ -73,7 +68,7 @@ describe('PUT', () => {
     expect(response.status).toBe(200);
 
     const responseBody = await response.json();
-    expect(responseBody.challengeEndTimestamp).toBe(newTimestamp);
+    expect(responseBody.user.challengeEndTimestamp).toBe(newTimestamp);
 
     containerSpy.mockRestore();
   });

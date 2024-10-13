@@ -1,0 +1,7 @@
+@use '../../../styles/partials';
+
+.loading_screen {
+  display: block;
+  $footerheight: 220px;
+  min-height: calc(100vh - $footerheight);
+}

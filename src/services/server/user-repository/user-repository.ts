@@ -9,5 +9,5 @@ export interface UserRepository {
   makeHybrid(userId: string): Promise<User>;
   awardRegisterToVoteBadge(userId: string): Promise<User>;
   awardElectionRemindersBadge(userId: string): Promise<User>;
-  restartChallenge(userId: string): Promise<number>;
+  restartChallenge(userId: string): Promise<User>;
 }

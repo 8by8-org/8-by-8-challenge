@@ -24,7 +24,7 @@ To contribute, you will need the following tools installed on your machine:
 
 - A code editor. [Visual Studio Code](https://code.visualstudio.com/) is a great option as it provides many helpful features for TypeScript development.
 - [Node.js](https://nodejs.org/en) - At the time of writing, Next.js requires version 18.17 or later.
-- Docker (strongly recommended, but not required. The alternative is to set up your own Supabase project.)
+- Docker
 
 ## Jira
 

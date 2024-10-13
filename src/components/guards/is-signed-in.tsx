@@ -3,6 +3,7 @@ import { useLayoutEffect, type FC } from 'react';
 import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
+import { LoadingScreen } from '../utils/loading-screen';
 
 /**
  * A higher-order component that redirects the user to /signin if they are
@@ -29,6 +30,6 @@ export function isSignedIn<P extends object>(Page: FC<P>) {
       }
     }, [shouldRedirect, router]);
 
-    return shouldRedirect ? null : <Page {...props} />;
+    return shouldRedirect ? <LoadingScreen /> : <Page {...props} />;
   };
 }

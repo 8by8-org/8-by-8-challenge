@@ -3,6 +3,7 @@ import { FC } from 'react';
 import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
+import { LoadingScreen } from '../utils/loading-screen';
 
 /**
  * A higher-order component that redirects the user to /playerwelcome if they
@@ -23,6 +24,6 @@ export function wasNotInvited<P extends object>(Page: FC<P>) {
       router.push('/playerwelcome');
     }
 
-    return shouldRedirect ? null : <Page {...props} />;
+    return shouldRedirect ? <LoadingScreen /> : <Page {...props} />;
   };
 }

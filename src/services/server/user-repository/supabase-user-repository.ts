@@ -22,6 +22,7 @@ export const SupabaseUserRepository = inject(
       AWARD_SHARED_CHALLENGE_BADGE: 'award_shared_challenge_badge',
       AWARD_REGISTER_TO_VOTE_BADGE: 'award_register_to_vote_badge',
       MAKE_HYBRID: 'make_hybrid',
+      RESTART_CHALLENGE: 'restart_challenge',
     };
 
     constructor(
@@ -172,23 +173,34 @@ export const SupabaseUserRepository = inject(
       }
     }
 
-    async restartChallenge(userId: string): Promise<number> {
+    async restartChallenge(userId: string): Promise<User> {
       const supabase = this.createSupabaseClient();
 
-      const updatedChallengeEndTimestamp = DateTime.now()
-        .plus({ days: 8 })
-        .toUnixInteger();
+      const newEndTimestamp = DateTime.now().plus({ days: 8 }).toUnixInteger();
 
-      const { error } = await supabase
-        .from('users')
-        .update({ challenge_end_timestamp: updatedChallengeEndTimestamp })
-        .eq('id', userId);
+      const {
+        data: dbUser,
+        error,
+        status,
+      } = await supabase.rpc(this.REMOTE_PROCEDURES.RESTART_CHALLENGE, {
+        user_id: userId,
+        new_end_timestamp: newEndTimestamp,
+      });
 
       if (error) {
-        throw new ServerError('Failed to update user.', 500);
+        throw new ServerError(error.message, status);
       }
 
-      return updatedChallengeEndTimestamp;
+      if (!dbUser) {
+        throw new ServerError('User was null after update.', 500);
+      }
+
+      try {
+        const user = this.userRecordParser.parseUserRecord(dbUser);
+        return user;
+      } catch (e) {
+        throw new ServerError('Failed to parse user data.', 400);
+      }
     }
   },
 

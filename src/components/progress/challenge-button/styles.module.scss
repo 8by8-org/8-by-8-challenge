@@ -1,9 +1,0 @@
-@use '../../../styles/partials';
-
-.inverted {
-  @extend .btn_lg, .btn_wide, .btn_inverted;
-}
-
-.gradient {
-  @extend .btn_lg, .btn_wide, .btn_gradient;
-}

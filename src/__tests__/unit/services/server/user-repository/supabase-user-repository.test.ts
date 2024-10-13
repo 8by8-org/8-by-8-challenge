@@ -1226,39 +1226,52 @@ describe('SupabaseUserRepository', () => {
 
   it(`sets the user's challengeEndTimestamp to 8 days in the future when 
     restartChallenge() is called.`, async () => {
-    const user = await new SupabaseUserRecordBuilder('player@example.com')
+    let user = await new SupabaseUserRecordBuilder('player@example.com')
       .challengeEndTimestamp(0)
       .build();
 
     expect(calculateDaysRemaining(user)).toBe(0);
 
-    user.challengeEndTimestamp = await userRepository.restartChallenge(
-      user.uid,
-    );
+    user = await userRepository.restartChallenge(user.uid);
 
     expect(calculateDaysRemaining(user)).toBe(8);
   });
 
   it(`throws a ServerError when the update operation initiated by 
-    restartChallenge returns an error.`, async () => {
+  restartChallenge returns an error.`, async () => {
     const errorMessage = 'Failed to update user.';
+
+    createSupabaseClient = jest.fn().mockImplementation(() => ({
+      rpc: () => {
+        return Promise.resolve({
+          data: null,
+          error: new Error(errorMessage),
+          status: 500,
+        });
+      },
+    }));
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      new UserRecordParser(),
+    );
+
+    await expect(userRepository.restartChallenge('')).rejects.toThrow(
+      new ServerError(errorMessage, 500),
+    );
+  });
+
+  it(`throws a ServerError if the user returned after the update operation 
+  initiated by restartChallenge is null.`, async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com').build();
 
     createSupabaseClient = jest.fn().mockImplementation(() => {
       return {
-        from: () => {
-          return {
-            update: () => {
-              return {
-                eq: () => {
-                  return Promise.resolve({
-                    data: null,
-                    error: new Error(errorMessage),
-                    status: 500,
-                  });
-                },
-              };
-            },
-          };
+        rpc: () => {
+          return Promise.resolve({
+            data: null,
+            error: null,
+          });
         },
       };
     });
@@ -1268,8 +1281,43 @@ describe('SupabaseUserRepository', () => {
       new UserRecordParser(),
     );
 
-    await expect(userRepository.restartChallenge('')).rejects.toThrow(
-      new ServerError(errorMessage, 500),
+    await expect(userRepository.restartChallenge(user.uid)).rejects.toThrow(
+      new ServerError('User was null after update.', 500),
+    );
+  });
+
+  it(`throws a ServerError if the user record returned after the update
+  operation initiated by restartChallenge cannot be parsed.`, async () => {
+    let user = await new SupabaseUserRecordBuilder('user@example.com')
+      .completedActions({
+        sharedChallenge: false,
+      })
+      .build();
+
+    createSupabaseClient = jest.fn().mockImplementation(() => {
+      return {
+        rpc: () => {
+          return Promise.resolve({
+            data: {},
+            error: null,
+          });
+        },
+      };
+    });
+
+    const userRecordParser: IUserRecordParser = {
+      parseUserRecord: () => {
+        throw new Error('Error parsing user.');
+      },
+    };
+
+    userRepository = new SupabaseUserRepository(
+      createSupabaseClient,
+      userRecordParser,
+    );
+
+    await expect(userRepository.restartChallenge(user.uid)).rejects.toThrow(
+      new ServerError('Failed to parse user data.', 400),
     );
   });
 });

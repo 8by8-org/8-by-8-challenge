@@ -1,0 +1,16 @@
+@use '../../../styles/partials' as *;
+
+.hidden {
+  display: none;
+}
+
+.toast {
+  background-color: $color-yellow;
+  border: 0.5px solid $color-black-text;
+  border-radius: 3px;
+  font-family: $font-family-lato;
+  font-size: 12px;
+  font-weight: 400;
+  text-align: center;
+  padding: 3px 5.5px;
+}

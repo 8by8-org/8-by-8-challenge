@@ -1,30 +1,23 @@
 'use client';
-import { useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { PageContainer } from '@/components/utils/page-container';
 import { UserContext } from '@/contexts/user-context';
 import { calculateDaysRemaining } from './calculate-days-remaining';
 import { useContextSafely } from '@/hooks/use-context-safely';
-import { ChallengeButton } from '@/components/progress/challenge-button/challenge-button';
+import { LinkButton } from '@/components/utils/link-button';
 import claimReward from '@/../public/static/images/pages/progress/claiming-a-reward.svg';
 import daysRemainingBlob from '@/../public/static/images/pages/progress/days-remaining-blob.svg';
 import { ConfettiAnimation } from '@/components/utils/confetti-animation';
 import blackCurve from '@/../public/static/images/pages/progress/black-curve.svg';
 import { Badges } from '@/components/progress/badges';
-import { Modal } from '@/components/utils/modal';
 import { isSignedIn } from '@/components/guards/is-signed-in';
 import { VoterRegistrationPathnames } from '../register/constants/voter-registration-pathnames';
 import styles from './styles.module.scss';
 
 export default isSignedIn(function Progress() {
-  const { user, restartChallenge } = useContextSafely(
-    UserContext,
-    'UserContext',
-  );
+  const { user } = useContextSafely(UserContext, 'UserContext');
   const daysLeft = calculateDaysRemaining(user);
-  const [openModal, setOpenModal] = useState(false);
-  const toggleInvite = useRef(null);
 
   return (
     <PageContainer>
@@ -80,13 +73,9 @@ export default isSignedIn(function Progress() {
             badges
           </h3>
 
-          <ChallengeButton
-            user={user}
-            daysLeft={daysLeft}
-            toggleInvite={toggleInvite}
-            restartChallenge={restartChallenge}
-            setOpenModal={setOpenModal}
-          />
+          <LinkButton href="/share" size="lg" wide>
+            Invite Friends
+          </LinkButton>
           {!user!.completedActions.registerToVote && (
             <div>
               <p className={styles.register}>
@@ -103,13 +92,9 @@ export default isSignedIn(function Progress() {
         <Badges badges={user!.badges} />
 
         <section className={styles.section_4}>
-          <ChallengeButton
-            user={user}
-            daysLeft={daysLeft}
-            toggleInvite={toggleInvite}
-            restartChallenge={restartChallenge}
-            setOpenModal={setOpenModal}
-          />
+          <LinkButton href="/share" size="lg" wide>
+            Invite Friends
+          </LinkButton>
           {!user!.completedActions.registerToVote && (
             <div>
               <p className={styles.register}>
@@ -123,29 +108,6 @@ export default isSignedIn(function Progress() {
             </div>
           )}
         </section>
-
-        <Modal
-          ariaLabel="restart challenge modal"
-          isOpen={openModal}
-          theme="dark"
-          closeModal={() => setOpenModal(false)}
-        >
-          <>
-            <div className={styles.restart_modal}>
-              Oops, times up! But no worries, restart your challenge to
-              continue!
-            </div>
-            <div className={styles.modal_btn}>
-              <ChallengeButton
-                user={user}
-                daysLeft={daysLeft}
-                toggleInvite={toggleInvite}
-                restartChallenge={restartChallenge}
-                setOpenModal={setOpenModal}
-              />
-            </div>
-          </>
-        </Modal>
       </article>
     </PageContainer>
   );

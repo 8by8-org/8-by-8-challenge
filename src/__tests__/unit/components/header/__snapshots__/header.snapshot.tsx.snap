@@ -123,14 +123,6 @@ exports[`Header renders the header unchanged 1`] = `
           </li>
           <li>
             <a
-              class="link_lg_top"
-              href="/actions"
-            >
-              Take Action
-            </a>
-          </li>
-          <li>
-            <a
               class="link_lg"
               href="/why8by8"
             >

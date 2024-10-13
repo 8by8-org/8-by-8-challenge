@@ -177,6 +177,20 @@ export function ClientSideUserContextProvider(
     setInvitedBy(data.invitedBy as ChallengerData);
   }
 
+  async function signOut() {
+    const response = await fetch('/api/signout', {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('There was a problem signing out.');
+    }
+
+    setUser(null);
+    setInvitedBy(null);
+    clearAllPersistentFormElements();
+  }
+
   async function gotElectionReminders() {
     if (!user || user.completedActions.electionReminders) return;
 
@@ -195,26 +209,6 @@ export function ClientSideUserContextProvider(
     }
   }
 
-  async function signOut() {
-    const response = await fetch('/api/signout', {
-      method: 'DELETE',
-    });
-
-    if (!response.ok) {
-      throw new Error('There was a problem signing out.');
-    }
-
-    setUser(null);
-    setInvitedBy(null);
-    clearAllPersistentFormElements();
-  }
-
-  /* istanbul ignore next */
-  async function restartChallenge() {
-    throw new Error('not implemented.');
-  }
-
-  // share Challenge Function to call the share-challenge API
   async function shareChallenge() {
     if (!user || user.completedActions.sharedChallenge) return;
 
@@ -269,6 +263,24 @@ export function ClientSideUserContextProvider(
 
     if (!response.ok) {
       throw new Error('There was a problem taking the challenge.');
+    }
+
+    const data = await response.json();
+
+    if (data.user.uid === user?.uid) {
+      setUser(data.user as User);
+    }
+  }
+
+  async function restartChallenge() {
+    if (!user) return;
+
+    const response = await fetch('/api/restart-challenge', {
+      method: 'PUT',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to restart the challenge.');
     }
 
     const data = await response.json();

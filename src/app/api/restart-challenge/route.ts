@@ -11,17 +11,15 @@ export async function PUT() {
   );
 
   try {
-    const user = await auth.loadSessionUser();
+    let user = await auth.loadSessionUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const newTimestamp = await userRepository.restartChallenge(user.uid);
+    user = await userRepository.restartChallenge(user.uid);
 
-    return NextResponse.json(
-      { challengeEndTimestamp: newTimestamp },
-      { status: 200 },
-    );
+    return NextResponse.json({ user }, { status: 200 });
   } catch (e) {
     if (e instanceof ServerError) {
       return NextResponse.json({ error: e.message }, { status: e.statusCode });

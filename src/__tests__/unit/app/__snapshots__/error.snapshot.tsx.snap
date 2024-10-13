@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ErrorPage renders the ErrorPage unchange. 1`] = `
+<div>
+  <div
+    class="outer_container"
+  >
+    <div
+      class="inner_container_light"
+    >
+      <section
+        class="container"
+      >
+        <img
+          alt="Woman holding sign that says 'Oops'"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent;"
+          width="40"
+        />
+        <h1
+          class="heading"
+        >
+          Something
+          <br />
+          Went Wrong
+        </h1>
+      </section>
+    </div>
+  </div>
+</div>
+`;

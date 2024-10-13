@@ -45,4 +45,34 @@ describe('Home Page', () => {
     expect(router.push).toHaveBeenNthCalledWith(1, '/challengerwelcome');
     expect(router.push).toHaveBeenNthCalledWith(2, '/challengerwelcome');
   });
+
+  it(`navigates to /playerwelcome when the challenge button is clicked if the 
+  user has been invited by a challenger.`, async () => {
+    render(
+      <UserContext.Provider
+        value={Builder<UserContextType>()
+          .user(null)
+          .invitedBy({
+            challengerName: '',
+            challengerInviteCode: '',
+            challengerAvatar: '0',
+          })
+          .build()}
+      >
+        <Home />
+      </UserContext.Provider>,
+    );
+
+    const challengeButtons = screen.getAllByRole('button', {
+      name: /take action/i,
+    });
+
+    for (const button of challengeButtons) {
+      await user.click(button);
+    }
+
+    expect(router.push).toHaveBeenCalledTimes(2);
+    expect(router.push).toHaveBeenNthCalledWith(1, '/playerwelcome');
+    expect(router.push).toHaveBeenNthCalledWith(2, '/playerwelcome');
+  });
 });

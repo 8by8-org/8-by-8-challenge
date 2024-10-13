@@ -1,6 +1,7 @@
 import { AlertsContextProvider } from '@/contexts/alerts-context';
 import { UserContextProvider } from '@/contexts/user-context/user-context-provider';
 import { Header } from '@/components/header';
+import { RestartChallengeModal } from '@/contexts/user-context/restart-challenge-modal';
 import { Footer } from '@/components/footer';
 import { bebasNeue } from '@/fonts/bebas-neue';
 import { lato } from '@/fonts/lato';
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <UserContextProvider>
             <Header />
             {children}
+            <RestartChallengeModal />
             <Footer />
           </UserContextProvider>
         </AlertsContextProvider>

@@ -3,6 +3,7 @@ import { FC } from 'react';
 import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
+import { LoadingScreen } from '../utils/loading-screen';
 import type { Actions } from '@/model/enums/actions';
 
 interface HasNotCompletedActionOpts {
@@ -41,6 +42,6 @@ export function hasNotCompletedAction<P extends object>(
       router.push(opts.redirectTo);
     }
 
-    return shouldRedirect ? null : <Component {...props} />;
+    return shouldRedirect ? <LoadingScreen /> : <Component {...props} />;
   };
 }

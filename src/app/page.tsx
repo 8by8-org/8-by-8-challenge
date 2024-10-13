@@ -1,11 +1,11 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { isSignedOut } from '@/components/guards/is-signed-out';
+import { useContextSafely } from '@/hooks/use-context-safely';
+import { UserContext } from '@/contexts/user-context';
 import { PageContainer } from '@/components/utils/page-container';
-import { Button } from '@/components/utils/button';
+import { LinkButton } from '@/components/utils/link-button';
 import logo from '../../public/static/images/shared/8by8-logo.svg';
 import yellowCurve from '../../public/static/images/pages/home/yellow-curve.svg';
 import tealCurve from '../../public/static/images/pages/home/teal-curve.svg';
@@ -18,11 +18,7 @@ import speakerWithMicAndSign from '../../public/static/images/pages/home/speaker
 import styles from './styles.module.scss';
 
 export default isSignedOut(function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.prefetch('/challengerwelcome');
-  }, [router]);
+  const { invitedBy } = useContextSafely(UserContext, 'Home');
 
   return (
     <PageContainer>
@@ -33,13 +29,13 @@ export default isSignedOut(function Home() {
             GET <u className="underline">8 AAPI FRIENDS</u> TO REGISTER TO VOTE
             IN <u className="underline">8 DAYS</u>
           </h1>
-          <Button
-            onClick={() => router.push('/challengerwelcome')}
+          <LinkButton
+            href={invitedBy ? '/playerwelcome' : '/challengerwelcome'}
             className={styles.challenge_btn}
             wide
           >
-            Take the Challenge
-          </Button>
+            {invitedBy ? 'Take Action' : 'Take the Challenge'}
+          </LinkButton>
           <Link href="/why8by8" className={styles.link}>
             See why others are doing it
           </Link>
@@ -147,9 +143,12 @@ export default isSignedOut(function Home() {
           <u className="underline">taking the #8by8challenge</u> and registering
           8 of their friends to vote in 8 days.
         </h2>
-        <Button onClick={() => router.push('/challengerwelcome')} wide>
-          Take the Challenge
-        </Button>
+        <LinkButton
+          href={invitedBy ? '/playerwelcome' : '/challengerwelcome'}
+          wide
+        >
+          {invitedBy ? 'Take Action' : 'Take the Challenge'}
+        </LinkButton>
         <div className={styles.content_container}>
           <p className="b2 color_white">
             The 8by8 mission aims to build civic participation and bring

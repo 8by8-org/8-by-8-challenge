@@ -10,6 +10,7 @@ const createJestConfig = nextJest({
 const config = {
   testEnvironment: './jest-environment.js',
   setupFiles: ['jest-canvas-mock', './jest-setup.js'],
+  setupFilesAfterEnv: ['./jest-setup-after-env.js'],
   collectCoverage: true,
   // add directories here to include them in coverage reports and threshold
   collectCoverageFrom: ['./src/**'],
@@ -35,8 +36,6 @@ const config = {
     // pledge to vote iframe is heavily reliant on the ResizeObserver and
     // content dimensions
     '<rootDir>/src/app/reminders/pledge-to-vote-iframe/pledge-to-vote-iframe.tsx',
-    // tests for button pending
-    '<rootDir>/src/components/progress/challenge-button',
   ],
   //require 100% code coverage for the tests to pass
   coverageThreshold: {

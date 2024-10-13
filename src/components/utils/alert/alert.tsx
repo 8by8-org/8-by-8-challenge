@@ -91,8 +91,14 @@ export const Alert = forwardRef(function Alert(
     return (message: string, variant: 'error' | 'success') => {
       if (alertRef.current) {
         const alert = alertRef.current;
+        /*
+          Clear the current content of the alert so that the message is always 
+          read by the screen reader.
+        */
+        alert.textContent = '';
         alert.textContent = message;
         alert.className = styles[variant];
+
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             alert.className = `${styles[variant]} ${styles.slide_out}`;

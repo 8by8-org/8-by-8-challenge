@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useContextSafely } from '@/hooks/use-context-safely';
 import { UserContext } from '@/contexts/user-context';
 import { UserType } from '@/model/enums/user-type';
+import { LoadingScreen } from '../utils/loading-screen';
 
 /**
  * A higher-order component that redirects the user to /signin if they are
@@ -32,6 +33,6 @@ export function isPlayerOrHybrid<P extends object>(Page: FC<P>) {
       router.push('/progress');
     }
 
-    return shouldRedirect ? null : <Page {...props} />;
+    return shouldRedirect ? <LoadingScreen /> : <Page {...props} />;
   };
 }

@@ -44,6 +44,8 @@ exports[`Home renders homepage unchanged 1`] = `
           </h1>
           <button
             class="gradient lg wide challenge_btn"
+            href="/challengerwelcome"
+            type="button"
           >
             <span>
               Take the Challenge
@@ -295,6 +297,8 @@ exports[`Home renders homepage unchanged 1`] = `
         </h2>
         <button
           class="gradient lg wide"
+          href="/challengerwelcome"
+          type="button"
         >
           <span>
             Take the Challenge

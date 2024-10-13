@@ -26,7 +26,11 @@ begin
   should_award_badge = should_award_shared_challenge_badge(user_id);
 
   if should_award_badge = true then
-    perform award_action_badge(award_shared_challenge_badge.user_id, 'sharedChallenge');
+    /* 
+      This is the only action that does not ALSO award an inviting challenger a 
+      badge, so here we call award_badge NOT award_action_badge.
+    */
+    perform award_badge(award_shared_challenge_badge.user_id, 'sharedChallenge', null, null);
   end if;
 
   return get_user_by_id(user_id);

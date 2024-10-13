@@ -20,7 +20,8 @@ export function RestartChallengeModal() {
     'RestartChallengeModal',
   );
 
-  const showModal = calculateDaysRemaining(user) === 0;
+  const showModal =
+    !!user && !user.completedChallenge && calculateDaysRemaining(user) === 0;
 
   /* istanbul ignore next */
   const preventClose = () => {};

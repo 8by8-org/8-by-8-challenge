@@ -8,7 +8,10 @@ import { AlertsContext } from '@/contexts/alerts-context';
 import Image from 'next/image';
 import { PageContainer } from '@/components/utils/page-container';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
-import { Modal } from '../../components/utils/modal/modal';
+import { Modal } from '@/components/utils/modal';
+import { Toast, useToast } from '@/components/utils/toast';
+import { createShareLink } from './create-share-link';
+import { UserType } from '@/model/enums/user-type';
 import copyLinkIcon from '../../../public/static/images/pages/share/copy-link.svg';
 import imagesIcon from '../../../public/static/images/pages/share/images-icon.svg';
 import backArrow from '../../../public/static/images/pages/share/back-icon.svg';
@@ -20,20 +23,22 @@ import socialMediaPostImage2 from '../../../public/static/images/pages/share/soc
 import styles from './styles.module.scss';
 
 interface ShareProps {
-  shareLink: string;
   hideShareButton?: boolean;
 }
 
 export const Share = isSignedIn(function Share({
-  shareLink,
   hideShareButton,
 }: ShareProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { user, shareChallenge } = useContextSafely(UserContext, 'Share');
+  const { user, invitedBy, shareChallenge } = useContextSafely(
+    UserContext,
+    'Share',
+  );
   const { showAlert } = useContextSafely(AlertsContext, 'Share');
-  const fullLink = shareLink + user!.inviteCode;
-  const shareData = { url: fullLink };
+  const { toastRef, showToast } = useToast();
+  const shareLink = createShareLink(user!, invitedBy);
+  const shareData = { url: shareLink };
   const router = useRouter();
 
   const copyLink = async () => {
@@ -55,7 +60,8 @@ export const Share = isSignedIn(function Share({
       }
     }
 
-    navigator.clipboard.writeText(fullLink);
+    navigator.clipboard.writeText(shareLink);
+    showToast('Link copied!');
   };
 
   const canShare =
@@ -65,6 +71,12 @@ export const Share = isSignedIn(function Share({
     window.navigator.canShare(shareData);
 
   const showShareButton = !hideShareButton && canShare;
+
+  const paragraphText =
+    user?.completedChallenge ? 'Invite friends to take the 8by8 Challenge!'
+    : user?.type === UserType.Player && invitedBy ?
+      `Invite friends to support ${invitedBy.challengerName}'s challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge.`
+    : 'Invite friends to support your challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge.';
 
   const share = async () => {
     if (isLoading || !canShare) {
@@ -102,7 +114,7 @@ export const Share = isSignedIn(function Share({
     <PageContainer>
       <div className={styles.main_content}>
         <button className={styles.back_icon} onClick={() => router.back()}>
-          <Image src={backArrow} alt="backicon" />
+          <Image src={backArrow} alt="Back arrow" priority />
           Back
         </button>
         <h1 className={styles.header}>Invite friends</h1>
@@ -110,25 +122,28 @@ export const Share = isSignedIn(function Share({
           className={styles.calendar_image}
           src={calendarImage}
           alt="calendar"
+          priority
         />
-        <p className={styles.paragraph}>
-          Invite friends to support your challenge by taking an action: register
-          to vote, get election reminders, or take the 8by8 challenge.
-        </p>
+        <p className={styles.paragraph}>{paragraphText}</p>
       </div>
-      <div className={styles.button_container}>
-        <button className={styles.button} onClick={copyLink}>
-          <Image src={copyLinkIcon} alt="copylink" />
-          Copy link
-        </button>
+      <div className={styles.buttons_container}>
+        <div className={styles.copy_button_container}>
+          <button className={styles.button} onClick={copyLink}>
+            <Image src={copyLinkIcon} alt="Copy link" priority />
+            Copy link
+          </button>
+          <div className={styles.toast_container}>
+            <Toast ref={toastRef} />
+          </div>
+        </div>
         {showShareButton && (
           <button onClick={share} className={styles.button}>
-            <Image src={socialShareIcon} alt="socialshareicon" />
-            Share via
+            <Image src={socialShareIcon} alt="Social share icon" priority />
+            Share
           </button>
         )}
         <button className={styles.button} onClick={openModal}>
-          <Image src={imagesIcon} alt="imagesicon" />
+          <Image src={imagesIcon} alt="Images icon" priority />
           Images for posts
         </button>
         <Modal

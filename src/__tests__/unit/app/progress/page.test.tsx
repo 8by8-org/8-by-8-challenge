@@ -1,4 +1,4 @@
-import { render, cleanup, screen, waitFor } from '@testing-library/react';
+import { render, cleanup, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 import Progress from '@/app/progress/page';
@@ -7,7 +7,6 @@ import { UserContext, UserContextType } from '@/contexts/user-context';
 import type { User } from '@/model/types/user';
 import { DateTime } from 'luxon';
 import { Actions } from '@/model/enums/actions';
-import userEvent from '@testing-library/user-event';
 
 jest.mock('next/navigation', () => require('next-router-mock'));
 
@@ -61,25 +60,6 @@ describe('ProgressTest', () => {
 
       cleanup();
     }
-  });
-
-  it('renders a closeable modal when days remaining is 0.', async () => {
-    appUser.challengeEndTimestamp = DateTime.now().toUnixInteger();
-
-    const user = userEvent.setup();
-    render(
-      <UserContext.Provider value={{ user: appUser } as UserContextType}>
-        <Progress />
-      </UserContext.Provider>,
-    );
-
-    expect(screen.getByText(/Oops, times up/i)).toBeInTheDocument();
-
-    const closeBtn = screen.getByLabelText('close dialog');
-    await user.click(closeBtn);
-    await waitFor(() =>
-      expect(HTMLDialogElement.prototype.close).toHaveBeenCalled(),
-    );
   });
 
   it('renders user when all badges are completed.', () => {
