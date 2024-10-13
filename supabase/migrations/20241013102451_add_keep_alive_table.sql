@@ -5,4 +5,5 @@ create table keep_alive (
 
 insert into keep_alive default values;
 
-revoke all privileges on keep_alive from anon, authenticated;
+revoke insert, update, delete on keep_alive from anon, authenticated;
+grant select on keep_alive to anon, authenticated;

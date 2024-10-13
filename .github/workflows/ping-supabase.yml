@@ -15,7 +15,7 @@ jobs:
     environment: ${{ inputs.environment-name }}
     env:
       SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-      SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_KEY: ${{ vars.SUPABASE_ANON_KEY }}
 
     steps:
       - uses: actions/setup-node@v3
