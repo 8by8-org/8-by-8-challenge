@@ -6,7 +6,7 @@ on:
 
 jobs:
   ping-staging:
-    uses: ./github/workflows/ping-supabase.yml
+    uses: ./.github/workflows/ping-supabase.yml
     with:
       environment-name: staging
 
