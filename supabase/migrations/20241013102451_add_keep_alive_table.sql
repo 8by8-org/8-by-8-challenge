@@ -5,9 +5,5 @@ create table public.keep_alive (
 
 insert into public.keep_alive default values;
 
-alter table public.keep_alive enable row level security;
-
-create policy "keep_alive is viewable by anyone."
-on public.keep_alive for select
-to authenticated, anon
-using ( true );
+revoke all on public.keep_alive from anon, authenticated;
+grant select on public.keep_alive to anon, authenticated;
