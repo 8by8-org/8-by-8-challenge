@@ -17,5 +17,6 @@ const { data, error } = supabase.from('keep_alive').select().limit(1);
 if (data) {
   core.info('Successfully Pinged supabase.');
 } else if (error || !data) {
+  if (error) core.error(error);
   core.setFailed('Failed to read data from Supabase.');
 }
