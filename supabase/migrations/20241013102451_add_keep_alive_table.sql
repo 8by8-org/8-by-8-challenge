@@ -1,9 +1,13 @@
-create table keep_alive (
+create table public.keep_alive (
   id bigserial primary key,
   created_at timestamp not null default current_timestamp
 );
 
-insert into keep_alive default values;
+insert into public.keep_alive default values;
 
-revoke insert, update, delete on keep_alive from anon, authenticated;
-grant select on keep_alive to anon, authenticated;
+alter table public.keep_alive enable row level security;
+
+create policy "keep_alive is viewable by anyone."
+on public.keep_alive for select
+to authenticated, anon
+using ( true );

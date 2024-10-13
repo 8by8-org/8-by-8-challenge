@@ -7,16 +7,20 @@
 const { createClient } = require('@supabase/supabase-js');
 const core = require('@actions/core');
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY,
-);
+pingSupabase();
 
-const { data, error } = supabase.from('keep_alive').select().limit(1);
+async function pingSupabase() {
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_ANON_KEY,
+  );
 
-if (data) {
-  core.info('Successfully Pinged supabase.');
-} else if (error || !data) {
-  if (error) core.error(error);
-  core.setFailed('Failed to read data from Supabase.');
+  const { data, error } = await supabase.from('keep_alive').select().limit(1);
+
+  if (data) {
+    core.info('Successfully Pinged supabase.');
+  } else if (error || !data) {
+    if (error) core.error(error);
+    core.setFailed('Failed to read data from Supabase.');
+  }
 }
