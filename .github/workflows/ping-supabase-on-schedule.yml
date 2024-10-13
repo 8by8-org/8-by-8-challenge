@@ -10,7 +10,7 @@ jobs:
     with:
       environment-name: staging
 
-  # ping-prod:
-  #   uses: ./github/workflows/ping-supabase.yml
-  #   with:
-  #     environment-name: production
+  ping-prod:
+    uses: ./github/workflows/ping-supabase.yml
+    with:
+      environment-name: production
