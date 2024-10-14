@@ -1,0 +1,24 @@
+name: 'Schedule Supabase Pings'
+
+on:
+  schedule:
+    # Run this job at 4:30 AM UTC every Sunday and Thursday. Scheduled jobs are
+    # often delayed and can be dropped during peak times (see
+    # https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#schedule)
+    # so to attempt to ensure that this job does not get dropped, this job is run
+    # at the half hour rather than the start of the hour (which according to docs
+    # is usually a busier time), and is executed early in the morning UTC. This
+    # job is executed twice a week to further help ensure that Supabase is kept
+    # alive.
+    - cron: '30 4 * * 0,4'
+
+jobs:
+  ping-staging:
+    uses: ./.github/workflows/ping-supabase.yml
+    with:
+      environment-name: staging
+
+  ping-prod:
+    uses: ./.github/workflows/ping-supabase.yml
+    with:
+      environment-name: production

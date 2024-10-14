@@ -1,0 +1,26 @@
+# A reusable workflow that can ping the Supabase project for a given environment
+# to prevent it from becoming paused.
+name: 'Ping Supabase'
+
+on:
+  workflow_call:
+    inputs:
+      environment-name:
+        type: string
+        required: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment-name }}
+    env:
+      SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - run: npm ci
+      - run: node scripts/ping-supabase.js

@@ -1,7 +1,15 @@
 name: 'Run Unit Tests'
 on:
   push:
+    # Ignore staging and production branches as this is redundant and will help
+    # save us some GH execution time, which is limited.
+    branches-ignore:
+      - staging
+      - production
   pull_request:
+    branches-ignore:
+      - staging
+      - production
 
 jobs:
   run-unit-tests:
