@@ -36,6 +36,7 @@ export function HasCompletedAllActions() {
                   <Image
                     src={AVATARS[challengerData.challengerAvatar].image}
                     alt={AVATARS[challengerData.challengerAvatar].altText}
+                    priority
                   />
                   <h3>{challengerData.challengerName}</h3>
                 </div>

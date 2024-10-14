@@ -57,6 +57,7 @@ export function HasIncompleteActions() {
             src={AVATARS[invitedBy.challengerAvatar].image}
             alt={AVATARS[invitedBy.challengerAvatar].altText}
             className={styles.avatar}
+            priority
           />
           <h3 className={styles.challenger_name}>{invitedBy.challengerName}</h3>
         </div>
