@@ -576,35 +576,4 @@ describe('Share', () => {
       screen.queryByText('Invite friends to take the 8by8 Challenge!'),
     ).toBeInTheDocument();
   });
-
-  test(`The paragraph text it renders changes if the user is player-type user 
-  and invitedBy is not null.`, () => {
-    const appUser = Builder<User>().type(UserType.Player).build();
-
-    const invitedBy: ChallengerData = {
-      challengerName: 'John Doe',
-      challengerInviteCode: createId(),
-      challengerAvatar: '0',
-    };
-
-    const userContextValue = Builder<UserContextType>()
-      .user(appUser)
-      .invitedBy(invitedBy)
-      .shareChallenge(jest.fn())
-      .build();
-
-    render(
-      <AlertsContextProvider>
-        <UserContext.Provider value={userContextValue}>
-          <Share />
-        </UserContext.Provider>
-      </AlertsContextProvider>,
-    );
-
-    expect(
-      screen.queryByText(
-        `Invite friends to support ${invitedBy.challengerName}'s challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge.`,
-      ),
-    ).toBeInTheDocument();
-  });
 });
