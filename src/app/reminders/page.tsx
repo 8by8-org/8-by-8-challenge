@@ -1,7 +1,7 @@
 'use client';
 import { isSignedIn } from '@/components/guards/is-signed-in';
 import { PageContainer } from '@/components/utils/page-container';
-import { PledgeToVoteIFrame } from './pledge-to-vote-iframe/pledge-to-vote-iframe';
+import { PledgeToVoteForm } from './pledge-to-vote-form/pledge-to-vote-form';
 import { hasNotCompletedAction } from '@/components/guards/has-not-completed-action';
 import { Actions } from '@/model/enums/actions';
 import styles from './styles.module.scss';
@@ -16,7 +16,7 @@ export default isSignedIn(
             <br />
             Alerts
           </h1>
-          <PledgeToVoteIFrame />
+          <PledgeToVoteForm />
         </PageContainer>
       );
     },
