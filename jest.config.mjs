@@ -33,9 +33,8 @@ const config = {
     '<rootDir>/src/app/register/other-details/page.tsx',
     '<rootDir>/src/app/share/page.tsx',
     '<rootDir>/src/app/register/completed/page.tsx',
-    // pledge to vote iframe is heavily reliant on the ResizeObserver and
-    // content dimensions
-    '<rootDir>/src/app/reminders/pledge-to-vote-iframe/pledge-to-vote-iframe.tsx',
+    // pledge to vote form is heavily reliant on the content rendered in its IFrame from Rock the Vote
+    '<rootDir>/src/app/reminders/pledge-to-vote-form/',
   ],
   //require 100% code coverage for the tests to pass
   coverageThreshold: {
