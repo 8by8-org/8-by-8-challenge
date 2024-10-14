@@ -15,7 +15,7 @@ describe('createShareLink', () => {
 
     const user = Builder<User>().completedChallenge(true).build();
 
-    const shareLink = createShareLink(user, null);
+    const shareLink = createShareLink(user);
     expect(shareLink).toBe(
       `${currentURL.slice(0, currentURL.indexOf('/share'))}/challengerwelcome?${SearchParams.WonTheChallenge}=true`,
     );
@@ -23,27 +23,8 @@ describe('createShareLink', () => {
 
   it(`returns a link in the format 
   <location.protocol>//<location.host>/playerwelcome?${SearchParams.InviteCode}=<inviteCode>
-  where <inviteCode> is the inviting challenger's invite code when the user is a 
-  player who has not won the challenge and invitedBy is not null.`, () => {
-    const currentURL = 'https://challenge.8by8.us/share';
-    window.location.assign(currentURL);
-
-    const user = Builder<User>().type(UserType.Player).build();
-
-    const invitedBy = Builder<ChallengerData>()
-      .challengerInviteCode(createId())
-      .build();
-
-    const shareLink = createShareLink(user, invitedBy);
-    expect(shareLink).toBe(
-      `${currentURL.slice(0, currentURL.indexOf('/share'))}/playerwelcome?${SearchParams.InviteCode}=${invitedBy.challengerInviteCode}`,
-    );
-  });
-
-  it(`returns a link in the format 
-  <location.protocol>//<location.host>/playerwelcome?${SearchParams.InviteCode}=<inviteCode>
-  where <inviteCode> is the user's own invite code when the user is a 
-  challenger who has not won the challenge.`, () => {
+  where <inviteCode> is the user's own invite code when the user has not won the 
+  challenge.`, () => {
     const currentURL = 'https://challenge.8by8.us/share';
     window.location.assign(currentURL);
 
@@ -52,7 +33,7 @@ describe('createShareLink', () => {
       .inviteCode(createId())
       .build();
 
-    const shareLink = createShareLink(user, null);
+    const shareLink = createShareLink(user);
     expect(shareLink).toBe(
       `${currentURL.slice(0, currentURL.indexOf('/share'))}/playerwelcome?${SearchParams.InviteCode}=${user.inviteCode}`,
     );
@@ -67,9 +48,23 @@ describe('createShareLink', () => {
       .inviteCode(createId())
       .build();
 
-    const shareLink = createShareLink(user, null);
+    const shareLink = createShareLink(user);
     expect(shareLink).toBe(
       `${currentURL.slice(0, currentURL.indexOf('/share'))}/playerwelcome?${SearchParams.InviteCode}=${user.inviteCode}`,
     );
+  });
+
+  it(`returns an empty string if window.location is undefined.`, () => {
+    const location = window.location;
+    delete (window as any).location;
+
+    const user = Builder<User>()
+      .type(UserType.Challenger)
+      .inviteCode(createId())
+      .build();
+
+    expect(createShareLink(user)).toBe('');
+
+    window.location = location;
   });
 });

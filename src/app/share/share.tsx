@@ -10,17 +10,16 @@ import { PageContainer } from '@/components/utils/page-container';
 import { LoadingWheel } from '@/components/utils/loading-wheel';
 import { Modal } from '@/components/utils/modal';
 import { Toast, useToast } from '@/components/utils/toast';
-import { createShareLink } from './create-share-link';
-import { UserType } from '@/model/enums/user-type';
 import copyLinkIcon from '../../../public/static/images/pages/share/copy-link.svg';
 import imagesIcon from '../../../public/static/images/pages/share/images-icon.svg';
 import backArrow from '../../../public/static/images/pages/share/back-icon.svg';
 import calendarImage from '../../../public/static/images/pages/share/calendar-image.png';
 import socialShareIcon from '../../../public/static/images/pages/share/share-icon.svg';
-import socialMediaPostImage0 from '../../../public/static/images/pages/share/social-media-post-image-0.png';
-import socialMediaPostImage1 from '../../../public/static/images/pages/share/social-media-post-image-1.png';
-import socialMediaPostImage2 from '../../../public/static/images/pages/share/social-media-post-image-2.png';
+import socialMediaPostImage0 from '../../../public/static/images/pages/share/post-image-0.png';
+import socialMediaPostImage1 from '../../../public/static/images/pages/share/post-image-1.png';
+import socialMediaPostImage2 from '../../../public/static/images/pages/share/post-image-2.png';
 import styles from './styles.module.scss';
+import { createShareLink } from './create-share-link';
 
 interface ShareProps {
   hideShareButton?: boolean;
@@ -31,13 +30,10 @@ export const Share = isSignedIn(function Share({
 }: ShareProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { user, invitedBy, shareChallenge } = useContextSafely(
-    UserContext,
-    'Share',
-  );
+  const { user, shareChallenge } = useContextSafely(UserContext, 'Share');
   const { showAlert } = useContextSafely(AlertsContext, 'Share');
   const { toastRef, showToast } = useToast();
-  const shareLink = createShareLink(user!, invitedBy);
+  const shareLink = createShareLink(user!);
   const shareData = { url: shareLink };
   const router = useRouter();
 
@@ -73,9 +69,8 @@ export const Share = isSignedIn(function Share({
   const showShareButton = !hideShareButton && canShare;
 
   const paragraphText =
-    user?.completedChallenge ? 'Invite friends to take the 8by8 Challenge!'
-    : user?.type === UserType.Player && invitedBy ?
-      `Invite friends to support ${invitedBy.challengerName}'s challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge.`
+    user?.completedChallenge ?
+      'Invite friends to take the 8by8 Challenge!'
     : 'Invite friends to support your challenge by taking an action: register to vote, get election reminders, or take the 8by8 challenge.';
 
   const share = async () => {
@@ -128,7 +123,11 @@ export const Share = isSignedIn(function Share({
       </div>
       <div className={styles.buttons_container}>
         <div className={styles.copy_button_container}>
-          <button className={styles.button} onClick={copyLink}>
+          <button
+            className={styles.button}
+            onClick={copyLink}
+            disabled={!shareLink.length}
+          >
             <Image src={copyLinkIcon} alt="Copy link" priority />
             Copy link
           </button>
@@ -137,7 +136,11 @@ export const Share = isSignedIn(function Share({
           </div>
         </div>
         {showShareButton && (
-          <button onClick={share} className={styles.button}>
+          <button
+            onClick={share}
+            className={styles.button}
+            disabled={!shareLink.length}
+          >
             <Image src={socialShareIcon} alt="Social share icon" priority />
             Share
           </button>
@@ -152,9 +155,24 @@ export const Share = isSignedIn(function Share({
           isOpen={isModalOpen}
           closeModal={closeModal}
         >
-          <Image src={socialMediaPostImage0} alt="images0-icon" priority />
-          <Image src={socialMediaPostImage1} alt="images1-icon" priority />
-          <Image src={socialMediaPostImage2} alt="images2-icon" priority />
+          <Image
+            src={socialMediaPostImage0}
+            alt="images0-icon"
+            className={styles.img_for_post}
+            priority
+          />
+          <Image
+            src={socialMediaPostImage1}
+            alt="images1-icon"
+            className={styles.img_for_post}
+            priority
+          />
+          <Image
+            src={socialMediaPostImage2}
+            alt="images2-icon"
+            className={styles.img_for_post}
+            priority
+          />
         </Modal>
       </div>
       {isLoading && <LoadingWheel />}

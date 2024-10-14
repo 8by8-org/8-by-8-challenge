@@ -157,7 +157,7 @@ export default function Why8by8() {
             more civic engagement and political presence, the journey for modern
             Asian Community Centers can be easier and smoother!
           </q>
-          <aside>
+          <aside style={{ position: 'relative', zIndex: 2 }}>
             <span className={styles.quote_gap_2}>
               —Yudy, Partnership Lead at 8BY8
             </span>
