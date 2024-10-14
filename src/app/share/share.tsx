@@ -15,9 +15,9 @@ import imagesIcon from '../../../public/static/images/pages/share/images-icon.sv
 import backArrow from '../../../public/static/images/pages/share/back-icon.svg';
 import calendarImage from '../../../public/static/images/pages/share/calendar-image.png';
 import socialShareIcon from '../../../public/static/images/pages/share/share-icon.svg';
-import socialMediaPostImage0 from '../../../public/static/images/pages/share/social-media-post-image-0.png';
-import socialMediaPostImage1 from '../../../public/static/images/pages/share/social-media-post-image-1.png';
-import socialMediaPostImage2 from '../../../public/static/images/pages/share/social-media-post-image-2.png';
+import socialMediaPostImage0 from '../../../public/static/images/pages/share/post-image-0.png';
+import socialMediaPostImage1 from '../../../public/static/images/pages/share/post-image-1.png';
+import socialMediaPostImage2 from '../../../public/static/images/pages/share/post-image-2.png';
 import styles from './styles.module.scss';
 import { createShareLink } from './create-share-link';
 
@@ -155,9 +155,24 @@ export const Share = isSignedIn(function Share({
           isOpen={isModalOpen}
           closeModal={closeModal}
         >
-          <Image src={socialMediaPostImage0} alt="images0-icon" priority />
-          <Image src={socialMediaPostImage1} alt="images1-icon" priority />
-          <Image src={socialMediaPostImage2} alt="images2-icon" priority />
+          <Image
+            src={socialMediaPostImage0}
+            alt="images0-icon"
+            className={styles.img_for_post}
+            priority
+          />
+          <Image
+            src={socialMediaPostImage1}
+            alt="images1-icon"
+            className={styles.img_for_post}
+            priority
+          />
+          <Image
+            src={socialMediaPostImage2}
+            alt="images2-icon"
+            className={styles.img_for_post}
+            priority
+          />
         </Modal>
       </div>
       {isLoading && <LoadingWheel />}
