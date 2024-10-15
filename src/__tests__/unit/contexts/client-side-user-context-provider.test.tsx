@@ -26,6 +26,7 @@ import { mockDialogMethods } from '@/utils/test/mock-dialog-methods';
 import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
 import { isErrorWithMessage } from '@/utils/shared/is-error-with-message';
 import { calculateDaysRemaining } from '@/app/progress/calculate-days-remaining';
+import { CSRF_HEADER } from '@/utils/csrf/constants';
 import type { User } from '@/model/types/user';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import type { Avatar } from '@/model/types/avatar';
@@ -150,6 +151,9 @@ describe('ClientSideUserContextProvider', () => {
       expect(fetchSpy).toHaveBeenCalledWith('/api/signup-with-email', {
         method: 'POST',
         body: JSON.stringify(signUpParams),
+        headers: {
+          [CSRF_HEADER]: expect.any(String),
+        },
       }),
     );
 
@@ -314,6 +318,9 @@ describe('ClientSideUserContextProvider', () => {
       expect(fetchSpy).toHaveBeenCalledWith('/api/send-otp-to-email', {
         method: 'POST',
         body: JSON.stringify(sendOTPToEmailParams),
+        headers: {
+          [CSRF_HEADER]: expect.any(String),
+        },
       }),
     );
 
@@ -465,6 +472,9 @@ describe('ClientSideUserContextProvider', () => {
       expect(fetchSpy).toHaveBeenCalledWith('/api/resend-otp-to-email', {
         method: 'POST',
         body: JSON.stringify({ email }),
+        headers: {
+          [CSRF_HEADER]: expect.any(String),
+        },
       }),
     );
 
@@ -639,6 +649,9 @@ describe('ClientSideUserContextProvider', () => {
       expect(fetchSpy).toHaveBeenCalledWith('/api/signin-with-otp', {
         method: 'POST',
         body: JSON.stringify({ email: expectedUser.email, otp }),
+        headers: {
+          [CSRF_HEADER]: expect.any(String),
+        },
       }),
     );
 
@@ -797,6 +810,9 @@ describe('ClientSideUserContextProvider', () => {
     await waitFor(() =>
       expect(fetchSpy).toHaveBeenCalledWith('/api/signout', {
         method: 'DELETE',
+        headers: {
+          [CSRF_HEADER]: expect.any(String),
+        },
       }),
     );
 
@@ -1036,6 +1052,7 @@ describe('ClientSideUserContextProvider', () => {
     await user.click(screen.getByText(/get reminders/i));
     expect(fetchSpy).not.toHaveBeenCalledWith(
       '/api/award-election-reminders-badge',
+      expect.anything(),
     );
     fetchSpy.mockRestore();
   });
@@ -1392,7 +1409,10 @@ describe('ClientSideUserContextProvider', () => {
     );
 
     await user.click(screen.getByText('Take the challenge'));
-    expect(fetchSpy).not.toHaveBeenCalledWith('/api/take-the-challenge');
+    expect(fetchSpy).not.toHaveBeenCalledWith(
+      '/api/take-the-challenge',
+      expect.anything(),
+    );
     fetchSpy.mockRestore();
   });
 
@@ -1444,7 +1464,10 @@ describe('ClientSideUserContextProvider', () => {
     );
 
     await user.click(screen.getByText('Take the challenge'));
-    expect(fetchSpy).not.toHaveBeenCalledWith('/api/take-the-challenge');
+    expect(fetchSpy).not.toHaveBeenCalledWith(
+      '/api/take-the-challenge',
+      expect.anything(),
+    );
     fetchSpy.mockRestore();
   });
 
@@ -1712,7 +1735,10 @@ describe('ClientSideUserContextProvider', () => {
     );
 
     await user.click(screen.getByText(/register/i));
-    expect(fetchSpy).not.toHaveBeenCalledWith('/api/register-to-vote');
+    expect(fetchSpy).not.toHaveBeenCalledWith(
+      '/api/register-to-vote',
+      expect.anything(),
+    );
     fetchSpy.mockRestore();
   });
 
@@ -2033,9 +2059,10 @@ describe('ClientSideUserContextProvider', () => {
       </AlertsContextProvider>,
     );
     await user.click(screen.getByText(/Share/i));
-    expect(fetchSpy).not.toHaveBeenCalledWith('/api/share-challenge', {
-      method: 'PUT',
-    });
+    expect(fetchSpy).not.toHaveBeenCalledWith(
+      '/api/share-challenge',
+      expect.anything(),
+    );
     fetchSpy.mockRestore();
   });
 
@@ -2227,9 +2254,10 @@ describe('ClientSideUserContextProvider', () => {
       </AlertsContextProvider>,
     );
     await user.click(screen.getByText(/restart/i));
-    expect(fetchSpy).not.toHaveBeenCalledWith('/api/restart-challenge', {
-      method: 'PUT',
-    });
+    expect(fetchSpy).not.toHaveBeenCalledWith(
+      '/api/restart-challenge',
+      expect.anything(),
+    );
     fetchSpy.mockRestore();
   });
 });

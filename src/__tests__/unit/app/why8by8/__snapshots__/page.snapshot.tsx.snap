@@ -279,7 +279,9 @@ exports[`Why8by8 renders why8by8 page unchanged 1`] = `
           <q>
             I joined the 8by8 partnerships team hoping to leverage my network and make a difference to the future of AAPI in America. Voter registration is a great starting point. My dream is to build a chain of modern and inclusive community centers for Asian Americans. With more civic engagement and political presence, the journey for modern Asian Community Centers can be easier and smoother!
           </q>
-          <aside>
+          <aside
+            style="position: relative; z-index: 2;"
+          >
             <span
               class="quote_gap_2"
             >

@@ -14,6 +14,8 @@ import { CookieNames } from '@/constants/cookie-names';
 import { SupabaseUserRecordBuilder } from '@/utils/test/supabase-user-record-builder';
 import { UserType } from '@/model/enums/user-type';
 import { getSignedInRequestWithUser } from '@/utils/test/get-signed-in-request-with-user';
+import { createCSRFToken } from '@/utils/csrf/create-csrf-token';
+import { CSRF_COOKIE, CSRF_HEADER } from '@/utils/csrf/constants';
 
 const mockCookies = new MockNextCookies();
 
@@ -21,6 +23,13 @@ jest.mock('next/headers', () => ({
   ...jest.requireActual('next/headers'),
   cookies: () => mockCookies.cookies(),
 }));
+
+function withCSRFToken(request: NextRequest) {
+  const token = createCSRFToken();
+  request.cookies.set(CSRF_COOKIE, token);
+  request.headers.set(CSRF_HEADER, token);
+  return request;
+}
 
 describe('middleware', () => {
   const ip = '1.2.3.4';
@@ -43,9 +52,11 @@ describe('middleware', () => {
   requests to a protected route.`, async () => {
     for (const limiter of rateLimiters) {
       for (let i = 0; i < limiter.allowedRequests; i++) {
-        const request = new NextRequest(`${host}${limiter.route}`, {
-          ip,
-        });
+        const request = withCSRFToken(
+          new NextRequest(`${host}${limiter.route}`, {
+            ip,
+          }),
+        );
 
         const response = await middleware(
           request,
@@ -54,9 +65,11 @@ describe('middleware', () => {
         expect(response.status).not.toBe(429);
       }
 
-      const request = new NextRequest(`${host}${limiter.route}`, {
-        ip,
-      });
+      const request = withCSRFToken(
+        new NextRequest(`${host}${limiter.route}`, {
+          ip,
+        }),
+      );
 
       const response = await middleware(
         request,
@@ -66,8 +79,83 @@ describe('middleware', () => {
     }
   });
 
+  it(`returns a response with a status of 403 if the user makes a request to
+    an API route without a CSRF token present in cookies or headers.`, async () => {
+    const request = new NextRequest(`${host}/api`);
+
+    const response = await middleware(
+      request,
+      Builder<NextFetchEvent>().build(),
+    );
+    expect(response.status).toBe(403);
+
+    const data = await response.json();
+    expect(data.error).toBe('Invalid CSRF token.');
+  });
+
+  it(`returns a response with a status of 403 if the user makes a request to
+  an API route without a CSRF token present in cookies.`, async () => {
+    const request = new NextRequest(`${host}/api`);
+    request.headers.set(CSRF_HEADER, createCSRFToken());
+
+    const response = await middleware(
+      request,
+      Builder<NextFetchEvent>().build(),
+    );
+    expect(response.status).toBe(403);
+
+    const data = await response.json();
+    expect(data.error).toBe('Invalid CSRF token.');
+  });
+
+  it(`returns a response with a status of 403 if the user makes a request to
+  an API route without a CSRF token present in headers.`, async () => {
+    const request = new NextRequest(`${host}/api`);
+    request.cookies.set(CSRF_COOKIE, createCSRFToken());
+
+    const response = await middleware(
+      request,
+      Builder<NextFetchEvent>().build(),
+    );
+    expect(response.status).toBe(403);
+
+    const data = await response.json();
+    expect(data.error).toBe('Invalid CSRF token.');
+  });
+
+  it(`returns a response with a status of 403 if the user makes a request to
+  an API route with a token in headers that does not match the token in 
+  cookies.`, async () => {
+    const request = new NextRequest(`${host}/api`);
+    request.cookies.set(CSRF_COOKIE, 'a');
+    request.headers.set(CSRF_HEADER, 'b');
+
+    const response = await middleware(
+      request,
+      Builder<NextFetchEvent>().build(),
+    );
+    expect(response.status).toBe(403);
+
+    const data = await response.json();
+    expect(data.error).toBe('Invalid CSRF token.');
+  });
+
+  it(`allows access to an API route if the CSRF token in headers matches that 
+  in cookies.`, async () => {
+    const request = new NextRequest(`${host}/api`);
+    const token = createCSRFToken();
+    request.cookies.set(CSRF_COOKIE, token);
+    request.headers.set(CSRF_HEADER, token);
+
+    const response = await middleware(
+      request,
+      Builder<NextFetchEvent>().build(),
+    );
+    expect(response.status).toBe(200);
+  });
+
   it(`sets a cookie and redirects the user to the same route without the 
-    inviteCode search parameter when the inviteCode search parameter is detected.`, async () => {
+  inviteCode search parameter when the inviteCode search parameter is detected.`, async () => {
     const route = '/share';
     const inviteCode = createId();
     const fullPath = `${host}${route}?${SearchParams.InviteCode}=${inviteCode}`;

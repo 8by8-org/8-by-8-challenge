@@ -13,6 +13,7 @@ import { clearInviteCode } from './clear-invite-code-cookie';
 import { clearAllPersistentFormElements, ValueOf } from 'fully-formed';
 import { VoterRegistrationForm } from '@/app/register/voter-registration-form';
 import { UserType } from '@/model/enums/user-type';
+import { createCSRFHeader } from '@/utils/csrf/create-csrf-header';
 import type { User } from '@/model/types/user';
 import type { ChallengerData } from '@/model/types/challenger-data';
 import type { RealtimeChannel } from '@supabase/supabase-js';
@@ -52,6 +53,7 @@ export function ClientSideUserContextProvider(
     const refreshUser = async () => {
       const response = await fetch('/api/refresh-user', {
         method: 'POST',
+        headers: createCSRFHeader(),
       });
 
       if (response.ok) {
@@ -111,6 +113,7 @@ export function ClientSideUserContextProvider(
     const response = await fetch('/api/signup-with-email', {
       method: 'POST',
       body: JSON.stringify(params),
+      headers: createCSRFHeader(),
     });
 
     if (!response.ok) {
@@ -129,6 +132,7 @@ export function ClientSideUserContextProvider(
     const response = await fetch('/api/send-otp-to-email', {
       method: 'POST',
       body: JSON.stringify(params),
+      headers: createCSRFHeader(),
     });
 
     if (!response.ok) {
@@ -147,6 +151,7 @@ export function ClientSideUserContextProvider(
     const response = await fetch('/api/resend-otp-to-email', {
       method: 'POST',
       body: JSON.stringify({ email: emailForSignIn }),
+      headers: createCSRFHeader(),
     });
 
     if (!response.ok) {
@@ -162,6 +167,7 @@ export function ClientSideUserContextProvider(
     const response = await fetch('/api/signin-with-otp', {
       method: 'POST',
       body: JSON.stringify({ email: emailForSignIn, otp }),
+      headers: createCSRFHeader(),
     });
 
     if (!response.ok) {
@@ -180,6 +186,7 @@ export function ClientSideUserContextProvider(
   async function signOut() {
     const response = await fetch('/api/signout', {
       method: 'DELETE',
+      headers: createCSRFHeader(),
     });
 
     if (!response.ok) {
@@ -196,6 +203,7 @@ export function ClientSideUserContextProvider(
 
     const response = await fetch('/api/award-election-reminders-badge', {
       method: 'PUT',
+      headers: createCSRFHeader(),
     });
 
     if (!response.ok) {
@@ -214,6 +222,7 @@ export function ClientSideUserContextProvider(
 
     const response = await fetch('/api/share-challenge', {
       method: 'PUT',
+      headers: createCSRFHeader(),
     });
 
     if (!response.ok) {
@@ -235,6 +244,7 @@ export function ClientSideUserContextProvider(
     const response = await fetch('/api/register-to-vote', {
       method: 'POST',
       body: JSON.stringify(formData),
+      headers: createCSRFHeader(),
     });
 
     if (!response.ok) {
@@ -259,6 +269,7 @@ export function ClientSideUserContextProvider(
 
     const response = await fetch('/api/take-the-challenge', {
       method: 'PUT',
+      headers: createCSRFHeader(),
     });
 
     if (!response.ok) {
@@ -277,6 +288,7 @@ export function ClientSideUserContextProvider(
 
     const response = await fetch('/api/restart-challenge', {
       method: 'PUT',
+      headers: createCSRFHeader(),
     });
 
     if (!response.ok) {

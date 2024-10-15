@@ -1,4 +1,5 @@
 export { chainMiddleware } from './chain-middleware';
+export { csrfProtection } from './csrf-protection';
 export { hasNotRegistered } from './has-not-registered';
 export { hasNotSignedUpForReminders } from './has-not-signed-up-for-reminders';
 export { hasRegistered } from './has-registered';

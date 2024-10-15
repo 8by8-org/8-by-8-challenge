@@ -11,6 +11,7 @@ import type { NextRequest, NextFetchEvent } from 'next/server';
  */
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
   return await middlewares.chainMiddleware([
+    middlewares.csrfProtection,
     middlewares.rateLimit,
     middlewares.setInviteCodeCookie,
     middlewares.isSignedOut,
