@@ -9,6 +9,7 @@ const ExternalSources = {
   RockTheVote: 'https://register.rockthevote.com/',
   RockyAPIAssets: 'https://s3.amazonaws.com/rocky-assets/',
   Cloudflare: 'https://challenges.cloudflare.com/',
+  VercelTools: 'https://vercel.live/',
 };
 
 /**
@@ -93,6 +94,7 @@ function getAllowedScriptSources() {
     ExternalSources.RockTheVote,
     ExternalSources.RockyAPIAssets,
     ExternalSources.Cloudflare,
+    ExternalSources.VercelTools,
   ];
 
   // 'unsafe-eval' is required by Next.js when running the dev server
