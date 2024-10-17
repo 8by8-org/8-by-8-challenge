@@ -1,6 +1,7 @@
 name: 'Schedule Supabase Pings'
 
 on:
+  workflow_dispatch:
   schedule:
     # Run this job at 4:30 AM UTC every Sunday and Thursday. Scheduled jobs are
     # often delayed and can be dropped during peak times (see
