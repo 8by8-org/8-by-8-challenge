@@ -16,9 +16,15 @@ jobs:
   ping-staging:
     uses: ./.github/workflows/ping-supabase.yml
     with:
-      environment-name: staging
+      environment: staging
+    secrets:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
   ping-prod:
     uses: ./.github/workflows/ping-supabase.yml
     with:
-      environment-name: production
+      environment: production
+    secrets:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
