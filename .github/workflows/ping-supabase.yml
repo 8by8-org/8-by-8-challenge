@@ -4,10 +4,20 @@ name: 'Ping Supabase'
 
 on:
   workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+    secrets:
+      SUPABASE_URL:
+        required: true
+      SUPABASE_ANON_KEY:
+        required: true
   
 jobs:
   ping:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
