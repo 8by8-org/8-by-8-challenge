@@ -25,7 +25,7 @@ export function setInviteCodeCookie(
       const response = NextResponse.redirect(request.nextUrl);
       response.cookies.set(CookieNames.InviteCode, inviteCode, {
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: 'lax',
         secure: PRIVATE_ENVIRONMENT_VARIABLES.APP_ENV === 'production',
       });
 
