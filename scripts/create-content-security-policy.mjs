@@ -34,7 +34,11 @@ export function createCSP() {
         widget to be rendered in IFrames.
       */
       directive: 'frame-src',
-      values: [ExternalSources.RockTheVote, ExternalSources.Cloudflare],
+      values: [
+        ExternalSources.RockTheVote,
+        ExternalSources.Cloudflare,
+        ExternalSources.VercelTools,
+      ],
     },
     {
       directive: 'connect-src',
