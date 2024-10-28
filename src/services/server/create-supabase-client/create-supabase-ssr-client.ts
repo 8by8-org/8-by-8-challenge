@@ -33,9 +33,19 @@ export const createSupabaseSSRClient = bind(
           return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options),
-          );
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options),
+            );
+          } catch {
+            /* 
+              The `setAll` method was called from a Server Component.
+              This error can be ignored because we have middleware that 
+              refreshes the user. For more information, see:
+
+              https://supabase.com/docs/guides/auth/server-side/creating-a-client?queryGroups=framework&framework=nextjs&queryGroups=environment&environment=server#create-a-client
+            */
+          }
         },
       },
     });
