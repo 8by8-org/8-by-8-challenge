@@ -33,6 +33,16 @@ const nextConfig = {
         destination: '/register/eligibility',
         permanent: true,
       },
+      {
+        /*
+          The Wix site (https://8by8.us) contains a link to /homepage, which 
+          doesn't exist in the new 8by8 challenge application. Redirect to 
+          / for now until the Wix site can be updated. 
+        */
+        source: '/homepage',
+        destination: '/',
+        permanent: true,
+      },
     ];
   },
 };
